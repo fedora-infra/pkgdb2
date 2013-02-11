@@ -51,7 +51,7 @@ import memcache
 # The Fedora Account System Module
 from fedora.client.fas2 import AccountSystem
 
-from pkgdb.lib.model.statuses import StatusTranslationTable
+from pkgdb.lib.model.statuses import StatusTranslation
 from pkgdb import _
 
 MEMCACHE = memcache.Client(config.get('memcached.servers', []))
