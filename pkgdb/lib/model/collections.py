@@ -46,9 +46,6 @@ CollectionJoin = polymorphic_union (
         'kind', 'CollectionJoin'
         )
 
-#
-# Mapped Classes
-#
 
 class Collection(BASE):
     '''A Collection of packages.
@@ -218,6 +215,7 @@ class Branch(Collection):
         else:
             raise NotImplementedError("Unsupported version %r" % version)
 
+
 ## TODO: this was not described in the pkgdb.sql file
 class Repo(BASE):
     '''Repos are actual yum repositories.
@@ -238,6 +236,7 @@ class Repo(BASE):
             self.name, self.shortname, self.url, self.mirror, self.active,
 
             self.collectionid)
+
 
 ## TODO: this is a view, create it as such...
 class CollectionPackage(BASE):
