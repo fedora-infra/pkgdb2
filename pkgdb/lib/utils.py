@@ -155,10 +155,9 @@ class StatusCache(dict):
             status_value = MEMCACHE.get(mc_id)
 
             if not status_value:
-                status = select((StatusTranslationTable,), and_(
+                status = session.query(StatusTranslation).filter(and_(
                     StatusTranslationTable.c.language=='C',
-                    StatusTranslationTable.c.statusname==status_id))\
-                            .execute().fetchone()
+                    StatusTranslationTable.c.statusname==status_id)).one()
         else:
             # Have an id, look for a statusname
 
@@ -168,10 +167,9 @@ class StatusCache(dict):
 
             if not status_value:
                 try:
-                    status = select((StatusTranslationTable,), and_(
-                        StatusTranslationTable.c.language=='C',
-                        StatusTranslationTable.c.statuscodeid==status_id))\
-                                .execute().fetchone()
+                    status = session.query(StatusTranslation).filter(and_(
+                        StatusTranslation.language=='C',
+                        StatusTranslation.statuscodeid==status_id)).one()
                 except DataError:
                     # If status_id was not an integer we get a DataError.  In
                     # that case, we know we won't find the value we want
@@ -196,8 +194,8 @@ class StatusCache(dict):
         '''Recache all the status types
         '''
         status_map = {}
-        for status in select((StatusTranslationTable,),
-                StatusTranslationTable.c.language=='C').execute():
+        for status in session.query(StatusTranslation).filter(
+                StatusTranslationlanguage=='C').all():
             status_map[Hasher(status.statusname).hexdigest()
                        ] = status.statuscodeid
             status_map[status.statuscodeid] = status.statusname
