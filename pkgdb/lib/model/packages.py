@@ -190,7 +190,7 @@ class PackageListing(BASE):
                                          ),
                            nullable=False,
                            )
-    statuschange = sa.Column(sa.Datetime, nullable=False,
+    statuschange = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
     __table_args__ = (
         sa.UniqueConstraint('packageId', 'collectionId'),
