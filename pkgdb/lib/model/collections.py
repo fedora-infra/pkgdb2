@@ -73,6 +73,40 @@ class Collection(BASE):
         sa.UniqueConstraint('name', 'version'),
     )
 
+    #mapper(Collection, CollectionJoin,
+        #polymorphic_on=CollectionJoin.c.kind,
+        #polymorphic_identity='c',
+        #with_polymorphic='*',
+        #properties={
+            ## listings is deprecated.  It will go away in 0.4.x
+            #'listings': relation(PackageListing),
+            ## listings2 is slower than listings.  It has a front-end cost to
+            ## load the data into the dict.  However, if we're using listings
+            ## to search for multiple packages, this will likely be faster.
+            ## Have to look at how it's being used in production and decide
+            ## what to do.
+            #'listings2': relation(PackageListing,
+                #backref=backref('collection'),
+                #collection_class=attribute_mapped_collection('packagename')),
+            #'repos': relation(Repo, backref=backref('collection'))
+        #})
+
+    ## TODO: is this correct? -- Should be what is above
+    __mapper_args__ = {
+        'polymorphic_on': CollectionJoin.c.kind,
+        'polymorphic_identity': 'c',
+        'with_polymorphic': '*',
+        'properties': {
+            'listings': relation(PackageListing),
+            'listings2': relation(
+                PackageListing,
+                backref=backref('collection'),
+                collection_class=attribute_mapped_collection('packagename')
+            ),
+            'repos': relation(Repo, backref=backref('collection'))
+        }
+    }
+
     # pylint: disable-msg=R0902, R0903
     def __init__(self, name, version, statuscode, owner,
             publishurltemplate=None, pendingurltemplate=None, summary=None,
@@ -173,6 +207,17 @@ class Branch(Collection):
                            nullable=False,
                            )
 
+#mapper(Branch, BranchTable, inherits=Collection,
+        #inherit_condition=CollectionJoin.c.id==BranchTable.c.collectionid,
+        #polymorphic_identity='b')
+
+    ## TODO: is this correct? -- Should be what is above
+    __mapper_args__ = {
+        'inherits': 'Collection',
+        'inherit_condition': CollectionJoin.c.id==BranchTable.c.collectionid,
+        'polymorphic_identity': 'b',
+    }
+
     # pylint: disable-msg=R0902, R0903
     def __init__(self, collectionid, branchname, disttag, parentid,
                  gitbranchname=None, *args):
@@ -222,6 +267,7 @@ class Repo(BASE):
 
     Table -- Repos
     '''
+
     def __init__(self, name, shortname, url, mirror, active, collectionid):
         super(Repo, self).__init__()
         self.name  = name
@@ -258,30 +304,3 @@ class CollectionPackage(BASE):
             ' statuscode=%r, numpkgs=%r,' \
                 % (self.id, self.name, self.version, self.statuscode,
                    self.numpkgs)
-
-#
-# TODO: port this part of the code to declarative
-#
-
-#mapper(Collection, CollectionJoin,
-        #polymorphic_on=CollectionJoin.c.kind,
-        #polymorphic_identity='c',
-        #with_polymorphic='*',
-        #properties={
-            ## listings is deprecated.  It will go away in 0.4.x
-            #'listings': relation(PackageListing),
-            ## listings2 is slower than listings.  It has a front-end cost to
-            ## load the data into the dict.  However, if we're using listings
-            ## to search for multiple packages, this will likely be faster.
-            ## Have to look at how it's being used in production and decide
-            ## what to do.
-            #'listings2': relation(PackageListing,
-                #backref=backref('collection'),
-                #collection_class=attribute_mapped_collection('packagename')),
-            #'repos': relation(Repo, backref=backref('collection'))
-        #})
-
-## No idea how to implement this part
-#mapper(Branch, BranchTable, inherits=Collection,
-        #inherit_condition=CollectionJoin.c.id==BranchTable.c.collectionid,
-        #polymorphic_identity='b')
