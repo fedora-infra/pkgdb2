@@ -26,6 +26,8 @@ Mapping of python classes to Database Tables.
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from collections import collection_package_create_view
+
 BASE = declarative_base()
 
 
@@ -46,6 +48,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     """
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
+    engine.execute(collection_package_create_view)
 
     if alembic_ini is not None:
         # then, load the Alembic configuration and generate the
@@ -57,3 +60,9 @@ def create_tables(db_url, alembic_ini=None, debug=False):
 
     sessionmak = sessionmaker(bind=engine)
     return sessionmak()
+
+
+if __name__ == '__main__':
+    db_url = 'sqlite://pkgdb2.sqlite'
+    debug = True
+    create_tables(db_url, debug=debug)
