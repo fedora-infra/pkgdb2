@@ -26,6 +26,9 @@ Mapping of collection and repo related database tables to python classes
 from sqlalchemy.orm import polymorphic_union, relation, backref
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.collections import attribute_mapped_collection
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql.expression import Executable, ClauseElement
+
 import sqlalchemy as sa
 
 
@@ -285,7 +288,7 @@ class Repo(BASE):
 
 
 ## TODO: this is a view, create it as such...
-class CollectionPackage(BASE):
+class CollectionPackage(Executable, ClauseElement):
     '''Information about how many `Packages` are in a `Collection`
 
     View -- CollectionPackage
@@ -293,9 +296,15 @@ class CollectionPackage(BASE):
 
     __tablename__ = 'CollectionPackage'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    name = sa.Column(sa.Text, nullable=False)
+    version = sa.Column(sa.Text, nullable=False)
     statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('collectionstatuscode.statuscodeid'),
-                           )
+                           sa.ForeignKey('CollectionStatusCode.statusCodeId',
+                                         ondelete="RESTRICT",
+                                         onupdate="CASCADE"
+                                         ),
+                           nullable=False)
+    numpkgs = sa.Column(sa.Integer, nullable=False)
 
     # pylint: disable-msg=R0902, R0903
     def __repr__(self):
@@ -304,3 +313,14 @@ class CollectionPackage(BASE):
             ' statuscode=%r, numpkgs=%r,' \
                 % (self.id, self.name, self.version, self.statuscode,
                    self.numpkgs)
+
+
+
+@compiles(CollectionPackage)
+def collection_package_create_view(*args, **kw):
+    return "select c.id, c.name, c.version, c.statuscode, count(*) as numpkgs "\
+    "from packagelisting as pl, collection as c "\
+    "where pl.collectionid = c.id "\
+    "and pl.statuscode = 3 "\
+    "group by c.id, c.name, c.version, c.statuscode "\
+    "order by c.name, c.version;"
