@@ -45,231 +45,41 @@ class Log(BASE):
 
     __tablename__ = 'Log'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    userId = sa.Column(sa.Integer, nullable=False)
-    changeTime = sa.Column(sa.DateTime, nullable=False,
+    user_id = sa.Column(sa.Integer, nullable=False)
+    change_time = sa.Column(sa.DateTime, nullable=False,
                            default=datetime.datetime.utcnow())
-    description = sa.Column(sa.Text)
+    package_id = sa.Column(sa.Integer,
+                           sa.ForeignKey('Package.id',
+                                         ondelete='RESTRICT',
+                                         onupdate='CASCADE'
+                                         ),
+                           nullable=False,
+                           )
+    description = sa.Column(sa.Text, nullable=False)
 
-    def __init__(self, username, description=None, changetime=None):
-        self.username = username
+    def __init__(self, user_id, package_id, description):
+        self.user_id = user_id
+        self.package_id = package_id
         self.description = description
-        self.changetime = changetime
 
     def __repr__(self):
         return 'Log(%r, description=%r, changetime=%r)' % (self.username,
                 self.description, self.changetime)
 
+    def save(self, session):
+        ''' Save the current log entry. '''
+        session.add(self)
 
-class PackageLog(Log):
-    '''Log of changes to Packages.
+    @classmethod
+    def insert(cls, session, user_id, package, description):
+        ''' Insert the given log entry into the database.
 
-    Table -- PackageLog
-    '''
+        :arg session: the session to connect to the database with
+        :arg user: the identifier of the user doing the action
+        :arg package: the `Package` object of the package changed
+        :arg description: a short textual description of the action
+            performed
 
-    __tablename__ = 'PackageLog'
-    logId = sa.Column(sa.Integer,
-                      sa.ForeignKey('Log.id',
-                                    ondelete="CASCADE",
-                                    onupdate="CASCADE"
-                                    ),
-                      nullable=False,
-                      primary_key=True)
-    packageId = sa.Column(sa.Integer,
-                          sa.ForeignKey('Package.id',
-                                        ondelete="RESTRICT",
-                                        onupdate="CASCADE"
-                                        ),
-                          nullable=False)
-    action = sa.Column(sa.Integer,
-                       sa.ForeignKey('PackageLogStatusCode.statusCodeId',
-                                     ondelete="RESTRICT",
-                                     onupdate="CASCADE"
-                                     ),
-                       nullable=False)
-
-    def __init__(self, username, action, description=None, changetime=None,
-            packageid=None):
-        super(PackageLog, self).__init__(username,
-                                         description,
-                                         changetime)
-        self.action = action
-        self.packageid = packageid
-
-    def __repr__(self):
-        return 'PackageLog(%r, %r, description=%r, changetime=%r,' \
-                ' packageid=%r)' % (self.username, self.action,
-                                    self.description, self.changetime,
-                                    self.packageid)
-
-
-class PackageListingLog(Log):
-    '''Log of changes to the PackageListings.
-
-    Table -- PackageListingLog
-    '''
-
-    __tablename__ = 'PackageListingLog'
-    logId = sa.Column(sa.Integer,
-                      sa.ForeignKey('Log.id',
-                                    ondelete="CASCADE",
-                                    onupdate="CASCADE"
-                                    ),
-                      nullable=False,
-                      primary_key=True)
-    packageListingId = sa.Column(sa.Integer,
-                          sa.ForeignKey('PackageListing.id',
-                                        ondelete="RESTRICT",
-                                        onupdate="CASCADE"
-                                        ),
-                          nullable=False)
-    action = sa.Column(sa.Integer,
-                       sa.ForeignKey('PackageListingLogStatusCode.statusCodeId',
-                                     ondelete="RESTRICT",
-                                     onupdate="CASCADE"
-                                     ),
-                       nullable=False)
-
-    def __init__(self, username, action, description=None, changetime=None,
-            packagelistingid=None):
-        super(PackageListingLog, self).__init__(username,
-                                                description,
-                                                changetime)
-        self.action = action
-        self.packagelistingid = packagelistingid
-
-    def __repr__(self):
-        return 'PackageListingLog(%r, %r, description=%r, changetime=%r,' \
-                ' packagelistingid=%r)' % (self.username,
-                self.action, self.description, self.changetime,
-                self.packagelistingid)
-
-
-class PersonPackageListingAclLog(Log):
-    '''Log changes to an Acl that a person owns.
-
-    Table -- PersonPackageListingAcl
-    '''
-
-    __tablename__ = 'PersonPackageListingAcl'
-    logId = sa.Column(sa.Integer,
-                      sa.ForeignKey('Log.id',
-                                    ondelete="CASCADE",
-                                    onupdate="CASCADE"
-                                    ),
-                      nullable=False,
-                      primary_key=True)
-    personPackageListingAclId = sa.Column(sa.Integer,
-                          sa.ForeignKey('PersonPackageListingAcl.id',
-                                        ondelete="RESTRICT",
-                                        onupdate="CASCADE"
-                                        ),
-                          nullable=False)
-    action = sa.Column(sa.Integer,
-                       sa.ForeignKey('PackageACLLogStatusCode.statusCodeId',
-                                     ondelete="RESTRICT",
-                                     onupdate="CASCADE"
-                                     ),
-                       nullable=False)
-
-    def __init__(self, username, action, description=None, changetime=None,
-            personpackagelistingaclid=None):
-        super(PersonPackageListingAclLog, self).__init__(username,
-                                                         description,
-                                                         changetime)
-        self.action = action
-        self.personpackagelistingaclid = personpackagelistingaclid
-
-    def __repr__(self):
-        return 'PersonPackageListingAclLog(%r, %r, description=%r,' \
-                ' changetime=%r, personpackagelistingaclid=%r)' % (
-                        self.username, self.action, self.description,
-                        self.changetime, self.personpackagelistingaclid)
-
-
-class GroupPackageListingAclLog(Log):
-    '''Log changes to an Acl that a group owns.
-
-    Table -- GroupPackageListingAclLog
-    '''
-
-    __tablename__ = 'GroupPackageListingAclLog'
-
-    def __init__(self, username, action, description=None, changetime=None,
-            grouppackagelistingaclid=None):
-        super(GroupPackageListingAclLog, self).__init__(username,
-                                                        description,
-                                                        changetime)
-        self.action = action
-        self.grouppackagelistingaclid = grouppackagelistingaclid
-
-    def __repr__(self):
-        return 'GroupPackageListingAclLog(%r, %r, description=%r,' \
-                ' changetime=%r, grouppackagelistingaclid=%r)' % (
-                        self.username, self.action, self.description,
-                        self.changetime, self.grouppackagelistingaclid)
-
-
-
-#logJoin = polymorphic_union (
-        #{'pkglog': select((LogTable.join(
-            #PackageLogTable,
-                #LogTable.c.id == PackageLogTable.c.logid),
-            #literal_column("'pkglog'").label('kind'))),
-         #'pkglistlog': select((LogTable.join(
-            #PackageListingLogTable,
-                #LogTable.c.id == PackageListingLogTable.c.logid),
-            #literal_column("'pkglistlog'").label('kind'))),
-         #'personpkglistacllog': select((LogTable.join(
-            #PersonPackageListingAclLogTable,
-                #LogTable.c.id == PersonPackageListingAclLogTable.c.logid),
-            #literal_column("'personpkglistacllog'").label('kind'))),
-         #'grouppkglistacllog': select((LogTable.join(
-            #GroupPackageListingAclLogTable,
-                #LogTable.c.id == GroupPackageListingAclLogTable.c.logid),
-            #literal_column("'grouppkglistacllog'").label('kind'))),
-         #'log': select((LogTable, literal_column("'log'").label('kind')),
-             #not_(LogTable.c.id.in_(select(
-                 #(LogTable.c.id,),
-                 #LogTable.c.id == PackageListingLogTable.c.logid)
-             #)))
-         #},
-        #None
-        #)
-
-##
-## Mappers
-##
-
-#logMapper = mapper(Log, LogTable, select_table=logJoin,
-        #polymorphic_on=logJoin.c.kind, polymorphic_identity='log'
-        #)
-
-#mapper(PersonPackageListingAclLog, PersonPackageListingAclLogTable,
-        #inherits=logMapper, polymorphic_identity='personpkglistacllog',
-        #inherit_condition=LogTable.c.id == \
-                #PersonPackageListingAclLogTable.c.logid,
-        #properties={
-            #'acl': relation(PersonPackageListingAcl, backref='logs')
-            #})
-
-#mapper(GroupPackageListingAclLog, GroupPackageListingAclLogTable,
-        #inherits=logMapper, polymorphic_identity='grouppkglistacllog',
-        #inherit_condition=LogTable.c.id == \
-                #GroupPackageListingAclLogTable.c.logid,
-        #properties={
-            #'acl': relation(GroupPackageListingAcl, backref='logs')
-            #})
-
-#mapper(PackageLog, PackageLogTable,
-        #inherits=logMapper, polymorphic_identity='pkglog',
-        #inherit_condition=LogTable.c.id == PackageLogTable.c.logid,
-        #properties={
-            #'package': relation(Package, backref='logs')
-            #})
-
-#mapper(PackageListingLog, PackageListingLogTable,
-        #inherits=logMapper, polymorphic_identity='pkglistlog',
-        #inherit_condition=LogTable.c.id == PackageListingLogTable.c.logid,
-        #properties={
-            #'listing': relation(PackageListing, backref='logs')
-            #})
+        '''
+        log = Log(user_id, package.id, description)
+        log.save(session)
