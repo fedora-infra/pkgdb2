@@ -248,8 +248,8 @@ class PackageListing(BASE):
         :rtype: PackageListing
         '''
         from pkgdb.lib.utils import STATUS
-        from pkgdb.model.collections import Branch
-        from pkgdb.model.logs import GroupPackageListingAclLog, \
+        from pkgdb.lib.model.collections import Branch
+        from pkgdb.lib.model.logs import GroupPackageListingAclLog, \
                 PersonPackageListingAclLog
         # Retrieve the PackageListing for the to clone branch
         try:
