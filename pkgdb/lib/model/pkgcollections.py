@@ -37,19 +37,6 @@ from sqlalchemy.ext.declarative import declarative_base
 BASE = declarative_base()
 
 
-CollectionJoin = polymorphic_union (
-        {'b' : sa.select((CollectionTable.join(
-            BranchTable, CollectionTable.c.id == BranchTable.c.collectionid),)),
-         'c' : select((CollectionTable,),
-             not_(CollectionTable.c.id.in_(select(
-                 (CollectionTable.c.id,),
-                 CollectionTable.c.id == BranchTable.c.collectionid)
-             )))
-         },
-        'kind', 'CollectionJoin'
-        )
-
-
 class Collection(BASE):
     '''A Collection of packages.
 
@@ -71,6 +58,9 @@ class Collection(BASE):
     pendingURLTemplate = sa.Column(sa.Text)
     summary = sa.Column(sa.Text)
     description = sa.Column(sa.Text)
+    branchName = sa.Column(sa.String(32), unique=True, nullable=False)
+    distTag = sa.Column(sa.String(32), unique=True, nullable=False)
+    git_branch_name = sa.Column(sa.Text)
 
     __table_args__ = (
         sa.UniqueConstraint('name', 'version'),
@@ -179,112 +169,6 @@ class Collection(BASE):
             collection = Collection.query.filter_by(name=name,
                     version=version).one()
         return collection
-
-
-class Branch(Collection):
-    '''Collection that has a physical existence.
-
-    Some Collections are only present as a name and collection of packages.  The
-    Collections that have a branch record are also present in our VCS and
-    download repositories.
-
-    Table -- Branch
-    '''
-
-    __tablename__ = 'Branch'
-    collectionId = sa.Column(sa.Integer,
-                             sa.ForeignKey('Collection.id',
-                                         ondelete="CASCADE",
-                                         onupdate="CASCADE"
-                                         ),
-                             nullable=False,
-                             primary_key=True,
-                             )
-    branchName = sa.Column(sa.String(32), unique=True, nullable=False)
-    distTag = sa.Column(sa.String(32), unique=True, nullable=False)
-    parentId = sa.Column(sa.Integer,
-                         sa.ForeignKey('Collection.id',
-                                         ondelete="SET NULL",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False,
-                           )
-
-#mapper(Branch, BranchTable, inherits=Collection,
-        #inherit_condition=CollectionJoin.c.id==BranchTable.c.collectionid,
-        #polymorphic_identity='b')
-
-    ## TODO: is this correct? -- Should be what is above
-    __mapper_args__ = {
-        'inherits': 'Collection',
-        'inherit_condition': CollectionJoin.c.id==BranchTable.c.collectionid,
-        'polymorphic_identity': 'b',
-    }
-
-    # pylint: disable-msg=R0902, R0903
-    def __init__(self, collectionid, branchname, disttag, parentid,
-                 gitbranchname=None, *args):
-        # pylint: disable-msg=R0913
-        branch_mapping = {'F-13': 'f13', 'F-12': 'f12', 'F-11': 'f11',
-                          'F-10': 'f10', 'F-9': 'f9', 'F-8': 'f8',
-                          'F-7': 'f7', 'FC-6': 'fc6', 'EL-6': 'el6',
-                          'EL-5': 'el5', 'EL-4':'el4', 'OLPC-3': 'olpc3'}
-
-        super(Branch, self).__init__(args)
-        self.collectionid = collectionid
-        self.branchname = branchname
-        self.disttag = disttag
-        self.parentid = parentid
-
-        if (not gitbranchname):
-            if (branchname in branch_mapping):
-                self.gitbranchname = branch_mapping[branchname]
-
-    def __repr__(self):
-        return 'Branch(%r, %r, %r, %r, %r, %r, %r, %r,' \
-                ' publishurltemplate=%r, pendingurltemplate=%r,' \
-                ' summary=%r, description=%r, gitbranchname=%r)' % \
-                (self.collectionid, self.branchname, self.disttag,
-                 self.parentid, self.name, self.version, self.statuscode,
-                 self.owner, self.publishurltemplate, self.pendingurltemplate,
-                 self.summary, self.description, self.gitbranchname)
-
-    def api_repr(self, version):
-        """ Used by fedmsg to serialize Branches in messages. """
-        if version == 1:
-            return dict(
-                name=self.name,
-                version=self.version,
-                publishurltemplate=self.publishurltemplate,
-                pendingurltemplate=self.pendingurltemplate,
-                branchname=self.branchname,
-                disttag=self.disttag,
-            )
-        else:
-            raise NotImplementedError("Unsupported version %r" % version)
-
-
-## TODO: this was not described in the pkgdb.sql file
-class Repo(BASE):
-    '''Repos are actual yum repositories.
-
-    Table -- Repos
-    '''
-
-    def __init__(self, name, shortname, url, mirror, active, collectionid):
-        super(Repo, self).__init__()
-        self.name  = name
-        self.shortname = shortname
-        self.url = url
-        self.mirror = mirror
-        self.active = active
-        self.collectionid = collectionid
-
-    def __repr__(self):
-        return 'Repo(%r, %r, url=%r, mirror=%r, active=%r, collectionid=%r)' % (
-            self.name, self.shortname, self.url, self.mirror, self.active,
-
-            self.collectionid)
 
 
 ## TODO: this is a view, create it as such...
