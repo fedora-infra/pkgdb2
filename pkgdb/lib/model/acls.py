@@ -27,86 +27,8 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relation, backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
-from pkgdb.lib.model import BASE
-
-
-class PersonPackageListing(BASE):
-    '''Associate a person with a PackageListing.
-
-    People who are watching or can modify a packagelisting.
-
-    Table -- PersonPackageListing
-    '''
-
-    __tablename__ = 'PersonPackageListing'
-
-    id = sa.Column(sa.Integer, primary_key=True)
-    user_id = sa.Column(sa.Integer, nullable=False)
-    packageListingId = sa.Column(
-        sa.Integer,
-        sa.ForeignKey('PackageListing.id',
-                      ondelete="CASCADE",
-                      onupdate="CASCADE"
-                      ),
-        nullable=False,
-    )
-
-    acls = relation(PersonPackageListingAcl)
-    acls2 = relation(PersonPackageListingAcl,
-                     backref=backref('personpackagelisting'),
-                     collection_class=attribute_mapped_collection('acl')
-                     )
-
-    __table_args__ = (
-        sa.UniqueConstraint('userid', 'packageListingId'),
-    )
-
-    # pylint: disable-msg=R0903
-    def __init__(self, username, packagelistingid=None):
-        self.username = username
-        self.packagelistingid = packagelistingid
-
-    def __repr__(self):
-        return 'PersonPackageListing(%r, %r)' % (self.username,
-                                                 self.packagelistingid)
-
-
-class GroupPackageListing(BASE):
-    '''Associate a group with a PackageListing.
-
-    Table -- GroupPackageListing
-    '''
-
-    __tablename__ = 'GroupPackageListing'
-
-    id = sa.Column(sa.Integer, primary_key=True)
-    groupid = sa.Column(sa.Integer, nullable=False)
-    packageListingId = sa.Column(
-        sa.Integer,
-        sa.ForeignKey('PackageListing.id',
-                      ondelete="CASCADE",
-                      onupdate="CASCADE"
-                      ),
-        nullable=False,
-    )
-
-    acls = relation(GroupPackageListingAcl)
-    acls2 = relation(GroupPackageListingAcl,
-                     backref=backref('grouppackagelisting'),
-                     collection_class=attribute_mapped_collection('acl')
-                     )
-
-    __table_args__ = (
-        sa.UniqueConstraint('groupid', 'packageListingId'),
-    )
-
-    def __init__(self, groupname, packagelistingid=None):
-        self.groupname = groupname
-        self.packagelistingid = packagelistingid
-
-    def __repr__(self):
-        return 'GroupPackageListing(%r, %r)' % (self.groupname,
-                                                self.packagelistingid)
+from sqlalchemy.ext.declarative import declarative_base
+BASE = declarative_base()
 
 
 class PersonPackageListingAcl(BASE):
@@ -192,3 +114,83 @@ class GroupPackageListingAcl(BASE):
     def __repr__(self):
         return 'GroupPackageListingAcl(%r, %r, grouppackagelistingid=%r)'\
             % (self.acl, self.statuscode, self.grouppackagelistingid)
+
+
+class PersonPackageListing(BASE):
+    '''Associate a person with a PackageListing.
+
+    People who are watching or can modify a packagelisting.
+
+    Table -- PersonPackageListing
+    '''
+
+    __tablename__ = 'PersonPackageListing'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    user_id = sa.Column(sa.Integer, nullable=False)
+    packageListingId = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('PackageListing.id',
+                      ondelete="CASCADE",
+                      onupdate="CASCADE"
+                      ),
+        nullable=False,
+    )
+
+    acls = relation(PersonPackageListingAcl)
+    acls2 = relation(PersonPackageListingAcl,
+                     backref=backref('personpackagelisting'),
+                     collection_class=attribute_mapped_collection('acl')
+                     )
+
+    __table_args__ = (
+        sa.UniqueConstraint('user_id', 'packageListingId'),
+    )
+
+    # pylint: disable-msg=R0903
+    def __init__(self, username, packagelistingid=None):
+        self.username = username
+        self.packagelistingid = packagelistingid
+
+    def __repr__(self):
+        return 'PersonPackageListing(%r, %r)' % (self.username,
+                                                 self.packagelistingid)
+
+
+class GroupPackageListing(BASE):
+    '''Associate a group with a PackageListing.
+
+    Table -- GroupPackageListing
+    '''
+
+    __tablename__ = 'GroupPackageListing'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    groupid = sa.Column(sa.Integer, nullable=False)
+    packageListingId = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('PackageListing.id',
+                      ondelete="CASCADE",
+                      onupdate="CASCADE"
+                      ),
+        nullable=False,
+    )
+
+    acls = relation(GroupPackageListingAcl)
+    acls2 = relation(GroupPackageListingAcl,
+                     backref=backref('grouppackagelisting'),
+                     collection_class=attribute_mapped_collection('acl')
+                     )
+
+    __table_args__ = (
+        sa.UniqueConstraint('groupid', 'packageListingId'),
+    )
+
+    def __init__(self, groupname, packagelistingid=None):
+        self.groupname = groupname
+        self.packagelistingid = packagelistingid
+
+    def __repr__(self):
+        return 'GroupPackageListing(%r, %r)' % (self.groupname,
+                                                self.packagelistingid)
+
