@@ -39,127 +39,32 @@ from sqlalchemy.orm.collections import (attribute_mapped_collection,
     mapped_collection)
 from sqlalchemy.sql import and_
 
-from pkgdb.lib.model import BASE
-
-from pkgdb.lib.model.acls import (GroupPackageListing,
+from acls import (GroupPackageListing,
     GroupPackageListingAcl, PersonPackageListing, PersonPackageListingAcl)
 
-error_log = logging.getLogger('pkgdb.model.packages')
+from sqlalchemy.ext.declarative import declarative_base
+BASE = declarative_base()
 
+error_log = logging.getLogger('pkgdb.lib.model.packages')
 
 DEFAULT_GROUPS = {'provenpackager': {'commit': True, 'checkout': True}}
 
 
+def collection_alias(pkg_listing):
+    '''Return the collection_alias that a package listing belongs to.
+
+    :arg pkg_listing: PackageListing to find the Collection for.
+    :returns: Collection Alias.  This is either the branchname or a combination
+        of the collection name and version.
+
+    This is used to make Branch keys for the dictionary mapping of pkg listings
+    into packages.
+    '''
+    return pkg_listing.collection.simple_name
+
+
 # Package and PackageListing are straightforward translations.  Look at these
 # if you're looking for a straightforward example.
-
-
-class Package(BASE):
-    '''Software we are packaging.
-
-    This is equal to the software in one of our revision control directories.
-    It is unversioned and not associated with a particular collection.
-
-    Table -- Package
-    '''
-
-    __tablename__ = 'Package'
-    id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    name = sa.Column(sa.Text, nullable=False, unique=True)
-    summary = sa.Column(sa.Text, nullable=False)
-    description = sa.Column(sa.Text)
-    reviewURL = sa.Column(sa.Text)
-    statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('PackageStatusCode.statuscodeid',
-                                         ondelete="RESTRICT",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False,
-                           )
-    shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
-
-    listings = relation(PackageListing)
-    listings2 = relation(PackageListing,
-                         backref=backref('package'),
-                         collection_class=mapped_collection(collection_alias)
-                         )
-
-    def __init__(self, name, summary, statuscode, description=None,
-            reviewurl=None, shouldopen=None, upstreamurl=None):
-        self.name = name
-        self.summary = summary
-        self.statuscode = statuscode
-        self.description = description
-        self.reviewurl = reviewurl
-        self.shouldopen = shouldopen
-        self.upstreamurl = upstreamurl
-
-    def __repr__(self):
-        return 'Package(%r, %r, %r, description=%r, ' \
-               'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
-                self.name, self.summary, self.statuscode, self.description,
-                self.upstreamurl, self.reviewurl, self.shouldopen)
-
-    def api_repr(self, version):
-        """ Used by fedmsg to serialize Packages in messages. """
-        if version == 1:
-            return dict(
-                name=self.name,
-                summary=self.summary,
-                description=self.description,
-                reviewurl=self.reviewurl,
-                upstreamurl=self.upstreamurl,
-            )
-        else:
-            raise NotImplementedError("Unsupported version %r" % version)
-
-    def create_listing(self, collection, owner, statusname,
-            qacontact=None, author_name=None):
-        '''Create a new PackageListing branch on this Package.
-
-        :arg collection: Collection that the new PackageListing lives on
-        :arg owner: The owner of the PackageListing
-        :arg statusname: Status to set the PackageListing to
-        :kwarg qacontact: QAContact for this PackageListing in bugzilla.
-        :kwarg author_name: Author of the change.  Note: will remove when
-            logging is made generic
-        :returns: The new PackageListing object.
-
-        This creates a new PackageListing for this Package.  The PackageListing
-        has default values set for group acls.
-        '''
-        from pkgdb.lib.utils import STATUS
-        from pkgdb.lib.model.logs import PackageListingLog
-        pkg_listing = PackageListing(owner, STATUS[statusname],
-                collectionid=collection.id,
-                qacontact=qacontact)
-        pkg_listing.packageid = self.id
-        for group in DEFAULT_GROUPS:
-            new_group = GroupPackageListing(group)
-            #pylint:disable-msg=E1101
-            pkg_listing.groups2[group] = new_group
-            #pylint:enable-msg=E1101
-            for acl, status in DEFAULT_GROUPS[group].iteritems():
-                if status:
-                    acl_statuscode = STATUS['Approved']
-                else:
-                    acl_statuscode = STATUS['Denied']
-                group_acl = GroupPackageListingAcl(acl, acl_statuscode)
-                # :W0201: grouppackagelisting is added to the model by
-                #   SQLAlchemy so it doesn't appear in __init__
-                #pylint:disable-msg=W0201
-                group_acl.grouppackagelisting = new_group
-                #pylint:enable-msg=W0201
-
-        # Create a log message
-        log = PackageListingLog(author_name, STATUS['Added'],
-                '%(user)s added a %(branch)s to %(pkg)s' %
-                {'user': author_name, 'branch': collection,
-                    'pkg': self.name})
-        log.listing = pkg_listing
-
-        return pkg_listing
-
 
 class PackageListing(BASE):
     '''This associates a package with a particular collection.
@@ -334,14 +239,109 @@ class PackageListing(BASE):
 
         return clone_branch
 
-def collection_alias(pkg_listing):
-    '''Return the collection_alias that a package listing belongs to.
 
-    :arg pkg_listing: PackageListing to find the Collection for.
-    :returns: Collection Alias.  This is either the branchname or a combination
-        of the collection name and version.
+class Package(BASE):
+    '''Software we are packaging.
 
-    This is used to make Branch keys for the dictionary mapping of pkg listings
-    into packages.
+    This is equal to the software in one of our revision control directories.
+    It is unversioned and not associated with a particular collection.
+
+    Table -- Package
     '''
-    return pkg_listing.collection.simple_name
+
+    __tablename__ = 'Package'
+    id = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    name = sa.Column(sa.Text, nullable=False, unique=True)
+    summary = sa.Column(sa.Text, nullable=False)
+    description = sa.Column(sa.Text)
+    reviewURL = sa.Column(sa.Text)
+    statuscode = sa.Column(sa.Integer,
+                           sa.ForeignKey('PackageStatusCode.statuscodeid',
+                                         ondelete="RESTRICT",
+                                         onupdate="CASCADE"
+                                         ),
+                           nullable=False,
+                           )
+    shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
+
+    listings = relation(PackageListing)
+    listings2 = relation(PackageListing,
+                         backref=backref('package'),
+                         collection_class=mapped_collection(collection_alias)
+                         )
+
+    def __init__(self, name, summary, statuscode, description=None,
+            reviewurl=None, shouldopen=None, upstreamurl=None):
+        self.name = name
+        self.summary = summary
+        self.statuscode = statuscode
+        self.description = description
+        self.reviewurl = reviewurl
+        self.shouldopen = shouldopen
+        self.upstreamurl = upstreamurl
+
+    def __repr__(self):
+        return 'Package(%r, %r, %r, description=%r, ' \
+               'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
+                self.name, self.summary, self.statuscode, self.description,
+                self.upstreamurl, self.reviewurl, self.shouldopen)
+
+    def api_repr(self, version):
+        """ Used by fedmsg to serialize Packages in messages. """
+        if version == 1:
+            return dict(
+                name=self.name,
+                summary=self.summary,
+                description=self.description,
+                reviewurl=self.reviewurl,
+                upstreamurl=self.upstreamurl,
+            )
+        else:
+            raise NotImplementedError("Unsupported version %r" % version)
+
+    def create_listing(self, collection, owner, statusname,
+            qacontact=None, author_name=None):
+        '''Create a new PackageListing branch on this Package.
+
+        :arg collection: Collection that the new PackageListing lives on
+        :arg owner: The owner of the PackageListing
+        :arg statusname: Status to set the PackageListing to
+        :kwarg qacontact: QAContact for this PackageListing in bugzilla.
+        :kwarg author_name: Author of the change.  Note: will remove when
+            logging is made generic
+        :returns: The new PackageListing object.
+
+        This creates a new PackageListing for this Package.  The PackageListing
+        has default values set for group acls.
+        '''
+        from pkgdb.lib.utils import STATUS
+        from pkgdb.lib.model.logs import PackageListingLog
+        pkg_listing = PackageListing(owner, STATUS[statusname],
+                collectionid=collection.id,
+                qacontact=qacontact)
+        pkg_listing.packageid = self.id
+        for group in DEFAULT_GROUPS:
+            new_group = GroupPackageListing(group)
+            #pylint:disable-msg=E1101
+            pkg_listing.groups2[group] = new_group
+            #pylint:enable-msg=E1101
+            for acl, status in DEFAULT_GROUPS[group].iteritems():
+                if status:
+                    acl_statuscode = STATUS['Approved']
+                else:
+                    acl_statuscode = STATUS['Denied']
+                group_acl = GroupPackageListingAcl(acl, acl_statuscode)
+                # :W0201: grouppackagelisting is added to the model by
+                #   SQLAlchemy so it doesn't appear in __init__
+                #pylint:disable-msg=W0201
+                group_acl.grouppackagelisting = new_group
+                #pylint:enable-msg=W0201
+
+        # Create a log message
+        log = PackageListingLog(author_name, STATUS['Added'],
+                '%(user)s added a %(branch)s to %(pkg)s' %
+                {'user': author_name, 'branch': collection,
+                    'pkg': self.name})
+        log.listing = pkg_listing
+
+        return pkg_listing
