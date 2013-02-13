@@ -29,7 +29,8 @@ import sqlalchemy as sa
 from sqlalchemy.orm import polymorphic_union, relation
 from turbogears.database import metadata, mapper, get_engine
 
-from pkgdb.lib.model import BASE
+from sqlalchemy.ext.declarative import declarative_base
+BASE = declarative_base()
 
 from pkgdb.lib.model.packages import Package, PackageListing
 from pkgdb.lib.model.acls import PersonPackageListingAcl, GroupPackageListingAcl

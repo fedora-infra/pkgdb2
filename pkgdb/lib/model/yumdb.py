@@ -25,7 +25,8 @@ Mapping of tables needed in the sqlite database that goes to yum
 
 import sqlalchemy as sa
 
-from pkgdb.lib.model import BASE
+from sqlalchemy.ext.declarative import declarative_base
+BASE = declarative_base()
 
 
 class YumTags(BASE):

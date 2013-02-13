@@ -26,7 +26,8 @@ Mapping of language related database tables to python classes.
 import sqlalchemy as sa
 from sqlalchemy.sql import or_
 
-from pkgdb.lib.model import BASE
+from sqlalchemy.ext.declarative import declarative_base
+BASE = declarative_base()
 
 #
 # Mapped Classes

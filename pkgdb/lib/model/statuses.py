@@ -27,7 +27,8 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relation, backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
-from pkgdb.lib.model import BASE
+from sqlalchemy.ext.declarative import declarative_base
+BASE = declarative_base()
 
 from pkgdb.lib.model.packages import Package, PackageListing
 from pkgdb.lib.model.pkgcollections import CollectionPackage, Collection

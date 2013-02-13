@@ -31,14 +31,14 @@ from sqlalchemy.sql.expression import Executable, ClauseElement
 
 import sqlalchemy as sa
 
+from packages import PackageListing
 
-from pkgdb.lib.model.packages import PackageListing
-
-from pkgdb.lib.model import BASE
+from sqlalchemy.ext.declarative import declarative_base
+BASE = declarative_base()
 
 
 CollectionJoin = polymorphic_union (
-        {'b' : select((CollectionTable.join(
+        {'b' : sa.select((CollectionTable.join(
             BranchTable, CollectionTable.c.id == BranchTable.c.collectionid),)),
          'c' : select((CollectionTable,),
              not_(CollectionTable.c.id.in_(select(
