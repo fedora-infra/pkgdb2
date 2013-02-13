@@ -27,13 +27,11 @@ import datetime
 
 import sqlalchemy as sa
 from sqlalchemy.orm import polymorphic_union, relation
-from turbogears.database import metadata, mapper, get_engine
 
-from sqlalchemy.ext.declarative import declarative_base
-BASE = declarative_base()
+from dbtools import BASE
 
-from pkgdb.lib.model.packages import Package, PackageListing
-from pkgdb.lib.model.acls import PersonPackageListingAcl, GroupPackageListingAcl
+from packages import Package, PackageListing
+from acls import PersonPackageListingAcl, GroupPackageListingAcl
 
 
 class Log(BASE):
