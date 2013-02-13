@@ -26,7 +26,7 @@ Mapping of python classes to Database Tables.
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from collections import collection_package_create_view
+from pkgcollections import collection_package_create_view
 
 BASE = declarative_base()
 

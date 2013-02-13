@@ -30,7 +30,7 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from pkgdb.lib.model import BASE
 
 from pkgdb.lib.model.packages import Package, PackageListing
-from pkgdb.lib.model.collections import CollectionPackage, Collection
+from pkgdb.lib.model.pkgcollections import CollectionPackage, Collection
 from pkgdb.lib.model.acls import PersonPackageListingAcl, GroupPackageListingAcl
 
 
