@@ -167,7 +167,7 @@ class GroupPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    status = sa.Column(sa.Enum('Denied', 'Approved', 'Obsolete',
+    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied', 'Obsolete',
                                 name='status'),
                         nullable=False)
     groupPackageListingId = sa.Column(sa.Integer,
