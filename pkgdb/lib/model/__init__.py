@@ -128,7 +128,7 @@ class PersonPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    status = sa.Column(sa.Enum('Approved', 'Awaiting', 'Denied', 'Obsolete',
+    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied', 'Obsolete',
                                 name='status'),
                         nullable=False)
     personPackageListingId = sa.Column(sa.Integer,
@@ -564,7 +564,7 @@ class Package(BASE):
     summary = sa.Column(sa.Text, nullable=False)
     description = sa.Column(sa.Text)
     reviewURL = sa.Column(sa.Text)
-    status = sa.Column(sa.Enum('Approved', 'Awaiting', 'Denied', 'Obsolete',
+    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied', 'Obsolete',
                                 name='status'),
                         nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
