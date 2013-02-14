@@ -64,7 +64,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     """
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
-    #engine.execute(collection_package_create_view())
+    engine.execute(collection_package_create_view())
 
     if alembic_ini is not None:
         # then, load the Alembic configuration and generate the
@@ -102,14 +102,16 @@ class CollectionPackage(Executable, ClauseElement):
                 % (self.id, self.name, self.version, self.status,
                    self.numpkgs)
 
+
 @compiles(CollectionPackage)
 def collection_package_create_view(*args, **kw):
-    return "select c.id, c.name, c.version, c.status count(*) as numpkgs "\
-    "from packagelisting as pl, collection as c "\
-    "where pl.collectionid = c.id "\
-    "and pl.statuscode = 3 "\
-    "group by c.id, c.name, c.version, c.statuscode "\
-    "order by c.name, c.version;"
+    return "CREATE VIEW IF NOT EXISTS CollectionPackage AS "\
+    "SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs "\
+    "FROM packagelisting as pl, collection as c "\
+    "WHERE pl.collectionid = c.id "\
+    "AND pl.status = 3 "\
+    "GROUP BY c.id, c.name, c.version, c.status "\
+    "ORDER BY c.name, c.version;"
 
 
 class PersonPackageListingAcl(BASE):
