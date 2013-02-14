@@ -279,7 +279,7 @@ class Collection(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
-    status = sa.Column(sa.Enum('EOL', 'Active', 'Under Dev',
+    status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
                                 name='status'),
                         nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
