@@ -89,80 +89,27 @@ class CollectionPackage(Executable, ClauseElement):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
-    statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('CollectionStatusCode.statusCodeId',
-                                         ondelete="RESTRICT",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False)
+    status = sa.Column(sa.Enum('',
+                                name='status'),
+                        nullable=False)
     numpkgs = sa.Column(sa.Integer, nullable=False)
 
     # pylint: disable-msg=R0902, R0903
     def __repr__(self):
         # pylint: disable-msg=E1101
         return 'CollectionPackage(id=%r, name=%r, version=%r,' \
-            ' statuscode=%r, numpkgs=%r,' \
-                % (self.id, self.name, self.version, self.statuscode,
+            ' status=%r, numpkgs=%r,' \
+                % (self.id, self.name, self.version, self.status,
                    self.numpkgs)
 
 @compiles(CollectionPackage)
 def collection_package_create_view(*args, **kw):
-    return "select c.id, c.name, c.version, c.statuscode, count(*) as numpkgs "\
+    return "select c.id, c.name, c.version, c.status count(*) as numpkgs "\
     "from packagelisting as pl, collection as c "\
     "where pl.collectionid = c.id "\
     "and pl.statuscode = 3 "\
     "group by c.id, c.name, c.version, c.statuscode "\
     "order by c.name, c.version;"
-
-
-class StatusCode(BASE):
-    ''' Status code table.
-
-    Table -- StatusCode
-    '''
-
-    __tablename__ = 'StatusCode'
-    id = sa.Column(sa.Integer, primary_key=True)
-
-
-class StatusTranslation(BASE):
-    '''Map status codes to status names in various languages.
-
-    Table -- StatusCodeTranslation
-    '''
-
-    __tablename__ = 'StatusCodeTranslation'
-    statuscodeid = sa.Column(sa.Integer,
-                             sa.ForeignKey('StatusCode.id',
-                                           ondelete="CASCADE",
-                                           onupdate="CASCADE"
-                                           ),
-                             nullable=False,
-                             primary_key=True)
-    language = sa.Column(sa.String(32), nullable=False, default='C',
-                         primary_key=True)
-    statusName = sa.Column(sa.Text, nullable=False)
-    description = sa.Column(sa.Text)
-
-    def __init__(self, statuscodeid, statusname, language=None,
-                 description=None):
-        '''
-        :statuscodeid: id of the status this translation applies to
-        :statusname: translated string
-        :language: Languages code that this string is for.  if not given.
-            defaults to 'C'
-        :description: a description of what this status means.  May be
-            used in online help
-        '''
-        self.statuscodeid = statuscodeid
-        self.statusname = statusname
-        self.language = language or None
-        self.description = description or None
-
-    def __repr__(self):
-        return 'StatusTranslation(%r, %r, language=%r, description=%r)' \
-            % (self.statuscodeid, self.statusname, self.language,
-               self.description)
 
 
 class PersonPackageListingAcl(BASE):
@@ -179,13 +126,9 @@ class PersonPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('PackageACLStatusCode.id',
-                                         ondelete="CASCADE",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False,
-                           )
+    status = sa.Column(sa.Enum('',
+                                name='status'),
+                        nullable=False)
     personPackageListingId = sa.Column(sa.Integer,
                                        sa.ForeignKey('PersonPackageListing.id',
                                                      ondelete="CASCADE",
@@ -197,56 +140,15 @@ class PersonPackageListingAcl(BASE):
         sa.UniqueConstraint('personPackageListingId', 'acl'),
     )
 
-    def __init__(self, acl, statuscode=None,
+    def __init__(self, acl, status=None,
                  personpackagelistingid=None):
         self.personpackagelistingid = personpackagelistingid
         self.acl = acl
-        self.statuscode = statuscode
+        self.status = status
 
     def __repr__(self):
         return 'PersonPackageListingAcl(%r, %r, personpackagelistingid=%r)' \
-            % (self.acl, self.statuscode, self.personpackagelistingid)
-
-
-class PackageAclStatus(BASE):
-    ''' Subset of status codes that apply to Person and Group Package Acls.
-
-    Table -- PackageACLStatusCode
-    '''
-
-    __tablename__ = 'PackageACLStatusCode'
-    pacls = relation('PersonPackageListingAcl',
-        backref=backref('status')),
-    gacls = relation('GroupPackageListingAcl',
-        backref=backref('status')),
-    id = sa.Column(sa.Integer,
-                             sa.ForeignKey('StatusCode.id',
-                                           ondelete="CASCADE",
-                                           onupdate="CASCADE"
-                                           ),
-                             nullable=False,
-                             primary_key=True)
-    translations = relation(StatusTranslation,
-        order_by=StatusTranslation.language,
-        primaryjoin="StatusTranslation.statuscodeid"
-                " == PackageAclStatus.statuscodeid",
-        foreign_keys=[StatusTranslation.statuscodeid]),
-    locale = relation(StatusTranslation,
-        order_by=StatusTranslation.language,
-        primaryjoin="StatusTranslation.statuscodeid"
-                " == PackageAclStatus.statuscodeid",
-        foreign_keys=[StatusTranslation.statuscodeid],
-        collection_class=attribute_mapped_collection('language'),
-        backref=backref('pastatuscode',
-            foreign_keys=[StatusTranslation.statuscodeid],
-            primaryjoin="StatusTranslation.statuscodeid"
-                    " == PackageAclStatus.statuscodeid"))
-
-    def __init__(self, statuscodeid):
-        self.statuscodeid = statuscodeid
-
-    def __repr__(self):
-        return 'PackageAclStatus(%r)' % self.statuscodeid
+            % (self.acl, self.status, self.personpackagelistingid)
 
 
 class GroupPackageListingAcl(BASE):
@@ -263,13 +165,9 @@ class GroupPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('PackageACLStatusCode.id',
-                                         ondelete="CASCADE",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False,
-                           )
+    status = sa.Column(sa.Enum('',
+                                name='status'),
+                        nullable=False)
     groupPackageListingId = sa.Column(sa.Integer,
                                       sa.ForeignKey('GroupPackageListing.id',
                                                     ondelete="CASCADE",
@@ -379,12 +277,9 @@ class Collection(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
-    statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('CollectionStatusCode.statuscodeid',
-                                         ondelete="RESTRICT",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False)
+    status = sa.Column(sa.Enum('',
+                                name='status'),
+                        nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
     publishURLTemplate = sa.Column(sa.Text)
     pendingURLTemplate = sa.Column(sa.Text)
@@ -399,12 +294,12 @@ class Collection(BASE):
     )
 
     # pylint: disable-msg=R0902, R0903
-    def __init__(self, name, version, statuscode, owner,
+    def __init__(self, name, version, status, owner,
             publishurltemplate=None, pendingurltemplate=None, summary=None,
             description=None):
         self.name = name
         self.version = version
-        self.statuscode = statuscode
+        self.status = status
         self.owner = owner
         self.publishurltemplate = publishurltemplate
         self.pendingurltemplate = pendingurltemplate
@@ -414,7 +309,7 @@ class Collection(BASE):
     def __repr__(self):
         return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
                 ' pendingurltemplate=%r, summary=%r, description=%r)' % (
-                self.name, self.version, self.statuscode, self.owner,
+                self.name, self.version, self.status, self.owner,
                 self.publishurltemplate, self.pendingurltemplate,
                 self.summary, self.description)
 
@@ -504,13 +399,9 @@ class PackageListing(BASE):
                           nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
     qacontact = sa.Column(sa.Integer)
-    statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('PackageStatusCode.statuscodeid',
-                                         ondelete="RESTRICT",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False,
-                           )
+    status = sa.Column(sa.Enum('',
+                                name='status'),
+                        nullable=False)
     statuschange = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
     __table_args__ = (
@@ -526,13 +417,13 @@ class PackageListing(BASE):
     groups2 = relation(GroupPackageListing, backref=backref('packagelisting'),
         collection_class = attribute_mapped_collection('groupname'))
 
-    def __init__(self, owner, statuscode, packageid=None, collectionid=None,
+    def __init__(self, owner, status, packageid=None, collectionid=None,
             qacontact=None, specfile=None):
         self.packageid = packageid
         self.collectionid = collectionid
         self.owner = owner
         self.qacontact = qacontact
-        self.statuscode = statuscode
+        self.status = status
         self.specfile = specfile
 
     packagename = association_proxy('package', 'name')
@@ -609,15 +500,15 @@ class PackageListing(BASE):
             for acl_name, acl in group.acls2.iteritems():
                 if acl_name not in clone_group.acls2:
                     clone_group.acls2[acl_name] = \
-                            GroupPackageListingAcl(acl_name, acl.statuscode)
+                            GroupPackageListingAcl(acl_name, acl.status)
                 else:
                     # Set the acl to have the correct status
-                    if acl.statuscode != clone_group.acls2[acl_name].statuscode:
-                        clone_group.acls2[acl_name].statuscode = acl.statuscode
+                    if acl.status != clone_group.acls2[acl_name].status:
+                        clone_group.acls2[acl_name].status = acl.status
 
                 # Create a log message for this acl
                 log_params['acl'] = acl.acl
-                log_params['status'] = acl.status.locale['C'].statusname
+                log_params['status'] = acl.status
                 log_msg = '%(user)s set %(acl)s status for %(group)s to' \
                         ' %(status)s on (%(pkg)s %(branch)s)' % log_params
                 log = GroupPackageListingAclLog(author_name,
@@ -638,19 +529,19 @@ class PackageListing(BASE):
             for acl_name, acl in person.acls2.iteritems():
                 if acl_name not in clone_person.acls2:
                     clone_person.acls2[acl_name] = \
-                            PersonPackageListingAcl(acl_name, acl.statuscode)
+                            PersonPackageListingAcl(acl_name, acl.status)
                 else:
                     # Set the acl to have the correct status
-                    if clone_person.acls2[acl_name].statuscode \
-                            != acl.statuscode:
-                        clone_person.acls2[acl_name].statuscode = acl.statuscode
+                    if clone_person.acls2[acl_name].status \
+                            != acl.status:
+                        clone_person.acls2[acl_name].status = acl.status
                 # Create a log message for this acl
                 log_params['acl'] = acl.acl
-                log_params['status'] = acl.status.locale['C'].statusname
+                log_params['status'] = acl.status
                 log_msg = '%(user)s set %(acl)s status for %(person)s to' \
                         ' %(status)s on (%(pkg)s %(branch)s)' % log_params
                 log = PersonPackageListingAclLog(author_name,
-                        acl.statuscode, log_msg)
+                        acl.status, log_msg)
                 log.acl = clone_person.acls2[acl_name]
 
         return clone_branch
@@ -671,13 +562,9 @@ class Package(BASE):
     summary = sa.Column(sa.Text, nullable=False)
     description = sa.Column(sa.Text)
     reviewURL = sa.Column(sa.Text)
-    statuscode = sa.Column(sa.Integer,
-                           sa.ForeignKey('PackageStatusCode.statuscodeid',
-                                         ondelete="RESTRICT",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False,
-                           )
+    status = sa.Column(sa.Enum('',
+                                name='status'),
+                        nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
     listings = relation(PackageListing)
@@ -686,11 +573,11 @@ class Package(BASE):
                          collection_class=mapped_collection(collection_alias)
                          )
 
-    def __init__(self, name, summary, statuscode, description=None,
+    def __init__(self, name, summary, status, description=None,
             reviewurl=None, shouldopen=None, upstreamurl=None):
         self.name = name
         self.summary = summary
-        self.statuscode = statuscode
+        self.status = status
         self.description = description
         self.reviewurl = reviewurl
         self.shouldopen = shouldopen
@@ -699,7 +586,7 @@ class Package(BASE):
     def __repr__(self):
         return 'Package(%r, %r, %r, description=%r, ' \
                'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
-                self.name, self.summary, self.statuscode, self.description,
+                self.name, self.summary, self.status, self.description,
                 self.upstreamurl, self.reviewurl, self.shouldopen)
 
     def api_repr(self, version):
@@ -746,7 +633,7 @@ class Package(BASE):
                     acl_statuscode = STATUS['Approved']
                 else:
                     acl_statuscode = STATUS['Denied']
-                group_acl = GroupPackageListingAcl(acl, acl_statuscode)
+                group_acl = GroupPackageListingAcl(acl, acl_status)
                 # :W0201: grouppackagelisting is added to the model by
                 #   SQLAlchemy so it doesn't appear in __init__
                 #pylint:disable-msg=W0201
@@ -761,124 +648,6 @@ class Package(BASE):
         log.listing = pkg_listing
 
         return pkg_listing
-
-
-
-class CollectionStatus(BASE):
-    '''Subset of status codes that are applicable to collections.
-
-    Table -- CollectionStatusCode
-    '''
-
-    __tablename__ = 'CollectionStatusCode'
-    collections = relation(Collection, backref=backref('status')),
-    collectionPackages = relation(CollectionPackage,
-                                  backref=backref('status'))
-    statuscodeid = sa.Column(sa.Integer,
-                             sa.ForeignKey('StatusCode.id',
-                                           ondelete="CASCADE",
-                                           onupdate="CASCADE"
-                                           ),
-                             nullable=False,
-                             primary_key=True)
-    translations = relation(StatusTranslation,
-                            order_by=StatusTranslation.language,
-                            primaryjoin="StatusTranslation.statuscodeid"
-                                " == CollectionStatus.statuscodeid",
-                            foreign_keys=[StatusTranslation.statuscodeid]
-                            )
-    locale = relation(StatusTranslation,
-                      primaryjoin="StatusTranslation.statuscodeid"
-                        " == CollectionStatus.statuscodeid",
-                      foreign_keys=[StatusTranslation.statuscodeid],
-                      collection_class=attribute_mapped_collection('language'),
-                      backref=backref('cstatuscode',
-                        foreign_keys=[StatusTranslation.statuscodeid],
-                        primaryjoin="StatusTranslation.statuscodeid"
-                            " == CollectionStatus.statuscodeid")
-                      )
-
-    def __init__(self, statuscodeid):
-        self.statuscodeid = statuscodeid
-
-    def __repr__(self):
-        return 'CollectionStatus(%r)' % self.statuscodeid
-
-
-class PackageStatus(BASE):
-    '''Subset of status codes that apply to packages.
-
-    Table -- PackageStatusCode
-    '''
-    
-    __tablename__ = 'PackageStatusCode'
-    packages = relation(Package, backref=backref('status'))
-    statuscodeid = sa.Column(sa.Integer,
-                             sa.ForeignKey('StatusCode.id',
-                                           ondelete="CASCADE",
-                                           onupdate="CASCADE"
-                                           ),
-                             nullable=False,
-                             primary_key=True)
-    translations = relation(StatusTranslation,
-        order_by=StatusTranslation.language,
-        primaryjoin="StatusTranslation.statuscodeid"
-                " == PackageStatus.statuscodeid",
-        foreign_keys=[StatusTranslation.statuscodeid])
-    locale = relation(StatusTranslation,
-        order_by=StatusTranslation.language,
-        primaryjoin="StatusTranslation.statuscodeid"
-                " == PackageStatus.statuscodeid",
-        foreign_keys=[StatusTranslation.statuscodeid],
-        collection_class=attribute_mapped_collection('language'),
-        backref=backref('pstatuscode',
-            foreign_keys=[StatusTranslation.statuscodeid],
-            primaryjoin="StatusTranslation.statuscodeid"
-                    " == PackageStatus.statuscodeid"))
-
-    def __init__(self, statuscodeid):
-        self.statuscodeid = statuscodeid
-
-    def __repr__(self):
-        return 'PackageStatus(%r)' % self.statuscodeid
-
-
-class PackageListingStatus(BASE):
-    '''Subset of status codes that are applicable to package listings.
-
-    Table -- PackageListingStatusCode
-    '''
-
-    __tablename__ = 'PackageListingStatusCode'
-    listings = relation(PackageListing, backref=backref('status'))
-    statuscodeid = sa.Column(sa.Integer,
-                             sa.ForeignKey('StatusCode.id',
-                                           ondelete="CASCADE",
-                                           onupdate="CASCADE"
-                                           ),
-                             nullable=False,
-                             primary_key=True)
-    translations = relation(StatusTranslation,
-        order_by=StatusTranslation.language,
-        primaryjoin="StatusTranslation.statuscodeid"
-                " == PackageListingStatus.statuscodeid",
-        foreign_keys=[StatusTranslation.statuscodeid])
-    locale = relation(StatusTranslation,
-        order_by=StatusTranslation.language,
-        primaryjoin="StatusTranslation.statuscodeid"
-                " == PackageListingStatus.statuscodeid",
-        foreign_keys=[StatusTranslation.statuscodeid],
-        collection_class=attribute_mapped_collection('language'),
-        backref=backref('plstatuscode',
-            foreign_keys=[StatusTranslation.statuscodeid],
-            primaryjoin="StatusTranslation.statuscodeid"
-                    " == PackageListingStatus.statuscodeid"))
-
-    def __init__(self, statuscodeid):
-        self.statuscodeid = statuscodeid
-
-    def __repr__(self):
-        return 'PackageListingStatus(%r)' % self.statuscodeid
 
 
 if __name__ == '__main__':
