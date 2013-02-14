@@ -89,7 +89,7 @@ class CollectionPackage(Executable, ClauseElement):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
-    status = sa.Column(sa.Enum('',
+    status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
                                 name='status'),
                         nullable=False)
     numpkgs = sa.Column(sa.Integer, nullable=False)
@@ -564,7 +564,8 @@ class Package(BASE):
     summary = sa.Column(sa.Text, nullable=False)
     description = sa.Column(sa.Text)
     reviewURL = sa.Column(sa.Text)
-    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied', 'Obsolete',
+    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
+                                'Obsolete', 'Removed',
                                 name='status'),
                         nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
