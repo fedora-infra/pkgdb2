@@ -128,7 +128,7 @@ class PersonPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    status = sa.Column(sa.Enum('',
+    status = sa.Column(sa.Enum('Approved', 'Awaiting', 'Denied', 'Obsolete',
                                 name='status'),
                         nullable=False)
     personPackageListingId = sa.Column(sa.Integer,
@@ -167,7 +167,7 @@ class GroupPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    status = sa.Column(sa.Enum('',
+    status = sa.Column(sa.Enum('Denied', 'Approved', 'Obsolete',
                                 name='status'),
                         nullable=False)
     groupPackageListingId = sa.Column(sa.Integer,
@@ -279,7 +279,7 @@ class Collection(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
-    status = sa.Column(sa.Enum('',
+    status = sa.Column(sa.Enum('EOL', 'Active', 'Under Dev',
                                 name='status'),
                         nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
@@ -401,7 +401,7 @@ class PackageListing(BASE):
                           nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
     qacontact = sa.Column(sa.Integer)
-    status = sa.Column(sa.Enum('',
+    status = sa.Column(sa.Enum('Approved', 'Removed', 'Deprecated', 'Orphaned',
                                 name='status'),
                         nullable=False)
     statuschange = sa.Column(sa.DateTime, nullable=False,
@@ -564,7 +564,7 @@ class Package(BASE):
     summary = sa.Column(sa.Text, nullable=False)
     description = sa.Column(sa.Text)
     reviewURL = sa.Column(sa.Text)
-    status = sa.Column(sa.Enum('',
+    status = sa.Column(sa.Enum('Approved', 'Awaiting', 'Denied', 'Obsolete',
                                 name='status'),
                         nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
