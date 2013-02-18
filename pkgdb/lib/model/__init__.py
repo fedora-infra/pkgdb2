@@ -108,7 +108,7 @@ class CollectionPackage(Executable, ClauseElement):
 
 @compiles(CollectionPackage)
 def collection_package_create_view(*args, **kw):
-    return "CREATE VIEW CollectionPackage AS "\
+    return "CREATE OR REPLACE VIEW CollectionPackage AS "\
     "SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs "\
     "FROM \"PackageListing\" pl, \"Collection\" c "\
     "WHERE pl.collectionid = c.id "\
