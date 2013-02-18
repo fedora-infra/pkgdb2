@@ -23,6 +23,9 @@
 Mapping of python classes to Database Tables.
 '''
 
+__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
+import pkg_resources
+
 import datetime
 import logging
 
@@ -105,11 +108,11 @@ class CollectionPackage(Executable, ClauseElement):
 
 @compiles(CollectionPackage)
 def collection_package_create_view(*args, **kw):
-    return "CREATE VIEW IF NOT EXISTS CollectionPackage AS "\
+    return "CREATE VIEW CollectionPackage AS "\
     "SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs "\
-    "FROM packagelisting as pl, collection as c "\
+    "FROM \"PackageListing\" pl, \"Collection\" c "\
     "WHERE pl.collectionid = c.id "\
-    "AND pl.status = 3 "\
+    "AND pl.status = 'Approved' "\
     "GROUP BY c.id, c.name, c.version, c.status "\
     "ORDER BY c.name, c.version;"
 
@@ -387,13 +390,13 @@ class PackageListing(BASE):
 
     __tablename__ = 'PackageListing'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    packageId = sa.Column(sa.Integer,
+    packageid = sa.Column(sa.Integer,
                           sa.ForeignKey('Package.id',
                                          ondelete="CASCADE",
                                          onupdate="CASCADE"
                                          ),
                           nullable=False)
-    collectionId = sa.Column(sa.Integer,
+    collectionid = sa.Column(sa.Integer,
                           sa.ForeignKey('Collection.id',
                                          ondelete="CASCADE",
                                          onupdate="CASCADE"
@@ -407,7 +410,7 @@ class PackageListing(BASE):
     statuschange = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
     __table_args__ = (
-        sa.UniqueConstraint('packageId', 'collectionId'),
+        sa.UniqueConstraint('packageid', 'collectionid'),
     )
 
     package = relation("Package")
