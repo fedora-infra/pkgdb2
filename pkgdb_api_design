@@ -1,0 +1,116 @@
+PkgDB API
+=========
+
+The `user` argument here refers to the user that run the script.
+
+ACL
+---
+
+* Get ACL
+/api/package/acl/get/
+  - package name
+
+* Update ACL
+@login_required
+/api/package/acl/
+  - package name
+  - flag (request, approve, deny)
+  - acl (commit, build, watchbugzilla, watchcommits, approveacls, checkout)
+  - branch (default: devel)
+  - user target (default: user)
+
+--> we could use POST and GET request to distinguish between these two and use one URL.
+
+
+* List packager according to a pattern or a flag
+GET:/api/package/list
+  - pattern
+    packager name (default to *)
+  - orphaned (default to False)
+  - deprecated (default to False)
+
+* Reassign package from one user to another
+@login_required
+/api/package/acl/reassign/
+  - package name (list)
+  - user
+  - user target
+
+
+Package
+-------
+
+* New package
+@login_required
+POST:/api/package/new/
+  - package name
+  - summary
+  - description ?
+  - review_url
+  - owner
+  - branch (list of collection name)
+  - user
+
+* Orphan package
+@login_required
+POST:/api/package/orphan/
+  - package name
+  - user
+  - branch (list)
+  - all_pkgs (Defaults to False)
+
+* Unorphan package
+@login_required
+POST:/api/package/unorphan/
+  - package name
+  - user
+  - branch (list)
+  - target user (?)
+
+* Deprecate package
+@login_required
+POST:/api/package/deprecate/
+  - package name
+  - user
+  - branch (list)
+
+
+Collection
+----------
+
+* New collection
+@login_required
+POST:/api/collection/new/
+  - name
+  - version
+  - owner
+  - user
+
+* Close collection
+@login_required
+POST:/api/collection/eol/
+  - name
+  - version
+  - user
+
+* List the collections
+GET:/api/collection/list/
+
+
+Packager
+--------
+
+* List packages of user
+GET:/api/packager/package/
+  - packager
+
+* List acl pending for action of user
+GET:/api/packager/acl/
+  - packager
+
+* List packagers
+GET:/api/packager/list/
+  - pattern
+    packager name (default to *)
+    
+
