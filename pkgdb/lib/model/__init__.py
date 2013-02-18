@@ -47,7 +47,7 @@ BASE = declarative_base()
 
 error_log = logging.getLogger('pkgdb.lib.model.packages')
 
-DEFAULT_GROUPS = {'provenpackager': {'commit': True, 'checkout': True}}
+DEFAULT_GROUPS = {'provenpackager': {'commit': True}}
 
 
 def create_tables(db_url, alembic_ini=None, debug=False):
@@ -127,7 +127,7 @@ class PersonPackageListingAcl(BASE):
 
     id = sa.Column(sa.Integer, primary_key=True)
     acl = sa.Column(sa.Enum('commit', 'build', 'watchbugzilla',
-                            'watchcommits', 'approveacls', 'checkout',
+                            'watchcommits', 'approveacls',
                             name='acl'),
                     nullable=False
                     )
@@ -166,7 +166,7 @@ class GroupPackageListingAcl(BASE):
 
     id = sa.Column(sa.Integer, primary_key=True)
     acl = sa.Column(sa.Enum('commit', 'build', 'watchbugzilla',
-                            'watchcommits', 'approveacls', 'checkout',
+                            'watchcommits', 'approveacls',
                             name='acl'),
                     nullable=False
                     )
