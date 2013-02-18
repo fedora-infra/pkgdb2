@@ -31,8 +31,9 @@ import logging
 
 import sqlalchemy as sa
 from sqlalchemy import create_engine
-from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation
@@ -42,8 +43,7 @@ from sqlalchemy.orm.collections import mapped_collection
 from sqlalchemy.sql import and_
 from sqlalchemy.sql.expression import Executable, ClauseElement
 
-from dbtools import BASE
-#from pkgcollections import CollectionPackage
+BASE = declarative_base()
 
 error_log = logging.getLogger('pkgdb.lib.model.packages')
 
@@ -654,6 +654,56 @@ class Package(BASE):
         log.listing = pkg_listing
 
         return pkg_listing
+
+
+class Log(BASE):
+    '''Base Log record.
+
+    This is a Log record.  All logs will be entered via a subclass of this.
+
+    Table -- Log
+    '''
+
+    __tablename__ = 'Log'
+    id = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    user_id = sa.Column(sa.Integer, nullable=False)
+    change_time = sa.Column(sa.DateTime, nullable=False,
+                           default=datetime.datetime.utcnow())
+    package_id = sa.Column(sa.Integer,
+                           sa.ForeignKey('Package.id',
+                                         ondelete='RESTRICT',
+                                         onupdate='CASCADE'
+                                         ),
+                           nullable=False,
+                           )
+    description = sa.Column(sa.Text, nullable=False)
+
+    def __init__(self, user_id, package_id, description):
+        self.user_id = user_id
+        self.package_id = package_id
+        self.description = description
+
+    def __repr__(self):
+        return 'Log(%r, description=%r, changetime=%r)' % (self.username,
+                self.description, self.changetime)
+
+    def save(self, session):
+        ''' Save the current log entry. '''
+        session.add(self)
+
+    @classmethod
+    def insert(cls, session, user_id, package, description):
+        ''' Insert the given log entry into the database.
+
+        :arg session: the session to connect to the database with
+        :arg user: the identifier of the user doing the action
+        :arg package: the `Package` object of the package changed
+        :arg description: a short textual description of the action
+            performed
+
+        '''
+        log = Log(user_id, package.id, description)
+        log.save(session)
 
 
 if __name__ == '__main__':
