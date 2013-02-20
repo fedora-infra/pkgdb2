@@ -304,7 +304,7 @@ class Collection(BASE):
     pendingURLTemplate = sa.Column(sa.Text)
     summary = sa.Column(sa.Text)
     description = sa.Column(sa.Text)
-    branchName = sa.Column(sa.String(32), unique=True, nullable=False)
+    branchname = sa.Column(sa.String(32), unique=True, nullable=False)
     distTag = sa.Column(sa.String(32), unique=True, nullable=False)
     git_branch_name = sa.Column(sa.Text)
 
@@ -351,14 +351,7 @@ class Collection(BASE):
     def simple_name(self):
         '''Return a simple name for the Collection
         '''
-        try:
-            # :E1101: If Collection is actually a branch, it will have a
-            # branchname attribute given it by SQLAlchemy
-            # pylint: disable-msg=E1101
-            simple_name = self.branchname
-        except AttributeError:
-            simple_name = '-'.join((self.name, self.version))
-        return simple_name
+        return self.branchname
 
     @classmethod
     def by_simple_name(cls, simple_name):
@@ -368,19 +361,9 @@ class Collection(BASE):
         :returns: The Collection that matches the name
         :raises sqlalchemy.InvalidRequestError: if the simple name is not found
 
-        simple_name will be looked up first as the Branch name.  Then as the
-        Collection name joined by a hyphen with the version.  ie:
-        'Fedora EPEL-5'.
+        simple_name will be looked up as the Branch name.
         '''
-        # :E1101: SQLAlchemy adds many methods to the Branch and Collection
-        # classes
-        # pylint: disable-msg=E1101
-        try:
-            collection = Branch.query.filter_by(branchname=simple_name).one()
-        except InvalidRequestError:
-            name, version = simple_name.rsplit('-')
-            collection = Collection.query.filter_by(name=name,
-                    version=version).one()
+        collection = Branch.query.filter_by(branchname=simple_name).one()
         return collection
 
 
@@ -481,17 +464,13 @@ class PackageListing(BASE):
         :returns: new branch
         :rtype: PackageListing
         '''
-        from pkgdb.lib.utils import STATUS
-        from pkgdb.lib.model.collections import Branch
-        from pkgdb.lib.model.logs import GroupPackageListingAclLog, \
-                PersonPackageListingAclLog
         # Retrieve the PackageListing for the to clone branch
         try:
             #pylint:disable-msg=E1101
             clone_branch = PackageListing.query.join('package'
                     ).join('collection').filter(
                         and_(Package.name==self.package.name,
-                            Branch.branchname==branch)).one()
+                            Collection.branchname==branch)).one()
             #pylint:enable-msg=E1101
         except InvalidRequestError:
             ### Create a new package listing for this release ###
@@ -506,7 +485,8 @@ class PackageListing(BASE):
                     author_name=author_name)
 
         log_params = {'user': author_name,
-                'pkg': self.package.name, 'branch': branch}
+                      'pkg': self.package.name,
+                      'branch': branch}
         # Iterate through the acls in the master_branch
         #pylint:disable-msg=E1101
         for group_name, group in self.groups2.iteritems():
@@ -528,14 +508,7 @@ class PackageListing(BASE):
                     if acl.status != clone_group.acls2[acl_name].status:
                         clone_group.acls2[acl_name].status = acl.status
 
-                # Create a log message for this acl
-                log_params['acl'] = acl.acl
-                log_params['status'] = acl.status
-                log_msg = '%(user)s set %(acl)s status for %(group)s to' \
-                        ' %(status)s on (%(pkg)s %(branch)s)' % log_params
-                log = GroupPackageListingAclLog(author_name,
-                        acl.statuscode, log_msg)
-                log.acl = clone_group.acls2[acl_name]
+                #TODO: Create a log message for this acl
 
         #pylint:disable-msg=E1101
         for person_name, person in self.people2.iteritems():
@@ -557,14 +530,7 @@ class PackageListing(BASE):
                     if clone_person.acls2[acl_name].status \
                             != acl.status:
                         clone_person.acls2[acl_name].status = acl.status
-                # Create a log message for this acl
-                log_params['acl'] = acl.acl
-                log_params['status'] = acl.status
-                log_msg = '%(user)s set %(acl)s status for %(person)s to' \
-                        ' %(status)s on (%(pkg)s %(branch)s)' % log_params
-                log = PersonPackageListingAclLog(author_name,
-                        acl.status, log_msg)
-                log.acl = clone_person.acls2[acl_name]
+                #TODO: Create a log message for this acl
 
         return clone_branch
 
@@ -643,8 +609,6 @@ class Package(BASE):
         This creates a new PackageListing for this Package.  The PackageListing
         has default values set for group acls.
         '''
-        from pkgdb.lib.utils import STATUS
-        from pkgdb.lib.model.logs import PackageListingLog
         pkg_listing = PackageListing(owner, STATUS[statusname],
                 collectionid=collection.id,
                 qacontact=qacontact)
@@ -666,12 +630,7 @@ class Package(BASE):
                 group_acl.grouppackagelisting = new_group
                 #pylint:enable-msg=W0201
 
-        # Create a log message
-        log = PackageListingLog(author_name, STATUS['Added'],
-                '%(user)s added a %(branch)s to %(pkg)s' %
-                {'user': author_name, 'branch': collection,
-                    'pkg': self.name})
-        log.listing = pkg_listing
+        #TODO: Create a log message
 
         return pkg_listing
 
