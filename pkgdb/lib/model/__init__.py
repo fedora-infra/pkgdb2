@@ -141,6 +141,10 @@ class PersonPackageListingAcl(BASE):
                                                      ),
                                        nullable=False,
                                        )
+
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
+
     __table_args__ = (
         sa.UniqueConstraint('personPackageListingId', 'acl'),
     )
@@ -180,6 +184,10 @@ class GroupPackageListingAcl(BASE):
                                                     ),
                                       nullable=False,
                                       )
+
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
+
     __table_args__ = (
         sa.UniqueConstraint('groupPackageListingId', 'acl'),
     )
@@ -221,6 +229,9 @@ class PersonPackageListing(BASE):
                      collection_class=attribute_mapped_collection('acl')
                      )
 
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
+
     __table_args__ = (
         sa.UniqueConstraint('user_id', 'packageListingId'),
     )
@@ -260,6 +271,9 @@ class GroupPackageListing(BASE):
                      collection_class=attribute_mapped_collection('acl')
                      )
 
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
+
     __table_args__ = (
         sa.UniqueConstraint('groupid', 'packageListingId'),
     )
@@ -293,6 +307,9 @@ class Collection(BASE):
     branchName = sa.Column(sa.String(32), unique=True, nullable=False)
     distTag = sa.Column(sa.String(32), unique=True, nullable=False)
     git_branch_name = sa.Column(sa.Text)
+
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
 
     __table_args__ = (
         sa.UniqueConstraint('name', 'version'),
@@ -578,6 +595,9 @@ class Package(BASE):
                          backref=backref('package'),
                          collection_class=mapped_collection(collection_alias)
                          )
+
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
 
     def __init__(self, name, summary, status, description=None,
             reviewurl=None, shouldopen=None, upstreamurl=None):
