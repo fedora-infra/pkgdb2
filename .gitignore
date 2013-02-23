@@ -3,4 +3,5 @@ build/
 *egg-info/
 *.cfg
 *.wsgi
+*.sqlite
 start-pkgdb
