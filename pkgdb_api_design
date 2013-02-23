@@ -21,14 +21,6 @@ ACL
 
 --> we could use POST and GET request to distinguish between these two and use one URL.
 
-
-* List packager according to a pattern or a flag
-GET:/api/package/list
-  - pattern
-    packager name (default to *)
-  - orphaned (default to False)
-  - deprecated (default to False)
-
 * Reassign package from one user to another
 @login_required
 /api/package/acl/reassign/
@@ -73,6 +65,13 @@ POST:/api/package/deprecate/
   - package name
   - user
   - branch (list)
+
+* List packager according to a pattern or a flag
+GET:/api/package/list
+  - pattern
+    packager name (default to *)
+  - orphaned (default to False)
+  - deprecated (default to False)
 
 
 Collection
