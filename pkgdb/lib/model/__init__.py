@@ -150,6 +150,16 @@ class PersonPackageListingAcl(BASE):
         sa.UniqueConstraint('personPackageListingId', 'acl'),
     )
 
+    @classmethod
+    def all(cls, session):
+        ''' Return the list of all Collections present in the database.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        '''
+        return session.query(cls).all()
+
     def __init__(self, acl, status=None,
                  personpackagelistingid=None):
         self.personpackagelistingid = personpackagelistingid
@@ -216,7 +226,7 @@ class PersonPackageListing(BASE):
 
     id = sa.Column(sa.Integer, primary_key=True)
     user_id = sa.Column(sa.Integer, nullable=False)
-    packageListingId = sa.Column(
+    packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey('PackageListing.id',
                       ondelete="CASCADE",
@@ -235,17 +245,27 @@ class PersonPackageListing(BASE):
                              default=datetime.datetime.utcnow())
 
     __table_args__ = (
-        sa.UniqueConstraint('user_id', 'packageListingId'),
+        sa.UniqueConstraint('user_id', 'packagelisting_id'),
     )
 
+    @classmethod
+    def all(cls, session):
+        ''' Return the list of all Collections present in the database.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        '''
+        return session.query(cls).all()
+
     # pylint: disable-msg=R0903
-    def __init__(self, username, packagelistingid=None):
-        self.username = username
-        self.packagelistingid = packagelistingid
+    def __init__(self, user_id, packagelisting_id):
+        self.user_id = user_id
+        self.packagelisting_id = packagelisting_id
 
     def __repr__(self):
-        return 'PersonPackageListing(%r, %r)' % (self.username,
-                                                 self.packagelistingid)
+        return 'PersonPackageListing(%r, %r)' % (self.user_id,
+                                                 self.packagelisting_id)
 
 
 class GroupPackageListing(BASE):
@@ -440,26 +460,48 @@ class PackageListing(BASE):
         collection_class = attribute_mapped_collection('groupname'))
 
     def __init__(self, owner, status, packageid=None, collectionid=None,
-            qacontact=None, specfile=None):
+            qacontact=None):
         self.packageid = packageid
         self.collectionid = collectionid
         self.owner = owner
         self.qacontact = qacontact
         self.status = status
-        self.specfile = specfile
 
     packagename = association_proxy('package', 'name')
 
     @classmethod
     def by_pkg_id(cls, session, pkgid):
-        """ Return the PackageListing object based on the Package ID. """
+        """ Return the PackageListing object based on the Package ID.
+
+        :arg pkgid: Integer, identifier of the package in the Package
+            table
+
+        """
+
         return session.query(cls).filter(PackageListing.packageid == pkgid).all()
+
+    @classmethod
+    def by_pkgid_collectionid(cls, session, pkgid, collectionid):
+        '''Return the PackageListing for the provided package in the
+        specified collection.
+
+        :arg pkgid: Integer, identifier of the package in the Package
+            table
+        :arg collectionid: Integer, identifier of the collection in the
+            Collection table
+        :returns: The PackageListing that matches this package identifier
+            and collection iddentifier
+        :raises sqlalchemy.InvalidRequestError: if the simple name is not found
+
+        '''
+        return session.query(cls).filter(
+            PackageListing.packageid == pkgid).filter(
+            PackageListing.collectionid == collectionid).one()
 
     def __repr__(self):
         return 'PackageListing(%r, %r, packageid=%r, collectionid=%r,' \
-               ' qacontact=%r, specfile=%r)' % (self.owner, self.statuscode,
-                        self.packageid, self.collectionid, self.qacontact,
-                        self.specfile)
+               ' qacontact=%r)' % (self.owner, self.status,
+                        self.packageid, self.collectionid, self.qacontact)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize PackageListing in messages. """
@@ -469,7 +511,6 @@ class PackageListing(BASE):
                 collection=self.collection.api_repr(version),
                 owner=self.owner,
                 qacontact=self.qacontact,
-                specfile=self.specfile,
             )
         else:
             raise NotImplementedError("Unsupported version %r" % version)
