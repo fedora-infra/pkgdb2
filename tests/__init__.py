@@ -64,6 +64,17 @@ class Modeltests(unittest.TestCase):
         if os.path.exists(DB_PATH):
             os.unlink(DB_PATH)
 
+        ## Empty the database
+        self.session.execute('TRUNCATE TABLE "GroupPackageListingAcl" CASCADE;')
+        self.session.execute('TRUNCATE TABLE "GroupPackageListing" CASCADE;')
+        self.session.execute('TRUNCATE TABLE "PersonPackageListingAcl" CASCADE;')
+        self.session.execute('TRUNCATE TABLE "PersonPackageListing" CASCADE;')
+        self.session.execute('TRUNCATE TABLE "PackageListing" CASCADE;')
+        self.session.execute('TRUNCATE TABLE "Collection" CASCADE;')
+        self.session.execute('TRUNCATE TABLE "Package" CASCADE;')
+        self.session.execute('TRUNCATE TABLE "Log" CASCADE;')
+        self.session.commit()
+
 
 def create_collection(session):
     """ Create some basic collection for testing. """
@@ -96,6 +107,41 @@ def create_collection(session):
                                   git_branch_name='master',
                                   )
     session.add(collection)
+    session.commit()
+
+
+def create_package(session):
+    """ Create some basic package for testing. """
+    package = model.Package(name = 'Guake',
+                            summary = 'Top down terminal for GNOME',
+                            status = 'Approved',
+                            description=None,
+                            reviewurl='https://bugzilla.redhat.com/450189',
+                            shouldopen=None,
+                            upstreamurl='http://guake.org'
+                            )
+    session.add(package)
+
+    package = model.Package(name = 'fedocal',
+                            summary = 'A web-based calendar for Fedora',
+                            status = 'Approved',
+                            description=None,
+                            reviewurl='https://bugzilla.redhat.com/915074',
+                            shouldopen=None,
+                            upstreamurl='http://fedorahosted.org/fedocal'
+                            )
+    session.add(package)
+
+    package = model.Package(name = 'geany',
+                            summary = 'A fast and lightweight IDE using GTK2',
+                            status = 'Approved',
+                            description=None,
+                            reviewurl=None,
+                            shouldopen=None,
+                            upstreamurl=None
+                            )
+    session.add(package)
+
     session.commit()
 
 
