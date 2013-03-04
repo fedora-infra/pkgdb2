@@ -41,7 +41,7 @@ class Collectiontests(Modeltests):
     """ Collection tests. """
 
     def test_init_collection(self):
-        """ Test the __init__ function of Ccollection. """
+        """ Test the __init__ function of Collection. """
         create_collection(self.session)
         self.assertEqual(2, len(model.Collection.all(self.session)))
 
