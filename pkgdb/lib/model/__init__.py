@@ -360,7 +360,7 @@ class Collection(BASE):
         return self.branchname
 
     @classmethod
-    def by_simple_name(cls, simple_name):
+    def by_simple_name(cls, session, simple_name):
         '''Return the Collection that matches the simple name
 
         :arg simple_name: simple name for a Collection
@@ -369,7 +369,8 @@ class Collection(BASE):
 
         simple_name will be looked up as the Branch name.
         '''
-        collection = Branch.query.filter_by(branchname=simple_name).one()
+        collection = session.query(cls).filter(
+            Collection.branchname == simple_name).one()
         return collection
 
     @classmethod
@@ -448,6 +449,11 @@ class PackageListing(BASE):
         self.specfile = specfile
 
     packagename = association_proxy('package', 'name')
+
+    @classmethod
+    def by_pkg_id(cls, session, pkgid):
+        """ Return the PackageListing object based on the Package ID. """
+        return session.query(cls).filter(PackageListing.packageid == pkgid).all()
 
     def __repr__(self):
         return 'PackageListing(%r, %r, packageid=%r, collectionid=%r,' \
@@ -580,6 +586,14 @@ class Package(BASE):
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
+
+    @classmethod
+    def by_name(cls, session, pkgname):
+        """ Return the package associated to the given name.
+
+        :raises sqlalchemy.InvalidRequestError: if the package name is not found
+        """
+        return session.query(cls).filter(Package.name == pkgname).one()
 
     def __init__(self, name, summary, status, description=None,
             reviewurl=None, shouldopen=None, upstreamurl=None):
