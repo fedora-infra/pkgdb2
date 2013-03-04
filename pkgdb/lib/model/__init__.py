@@ -93,7 +93,7 @@ class CollectionPackage(Executable, ClauseElement):
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
     status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
-                                name='status'),
+                                name='collection_status'),
                         nullable=False)
     numpkgs = sa.Column(sa.Integer, nullable=False)
 
@@ -131,8 +131,9 @@ class PersonPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied', 'Obsolete',
-                                name='status'),
+    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
+                               'Obsolete', 'Removed',
+                               name='package_status'),
                         nullable=False)
     personPackageListingId = sa.Column(sa.Integer,
                                        sa.ForeignKey('PersonPackageListing.id',
@@ -174,8 +175,9 @@ class GroupPackageListingAcl(BASE):
                             name='acl'),
                     nullable=False
                     )
-    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied', 'Obsolete',
-                                name='status'),
+    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
+                               'Obsolete', 'Removed',
+                               name='package_status'),
                         nullable=False)
     groupPackageListingId = sa.Column(sa.Integer,
                                       sa.ForeignKey('GroupPackageListing.id',
@@ -297,7 +299,7 @@ class Collection(BASE):
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
     status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
-                                name='status'),
+                                name='collection_status'),
                         nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
     publishURLTemplate = sa.Column(sa.Text)
@@ -318,7 +320,8 @@ class Collection(BASE):
     # pylint: disable-msg=R0902, R0903
     def __init__(self, name, version, status, owner,
             publishurltemplate=None, pendingurltemplate=None, summary=None,
-            description=None):
+            description=None, branchname=None, distTag=None,
+            git_branch_name=None):
         self.name = name
         self.version = version
         self.status = status
@@ -327,6 +330,9 @@ class Collection(BASE):
         self.pendingurltemplate = pendingurltemplate
         self.summary = summary
         self.description = description
+        self.branchname = branchname
+        self.distTag = distTag
+        self.git_branch_name = git_branch_name
 
     def __repr__(self):
         return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
@@ -365,6 +371,16 @@ class Collection(BASE):
         '''
         collection = Branch.query.filter_by(branchname=simple_name).one()
         return collection
+
+    @classmethod
+    def all(cls, session):
+        ''' Return the list of all Collections present in the database.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        '''
+        return session.query(cls).all()
 
 
 def collection_alias(pkg_listing):
@@ -405,7 +421,7 @@ class PackageListing(BASE):
     owner = sa.Column(sa.Integer, nullable=False)
     qacontact = sa.Column(sa.Integer)
     status = sa.Column(sa.Enum('Approved', 'Removed', 'Deprecated', 'Orphaned',
-                                name='status'),
+                                name='pl_status'),
                         nullable=False)
     statuschange = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
@@ -552,13 +568,13 @@ class Package(BASE):
     reviewURL = sa.Column(sa.Text)
     status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
                                 'Obsolete', 'Removed',
-                                name='status'),
+                                name='package_status'),
                         nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
     listings = relation(PackageListing)
     listings2 = relation(PackageListing,
-                         backref=backref('package'),
+                         #backref=backref('package'),
                          collection_class=mapped_collection(collection_alias)
                          )
 
