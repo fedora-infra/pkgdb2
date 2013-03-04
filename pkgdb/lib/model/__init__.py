@@ -650,6 +650,16 @@ class Package(BASE):
 
         return pkg_listing
 
+    @classmethod
+    def all(cls, session):
+        ''' Return the list of all Collections present in the database.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        '''
+        return session.query(cls).all()
+
 
 class Log(BASE):
     '''Base Log record.
