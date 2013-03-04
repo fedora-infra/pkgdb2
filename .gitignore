@@ -6,3 +6,4 @@ build/
 *.sqlite
 *~
 start-pkgdb
+.coverage
