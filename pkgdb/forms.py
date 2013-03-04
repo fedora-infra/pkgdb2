@@ -24,3 +24,44 @@ WTF Forms of the pkgdb Flask application.
 '''
 
 import flask
+from flask.ext import wtf
+
+
+class AddCollectionForm(wtf.Form):
+    collection_name = wtf.TextField('Collection name',
+                                    [wtf.validators.Required()])
+    collection_version = wtf.TextField('version',
+                                    [wtf.validators.Required()])
+    collection_status = wtf.SelectField('Status',
+        [wtf.validators.Required()],
+        choices=[('EOL', 'EOL'),
+                 ('Active', 'Active'),
+                 ('Under Development', 'Under Development')]
+        )
+    collection_numpkgs = wtf.FloatField('numpkgs')
+
+
+class AddPackageForm(wtf.Form):
+    pkg_name = wtf.TextField('Package name',
+                                    [wtf.validators.Required()])
+    pkg_summary = wtf.TextField('Summary',
+                                    [wtf.validators.Required()])
+    pkg_description = wtf.TextField('Summary',
+                                    [wtf.validators.optional()])
+    pkg_reviewURL = wtf.URL('Review URL', [wtf.validators.Required(),
+                            wtf.validators.URL()])
+    pkg_status = wtf.SelectField('Status',
+        [wtf.validators.Required()],
+        choices=[('Approved', 'Approved'),
+                 ('Awaiting Review', 'Awaiting Review'),
+                 ('Denied', 'Denied'),
+                 ('Obsolete', 'Obsolete'),
+                 ('Removed', 'Removed')]
+        )
+    pkg_shouldopen = wtf.BooleanField('Should open',
+                                      [wtf.validators.Required()],
+                                      value=True)
+    pkg_collection = wtf.SelectMultipleField('Collection',
+        [wtf.validators.Required()],
+        choices=[(item, item) for item in []])
+    pkg_owner = wtf.TextField('Owner', [wtf.validators.optional()])
