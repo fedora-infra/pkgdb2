@@ -64,6 +64,8 @@ class Modeltests(unittest.TestCase):
         if os.path.exists(DB_PATH):
             os.unlink(DB_PATH)
 
+        self.session.rollback()
+
         ## Empty the database
         self.session.execute('TRUNCATE TABLE "GroupPackageListingAcl" CASCADE;')
         self.session.execute('TRUNCATE TABLE "GroupPackageListing" CASCADE;')
@@ -142,6 +144,55 @@ def create_package(session):
                             )
     session.add(package)
 
+    session.commit()
+
+
+def create_package_listing(session):
+    """ Add some package to a some collection. """
+    create_collection(session)
+    create_package(session)
+
+    guake_pkg = model.Package.by_name(session, 'Guake')
+    fedocal_pkg = model.Package.by_name(session, 'fedocal')
+    f18_collec = model.Collection.by_simple_name(session, 'F18')
+    devel_collec = model.Collection.by_simple_name(session, 'devel')
+
+    # Pkg: Guake - Collection: F18 - Approved
+    pkgltg = model.PackageListing(owner=10,
+                                  status='Approved',
+                                  packageid=guake_pkg.id,
+                                  collectionid=f18_collec.id,
+                                  qacontact=None,
+                                  specfile=None,
+                                  )
+    session.add(pkgltg)
+    # Pkg: Guake - Collection: devel - Approved
+    pkgltg = model.PackageListing(owner=10,
+                                  status='Approved',
+                                  packageid=guake_pkg.id,
+                                  collectionid=devel_collec.id,
+                                  qacontact=None,
+                                  specfile=None,
+                                  )
+    session.add(pkgltg)
+    # Pkg: fedocal - Collection: F18 - Orphaned
+    pkgltg = model.PackageListing(owner=10,
+                                  status='Orphaned',
+                                  packageid=fedocal_pkg.id,
+                                  collectionid=f18_collec.id,
+                                  qacontact=None,
+                                  specfile=None,
+                                  )
+    session.add(pkgltg)
+    # Pkg: fedocal - Collection: devel - Deprecated
+    pkgltg = model.PackageListing(owner=10,
+                                  status='Deprecated',
+                                  packageid=fedocal_pkg.id,
+                                  collectionid=devel_collec.id,
+                                  qacontact=None,
+                                  specfile=None,
+                                  )
+    session.add(pkgltg)
     session.commit()
 
 
