@@ -135,7 +135,7 @@ class PersonPackageListingAcl(BASE):
                                'Obsolete', 'Removed',
                                name='package_status'),
                         nullable=False)
-    personPackageListingId = sa.Column(sa.Integer,
+    personpackagelistingid = sa.Column(sa.Integer,
                                        sa.ForeignKey('PersonPackageListing.id',
                                                      ondelete="CASCADE",
                                                      onupdate="CASCADE"
@@ -147,7 +147,7 @@ class PersonPackageListingAcl(BASE):
                              default=datetime.datetime.utcnow())
 
     __table_args__ = (
-        sa.UniqueConstraint('personPackageListingId', 'acl'),
+        sa.UniqueConstraint('personpackagelistingid', 'acl'),
     )
 
     @classmethod
@@ -160,8 +160,7 @@ class PersonPackageListingAcl(BASE):
         '''
         return session.query(cls).all()
 
-    def __init__(self, acl, status=None,
-                 personpackagelistingid=None):
+    def __init__(self, acl, status, personpackagelistingid):
         self.personpackagelistingid = personpackagelistingid
         self.acl = acl
         self.status = status
@@ -257,6 +256,12 @@ class PersonPackageListing(BASE):
 
         '''
         return session.query(cls).all()
+
+    @classmethod
+    def by_userid_pkglistid(cls, session, user_id, packagelisting_id):
+        return session.query(cls).filter(
+        PersonPackageListing.user_id == user_id).filter(
+        PersonPackageListing.packagelisting_id == packagelisting_id).one()
 
     # pylint: disable-msg=R0903
     def __init__(self, user_id, packagelisting_id):
