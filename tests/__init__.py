@@ -67,14 +67,14 @@ class Modeltests(unittest.TestCase):
         self.session.rollback()
 
         ## Empty the database
-        self.session.execute('TRUNCATE TABLE "GroupPackageListingAcl" CASCADE;')
-        self.session.execute('TRUNCATE TABLE "GroupPackageListing" CASCADE;')
-        self.session.execute('TRUNCATE TABLE "PersonPackageListingAcl" CASCADE;')
-        self.session.execute('TRUNCATE TABLE "PersonPackageListing" CASCADE;')
-        self.session.execute('TRUNCATE TABLE "PackageListing" CASCADE;')
-        self.session.execute('TRUNCATE TABLE "Collection" CASCADE;')
-        self.session.execute('TRUNCATE TABLE "Package" CASCADE;')
-        self.session.execute('TRUNCATE TABLE "Log" CASCADE;')
+        self.session.execute('DROP TABLE "GroupPackageListingAcl" CASCADE;')
+        self.session.execute('DROP TABLE "GroupPackageListing" CASCADE;')
+        self.session.execute('DROP TABLE "PersonPackageListingAcl" CASCADE;')
+        self.session.execute('DROP TABLE "PersonPackageListing" CASCADE;')
+        self.session.execute('DROP TABLE "PackageListing" CASCADE;')
+        self.session.execute('DROP TABLE "Collection" CASCADE;')
+        self.session.execute('DROP TABLE "Package" CASCADE;')
+        self.session.execute('DROP TABLE "Log" CASCADE;')
         self.session.commit()
 
 
@@ -163,7 +163,6 @@ def create_package_listing(session):
                                   packageid=guake_pkg.id,
                                   collectionid=f18_collec.id,
                                   qacontact=None,
-                                  specfile=None,
                                   )
     session.add(pkgltg)
     # Pkg: Guake - Collection: devel - Approved
@@ -172,7 +171,6 @@ def create_package_listing(session):
                                   packageid=guake_pkg.id,
                                   collectionid=devel_collec.id,
                                   qacontact=None,
-                                  specfile=None,
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: F18 - Orphaned
@@ -181,7 +179,6 @@ def create_package_listing(session):
                                   packageid=fedocal_pkg.id,
                                   collectionid=f18_collec.id,
                                   qacontact=None,
-                                  specfile=None,
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: devel - Deprecated
@@ -190,9 +187,50 @@ def create_package_listing(session):
                                   packageid=fedocal_pkg.id,
                                   collectionid=devel_collec.id,
                                   qacontact=None,
-                                  specfile=None,
                                   )
     session.add(pkgltg)
+    session.commit()
+
+
+def create_person_package(session):
+    """ Add packagers to packages. """
+    create_package_listing(session)
+
+    guake_pkg = model.Package.by_name(session, 'Guake')
+    fedocal_pkg = model.Package.by_name(session, 'fedocal')
+    f18_collec = model.Collection.by_simple_name(session, 'F18')
+    devel_collec = model.Collection.by_simple_name(session, 'devel')
+    pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(
+        session, guake_pkg.id, f18_collec.id)
+    pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
+        session, guake_pkg.id, devel_collec.id)
+
+    packager = model.PersonPackageListing(user_id = 10,
+                                          packagelisting_id=pklist_guake_f18.id
+                                          )
+    session.add(packager)
+    packager = model.PersonPackageListing(user_id = 20,
+                                          packagelisting_id=pklist_guake_devel.id
+                                          )
+    session.add(packager)
+    session.commit()
+
+
+def create_person_package_acl(session):
+    """ Add ACLs of a packagr on a package. """
+    create_person_package(session)
+
+    guake_pkg = model.Package.by_name(session, 'Guake')
+
+    pkglist = model.PersonPackageListing.by_userid_pkglistid(session, 10,
+    guake_pkg.id)
+
+    packager = model.PersonPackageListingAcl(acl='commit',
+                                             status='Approved',
+                                             personpackagelistingid=pkglist.id
+                                             )
+
+    session.add(packager)
     session.commit()
 
 
