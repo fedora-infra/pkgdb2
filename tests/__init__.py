@@ -42,7 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from pkgdb.lib import model
 
-DB_PATH = 'url...'
+DB_PATH = 'sqlite:///:memory:'
 
 
 class Modeltests(unittest.TestCase):
@@ -66,16 +66,17 @@ class Modeltests(unittest.TestCase):
 
         self.session.rollback()
 
-        ## Empty the database
-        self.session.execute('DROP TABLE "GroupPackageListingAcl" CASCADE;')
-        self.session.execute('DROP TABLE "GroupPackageListing" CASCADE;')
-        self.session.execute('DROP TABLE "PersonPackageListingAcl" CASCADE;')
-        self.session.execute('DROP TABLE "PersonPackageListing" CASCADE;')
-        self.session.execute('DROP TABLE "PackageListing" CASCADE;')
-        self.session.execute('DROP TABLE "Collection" CASCADE;')
-        self.session.execute('DROP TABLE "Package" CASCADE;')
-        self.session.execute('DROP TABLE "Log" CASCADE;')
-        self.session.commit()
+        ## Empty the database if it's not a sqlite
+        if self.session.bind.driver != 'pysqlite':
+            self.session.execute('DROP TABLE "GroupPackageListingAcl" CASCADE;')
+            self.session.execute('DROP TABLE "GroupPackageListing" CASCADE;')
+            self.session.execute('DROP TABLE "PersonPackageListingAcl" CASCADE;')
+            self.session.execute('DROP TABLE "PersonPackageListing" CASCADE;')
+            self.session.execute('DROP TABLE "PackageListing" CASCADE;')
+            self.session.execute('DROP TABLE "Collection" CASCADE;')
+            self.session.execute('DROP TABLE "Package" CASCADE;')
+            self.session.execute('DROP TABLE "Log" CASCADE;')
+            self.session.commit()
 
 
 def create_collection(session):
