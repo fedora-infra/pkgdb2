@@ -67,7 +67,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     """
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
-    engine.execute(collection_package_create_view())
+    engine.execute(collection_package_create_view(driver=engine.driver))
 
     if alembic_ini is not None:
         # then, load the Alembic configuration and generate the
@@ -108,13 +108,17 @@ class CollectionPackage(Executable, ClauseElement):
 
 @compiles(CollectionPackage)
 def collection_package_create_view(*args, **kw):
-    return "CREATE OR REPLACE VIEW CollectionPackage AS "\
-    "SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs "\
-    "FROM \"PackageListing\" pl, \"Collection\" c "\
-    "WHERE pl.collectionid = c.id "\
-    "AND pl.status = 'Approved' "\
-    "GROUP BY c.id, c.name, c.version, c.status "\
-    "ORDER BY c.name, c.version;"
+    sql_string = 'CREATE OR REPLACE VIEW'
+    if 'driver' in kw:
+        if kw['driver'] == 'pysqlite':
+            sql_string = 'CREATE VIEW IF NOT EXISTS'
+    return '%s CollectionPackage AS '\
+    'SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs '\
+    'FROM "PackageListing" pl, "Collection" c '\
+    'WHERE pl.collectionid = c.id '\
+    'AND pl.status = "Approved" '\
+    'GROUP BY c.id, c.name, c.version, c.status '\
+    'ORDER BY c.name, c.version;' % sql_string
 
 
 class PersonPackageListingAcl(BASE):
@@ -137,8 +141,8 @@ class PersonPackageListingAcl(BASE):
                         nullable=False)
     personpackagelistingid = sa.Column(sa.Integer,
                                        sa.ForeignKey('PersonPackageListing.id',
-                                                     ondelete="CASCADE",
-                                                     onupdate="CASCADE"
+                                                     ondelete='CASCADE',
+                                                     onupdate='CASCADE'
                                                      ),
                                        nullable=False,
                                        )
@@ -190,8 +194,8 @@ class GroupPackageListingAcl(BASE):
                         nullable=False)
     groupPackageListingId = sa.Column(sa.Integer,
                                       sa.ForeignKey('GroupPackageListing.id',
-                                                    ondelete="CASCADE",
-                                                    onupdate="CASCADE"
+                                                    ondelete='CASCADE',
+                                                    onupdate='CASCADE'
                                                     ),
                                       nullable=False,
                                       )
@@ -228,8 +232,8 @@ class PersonPackageListing(BASE):
     packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey('PackageListing.id',
-                      ondelete="CASCADE",
-                      onupdate="CASCADE"
+                      ondelete='CASCADE',
+                      onupdate='CASCADE'
                       ),
         nullable=False,
     )
@@ -286,8 +290,8 @@ class GroupPackageListing(BASE):
     packageListingId = sa.Column(
         sa.Integer,
         sa.ForeignKey('PackageListing.id',
-                      ondelete="CASCADE",
-                      onupdate="CASCADE"
+                      ondelete='CASCADE',
+                      onupdate='CASCADE'
                       ),
         nullable=False,
     )
@@ -773,5 +777,6 @@ class Log(BASE):
 
 if __name__ == '__main__':
     db_url = 'sqlite:///pkgdb2.sqlite'
+    #db_url = "postgres://pkgdbadmin:bunbunbun@localhost/pkgdb2"
     debug = True
     create_tables(db_url, debug=debug)
