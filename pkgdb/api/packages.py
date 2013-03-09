@@ -26,6 +26,7 @@ API for package management.
 import flask
 
 import pkgdb.forms
+import pkgdb.lib as pkgdblib
 from pkgdb.api import API
 
 
@@ -41,7 +42,46 @@ def api_package_new():
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    form = forms.AddPackageForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        pkg_name = form.pkg_name.data
+        pkg_summary = form.pkg_summary.data
+        pkg_reviewURL = form.pkg_reviewURL.data
+        pkg_status = form.pkg_status.data
+        pkg_shouldopen = form.pkg_shouldopen.data
+        pkg_collection = form.pkg_collection.data
+        pkg_owner = form.pkg_owner.data
+        pkg_upstreamURL = form.pkg_upstreamURL.data
+
+        try:
+            message = pkgdblib.add_package(SESSION,
+                                           pkg_name=pkg_name,
+                                           pkg_summary=pkg_summary,
+                                           pkg_reviewURL=pkg_reviewURL,
+                                           pkg_status=pkg_status,
+                                           pkg_shouldopen=pkg_shouldopen,
+                                           pkg_collection=pkg_collection,
+                                           pkg_owner=pkg_owner,
+                                           pkg_upstreamURL=pkg_upstreamURL,
+                                           )
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = [message]
+        except SQLAlchemyError, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = 'You have already rated this package'
+            httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
