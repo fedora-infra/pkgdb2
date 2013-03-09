@@ -118,7 +118,6 @@ def create_package(session):
     package = model.Package(name = 'Guake',
                             summary = 'Top down terminal for GNOME',
                             status = 'Approved',
-                            description=None,
                             review_url='https://bugzilla.redhat.com/450189',
                             shouldopen=None,
                             upstream_url='http://guake.org'
@@ -128,7 +127,6 @@ def create_package(session):
     package = model.Package(name = 'fedocal',
                             summary = 'A web-based calendar for Fedora',
                             status = 'Approved',
-                            description=None,
                             review_url='https://bugzilla.redhat.com/915074',
                             shouldopen=None,
                             upstream_url='http://fedorahosted.org/fedocal'
@@ -138,7 +136,6 @@ def create_package(session):
     package = model.Package(name = 'geany',
                             summary = 'A fast and lightweight IDE using GTK2',
                             status = 'Approved',
-                            description=None,
                             review_url=None,
                             shouldopen=None,
                             upstream_url=None

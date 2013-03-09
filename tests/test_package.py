@@ -49,8 +49,8 @@ class Packagetests(Modeltests):
         """ Test the __repr__ function of Package. """
         create_package(self.session)
         packages = model.Package.all(self.session)
-        self.assertEqual("Package(u'Guake', u'Top down terminal for GNOME',"
-                         " u'Approved', description=None, "
+        self.assertEqual("Package(u'Guake', u'Top down terminal for GNOME', "
+                         "u'Approved', "
                          "upstreamurl=u'http://guake.org', "
                          "reviewurl=u'https://bugzilla.redhat.com/450189', "
                          "shouldopen=True)",
