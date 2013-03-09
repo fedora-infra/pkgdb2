@@ -69,7 +69,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     BASE.metadata.create_all(engine)
     engine.execute(collection_package_create_view(driver=engine.driver))
 
-    if alembic_ini is not None:
+    if alembic_ini is not None:  # pragma: no cover
         # then, load the Alembic configuration and generate the
         # version table, "stamping" it with the most recent rev:
         from alembic.config import Config
@@ -355,8 +355,8 @@ class Collection(BASE):
         self.version = version
         self.status = status
         self.owner = owner
-        self.publishurltemplate = publishurltemplate
-        self.pendingurltemplate = pendingurltemplate
+        self.publishURLTemplate = publishurltemplate
+        self.pendingURLTemplate = pendingurltemplate
         self.summary = summary
         self.description = description
         self.branchname = branchname
@@ -367,7 +367,7 @@ class Collection(BASE):
         return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
                 ' pendingurltemplate=%r, summary=%r, description=%r)' % (
                 self.name, self.version, self.status, self.owner,
-                self.publishurltemplate, self.pendingurltemplate,
+                self.publishURLTemplate, self.pendingURLTemplate,
                 self.summary, self.description)
 
     def api_repr(self, version):
@@ -621,7 +621,8 @@ class Package(BASE):
     name = sa.Column(sa.Text, nullable=False, unique=True)
     summary = sa.Column(sa.Text, nullable=False)
     description = sa.Column(sa.Text)
-    reviewURL = sa.Column(sa.Text)
+    review_url = sa.Column(sa.Text)
+    upstream_url = sa.Column(sa.Text)
     status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
                                 'Obsolete', 'Removed',
                                 name='package_status'),
@@ -646,20 +647,21 @@ class Package(BASE):
         return session.query(cls).filter(Package.name == pkgname).one()
 
     def __init__(self, name, summary, status, description=None,
-            reviewurl=None, shouldopen=None, upstreamurl=None):
+            reviewurl=None, shouldopen=None, review_url=None,
+            upstream_url=None):
         self.name = name
         self.summary = summary
         self.status = status
         self.description = description
-        self.reviewurl = reviewurl
+        self.review_url = review_url
         self.shouldopen = shouldopen
-        self.upstreamurl = upstreamurl
+        self.upstream_url = upstream_url
 
     def __repr__(self):
         return 'Package(%r, %r, %r, description=%r, ' \
                'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
                 self.name, self.summary, self.status, self.description,
-                self.upstreamurl, self.reviewurl, self.shouldopen)
+                self.upstream_url, self.review_url, self.shouldopen)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize Packages in messages. """
