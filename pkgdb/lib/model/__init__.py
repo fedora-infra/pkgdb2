@@ -620,7 +620,6 @@ class Package(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False, unique=True)
     summary = sa.Column(sa.Text, nullable=False)
-    description = sa.Column(sa.Text)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
     status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
@@ -646,21 +645,19 @@ class Package(BASE):
         """
         return session.query(cls).filter(Package.name == pkgname).one()
 
-    def __init__(self, name, summary, status, description=None,
-            reviewurl=None, shouldopen=None, review_url=None,
-            upstream_url=None):
+    def __init__(self, name, summary, status, reviewurl=None,
+                 shouldopen=None, review_url=None, upstream_url=None):
         self.name = name
         self.summary = summary
         self.status = status
-        self.description = description
         self.review_url = review_url
         self.shouldopen = shouldopen
         self.upstream_url = upstream_url
 
     def __repr__(self):
-        return 'Package(%r, %r, %r, description=%r, ' \
+        return 'Package(%r, %r, %r, ' \
                'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
-                self.name, self.summary, self.status, self.description,
+                self.name, self.summary, self.status,
                 self.upstream_url, self.review_url, self.shouldopen)
 
     def api_repr(self, version):
@@ -669,7 +666,6 @@ class Package(BASE):
             return dict(
                 name=self.name,
                 summary=self.summary,
-                description=self.description,
                 reviewurl=self.reviewurl,
                 upstreamurl=self.upstreamurl,
             )
@@ -691,9 +687,10 @@ class Package(BASE):
         This creates a new PackageListing for this Package.  The PackageListing
         has default values set for group acls.
         '''
-        pkg_listing = PackageListing(owner, STATUS[statusname],
-                collectionid=collection.id,
-                qacontact=qacontact)
+        pkg_listing = PackageListing(owner=owner,
+                                     status=statusname,
+                                     collectionid=collection.id,
+                                     qacontact=qacontact)
         pkg_listing.packageid = self.id
         for group in DEFAULT_GROUPS:
             new_group = GroupPackageListing(group)
