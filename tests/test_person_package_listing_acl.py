@@ -40,12 +40,20 @@ from tests import Modeltests, create_person_package_acl
 class PersonPackageListingAcltests(Modeltests):
     """ PersonPackageListingAcl tests. """
 
-    def test_init_package(self):
+    def test_init_package_listing_acl(self):
         """ Test the __init__ function of PersonPackageListingAcl. """
         create_person_package_acl(self.session)
         self.assertEqual(1,
                          len(model.PersonPackageListingAcl.all(self.session))
                          )
+
+    def test_repr_package_listing_acl(self):
+        """ Test the __repr__ function of PersonPackageListingAcl. """
+        create_person_package_acl(self.session)
+        person = model.PersonPackageListingAcl.all(self.session)
+        self.assertEqual("PersonPackageListingAcl(u'commit', u'Approved',"
+                         " personpackagelistingid=1)",
+                         person[0].__repr__())
 
 
 if __name__ == '__main__':

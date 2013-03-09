@@ -45,6 +45,17 @@ class Packagetests(Modeltests):
         create_package(self.session)
         self.assertEqual(3, len(model.Package.all(self.session)))
 
+    def test_repr_package(self):
+        """ Test the __repr__ function of Package. """
+        create_package(self.session)
+        packages = model.Package.all(self.session)
+        self.assertEqual("Package(u'Guake', u'Top down terminal for GNOME',"
+                         " u'Approved', description=None, "
+                         "upstreamurl=u'http://guake.org', "
+                         "reviewurl=u'https://bugzilla.redhat.com/450189', "
+                         "shouldopen=True)",
+                         packages[0].__repr__())
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Packagetests)

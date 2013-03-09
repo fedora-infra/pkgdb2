@@ -40,7 +40,7 @@ from tests import Modeltests, create_package_listing
 class PackageListingtests(Modeltests):
     """ PackageListing tests. """
 
-    def test_init_package(self):
+    def test_init_package_listing(self):
         """ Test the __init__ function of PackageListing. """
         create_package_listing(self.session)
         pkg = model.Package.by_name(self.session, 'Guake')
@@ -48,6 +48,16 @@ class PackageListingtests(Modeltests):
                          len(model.PackageListing.by_pkg_id(self.session,
                                                         pkg.id))
                          )
+
+    def test_repr_package_listing(self):
+        """ Test the __repr__ function of PackageListing. """
+        create_package_listing(self.session)
+        pkg = model.Package.by_name(self.session, 'Guake')
+        packages = model.PackageListing.by_pkg_id(self.session,
+                                                        pkg.id)
+        self.assertEqual("PackageListing(10, u'Approved', packageid=1, "
+                         "collectionid=1, qacontact=None)",
+                         packages[0].__repr__())
 
 
 if __name__ == '__main__':
