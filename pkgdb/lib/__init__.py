@@ -38,3 +38,29 @@ def create_session(db_url, debug=False, pool_recycle=3600):
         pool_recycle=pool_recycle)
     scopedsession = scoped_session(sessionmaker(bind=engine))
     return scopedsession
+
+
+def add_package(session, pkg_name, pkg_summary, pkg_status,
+                pkg_collection, pkg_owner, pkg_reviewURL=None,
+                pkg_shouldopen=None, pkg_upstreamURL=None):
+    """ Create a new Package in the database and adds the corresponding
+    PackageListing entry.
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name:
+    ...
+    """
+    package = model.Package(name=pkg_name,
+                            summary=pkg_summary,
+                            status=pkg_status,
+                            review_url=pkg_reviewURL,
+                            shouldopen=pkg_shouldopen,
+                            upstream_url=pkg_upstreamURL
+                            )
+    session.add(package)
+    session.flush()
+    pklisting = package.create_listing(owner=pkg_owner,
+                                       collection=pkg_collection,
+                                       statusname=pkg_status)
+    session.add(pkglisting)
+    session.flush()
