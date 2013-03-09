@@ -119,9 +119,9 @@ def create_package(session):
                             summary = 'Top down terminal for GNOME',
                             status = 'Approved',
                             description=None,
-                            reviewurl='https://bugzilla.redhat.com/450189',
+                            review_url='https://bugzilla.redhat.com/450189',
                             shouldopen=None,
-                            upstreamurl='http://guake.org'
+                            upstream_url='http://guake.org'
                             )
     session.add(package)
 
@@ -129,9 +129,9 @@ def create_package(session):
                             summary = 'A web-based calendar for Fedora',
                             status = 'Approved',
                             description=None,
-                            reviewurl='https://bugzilla.redhat.com/915074',
+                            review_url='https://bugzilla.redhat.com/915074',
                             shouldopen=None,
-                            upstreamurl='http://fedorahosted.org/fedocal'
+                            upstream_url='http://fedorahosted.org/fedocal'
                             )
     session.add(package)
 
@@ -139,9 +139,9 @@ def create_package(session):
                             summary = 'A fast and lightweight IDE using GTK2',
                             status = 'Approved',
                             description=None,
-                            reviewurl=None,
+                            review_url=None,
                             shouldopen=None,
-                            upstreamurl=None
+                            upstream_url=None
                             )
     session.add(package)
 
