@@ -46,8 +46,6 @@ class AddPackageForm(wtf.Form):
                                     [wtf.validators.Required()])
     pkg_summary = wtf.TextField('Summary',
                                     [wtf.validators.Required()])
-    pkg_description = wtf.TextField('Summary',
-                                    [wtf.validators.optional()])
     pkg_reviewURL = wtf.URL('Review URL', [wtf.validators.Required(),
                             wtf.validators.URL()])
     pkg_status = wtf.SelectField('Status',
@@ -65,3 +63,5 @@ class AddPackageForm(wtf.Form):
         [wtf.validators.Required()],
         choices=[(item, item) for item in []])
     pkg_owner = wtf.TextField('Owner', [wtf.validators.optional()])
+    pkg_upstreamURL = wtf.TextField('Upstream URL',
+                                    [wtf.validators.optional()])
