@@ -43,17 +43,17 @@ class PackageListingtests(Modeltests):
     def test_init_package_listing(self):
         """ Test the __init__ function of PackageListing. """
         create_package_listing(self.session)
-        pkg = model.Package.by_name(self.session, 'Guake')
-        self.assertEqual(2, 
-                         len(model.PackageListing.by_pkg_id(self.session,
+        pkg = model.Package.by_name(self.session, 'guake')
+        self.assertEqual(2,
+                         len(model.PackageListing.by_package_id(self.session,
                                                         pkg.id))
                          )
 
     def test_repr_package_listing(self):
         """ Test the __repr__ function of PackageListing. """
         create_package_listing(self.session)
-        pkg = model.Package.by_name(self.session, 'Guake')
-        packages = model.PackageListing.by_pkg_id(self.session,
+        pkg = model.Package.by_name(self.session, 'guake')
+        packages = model.PackageListing.by_package_id(self.session,
                                                         pkg.id)
         self.assertEqual("PackageListing(10, u'Approved', packageid=1, "
                          "collectionid=1, qacontact=None)",
