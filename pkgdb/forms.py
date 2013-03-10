@@ -65,3 +65,50 @@ class AddPackageForm(wtf.Form):
     pkg_owner = wtf.TextField('Owner', [wtf.validators.optional()])
     pkg_upstreamURL = wtf.TextField('Upstream URL',
                                     [wtf.validators.optional()])
+
+
+class SetAclPackageForm(wtf.Form):
+    pkg_name = wtf.TextField('Package name',
+                                    [wtf.validators.Required()])
+    pkg_branch = wtf.TextField('Fedora branch',
+                                    [wtf.validators.Required()])
+    pkg_acl = wtf.SelectField('ACL',
+        [wtf.validators.Required()],
+        choices=[('commit', 'commit'),
+                 ('build', 'build'),
+                 ('watchbugzilla', 'watchbugzilla'),
+                 ('watchcommits', 'watchcommits'),
+                 ('approveacls', 'approveacls')]
+        )
+    pkg_status = wtf.SelectField('Status',
+        [wtf.validators.Required()],
+        choices=[('Approved', 'Approved'),
+                 ('Awaiting Review', 'Awaiting Review'),
+                 ('Denied', 'Denied'),
+                 ('Obsolete', 'Obsolete'),
+                 ('Removed', 'Removed')]
+        )
+
+
+class PackageStatusForm(wtf.Form):
+    pkg_name = wtf.TextField('Package name',
+                                    [wtf.validators.Required()])
+    collection_name = wtf.TextField('Collection name',
+                                    [wtf.validators.Required()])
+    pkg_status = wtf.SelectField('Status',
+        [wtf.validators.Required()],
+        choices=[('Approved', 'Approved'),
+                 ('Awaiting Review', 'Awaiting Review'),
+                 ('Denied', 'Denied'),
+                 ('Obsolete', 'Obsolete'),
+                 ('Removed', 'Removed')]
+        )
+
+
+class PackageOwnerForm(wtf.Form):
+    pkg_name = wtf.TextField('Package name',
+                                    [wtf.validators.Required()])
+    clt_name = wtf.TextField('Fedora branch',
+                                    [wtf.validators.Required()])
+    pkg_owner  = wtf.TextField('New package owner',
+                                    [wtf.validators.Required()])
