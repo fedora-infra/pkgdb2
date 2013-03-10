@@ -67,10 +67,10 @@ def api_package_new():
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
-        except SQLAlchemyError, err:
+        except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = 'You have already rated this package'
+            output['error'] = err
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -103,7 +103,37 @@ def api_package_orphan():
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    form = forms.PackageOwnerForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        pkg_name = form.pkg_name.data
+        clt_name = form.clt_name.data
+        pkg_owner = form.pkg_owner.data
+
+        try:
+            message = pkgdblib.pkg_change_owner(SESSION,
+                                                pkg_name=pkg_name,
+                                                clt_name=clt_name,
+                                                pkg_owner='orphan',
+                                                user=flask.g.fas_user,
+                                                )
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = [message]
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = err
+            httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
@@ -124,7 +154,37 @@ def api_package_unorphan():
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    form = forms.PackageOwnerForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        pkg_name = form.pkg_name.data
+        pkg_branch = form.pkg_branch.data
+        pkg_owner = form.pkg_owner.data
+
+        try:
+            message = pkgdblib.pkg_change_owner(SESSION,
+                                                pkg_name=pkg_name,
+                                                pkg_branch=pkg_branch,
+                                                pkg_owner=pkg_owner,
+                                                user=flask.g.fas_user,
+                                                )
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = [message]
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = err
+            httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
