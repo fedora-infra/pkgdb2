@@ -22,6 +22,14 @@
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm.exc import NoResultFound
+
+
+class PkgdbException(Exception):
+    """ Generic Exception object used to throw pkgdb specific error.
+    """
+    pass
+
 
 def create_session(db_url, debug=False, pool_recycle=3600):
     """ Create the Session object to use to query the database.
@@ -59,8 +67,53 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
                             )
     session.add(package)
     session.flush()
-    pklisting = package.create_listing(owner=pkg_owner,
-                                       collection=pkg_collection,
+    collection = model.Collection.by_name(session, pkg_collection)
+    pkglisting = package.create_listing(owner=pkg_owner,
+                                       collection=collection,
                                        statusname=pkg_status)
     session.add(pkglisting)
+    session.flush()
+
+
+def get_acl_package(session, pkg_name):
+    """ Return the ACLs for the specified package.
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name: the name of the package to retrieve the ACLs for
+    """
+    package = model.Package.by_name(session, pkg_name)
+    pkglisting = model.PackageListing.by_package_id(session, package.id)
+    return pkglisting
+
+
+def set_acl_package(session, pkg_name, clt_name, user, acl, status):
+    """ Return the ACLs for the specified package.
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name: the name of the package
+    :arg colt_name: the name of the collection
+    :arg user: the FAS user for which the ACL should be set/change
+    :arg status: the status of the ACLs
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    try:
+        collection = model.Collection.by_name(session, clt_name)
+    except NoResultFound:
+        raise PkgdbException('No collection found by this name')
+
+    pkglisting = model.PackageListing.by_pkgid_collectionid(session,
+                                                            package.id,
+                                                            collection.id)
+    personpkg = model.PersonPackageListing.get_or_create(session,
+                                                         user.id,
+                                                         pkglisting.id)
+    personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(session,
+                                                                      personpkg.id,
+                                                                      acl)
+    personpkgacl.status = status
+    session.add(personpkgacl)
     session.flush()
