@@ -772,10 +772,3 @@ class Log(BASE):
         '''
         log = Log(user_id, package.id, description)
         log.save(session)
-
-
-if __name__ == '__main__':
-    db_url = 'sqlite:///pkgdb2.sqlite'
-    #db_url = "postgres://pkgdbadmin:bunbunbun@localhost/pkgdb2"
-    debug = True
-    create_tables(db_url, debug=debug)
