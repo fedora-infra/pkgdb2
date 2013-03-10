@@ -44,6 +44,12 @@ from pkgdb.lib import model
 
 DB_PATH = 'sqlite:///:memory:'
 
+class FakeFasUser(object):
+    """ Fake FAS user used for the tests. """
+    id = 100
+    name = 'username'
+    groups = ['packager', 'cla_done']
+
 
 class Modeltests(unittest.TestCase):
     """ Model tests. """
@@ -56,7 +62,7 @@ class Modeltests(unittest.TestCase):
     # pylint: disable=C0103
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
-        self.session = model.create_tables(DB_PATH)
+        self.session = model.create_tables(DB_PATH, debug=False)
 
     # pylint: disable=C0103
     def tearDown(self):
@@ -90,7 +96,7 @@ def create_collection(session):
                                   pendingurltemplate=None,
                                   summary='Fedora 18 release',
                                   description=None,
-                                  branchname='F18',
+                                  branchname='F-18',
                                   distTag='.fc18',
                                   git_branch_name='f18',
                                   )
@@ -115,7 +121,7 @@ def create_collection(session):
 
 def create_package(session):
     """ Create some basic package for testing. """
-    package = model.Package(name = 'Guake',
+    package = model.Package(name = 'guake',
                             summary = 'Top down terminal for GNOME',
                             status = 'Approved',
                             review_url='https://bugzilla.redhat.com/450189',
@@ -150,10 +156,10 @@ def create_package_listing(session):
     create_collection(session)
     create_package(session)
 
-    guake_pkg = model.Package.by_name(session, 'Guake')
+    guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
-    f18_collec = model.Collection.by_simple_name(session, 'F18')
-    devel_collec = model.Collection.by_simple_name(session, 'devel')
+    f18_collec = model.Collection.by_name(session, 'F-18')
+    devel_collec = model.Collection.by_name(session, 'devel')
 
     # Pkg: Guake - Collection: F18 - Approved
     pkgltg = model.PackageListing(owner=10,
@@ -194,10 +200,10 @@ def create_person_package(session):
     """ Add packagers to packages. """
     create_package_listing(session)
 
-    guake_pkg = model.Package.by_name(session, 'Guake')
+    guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
-    f18_collec = model.Collection.by_simple_name(session, 'F18')
-    devel_collec = model.Collection.by_simple_name(session, 'devel')
+    f18_collec = model.Collection.by_name(session, 'F-18')
+    devel_collec = model.Collection.by_name(session, 'devel')
     pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, f18_collec.id)
     pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
@@ -218,7 +224,7 @@ def create_person_package_acl(session):
     """ Add ACLs of a packagr on a package. """
     create_person_package(session)
 
-    guake_pkg = model.Package.by_name(session, 'Guake')
+    guake_pkg = model.Package.by_name(session, 'guake')
 
     pkglist = model.PersonPackageListing.by_userid_pkglistid(session, 10,
     guake_pkg.id)
