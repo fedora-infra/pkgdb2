@@ -58,20 +58,32 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     :arg pkg_name:
     ...
     """
-    package = model.Package(name=pkg_name,
-                            summary=pkg_summary,
-                            status=pkg_status,
-                            review_url=pkg_reviewURL,
-                            shouldopen=pkg_shouldopen,
-                            upstream_url=pkg_upstreamURL
-                            )
-    session.add(package)
+    if ',' in pkg_name:
+        pkg_name = [item.strip() for item in pkg_name.split(',')]
+    else:
+        pkg_name = [pkg_name]
+    if ',' in pkg_collection:
+        pkg_collection = [item.strip() for item in pkg_collection.split(',')]
+    else:
+        pkg_collection = [pkg_collection]
+
+    for pkg in pkg_name:
+        package = model.Package(name=pkg,
+                                summary=pkg_summary,
+                                status=pkg_status,
+                                review_url=pkg_reviewURL,
+                                shouldopen=pkg_shouldopen,
+                                upstream_url=pkg_upstreamURL
+                                )
+        session.add(package)
     session.flush()
-    collection = model.Collection.by_name(session, pkg_collection)
-    pkglisting = package.create_listing(owner=pkg_owner,
-                                       collection=collection,
-                                       statusname=pkg_status)
-    session.add(pkglisting)
+
+    for collec in pkg_collection:
+        collection = model.Collection.by_name(session, collec)
+        pkglisting = package.create_listing(owner=pkg_owner,
+                                        collection=collection,
+                                        statusname=pkg_status)
+        session.add(pkglisting)
     session.flush()
 
 
@@ -117,3 +129,36 @@ def set_acl_package(session, pkg_name, clt_name, user, acl, status):
     personpkgacl.status = status
     session.add(personpkgacl)
     session.flush()
+
+
+def pkg_change_owner(session, pkg_name, clt_name, pkg_owner, user):
+    """ Change the owner of a package.
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name: the name of the package
+    :arg clt_name: the name of the collection
+    :arg pkg_owner: name of the new owner of the package.
+    :arg user: the FAS user for which the ACL should be set/change
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    try:
+        collection = model.Collection.by_name(session, clt_name)
+    except NoResultFound:
+        raise PkgdbException('No collection found by this name')
+
+    pkglisting = model.PackageListing.by_pkgid_collectionid(session,
+                                                            package.id,
+                                                            collection.id)
+
+    ## TODO: Check if flask.g.fas_user is an admin
+
+    if pkglisting.owner == user.name:
+        pkglisting.owner = pkg_owner
+        session.add(pkglisting)
+        session.flush()
+    else:
+        raise PkgdbException('You are now allowed to change the owner.')
