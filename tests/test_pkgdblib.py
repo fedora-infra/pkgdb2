@@ -62,13 +62,29 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(1, len(packages))
         self.assertEqual('guake', packages[0].name)
 
+        pkgdblib.add_package(self.session,
+                             pkg_name='geany,fedocal',
+                             pkg_summary='Drop down terminal',
+                             pkg_status='Approved',
+                             pkg_collection='devel, F-18',
+                             pkg_owner='pingou',
+                             pkg_reviewURL=None,
+                             pkg_shouldopen=None,
+                             pkg_upstreamURL=None)
+        self.session.commit()
+        packages = model.Package.all(self.session)
+        self.assertEqual(3, len(packages))
+        self.assertEqual('guake', packages[0].name)
+        self.assertEqual('geany', packages[1].name)
+        self.assertEqual('fedocal', packages[2].name)
+
     def test_get_acl_package(self):
         """ Test the get_acl_package function. """
         self.test_add_package()
         self.session.commit()
 
         packages = model.Package.all(self.session)
-        self.assertEqual(1, len(packages))
+        self.assertEqual(3, len(packages))
         self.assertEqual('guake', packages[0].name)
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
@@ -77,7 +93,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].people, [])
 
     def test_set_acl_package(self):
-        """ Test the get_acl_package function. """
+        """ Test the set_acl_package function. """
         self.test_add_package()
 
         self.assertRaises(pkgdblib.PkgdbException,
@@ -136,7 +152,59 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(len(pkg_acl[0].people), 1)
-        
+
+    def test_pkg_change_owner(self):
+        """ Test the pkg_change_owner function. """
+        self.test_add_package()
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_change_owner,
+                          self.session,
+                          pkg_name='test',
+                          clt_name='F-17',
+                          user=FakeFasUser(),
+                          pkg_owner='toshio',
+                          )
+        self.session.rollback()
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_change_owner,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-17',
+                          user=FakeFasUser(),
+                          pkg_owner='toshio',
+                          )
+        self.session.rollback()
+
+        fake_user = FakeFasUser()
+        fake_user.name = 'test'
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_change_owner,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          user=fake_user,
+                          pkg_owner='toshio',
+                          )
+        self.session.rollback()
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].owner, 'pingou')
+
+        pkgdblib.pkg_change_owner(self.session,
+                                 pkg_name='guake',
+                                 clt_name='F-18',
+                                 user=FakeFasUser(),
+                                 pkg_owner='toshio',
+                                 )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].owner, 'toshio')
 
 
 if __name__ == '__main__':

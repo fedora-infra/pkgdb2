@@ -47,7 +47,7 @@ DB_PATH = 'sqlite:///:memory:'
 class FakeFasUser(object):
     """ Fake FAS user used for the tests. """
     id = 100
-    name = 'username'
+    name = 'pingou'
     groups = ['packager', 'cla_done']
 
 
