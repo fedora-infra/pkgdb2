@@ -40,6 +40,7 @@ from sqlalchemy.orm import relation
 from sqlalchemy.orm import backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.orm.collections import mapped_collection
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import and_
 from sqlalchemy.sql.expression import Executable, ClauseElement
 
@@ -164,6 +165,24 @@ class PersonPackageListingAcl(BASE):
         '''
         return session.query(cls).all()
 
+    @classmethod
+    def get_or_create_personpkgid_acl(cls, session, personpkg_id, acl):
+        """ Return the PersonPackageListingAcl for the provided
+        PersonPackageListing identifier and ACL.
+        
+        :arg session:
+        :arg personpkg_id:
+        :arg acl:
+        """
+        try:
+            pkgacl = session.query(cls).filter_by(personpackagelistingid=personpkg_id
+                                                  ).filter_by(acl=acl).one()
+        except NoResultFound:
+            pkgacl = PersonPackageListingAcl(personpackagelistingid=personpkg_id,
+                                             status=None,
+                                             acl=acl)
+        return pkgacl
+
     def __init__(self, acl, status, personpackagelistingid):
         self.personpackagelistingid = personpackagelistingid
         self.acl = acl
@@ -192,7 +211,7 @@ class GroupPackageListingAcl(BASE):
                                'Obsolete', 'Removed',
                                name='package_status'),
                         nullable=False)
-    groupPackageListingId = sa.Column(sa.Integer,
+    group_packagelisting_id = sa.Column(sa.Integer,
                                       sa.ForeignKey('GroupPackageListing.id',
                                                     ondelete='CASCADE',
                                                     onupdate='CASCADE'
@@ -204,17 +223,17 @@ class GroupPackageListingAcl(BASE):
                              default=datetime.datetime.utcnow())
 
     __table_args__ = (
-        sa.UniqueConstraint('groupPackageListingId', 'acl'),
+        sa.UniqueConstraint('group_packagelisting_id', 'acl'),
     )
 
-    def __init__(self, acl, statuscode=None, grouppackagelistingid=None):
-        self.grouppackagelistingid = grouppackagelistingid
+    def __init__(self, acl, status=None, group_packagelisting_id=None):
+        self.group_packagelisting_id = group_packagelisting_id
         self.acl = acl
-        self.statuscode = statuscode
+        self.status = status
 
     def __repr__(self):
-        return 'GroupPackageListingAcl(%r, %r, grouppackagelistingid=%r)'\
-            % (self.acl, self.statuscode, self.grouppackagelistingid)
+        return 'GroupPackageListingAcl(%r, %r, group_packagelisting_id=%r)'\
+            % (self.acl, self.status, self.group_packagelisting_id)
 
 
 class PersonPackageListing(BASE):
@@ -266,6 +285,30 @@ class PersonPackageListing(BASE):
         return session.query(cls).filter(
         PersonPackageListing.user_id == user_id).filter(
         PersonPackageListing.packagelisting_id == packagelisting_id).one()
+
+    @classmethod
+    def get_or_create(cls, session, user_id, packagelisting_id):
+        """ Retrieve the PersonPackageListing which associates a person
+        with a package in a certain collection.
+
+        :arg session: the database session used to connect to the
+            database
+        :arg user_id: the identifier (integer) of the user
+        :arg packagelisting_id: the identifier of the PackageListing
+            entry.
+        """
+        try:
+            personpkg = session.query(cls).filter(
+        PersonPackageListing.user_id == user_id).filter(
+        PersonPackageListing.packagelisting_id == packagelisting_id).one()
+        except NoResultFound:
+            personpkg = PersonPackageListing(user_id=user_id,
+                                             packagelisting_id=packagelisting_id)
+            session.add(personpkg)
+            session.flush()
+
+        return personpkg
+
 
     # pylint: disable-msg=R0903
     def __init__(self, user_id, packagelisting_id):
@@ -382,24 +425,18 @@ class Collection(BASE):
         else:
             raise NotImplementedError("Unsupported version %r" % version)
 
-    @property
-    def simple_name(self):
-        '''Return a simple name for the Collection
-        '''
-        return self.branchname
-
     @classmethod
-    def by_simple_name(cls, session, simple_name):
+    def by_name(cls, session, branch_name):
         '''Return the Collection that matches the simple name
 
-        :arg simple_name: simple name for a Collection
+        :arg branch_name: branch name for a Collection
         :returns: The Collection that matches the name
         :raises sqlalchemy.InvalidRequestError: if the simple name is not found
 
         simple_name will be looked up as the Branch name.
         '''
         collection = session.query(cls).filter(
-            Collection.branchname == simple_name).one()
+            Collection.branchname == branch_name).one()
         return collection
 
     @classmethod
@@ -479,7 +516,7 @@ class PackageListing(BASE):
     packagename = association_proxy('package', 'name')
 
     @classmethod
-    def by_pkg_id(cls, session, pkgid):
+    def by_package_id(cls, session, pkgid):
         """ Return the PackageListing object based on the Package ID.
 
         :arg pkgid: Integer, identifier of the package in the Package
@@ -693,21 +730,19 @@ class Package(BASE):
                                      qacontact=qacontact)
         pkg_listing.packageid = self.id
         for group in DEFAULT_GROUPS:
-            new_group = GroupPackageListing(group)
+            new_group = GroupPackageListing(groupname=group,
+                                            packagelistingid=pkg_listing.id)
             #pylint:disable-msg=E1101
-            pkg_listing.groups2[group] = new_group
+            #pkg_listing.groups2[group] = new_group
             #pylint:enable-msg=E1101
             for acl, status in DEFAULT_GROUPS[group].iteritems():
                 if status:
-                    acl_statuscode = STATUS['Approved']
+                    acl_status = 'Approved'
                 else:
-                    acl_statuscode = STATUS['Denied']
-                group_acl = GroupPackageListingAcl(acl, acl_status)
-                # :W0201: grouppackagelisting is added to the model by
-                #   SQLAlchemy so it doesn't appear in __init__
-                #pylint:disable-msg=W0201
-                group_acl.grouppackagelisting = new_group
-                #pylint:enable-msg=W0201
+                    acl_status = 'Denied'
+                group_acl = GroupPackageListingAcl(acl=acl,
+                                                   status=acl_status,
+                                                   group_packagelisting_id=new_group.id)
 
         #TODO: Create a log message
 
