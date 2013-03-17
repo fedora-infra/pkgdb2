@@ -162,3 +162,32 @@ def pkg_change_owner(session, pkg_name, clt_name, pkg_owner, user):
         session.flush()
     else:
         raise PkgdbException('You are now allowed to change the owner.')
+
+
+def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
+                    deprecated):
+    """
+    Return the list of packages matching the given criteria
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name: the name of the package
+    :arg clt_name: the name of the collection
+    :arg pkg_owner: name of the new owner of the package
+    :arg orphaned: a boolean to restricted to orphaned packages
+    :arg deprecated: a boolean to restricted to deprecated packages
+    """
+    if '*' in pkg_name:
+        pkg_name = pkg_name.replace('*', '%')
+    if orphaned:
+        pkg_name = 'orphan'
+    status = None
+    if deprecated:
+        status = 'Deprecated'
+
+    collection = model.Collection.by_name(session, clt_name)
+
+    return model.Package.search(session,
+                                pkg_name=pkg_name,
+                                clt_id=collection.id,
+                                pkg_owner=pkg_owner,
+                                pkg_status=status)
