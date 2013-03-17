@@ -59,6 +59,21 @@ class PackageListingtests(Modeltests):
                          "collectionid=1, qacontact=None)",
                          packages[0].__repr__())
 
+    def test_search_listing(self):
+        """ Test the search function of PackageListing. """
+        create_package_listing(self.session)
+        collection = model.Collection.by_name(self.session, 'F-18')
+        packages = model.PackageListing.search(self.session,
+                                               pkg_name='g%',
+                                               clt_id=collection.id,
+                                               pkg_owner=None,
+                                               pkg_status=None)
+        print packages
+        self.assertEqual(2, len(packages))
+        self.assertEqual("PackageListing(10, u'Approved', packageid=1, "
+                         "collectionid=1, qacontact=None)",
+                         packages[0].__repr__())
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PackageListingtests)

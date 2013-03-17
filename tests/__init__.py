@@ -158,10 +158,11 @@ def create_package_listing(session):
 
     guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
+    geany_pkg = model.Package.by_name(session, 'geany')
     f18_collec = model.Collection.by_name(session, 'F-18')
     devel_collec = model.Collection.by_name(session, 'devel')
 
-    # Pkg: Guake - Collection: F18 - Approved
+    # Pkg: guake - Collection: F18 - Approved
     pkgltg = model.PackageListing(owner=10,
                                   status='Approved',
                                   packageid=guake_pkg.id,
@@ -169,7 +170,7 @@ def create_package_listing(session):
                                   qacontact=None,
                                   )
     session.add(pkgltg)
-    # Pkg: Guake - Collection: devel - Approved
+    # Pkg: guake - Collection: devel - Approved
     pkgltg = model.PackageListing(owner=10,
                                   status='Approved',
                                   packageid=guake_pkg.id,
@@ -190,6 +191,14 @@ def create_package_listing(session):
                                   status='Deprecated',
                                   packageid=fedocal_pkg.id,
                                   collectionid=devel_collec.id,
+                                  qacontact=None,
+                                  )
+    session.add(pkgltg)
+    # Pkg: geany - Collection: F18 - Approved
+    pkgltg = model.PackageListing(owner=10,
+                                  status='Approved',
+                                  packageid=geany_pkg.id,
+                                  collectionid=f18_collec.id,
                                   qacontact=None,
                                   )
     session.add(pkgltg)
