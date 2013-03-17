@@ -668,6 +668,14 @@ class PackageListing(BASE):
 
         return clone_branch
 
+    def to_json(self):
+        """ Return a dictionnary representation of this object. """
+        return dict(
+                package=self.package.api_repr(version),
+                collection=self.collection.api_repr(version),
+                owner=self.owner,
+                qacontact=self.qacontact,
+            )
 
 class Package(BASE):
     '''Software we are packaging.
