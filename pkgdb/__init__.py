@@ -37,3 +37,9 @@ __version__ = '0.1.0'
 APP = flask.Flask(__name__)
 APP.register_blueprint(API)
 
+
+# pylint: disable=W0613
+@APP.teardown_request
+def shutdown_session(exception=None):
+    """ Remove the DB session at the end of each request. """
+    SESSION.remove()
