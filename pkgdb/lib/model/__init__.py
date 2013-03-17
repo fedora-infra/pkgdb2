@@ -544,6 +544,31 @@ class PackageListing(BASE):
             PackageListing.packageid == pkgid).filter(
             PackageListing.collectionid == collectionid).one()
 
+    @classmethod
+    def search(cls, session, pkg_name, clt_id, pkg_owner=None,
+               pkg_status=None):
+        """
+        Return the list of packages matching the given criteria
+
+        :arg session: session with which to connect to the database
+        :arg pkg_name: the name of the package
+        :arg clt_id: the identifier of the collection
+        :arg pkg_owner: name of the new owner of the package
+        """
+        # Get all the packages matching the name
+        stmt = session.query(Package
+                             ).filter(Package.name.like(pkg_name)
+                             ).subquery()
+        # Match the other criteria
+        query = session.query(cls
+                              ).filter(PackageListing.packageid == stmt.c.id
+                              ).filter(PackageListing.collectionid == clt_id)
+        if pkg_owner:
+            query = query.filter(PackageListing.owner == pkg_owner)
+        if pkg_status:
+            query = query.filter(PackageListing.status == pkg_status)
+        return query.all()
+
     def __repr__(self):
         return 'PackageListing(%r, %r, packageid=%r, collectionid=%r,' \
                ' qacontact=%r)' % (self.owner, self.status,
