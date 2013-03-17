@@ -214,12 +214,11 @@ def api_package_deprecate():
 def api_package_list():
     ''' List packages.
 
-    :arg packagenames: Pattern to list packages from their name.
+    :arg packagename: Pattern to list packages from their name.
     :arg branches: List of string of the branches name in which these
         packages will be searched.
-    :arg username: String of the user name to to which restrict the
-        search.
-    :arg orphaned: Boolean to retrict the search to orphaned packages. 
+    :arg owner: String of the user name to to which restrict the search.
+    :arg orphaned: Boolean to retrict the search to orphaned packages.
     :arg deprecated: Boolean to retrict the search to deprecated
         packages.
 
@@ -227,7 +226,28 @@ def api_package_list():
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    pattern = flask.request.args.get('pgkname', None)
+    branches = flask.request.args.get('branches', None)
+    owner = flask.request.args.get('owner', None)
+    orphaned = bool(flask.request.args.get('orphaned', False))
+    deprecated = bool(flask.request.args.get('deprecated', False))
+
+    try:
+        packages = pkgdblib.search_package(SESSION,
+                                            pkg_name=pattern,
+                                            clt_name=branches,
+                                            pkg_owner=owner,
+                                            orphaned=orphaned,
+                                            deprecated=deprecated,
+                                            )
+        SESSION.commit()
+        output['output'] = 'ok'
+        output['packages'] = [pkg.to_json() for pkg in packages]
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        output['output'] = 'notok'
+        output['error'] = err
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
