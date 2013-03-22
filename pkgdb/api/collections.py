@@ -70,7 +70,7 @@ def api_collection_eol():
 
 @API.route('/collection/list/', methods=['POST'])
 def api_collection_list():
-    ''' List collections.
+    ''' List all collections.
 
     '''
     httpcode = 200
