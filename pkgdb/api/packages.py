@@ -24,6 +24,7 @@ API for package management.
 '''
 
 import flask
+import itertools
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
@@ -105,17 +106,18 @@ def api_package_orphan():
 
     form = forms.PackageOwnerForm(csrf_enabled=False)
     if form.validate_on_submit():
-        pkg_name = form.pkg_name.data
-        clt_name = form.clt_name.data
+        pkg_names = form.pkg_name.data.split(',')
+        pkg_branchs = form.clt_name.data.split(',')
         pkg_owner = form.pkg_owner.data
 
         try:
-            message = pkgdblib.pkg_change_owner(SESSION,
-                                                pkg_name=pkg_name,
-                                                clt_name=clt_name,
-                                                pkg_owner='orphan',
-                                                user=flask.g.fas_user,
-                                                )
+            for pkg_name, pkg_branch in itertools.product(pkg_names, pkg_branchs):
+                message = pkgdblib.pkg_change_owner(SESSION,
+                                                    pkg_name=pkg_name,
+                                                    clt_name=clt_name,
+                                                    pkg_owner='orphan',
+                                                    user=flask.g.fas_user,
+                                                    )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -156,17 +158,18 @@ def api_package_unorphan():
 
     form = forms.PackageOwnerForm(csrf_enabled=False)
     if form.validate_on_submit():
-        pkg_name = form.pkg_name.data
-        pkg_branch = form.pkg_branch.data
+        pkg_names = form.pkg_name.data.split(',')
+        pkg_branchs = form.pkg_branch.data.split(',')
         pkg_owner = form.pkg_owner.data
 
         try:
-            message = pkgdblib.pkg_change_owner(SESSION,
-                                                pkg_name=pkg_name,
-                                                pkg_branch=pkg_branch,
-                                                pkg_owner=pkg_owner,
-                                                user=flask.g.fas_user,
-                                                )
+            for pkg_name, pkg_branch in itertools.product(pkg_names, pkg_branchs):
+                message = pkgdblib.pkg_change_owner(SESSION,
+                                                    pkg_name=pkg_name,
+                                                    pkg_branch=pkg_branch,
+                                                    pkg_owner=pkg_owner,
+                                                    user=flask.g.fas_user,
+                                                    )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -203,7 +206,36 @@ def api_package_deprecate():
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    form = forms.DeprecatePackageForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        pkg_names = form.pkg_name.data.split(',')
+        pkg_branchs = form.clt_name.data.split(',')
+
+        try:
+            for pkg_name, pkg_branch in itertools.product(pkg_names, pkg_branchs):
+                message = pkgdblib.pkg_deprecate(SESSION,
+                                                    pkg_name=pkg_name,
+                                                    clt_name=clt_name,
+                                                    user=flask.g.fas_user,
+                                                    )
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = [message]
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = err
+            httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
@@ -211,7 +243,8 @@ def api_package_deprecate():
 
 
 @API.route('/package/list/')
-def api_package_list():
+@API.route('/package/list/<pkgname>/')
+def api_package_list(pkgname=None):
     ''' List packages.
 
     :arg packagename: Pattern to list packages from their name.
@@ -226,7 +259,7 @@ def api_package_list():
     httpcode = 200
     output = {}
 
-    pattern = flask.request.args.get('pgkname', None)
+    pattern = flask.request.args.get('pgkname', pkgname)
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
