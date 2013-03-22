@@ -31,37 +31,41 @@ class AddCollectionForm(wtf.Form):
     collection_name = wtf.TextField('Collection name',
                                     [wtf.validators.Required()])
     collection_version = wtf.TextField('version',
-                                    [wtf.validators.Required()])
-    collection_status = wtf.SelectField('Status',
+                                       [wtf.validators.Required()])
+    collection_status = wtf.SelectField(
+        'Status',
         [wtf.validators.Required()],
         choices=[('EOL', 'EOL'),
                  ('Active', 'Active'),
                  ('Under Development', 'Under Development')]
-        )
+    )
     collection_numpkgs = wtf.FloatField('numpkgs')
 
 
 class AddPackageForm(wtf.Form):
     pkg_name = wtf.TextField('Package name',
-                                    [wtf.validators.Required()])
+                             [wtf.validators.Required()])
     pkg_summary = wtf.TextField('Summary',
-                                    [wtf.validators.Required()])
+                                [wtf.validators.Required()])
     pkg_reviewURL = wtf.URL('Review URL', [wtf.validators.Required(),
                             wtf.validators.URL()])
-    pkg_status = wtf.SelectField('Status',
+    pkg_status = wtf.SelectField(
+        'Status',
         [wtf.validators.Required()],
         choices=[('Approved', 'Approved'),
                  ('Awaiting Review', 'Awaiting Review'),
                  ('Denied', 'Denied'),
                  ('Obsolete', 'Obsolete'),
                  ('Removed', 'Removed')]
-        )
+    )
     pkg_shouldopen = wtf.BooleanField('Should open',
                                       [wtf.validators.Required()],
                                       value=True)
-    pkg_collection = wtf.SelectMultipleField('Collection',
+    pkg_collection = wtf.SelectMultipleField(
+        'Collection',
         [wtf.validators.Required()],
-        choices=[(item, item) for item in []])
+        choices=[(item, item) for item in []]
+    )
     pkg_owner = wtf.TextField('Owner', [wtf.validators.optional()])
     pkg_upstreamURL = wtf.TextField('Upstream URL',
                                     [wtf.validators.optional()])
@@ -69,54 +73,58 @@ class AddPackageForm(wtf.Form):
 
 class SetAclPackageForm(wtf.Form):
     pkg_name = wtf.TextField('Package name',
-                                    [wtf.validators.Required()])
+                             [wtf.validators.Required()])
     pkg_branch = wtf.TextField('Fedora branch',
-                                    [wtf.validators.Required()])
-    pkg_acl = wtf.SelectField('ACL',
+                               [wtf.validators.Required()])
+    pkg_acl = wtf.SelectField(
+        'ACL',
         [wtf.validators.Required()],
         choices=[('commit', 'commit'),
                  ('build', 'build'),
                  ('watchbugzilla', 'watchbugzilla'),
                  ('watchcommits', 'watchcommits'),
                  ('approveacls', 'approveacls')]
-        )
+    )
     pkg_user = wtf.TextField('Packager name',
-                                    [wtf.validators.Required()])
-    pkg_status = wtf.SelectField('Status',
+                             [wtf.validators.Required()])
+    pkg_status = wtf.SelectField(
+        'Status',
         [wtf.validators.Required()],
         choices=[('Approved', 'Approved'),
                  ('Awaiting Review', 'Awaiting Review'),
                  ('Denied', 'Denied'),
                  ('Obsolete', 'Obsolete'),
                  ('Removed', 'Removed')]
-        )
+    )
 
 
 class PackageStatusForm(wtf.Form):
     pkg_name = wtf.TextField('Package name',
-                                    [wtf.validators.Required()])
+                             [wtf.validators.Required()])
     collection_name = wtf.TextField('Collection name',
                                     [wtf.validators.Required()])
-    pkg_status = wtf.SelectField('Status',
+    pkg_status = wtf.SelectField(
+        'Status',
         [wtf.validators.Required()],
         choices=[('Approved', 'Approved'),
                  ('Awaiting Review', 'Awaiting Review'),
                  ('Denied', 'Denied'),
                  ('Obsolete', 'Obsolete'),
                  ('Removed', 'Removed')]
-        )
+    )
 
 
 class PackageOwnerForm(wtf.Form):
     pkg_name = wtf.TextField('Package name',
-                                    [wtf.validators.Required()])
+                             [wtf.validators.Required()])
     clt_name = wtf.TextField('Fedora branch',
-                                    [wtf.validators.Required()])
-    pkg_owner  = wtf.TextField('New package owner',
-                                    [wtf.validators.Required()])
+                             [wtf.validators.Required()])
+    pkg_owner = wtf.TextField('New package owner',
+                              [wtf.validators.Required()])
+
 
 class DeprecatePackageForm(wtf.Form):
     pkg_name = wtf.TextField('Package name',
-                                    [wtf.validators.Required()])
+                             [wtf.validators.Required()])
     clt_name = wtf.TextField('Fedora branch',
-                                    [wtf.validators.Required()])
+                             [wtf.validators.Required()])
