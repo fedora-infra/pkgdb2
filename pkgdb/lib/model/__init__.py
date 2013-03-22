@@ -791,6 +791,21 @@ class Package(BASE):
         '''
         return session.query(cls).all()
 
+    def to_json(self):
+        ''' Return a dictionnary representation of the object.
+        '''
+        acls = [pkg.to_json() for pkg in self.listings]
+        return {
+                'name': self.name,
+                'summary': self.summary,
+                'status': self.status,
+                'review_url': self.review_url,
+                'upstream_url': self.upstream_url,
+                'acls': acls,
+                'creation_date': self.date_created
+                }
+
+
 
 class Log(BASE):
     '''Base Log record.
