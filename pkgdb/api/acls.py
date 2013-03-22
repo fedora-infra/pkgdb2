@@ -25,8 +25,12 @@ API for ACL management.
 
 import flask
 
+from sqlalchemy.orm.exc import NoResultFound
+
 import pkgdb.forms
+import pkgdb.lib as pkgdblib
 from pkgdb.api import API
+from pkgdb.lib import model
 
 
 ## ACL
@@ -44,10 +48,16 @@ def api_acl_get(packagename=None):
     packagename = flask.request.args.get('packagename', None) or packagename
     httpcode = 200
     if packagename:
-        #TODO: retrieve acl for this package
-        pass
+        try:
+            packages = pkgdblib.get_acl_package(SESSION, packagename)
+            output = {'acls': [pkg.to_json() for pkg in packages]}
+        except NoResultFound:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = 'No package found with name "%s"' % packagename
+            httpcode = 500
     else:
-        output = {'output': 'notok', 'error': 'Invalid request'}
+        output = {'output': 'notok', 'error': 'No package provided'}
         httpcode = 500
 
     jsonout = flask.jsonify(output)
@@ -75,7 +85,42 @@ def api_acl_update():
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    form = forms.SetAclPackageForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        pkg_name = form.pkg_name.data
+        pkg_branch = form.pkg_branch.data.split(',')
+        pkg_acl = form.pkg_owner.data
+        pkg_status = form.pkg_status.data
+        pkg_user = form.pkg_user.data
+
+        try:
+            for branch in pkg_branch:
+                message = pkgdblib.set_acl_package(SESSION,
+                                                   pkg_name=pkg_name,
+                                                   pkg_branch=branch,
+                                                   pkg_acl=pkg_acl,
+                                                   pkg_status=pkg_status,
+                                                   pkg_user=pkg_user,
+                                                   user=flask.g.fas_user,
+                                                   )
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = [message]
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = err
+            httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
