@@ -80,6 +80,8 @@ class SetAclPackageForm(wtf.Form):
                  ('watchcommits', 'watchcommits'),
                  ('approveacls', 'approveacls')]
         )
+    pkg_user = wtf.TextField('Packager name',
+                                    [wtf.validators.Required()])
     pkg_status = wtf.SelectField('Status',
         [wtf.validators.Required()],
         choices=[('Approved', 'Approved'),
@@ -111,4 +113,10 @@ class PackageOwnerForm(wtf.Form):
     clt_name = wtf.TextField('Fedora branch',
                                     [wtf.validators.Required()])
     pkg_owner  = wtf.TextField('New package owner',
+                                    [wtf.validators.Required()])
+
+class DeprecatePackageForm(wtf.Form):
+    pkg_name = wtf.TextField('Package name',
+                                    [wtf.validators.Required()])
+    clt_name = wtf.TextField('Fedora branch',
                                     [wtf.validators.Required()])
