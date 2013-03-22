@@ -42,8 +42,9 @@ def create_session(db_url, debug=False, pool_recycle=3600):
         output of sqlalchemy or not.
     :return a Session that can be used to query the database.
     """
-    engine = sqlalchemy.create_engine(db_url, echo=debug,
-        pool_recycle=pool_recycle)
+    engine = sqlalchemy.create_engine(db_url,
+                                      echo=debug,
+                                      pool_recycle=pool_recycle)
     scopedsession = scoped_session(sessionmaker(bind=engine))
     return scopedsession
 
@@ -81,8 +82,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     for collec in pkg_collection:
         collection = model.Collection.by_name(session, collec)
         pkglisting = package.create_listing(owner=pkg_owner,
-                                        collection=collection,
-                                        statusname=pkg_status)
+                                            collection=collection,
+                                            statusname=pkg_status)
         session.add(pkglisting)
     session.flush()
 
@@ -128,9 +129,8 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     personpkg = model.PersonPackageListing.get_or_create(session,
                                                          pkg_user.id,
                                                          pkglisting.id)
-    personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(session,
-                                                                      personpkg.id,
-                                                                      acl)
+    personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(
+                    session, personpkg.id, acl)
     personpkgacl.status = status
     session.add(personpkgacl)
     session.flush()
@@ -200,9 +200,8 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
     session.flush()
 
 
-
 def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
-                    deprecated):
+                   deprecated):
     """
     Return the list of packages matching the given criteria
 
