@@ -27,6 +27,7 @@ import flask
 
 import pkgdb.forms
 from pkgdb.api import API
+from pkgdb.lib import model
 
 
 ## Collection
@@ -75,7 +76,8 @@ def api_collection_list():
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    collections = model.Collection.all(SESSION)
+    output = {'collections': [collec.api_repr(1) for collec in collections]}
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
