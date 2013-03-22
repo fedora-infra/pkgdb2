@@ -31,7 +31,7 @@ from pkgdb.api import API
 
 ## Packagers
 @API.route('/packager/acl/')
-@API.route('/package/acl/get/<packagername>/')
+@API.route('/packager/acl/<packagername>/')
 def api_packager_acl(packagername=None):
     ''' List the pending ACL action of the user.
 
@@ -55,7 +55,7 @@ def api_packager_acl(packagername=None):
 
 
 @API.route('/packager/list/')
-@API.route('/package/acl/get/<pattern>/')
+@API.route('/packager/list/<pattern>/')
 def api_packager_list(pattern=None):
     ''' List packagers.
 
