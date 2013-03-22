@@ -101,9 +101,10 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='test',
                           clt_name='F-17',
-                          user=FakeFasUser(),
+                          pkg_user=FakeFasUser(),
                           acl='nothing',
-                          status='Appr'
+                          status='Appr',
+                          user=FakeFasUser(),
                           )
         self.session.rollback()
 
@@ -112,9 +113,10 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-17',
-                          user=FakeFasUser(),
+                          pkg_user=FakeFasUser(),
                           acl='nothing',
-                          status='Appr'
+                          status='Appr',
+                          user=FakeFasUser(),
                           )
         self.session.rollback()
 
@@ -123,9 +125,10 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          user=FakeFasUser(),
                           acl='nothing',
-                          status='Appro'
+                          pkg_user=FakeFasUser(),
+                          status='Appro',
+                          user=FakeFasUser(),
                           )
         self.session.rollback()
 
@@ -134,18 +137,20 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          user=FakeFasUser(),
+                          pkg_user=FakeFasUser(),
                           acl='nothing',
-                          status='Approved'
+                          status='Approved',
+                          user=FakeFasUser(),
                           )
         self.session.rollback()
 
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
-                                 user=FakeFasUser(),
+                                 pkg_user=FakeFasUser(),
                                  acl='commit',
-                                 status='Approved'
+                                 status='Approved',
+                                 user=FakeFasUser(),
                                  )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
@@ -205,6 +210,93 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].owner, 'toshio')
+
+        user = FakeFasUser()
+        user.name = 'toshio'
+        pkgdblib.pkg_change_owner(self.session,
+                                 pkg_name='guake',
+                                 clt_name='F-18',
+                                 user=user,
+                                 pkg_owner='orphan',
+                                 )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].owner, 'orphan')
+        self.assertEqual(pkg_acl[0].status, 'Orphaned')
+
+    def test_create_session(self):
+        """ Test the create_session function. """
+        session = pkgdblib.create_session('sqlite:///:memory:')
+        self.assertTrue(session is not None)
+
+    def test_search_package(self):
+        """ Test the search_package function. """
+        self.test_add_package()
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='gu*',
+                                       clt_name='F-18',
+                                       pkg_owner=None,
+                                       orphaned=None,
+                                       deprecated=None,
+                                       )
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0].collection.branchname, 'F-18')
+        self.assertEqual(pkgs[0].package.name, 'guake')
+        self.assertEqual(pkgs[0].owner, 'pingou')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='gu*',
+                                       clt_name='F-18',
+                                       pkg_owner=None,
+                                       orphaned=True,
+                                       deprecated=None,
+                                       )
+        self.assertEqual(len(pkgs), 0)
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='gu*',
+                                       clt_name='F-18',
+                                       pkg_owner=None,
+                                       orphaned=None,
+                                       deprecated=True,
+                                       )
+        self.assertEqual(len(pkgs), 0)
+
+    def test_pkg_deprecate(self):
+        """ Test the pkg_deprecate function. """
+        self.test_add_package()
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_deprecate,
+                          self.session,
+                          pkg_name='test',
+                          clt_name='F-17',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_deprecate,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-17',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        pkgdblib.pkg_deprecate(self.session,
+                               pkg_name='guake',
+                               clt_name='F-18',
+                               user=FakeFasUser()
+                               )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].owner, 'pingou')
+        self.assertEqual(pkg_acl[0].status, 'Deprecated')
 
 
 if __name__ == '__main__':
