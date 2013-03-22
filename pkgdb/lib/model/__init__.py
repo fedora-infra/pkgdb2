@@ -94,8 +94,8 @@ class CollectionPackage(Executable, ClauseElement):
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
     status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
-                                name='collection_status'),
-                        nullable=False)
+                               name='collection_status'),
+                       nullable=False)
     numpkgs = sa.Column(sa.Integer, nullable=False)
 
     # pylint: disable-msg=R0902, R0903
@@ -103,8 +103,8 @@ class CollectionPackage(Executable, ClauseElement):
         # pylint: disable-msg=E1101
         return 'CollectionPackage(id=%r, name=%r, version=%r,' \
             ' status=%r, numpkgs=%r,' \
-                % (self.id, self.name, self.version, self.status,
-                   self.numpkgs)
+            % (self.id, self.name, self.version, self.status,
+               self.numpkgs)
 
 
 @compiles(CollectionPackage)
@@ -114,12 +114,12 @@ def collection_package_create_view(*args, **kw):
         if kw['driver'] == 'pysqlite':
             sql_string = 'CREATE VIEW IF NOT EXISTS'
     return '%s CollectionPackage AS '\
-    'SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs '\
-    'FROM "PackageListing" pl, "Collection" c '\
-    'WHERE pl.collectionid = c.id '\
-    'AND pl.status = "Approved" '\
-    'GROUP BY c.id, c.name, c.version, c.status '\
-    'ORDER BY c.name, c.version;' % sql_string
+           'SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs '\
+           'FROM "PackageListing" pl, "Collection" c '\
+           'WHERE pl.collectionid = c.id '\
+           'AND pl.status = "Approved" '\
+           'GROUP BY c.id, c.name, c.version, c.status '\
+           'ORDER BY c.name, c.version;' % sql_string
 
 
 class PersonPackageListingAcl(BASE):
@@ -139,7 +139,7 @@ class PersonPackageListingAcl(BASE):
     status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
                                'Obsolete', 'Removed',
                                name='package_status'),
-                        nullable=False)
+                       nullable=False)
     personpackagelistingid = sa.Column(sa.Integer,
                                        sa.ForeignKey('PersonPackageListing.id',
                                                      ondelete='CASCADE',
@@ -169,16 +169,18 @@ class PersonPackageListingAcl(BASE):
     def get_or_create_personpkgid_acl(cls, session, personpkg_id, acl):
         """ Return the PersonPackageListingAcl for the provided
         PersonPackageListing identifier and ACL.
-        
+
         :arg session:
         :arg personpkg_id:
         :arg acl:
         """
         try:
-            pkgacl = session.query(cls).filter_by(personpackagelistingid=personpkg_id
+            pkgacl = session.query(cls).filter_by(personpackagelistingid=
+                                                  personpkg_id
                                                   ).filter_by(acl=acl).one()
         except NoResultFound:
-            pkgacl = PersonPackageListingAcl(personpackagelistingid=personpkg_id,
+            pkgacl = PersonPackageListingAcl(personpackagelistingid=
+                                             personpkg_id,
                                              status=None,
                                              acl=acl)
         return pkgacl
@@ -210,14 +212,14 @@ class GroupPackageListingAcl(BASE):
     status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
                                'Obsolete', 'Removed',
                                name='package_status'),
-                        nullable=False)
+                       nullable=False)
     group_packagelisting_id = sa.Column(sa.Integer,
-                                      sa.ForeignKey('GroupPackageListing.id',
-                                                    ondelete='CASCADE',
-                                                    onupdate='CASCADE'
-                                                    ),
-                                      nullable=False,
-                                      )
+                                        sa.ForeignKey('GroupPackageListing.id',
+                                                      ondelete='CASCADE',
+                                                      onupdate='CASCADE'
+                                                      ),
+                                        nullable=False,
+                                        )
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
@@ -283,8 +285,10 @@ class PersonPackageListing(BASE):
     @classmethod
     def by_userid_pkglistid(cls, session, user_id, packagelisting_id):
         return session.query(cls).filter(
-        PersonPackageListing.user_id == user_id).filter(
-        PersonPackageListing.packagelisting_id == packagelisting_id).one()
+            PersonPackageListing.user_id == user_id
+        ).filter(
+            PersonPackageListing.packagelisting_id == packagelisting_id
+        ).one()
 
     @classmethod
     def get_or_create(cls, session, user_id, packagelisting_id):
@@ -299,16 +303,18 @@ class PersonPackageListing(BASE):
         """
         try:
             personpkg = session.query(cls).filter(
-        PersonPackageListing.user_id == user_id).filter(
-        PersonPackageListing.packagelisting_id == packagelisting_id).one()
+                PersonPackageListing.user_id == user_id
+            ).filter(
+                PersonPackageListing.packagelisting_id == packagelisting_id
+            ).one()
         except NoResultFound:
             personpkg = PersonPackageListing(user_id=user_id,
-                                             packagelisting_id=packagelisting_id)
+                                             packagelisting_id=
+                                             packagelisting_id)
             session.add(personpkg)
             session.flush()
 
         return personpkg
-
 
     # pylint: disable-msg=R0903
     def __init__(self, user_id, packagelisting_id):
@@ -360,6 +366,7 @@ class GroupPackageListing(BASE):
         return 'GroupPackageListing(%r, %r)' % (self.groupname,
                                                 self.packagelistingid)
 
+
 class Collection(BASE):
     '''A Collection of packages.
 
@@ -371,8 +378,8 @@ class Collection(BASE):
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
     status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
-                                name='collection_status'),
-                        nullable=False)
+                               name='collection_status'),
+                       nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
     publishURLTemplate = sa.Column(sa.Text)
     pendingURLTemplate = sa.Column(sa.Text)
@@ -391,9 +398,10 @@ class Collection(BASE):
 
     # pylint: disable-msg=R0902, R0903
     def __init__(self, name, version, status, owner,
-            publishurltemplate=None, pendingurltemplate=None, summary=None,
-            description=None, branchname=None, distTag=None,
-            git_branch_name=None):
+                 publishurltemplate=None, pendingurltemplate=None,
+                 summary=None,
+                 description=None, branchname=None, distTag=None,
+                 git_branch_name=None):
         self.name = name
         self.version = version
         self.status = status
@@ -408,10 +416,10 @@ class Collection(BASE):
 
     def __repr__(self):
         return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
-                ' pendingurltemplate=%r, summary=%r, description=%r)' % (
-                self.name, self.version, self.status, self.owner,
-                self.publishURLTemplate, self.pendingURLTemplate,
-                self.summary, self.description)
+               ' pendingurltemplate=%r, summary=%r, description=%r)' % (
+               self.name, self.version, self.status, self.owner,
+               self.publishURLTemplate, self.pendingURLTemplate,
+               self.summary, self.description)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize Collections in messages. """
@@ -465,6 +473,7 @@ def collection_alias(pkg_listing):
 # Package and PackageListing are straightforward translations.  Look at these
 # if you're looking for a straightforward example.
 
+
 class PackageListing(BASE):
     '''This associates a package with a particular collection.
 
@@ -475,21 +484,21 @@ class PackageListing(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     packageid = sa.Column(sa.Integer,
                           sa.ForeignKey('Package.id',
-                                         ondelete="CASCADE",
-                                         onupdate="CASCADE"
-                                         ),
+                                        ondelete="CASCADE",
+                                        onupdate="CASCADE"
+                                        ),
                           nullable=False)
     collectionid = sa.Column(sa.Integer,
-                          sa.ForeignKey('Collection.id',
-                                         ondelete="CASCADE",
-                                         onupdate="CASCADE"
-                                         ),
-                          nullable=False)
+                             sa.ForeignKey('Collection.id',
+                                           ondelete="CASCADE",
+                                           onupdate="CASCADE"
+                                           ),
+                             nullable=False)
     owner = sa.Column(sa.Integer, nullable=False)
     qacontact = sa.Column(sa.Integer)
     status = sa.Column(sa.Enum('Approved', 'Removed', 'Deprecated', 'Orphaned',
-                                name='pl_status'),
-                        nullable=False)
+                               name='pl_status'),
+                       nullable=False)
     statuschange = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
     __table_args__ = (
@@ -499,14 +508,20 @@ class PackageListing(BASE):
     package = relation("Package")
     collection = relation("Collection")
     people = relation(PersonPackageListing)
-    people2 = relation(PersonPackageListing, backref=backref('packagelisting'),
-        collection_class = attribute_mapped_collection('username'))
+    people2 = relation(
+        PersonPackageListing,
+        backref=backref('packagelisting'),
+        collection_class=attribute_mapped_collection('username')
+    )
     groups = relation(GroupPackageListing)
-    groups2 = relation(GroupPackageListing, backref=backref('packagelisting'),
-        collection_class = attribute_mapped_collection('groupname'))
+    groups2 = relation(
+        GroupPackageListing,
+        backref=backref('packagelisting'),
+        collection_class=attribute_mapped_collection('groupname')
+    )
 
     def __init__(self, owner, status, packageid=None, collectionid=None,
-            qacontact=None):
+                 qacontact=None):
         self.packageid = packageid
         self.collectionid = collectionid
         self.owner = owner
@@ -524,7 +539,9 @@ class PackageListing(BASE):
 
         """
 
-        return session.query(cls).filter(PackageListing.packageid == pkgid).all()
+        return session.query(cls).filter(
+            PackageListing.packageid == pkgid
+        ).all()
 
     @classmethod
     def by_pkgid_collectionid(cls, session, pkgid, collectionid):
@@ -541,8 +558,10 @@ class PackageListing(BASE):
 
         '''
         return session.query(cls).filter(
-            PackageListing.packageid == pkgid).filter(
-            PackageListing.collectionid == collectionid).one()
+            PackageListing.packageid == pkgid
+        ).filter(
+            PackageListing.collectionid == collectionid
+        ).one()
 
     @classmethod
     def search(cls, session, pkg_name, clt_id, pkg_owner=None,
@@ -556,13 +575,14 @@ class PackageListing(BASE):
         :arg pkg_owner: name of the new owner of the package
         """
         # Get all the packages matching the name
-        stmt = session.query(Package
-                             ).filter(Package.name.like(pkg_name)
-                             ).subquery()
+        stmt = session.query(Package).filter(
+            Package.name.like(pkg_name)
+        ).subquery()
         # Match the other criteria
-        query = session.query(cls
-                              ).filter(PackageListing.packageid == stmt.c.id
-                              ).filter(PackageListing.collectionid == clt_id)
+        query = session.query(cls).filter(
+            PackageListing.packageid == stmt.c.id
+        ).filter(
+            PackageListing.collectionid == clt_id)
         if pkg_owner:
             query = query.filter(PackageListing.owner == pkg_owner)
         if pkg_status:
@@ -572,7 +592,8 @@ class PackageListing(BASE):
     def __repr__(self):
         return 'PackageListing(%r, %r, packageid=%r, collectionid=%r,' \
                ' qacontact=%r)' % (self.owner, self.status,
-                        self.packageid, self.collectionid, self.qacontact)
+                                   self.packageid, self.collectionid,
+                                   self.qacontact)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize PackageListing in messages. """
@@ -601,10 +622,12 @@ class PackageListing(BASE):
         # Retrieve the PackageListing for the to clone branch
         try:
             #pylint:disable-msg=E1101
-            clone_branch = PackageListing.query.join('package'
-                    ).join('collection').filter(
-                        and_(Package.name==self.package.name,
-                            Collection.branchname==branch)).one()
+            clone_branch = PackageListing.query.join('package').join(
+                'collection'
+            ).filter(
+                and_(Package.name == self.package.name,
+                     Collection.branchname == branch)
+            ).one()
             #pylint:enable-msg=E1101
         except InvalidRequestError:
             ### Create a new package listing for this release ###
@@ -614,9 +637,12 @@ class PackageListing(BASE):
             clone_collection = Branch.query.filter_by(branchname=branch).one()
             #pylint:enable-msg=E1101
             # Create the new PackageListing
-            clone_branch = self.package.create_listing(clone_collection,
-                    self.owner, STATUS[self.statuscode], qacontact=self.qacontact,
-                    author_name=author_name)
+            clone_branch = self.package.create_listing(
+                clone_collection,
+                self.owner,
+                STATUS[self.statuscode],
+                qacontact=self.qacontact,
+                author_name=author_name)
 
         log_params = {'user': author_name,
                       'pkg': self.package.name,
@@ -630,13 +656,13 @@ class PackageListing(BASE):
                 # Associate the group with the packagelisting
                 #pylint:disable-msg=E1101
                 clone_branch.groups2[group_name] = \
-                        GroupPackageListing(group_name)
+                    GroupPackageListing(group_name)
                 #pylint:enable-msg=E1101
             clone_group = clone_branch.groups2[group_name]
             for acl_name, acl in group.acls2.iteritems():
                 if acl_name not in clone_group.acls2:
                     clone_group.acls2[acl_name] = \
-                            GroupPackageListingAcl(acl_name, acl.status)
+                        GroupPackageListingAcl(acl_name, acl.status)
                 else:
                     # Set the acl to have the correct status
                     if acl.status != clone_group.acls2[acl_name].status:
@@ -652,13 +678,13 @@ class PackageListing(BASE):
                 # Associate the person with the packagelisting
                 #pylint:disable-msg=E1101
                 clone_branch.people2[person_name] = \
-                        PersonPackageListing(person_name)
+                    PersonPackageListing(person_name)
                 #pylint:enable-msg=E1101
             clone_person = clone_branch.people2[person_name]
             for acl_name, acl in person.acls2.iteritems():
                 if acl_name not in clone_person.acls2:
                     clone_person.acls2[acl_name] = \
-                            PersonPackageListingAcl(acl_name, acl.status)
+                        PersonPackageListingAcl(acl_name, acl.status)
                 else:
                     # Set the acl to have the correct status
                     if clone_person.acls2[acl_name].status \
@@ -670,12 +696,12 @@ class PackageListing(BASE):
 
     def to_json(self):
         """ Return a dictionnary representation of this object. """
-        return dict(
-                package=self.package.api_repr(version),
-                collection=self.collection.api_repr(version),
-                owner=self.owner,
-                qacontact=self.qacontact,
-            )
+        return dict(package=self.package.api_repr(version),
+                    collection=self.collection.api_repr(version),
+                    owner=self.owner,
+                    qacontact=self.qacontact,
+                    )
+
 
 class Package(BASE):
     '''Software we are packaging.
@@ -693,9 +719,9 @@ class Package(BASE):
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
     status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
-                                'Obsolete', 'Removed',
-                                name='package_status'),
-                        nullable=False)
+                               'Obsolete', 'Removed',
+                               name='package_status'),
+                       nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
     listings = relation(PackageListing)
@@ -711,7 +737,8 @@ class Package(BASE):
     def by_name(cls, session, pkgname):
         """ Return the package associated to the given name.
 
-        :raises sqlalchemy.InvalidRequestError: if the package name is not found
+        :raises sqlalchemy.InvalidRequestError: if the package name is
+            not found
         """
         return session.query(cls).filter(Package.name == pkgname).one()
 
@@ -726,9 +753,9 @@ class Package(BASE):
 
     def __repr__(self):
         return 'Package(%r, %r, %r, ' \
-               'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
-                self.name, self.summary, self.status,
-                self.upstream_url, self.review_url, self.shouldopen)
+            'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
+            self.name, self.summary, self.status,
+            self.upstream_url, self.review_url, self.shouldopen)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize Packages in messages. """
@@ -743,7 +770,7 @@ class Package(BASE):
             raise NotImplementedError("Unsupported version %r" % version)
 
     def create_listing(self, collection, owner, statusname,
-            qacontact=None, author_name=None):
+                       qacontact=None, author_name=None):
         '''Create a new PackageListing branch on this Package.
 
         :arg collection: Collection that the new PackageListing lives on
@@ -773,9 +800,10 @@ class Package(BASE):
                     acl_status = 'Approved'
                 else:
                     acl_status = 'Denied'
-                group_acl = GroupPackageListingAcl(acl=acl,
-                                                   status=acl_status,
-                                                   group_packagelisting_id=new_group.id)
+                group_acl = GroupPackageListingAcl(
+                    acl=acl,
+                    status=acl_status,
+                    group_packagelisting_id=new_group.id)
 
         #TODO: Create a log message
 
@@ -795,8 +823,7 @@ class Package(BASE):
         ''' Return a dictionnary representation of the object.
         '''
         acls = [pkg.to_json() for pkg in self.listings]
-        return {
-                'name': self.name,
+        return {'name': self.name,
                 'summary': self.summary,
                 'status': self.status,
                 'review_url': self.review_url,
@@ -804,7 +831,6 @@ class Package(BASE):
                 'acls': acls,
                 'creation_date': self.date_created
                 }
-
 
 
 class Log(BASE):
@@ -819,7 +845,7 @@ class Log(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     user_id = sa.Column(sa.Integer, nullable=False)
     change_time = sa.Column(sa.DateTime, nullable=False,
-                           default=datetime.datetime.utcnow())
+                            default=datetime.datetime.utcnow())
     package_id = sa.Column(sa.Integer,
                            sa.ForeignKey('Package.id',
                                          ondelete='RESTRICT',
@@ -835,8 +861,8 @@ class Log(BASE):
         self.description = description
 
     def __repr__(self):
-        return 'Log(%r, description=%r, changetime=%r)' % (self.username,
-                self.description, self.changetime)
+        return 'Log(%r, description=%r, changetime=%r)' % (
+            self.username, self.description, self.changetime)
 
     def save(self, session):
         ''' Save the current log entry. '''
