@@ -98,14 +98,16 @@ def get_acl_package(session, pkg_name):
     return pkglisting
 
 
-def set_acl_package(session, pkg_name, clt_name, user, acl, status):
-    """ Return the ACLs for the specified package.
+def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
+                    user):
+    """ Set the specified ACLs for the specified package.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
     :arg colt_name: the name of the collection
-    :arg user: the FAS user for which the ACL should be set/change
+    :arg pkg_user: the FAS user for which the ACL should be set/change
     :arg status: the status of the ACLs
+    :arg user: the user making the action
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -117,11 +119,14 @@ def set_acl_package(session, pkg_name, clt_name, user, acl, status):
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
+    ## TODO: check is user is allowed to change package
+
     pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
                                                             collection.id)
+    ## TODO: how do we get pkg_user's object?
     personpkg = model.PersonPackageListing.get_or_create(session,
-                                                         user.id,
+                                                         pkg_user.id,
                                                          pkglisting.id)
     personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(session,
                                                                       personpkg.id,
@@ -138,7 +143,7 @@ def pkg_change_owner(session, pkg_name, clt_name, pkg_owner, user):
     :arg pkg_name: the name of the package
     :arg clt_name: the name of the collection
     :arg pkg_owner: name of the new owner of the package.
-    :arg user: the FAS user for which the ACL should be set/change
+    :arg user: the user making the action
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -158,10 +163,42 @@ def pkg_change_owner(session, pkg_name, clt_name, pkg_owner, user):
 
     if pkglisting.owner == user.name:
         pkglisting.owner = pkg_owner
+        if pkg_owner == 'orphan':
+            pkglisting.status = 'Orphaned'
         session.add(pkglisting)
         session.flush()
     else:
         raise PkgdbException('You are now allowed to change the owner.')
+
+
+def pkg_deprecate(session, pkg_name, clt_name, user):
+    """ Deprecates a package.
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name: the name of the package
+    :arg clt_name: the name of the collection
+    :arg user: the user making the action
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    try:
+        collection = model.Collection.by_name(session, clt_name)
+    except NoResultFound:
+        raise PkgdbException('No collection found by this name')
+
+    pkglisting = model.PackageListing.by_pkgid_collectionid(session,
+                                                            package.id,
+                                                            collection.id)
+
+    ## TODO: Check if user is allowed to do the action
+
+    pkglisting.status = 'Deprecated'
+    session.add(pkglisting)
+    session.flush()
+
 
 
 def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
@@ -186,8 +223,8 @@ def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
 
     collection = model.Collection.by_name(session, clt_name)
 
-    return model.Package.search(session,
-                                pkg_name=pkg_name,
-                                clt_id=collection.id,
-                                pkg_owner=pkg_owner,
-                                pkg_status=status)
+    return model.PackageListing.search(session,
+                                       pkg_name=pkg_name,
+                                       clt_id=collection.id,
+                                       pkg_owner=pkg_owner,
+                                       pkg_status=status)
