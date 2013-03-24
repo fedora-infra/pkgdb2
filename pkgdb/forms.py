@@ -43,13 +43,16 @@ class AddCollectionForm(wtf.Form):
     collection_pendingURLTemplate = wtf.TextField('Pending URL template')
     collection_summary = wtf.TextField('Summary')
     collection_description = wtf.TextField('Description')
-    collection_branchname = wtf.TextField('Branch name')
-    collection_distTag = wtf.TextField('Dist tag')
+    collection_branchname = wtf.TextField('Branch name',
+                                          [wtf.validators.Required()])
+    collection_distTag = wtf.TextField('Dist tag',
+                                       [wtf.validators.Required()])
     collection_git_branch_name = wtf.TextField('Git branch name')
 
 
 class CollectionStatusForm(wtf.Form):
-    collection_branchname = wtf.TextField('Branch name')
+    collection_branchname = wtf.TextField('Branch name',
+                                          [wtf.validators.Required()])
     collection_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
