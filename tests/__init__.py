@@ -88,10 +88,10 @@ class Modeltests(unittest.TestCase):
 def create_collection(session):
     """ Create some basic collection for testing. """
     collection = model.Collection(
-                                  name = 'Fedora',
-                                  version = '18',
-                                  status = 'Active',
-                                  owner = 10,
+                                  name='Fedora',
+                                  version='18',
+                                  status='Active',
+                                  owner=10,
                                   publishURLTemplate=None,
                                   pendingURLTemplate=None,
                                   summary='Fedora 18 release',
@@ -103,10 +103,10 @@ def create_collection(session):
     session.add(collection)
 
     collection = model.Collection(
-                                  name = 'Fedora',
-                                  version = 'devel',
-                                  status = 'Under Development',
-                                  owner = 11,
+                                  name='Fedora',
+                                  version='devel',
+                                  status='Under Development',
+                                  owner=11,
                                   publishURLTemplate=None,
                                   pendingURLTemplate=None,
                                   summary='Fedora rawhide',
