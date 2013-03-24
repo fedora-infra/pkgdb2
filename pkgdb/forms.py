@@ -48,6 +48,17 @@ class AddCollectionForm(wtf.Form):
     collection_git_branch_name = wtf.TextField('Git branch name')
 
 
+class CollectionStatusForm(wtf.Form):
+    collection_branchname = wtf.TextField('Branch name')
+    collection_status = wtf.SelectField(
+        'Status',
+        [wtf.validators.Required()],
+        choices=[('EOL', 'EOL'),
+                 ('Active', 'Active'),
+                 ('Under Development', 'Under Development')]
+    )
+
+
 class AddPackageForm(wtf.Form):
     pkg_name = wtf.TextField('Package name',
                              [wtf.validators.Required()])
