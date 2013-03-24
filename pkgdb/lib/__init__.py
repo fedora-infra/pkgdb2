@@ -23,6 +23,7 @@ import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import SQLAlchemyError
 
 
 class PkgdbException(Exception):
@@ -77,7 +78,11 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
                                 upstream_url=pkg_upstreamURL
                                 )
         session.add(package)
-    session.flush()
+    try:
+        session.flush()
+        return 'Package created'
+    except SQLAlchemyError, err:
+        return 'Could not add packages'
 
     for collec in pkg_collection:
         collection = model.Collection.by_name(session, collec)
@@ -85,7 +90,11 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
                                             collection=collection,
                                             statusname=pkg_status)
         session.add(pkglisting)
-    session.flush()
+    try:
+        session.flush()
+        return 'Package associated to collection'
+    except SQLAlchemyError, err:
+        return 'Could not add packages'
 
 
 def get_acl_package(session, pkg_name):
@@ -245,3 +254,35 @@ def search_collection(session, clt_name, eold=False):
     return model.Collection.search(session,
                                    clt_name=clt_name,
                                    clt_status=status)
+
+
+def add_collection(session, clt_name, clt_version, clt_status,
+                   clt_publishurl, clt_pendingurl, clt_summary,
+                   clt_description, clt_branchname, clt_disttag,
+                   clt_gitbranch, user):
+    """ Add a new collection
+
+    
+    """
+
+    ## TODO: check if user is allowed to add a new collection
+
+    collection = model.Collection(
+        name=clt_name,
+        version=clt_version,
+        status=clt_status,
+        owner=user.id,
+        publishURLTemplate=clt_publishurl,
+        pendingURLTemplate=clt_pendingurl,
+        summary=clt_summary,
+        description=clt_description,
+        branchname=clt_branchname,
+        distTag=clt_disttag,
+        git_branch_name=clt_gitbranch,
+    )
+    try:
+        session.add(collection)
+        session.flush()
+        return 'Collection "%s" created' % collection.branchname
+    except SQLAlchemyError, err:
+        raise PkgdbException('Could not add Collection to the database.')

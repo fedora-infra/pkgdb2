@@ -314,6 +314,29 @@ class PkgdbLibtests(Modeltests):
                          " summary=u'Fedora 18 release', description=None)",
                          collections[0].__repr__())
 
+    def test_add_collection(self):
+        """ Test the add_collection function. """
+        pkgdblib.add_collection(self.session,
+                                clt_name='Fedora',
+                                clt_version='19',
+                                clt_status='Active',
+                                clt_publishurl=None,
+                                clt_pendingurl=None,
+                                clt_summary='Fedora 19 release',
+                                clt_description='Fedora 19 collection',
+                                clt_branchname='F-19',
+                                clt_disttag='.fc19',
+                                clt_gitbranch='f19',
+                                user=FakeFasUser(),
+                                )
+        self.session.commit()
+        collection = model.Collection.by_name(self.session, 'F-19')
+        self.assertEqual("Collection(u'Fedora', u'19', u'Active', 100, "
+                         "publishurltemplate=None, pendingurltemplate=None, "
+                         "summary=u'Fedora 19 release', "
+                         "description=u'Fedora 19 collection')",
+                         collection.__repr__())
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
