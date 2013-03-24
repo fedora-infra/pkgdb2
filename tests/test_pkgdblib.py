@@ -48,15 +48,16 @@ class PkgdbLibtests(Modeltests):
     def test_add_package(self):
         """ Test the add_package function. """
         create_collection(self.session)
-        pkgdblib.add_package(self.session,
-                             pkg_name='guake',
-                             pkg_summary='Drop down terminal',
-                             pkg_status='Approved',
-                             pkg_collection='F-18',
-                             pkg_owner='pingou',
-                             pkg_reviewURL=None,
-                             pkg_shouldopen=None,
-                             pkg_upstreamURL=None)
+        msg = pkgdblib.add_package(self.session,
+                                    pkg_name='guake',
+                                    pkg_summary='Drop down terminal',
+                                    pkg_status='Approved',
+                                    pkg_collection='F-18',
+                                    pkg_owner='pingou',
+                                    pkg_reviewURL=None,
+                                    pkg_shouldopen=None,
+                                    pkg_upstreamURL=None)
+        self.assertEqual(msg, 'Package created')
         self.session.commit()
         packages = model.Package.all(self.session)
         self.assertEqual(1, len(packages))
@@ -336,6 +337,18 @@ class PkgdbLibtests(Modeltests):
                          "summary=u'Fedora 19 release', "
                          "description=u'Fedora 19 collection')",
                          collection.__repr__())
+
+    def test_update_collection_status(self):
+        """ Test the update_collection_status function. """
+        create_collection(self.session)
+
+        collection = model.Collection.by_name(self.session, 'F-18')
+        self.assertEqual(collection.status, 'Active')
+
+        pkgdblib.update_collection_status(self.session, 'F-18', 'EOL')
+        self.session.commit()
+        collection = model.Collection.by_name(self.session, 'F-18')
+        self.assertEqual(collection.status, 'EOL')
 
 
 if __name__ == '__main__':

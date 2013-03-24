@@ -80,9 +80,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         session.add(package)
     try:
         session.flush()
-        return 'Package created'
     except SQLAlchemyError, err:
-        return 'Could not add packages'
+        raise PkgdbException('Could not add packages')
 
     for collec in pkg_collection:
         collection = model.Collection.by_name(session, collec)
@@ -92,9 +91,9 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         session.add(pkglisting)
     try:
         session.flush()
-        return 'Package associated to collection'
+        return 'Package created'
     except SQLAlchemyError, err:
-        return 'Could not add packages'
+        raise PkgdbException('Could not add packages')
 
 
 def get_acl_package(session, pkg_name):
@@ -286,3 +285,29 @@ def add_collection(session, clt_name, clt_version, clt_status,
         return 'Collection "%s" created' % collection.branchname
     except SQLAlchemyError, err:
         raise PkgdbException('Could not add Collection to the database.')
+
+
+def update_collection_status(session, clt_branchname, clt_status):
+    """ Update the status of a collection.
+
+    :arg session: session with which to connect to the database
+    :arg clt_branchname: branchname of the collection
+    :arg clt_status: status of the collection
+    """
+    try:
+        collection = model.Collection.by_name(session, clt_branchname)
+        
+        if collection.status != clt_status:
+            collection.status = clt_status
+            message = 'Collection updated to "%s"' % clt_status
+        else:
+            message = 'Collection "%s" already had this status' % clt_branchname
+        session.add(collection)
+        session.flush()
+        return message
+    except NoResultFound:
+        raise PkgdbException('Could not find collection "%s"' %
+            clt_branchname)
+    except SQLAlchemyError, err:
+        raise PkgdbException('Could not update the status of collection'
+            '"%s".' % clt_branchname)
