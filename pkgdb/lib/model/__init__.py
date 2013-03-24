@@ -398,16 +398,15 @@ class Collection(BASE):
 
     # pylint: disable-msg=R0902, R0903
     def __init__(self, name, version, status, owner,
-                 publishurltemplate=None, pendingurltemplate=None,
-                 summary=None,
-                 description=None, branchname=None, distTag=None,
-                 git_branch_name=None):
+                 publishURLTemplate=None, pendingURLTemplate=None,
+                 summary=None, description=None, branchname=None,
+                 distTag=None, git_branch_name=None):
         self.name = name
         self.version = version
         self.status = status
         self.owner = owner
-        self.publishURLTemplate = publishurltemplate
-        self.pendingURLTemplate = pendingurltemplate
+        self.publishURLTemplate = publishURLTemplate
+        self.pendingURLTemplate = pendingURLTemplate
         self.summary = summary
         self.description = description
         self.branchname = branchname
