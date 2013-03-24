@@ -66,8 +66,8 @@ def api_packager_list(pattern=None):
     httpcode = 200
     output = {}
 
-    pattern = flask.request.args.get('pattern', None) or packagername
-    if packagername:
+    pattern = flask.request.args.get('pattern', None) or pattern
+    if pattern:
         #TODO: implement the logic
         pass
     else:
