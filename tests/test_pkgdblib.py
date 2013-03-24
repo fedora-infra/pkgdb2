@@ -347,6 +347,9 @@ class PkgdbLibtests(Modeltests):
 
         pkgdblib.update_collection_status(self.session, 'F-18', 'EOL')
         self.session.commit()
+        msg = pkgdblib.update_collection_status(self.session, 'F-18',
+                                                'EOL')
+        self.assertEqual(msg, 'Collection "F-18" already had this status')
         collection = model.Collection.by_name(self.session, 'F-18')
         self.assertEqual(collection.status, 'EOL')
 

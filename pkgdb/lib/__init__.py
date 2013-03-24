@@ -80,7 +80,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         session.add(package)
     try:
         session.flush()
-    except SQLAlchemyError, err:
+    except SQLAlchemyError, err:  # pragma: no cover
         raise PkgdbException('Could not add packages')
 
     for collec in pkg_collection:
@@ -92,7 +92,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     try:
         session.flush()
         return 'Package created'
-    except SQLAlchemyError, err:
+    except SQLAlchemyError, err:  # pragma: no cover
         raise PkgdbException('Could not add packages')
 
 
@@ -283,7 +283,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
         session.add(collection)
         session.flush()
         return 'Collection "%s" created' % collection.branchname
-    except SQLAlchemyError, err:
+    except SQLAlchemyError, err:  # pragma: no cover
         raise PkgdbException('Could not add Collection to the database.')
 
 
@@ -305,9 +305,9 @@ def update_collection_status(session, clt_branchname, clt_status):
         session.add(collection)
         session.flush()
         return message
-    except NoResultFound:
+    except NoResultFound:  # pragma: no cover
         raise PkgdbException('Could not find collection "%s"' %
             clt_branchname)
-    except SQLAlchemyError, err:
+    except SQLAlchemyError, err:  # pragma: no cover
         raise PkgdbException('Could not update the status of collection'
             '"%s".' % clt_branchname)
