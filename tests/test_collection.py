@@ -53,6 +53,20 @@ class Collectiontests(Modeltests):
                          "publishurltemplate=None, pendingurltemplate=None,"
                          " summary=u'Fedora 18 release', description=None)",
                          collections[0].__repr__())
+        self.assertEqual(collections[0].branchname, 'F-18')
+
+    def test_search(self):
+        """ Test the search function of Collection. """
+        create_collection(self.session)
+
+        collections = model.Collection.search(self.session, 'EPEL%')
+        self.assertEqual(len(collections), 0)
+
+        collections = model.Collection.search(self.session, 'F-%', 'Active')
+        self.assertEqual("Collection(u'Fedora', u'18', u'Active', 10, "
+                         "publishurltemplate=None, pendingurltemplate=None,"
+                         " summary=u'Fedora 18 release', description=None)",
+                         collections[0].__repr__())
 
 
 if __name__ == '__main__':

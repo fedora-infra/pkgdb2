@@ -298,6 +298,22 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].owner, 'pingou')
         self.assertEqual(pkg_acl[0].status, 'Deprecated')
 
+    def test_search_collection(self):
+        """ Test the search_collection function. """
+        create_collection(self.session)
+
+        collections = pkgdblib.search_collection(self.session, 'EPEL*')
+        self.assertEqual(len(collections), 0)
+
+        collections = pkgdblib.search_collection(self.session, 'F-*', True)
+        self.assertEqual(len(collections), 0)
+
+        collections = pkgdblib.search_collection(self.session, 'F-*', False)
+        self.assertEqual("Collection(u'Fedora', u'18', u'Active', 10, "
+                         "publishurltemplate=None, pendingurltemplate=None,"
+                         " summary=u'Fedora 18 release', description=None)",
+                         collections[0].__repr__())
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)

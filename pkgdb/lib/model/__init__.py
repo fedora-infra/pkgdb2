@@ -457,6 +457,24 @@ class Collection(BASE):
         '''
         return session.query(cls).all()
 
+    @classmethod
+    def search(cls, session, clt_name, clt_status=None):
+        ''' Return the Collections matching the criteria.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+        :arg clt_name: pattern to retrict the Collection queried
+        :kwarg clt_status: the status of the Collection
+
+        '''
+        # Get all the packages matching the name
+        query = session.query(Collection).filter(
+            Collection.branchname.like(clt_name)
+        )
+        if clt_status:
+            query = query.filter(Collection.status == clt_status)
+        return query.all()
+
 
 def collection_alias(pkg_listing):
     '''Return the collection_alias that a package listing belongs to.

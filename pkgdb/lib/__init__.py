@@ -202,8 +202,7 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
 
 def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
                    deprecated):
-    """
-    Return the list of packages matching the given criteria
+    """ Return the list of packages matching the given criteria.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
@@ -227,3 +226,22 @@ def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
                                        clt_id=collection.id,
                                        pkg_owner=pkg_owner,
                                        pkg_status=status)
+
+
+def search_collection(session, clt_name, eold=False):
+    """ Return the list of Collection matching the given criteria.
+
+    :arg session: session with which to connect to the database
+    :arg clt_name: pattern to match the collection
+    :kwarg eold: boolean to filter in or out the collection which have
+        been "end of life"'d (defaults to False)
+    """
+    if '*' in clt_name:
+        clt_name = clt_name.replace('*', '%')
+    status = None
+    if eold:
+        status = 'EOL'
+
+    return model.Collection.search(session,
+                                   clt_name=clt_name,
+                                   clt_status=status)

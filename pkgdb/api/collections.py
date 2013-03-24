@@ -68,16 +68,25 @@ def api_collection_eol():
     return jsonout
 
 
-@API.route('/collection/list/', methods=['POST'])
-def api_collection_list():
-    ''' List all collections.
+@API.route('/collection/list/')
+@API.route('/collection/list/<pattern>')
+def api_collection_list(pattern=None):
+    ''' List collections.
 
     '''
     httpcode = 200
     output = {}
 
-    collections = model.Collection.all(SESSION)
-    output = {'collections': [collec.api_repr(1) for collec in collections]}
+    pattern = flask.request.args.get('pattern', None) or pattern
+    eold = bool(flask.request.args.get('eold', False))
+    if pattern:
+        packages = pkgdblib.search_collection(SESSION,
+                                              clt_name=pattern,
+                                              eold=eold
+                                              )
+    else:
+        collections = model.Collection.all(SESSION)
+        output = {'collections': [collec.api_repr(1) for collec in collections]}
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
