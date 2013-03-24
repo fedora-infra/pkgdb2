@@ -39,7 +39,13 @@ class AddCollectionForm(wtf.Form):
                  ('Active', 'Active'),
                  ('Under Development', 'Under Development')]
     )
-    collection_numpkgs = wtf.FloatField('numpkgs')
+    collection_publishURLTemplate = wtf.TextField('Publish URL template')
+    collection_pendingURLTemplate = wtf.TextField('Pending URL template')
+    collection_summary = wtf.TextField('Summary')
+    collection_description = wtf.TextField('Description')
+    collection_branchname = wtf.TextField('Branch name')
+    collection_distTag = wtf.TextField('Dist tag')
+    collection_git_branch_name = wtf.TextField('Git branch name')
 
 
 class AddPackageForm(wtf.Form):
