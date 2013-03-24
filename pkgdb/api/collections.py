@@ -57,19 +57,20 @@ def api_collection_new():
         clt_gitbranch = form.collection_git_branch_name.data
 
         try:
-            message = pkgdblib.add_collection(SESSION,
-                                           clt_name=clt_name,
-                                           clt_version=clt_version,
-                                           clt_status=clt_status,
-                                           clt_publishurl=clt_publishurl,
-                                           clt_pendingurl=clt_pendingurl,
-                                           clt_summary=clt_summary,
-                                           clt_description=clt_description,
-                                           clt_branchname=clt_branchname,
-                                           clt_disttag=clt_disttag,
-                                           clt_gitbranch=clt_gitbranch,
-                                           user=flask.g.fas_user,
-                                           )
+            message = pkgdblib.add_collection(
+                SESSION,
+                clt_name=clt_name,
+                clt_version=clt_version,
+                clt_status=clt_status,
+                clt_publishurl=clt_publishurl,
+                clt_pendingurl=clt_pendingurl,
+                clt_summary=clt_summary,
+                clt_description=clt_description,
+                clt_branchname=clt_branchname,
+                clt_disttag=clt_disttag,
+                clt_gitbranch=clt_gitbranch,
+                user=flask.g.fas_user,
+            )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -130,7 +131,9 @@ def api_collection_list(pattern=None):
                                               )
     else:
         collections = model.Collection.all(SESSION)
-        output = {'collections': [collec.api_repr(1) for collec in collections]}
+        output = {'collections':
+                  [collec.api_repr(1) for collec in collections]
+                  }
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
