@@ -426,10 +426,10 @@ class Collection(BASE):
             return dict(
                 name=self.name,
                 version=self.version,
-                publishurltemplate=self.publishurltemplate,
-                pendingurltemplate=self.pendingurltemplate,
+                publishurltemplate=self.publishURLTemplate,
+                pendingurltemplate=self.pendingURLTemplate,
             )
-        else:
+        else:  # pragma: no cover
             raise NotImplementedError("Unsupported version %r" % version)
 
     @classmethod
@@ -621,7 +621,7 @@ class PackageListing(BASE):
                 owner=self.owner,
                 qacontact=self.qacontact,
             )
-        else:
+        else:  # pragma: no cover
             raise NotImplementedError("Unsupported version %r" % version)
 
     def clone(self, branch, author_name):
@@ -713,8 +713,8 @@ class PackageListing(BASE):
 
     def to_json(self):
         """ Return a dictionnary representation of this object. """
-        return dict(package=self.package.api_repr(version),
-                    collection=self.collection.api_repr(version),
+        return dict(package=self.package.api_repr(1),
+                    collection=self.collection.api_repr(1),
                     owner=self.owner,
                     qacontact=self.qacontact,
                     )
@@ -780,10 +780,10 @@ class Package(BASE):
             return dict(
                 name=self.name,
                 summary=self.summary,
-                reviewurl=self.reviewurl,
-                upstreamurl=self.upstreamurl,
+                reviewurl=self.review_url,
+                upstreamurl=self.upstream_url,
             )
-        else:
+        else:  # pragma: no cover
             raise NotImplementedError("Unsupported version %r" % version)
 
     def create_listing(self, collection, owner, statusname,
