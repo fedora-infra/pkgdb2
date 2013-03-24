@@ -68,6 +68,14 @@ class Collectiontests(Modeltests):
                          " summary=u'Fedora 18 release', description=None)",
                          collections[0].__repr__())
 
+    def test_api_repr(self):
+        """ Test the api_repr function of Collection. """
+        create_collection(self.session)
+        collection = model.Collection.by_name(self.session, 'F-18')
+        collection = collection.api_repr(1)
+        self.assertEqual(collection.keys(), ['pendingurltemplate',
+                         'publishurltemplate', 'version', 'name'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Collectiontests)

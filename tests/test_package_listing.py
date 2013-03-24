@@ -68,11 +68,30 @@ class PackageListingtests(Modeltests):
                                                clt_id=collection.id,
                                                pkg_owner=None,
                                                pkg_status=None)
-        print packages
         self.assertEqual(2, len(packages))
         self.assertEqual("PackageListing(10, u'Approved', packageid=1, "
                          "collectionid=1, qacontact=None)",
                          packages[0].__repr__())
+
+    def test_api_repr(self):
+        """ Test the api_repr function of PackageListing. """
+        create_package_listing(self.session)
+        pkg = model.Package.by_name(self.session, 'guake')
+        package = model.PackageListing.by_package_id(self.session,
+                                                        pkg.id)[0]
+        package = package.api_repr(1)
+        self.assertEqual(package.keys(), ['owner', 'qacontact',
+                         'collection', 'package'])
+
+    def test_to_json(self):
+        """ Test the to_json function of PackageListing. """
+        create_package_listing(self.session)
+        pkg = model.Package.by_name(self.session, 'guake')
+        package = model.PackageListing.by_package_id(self.session,
+                                                        pkg.id)[0]
+        package = package.to_json()
+        self.assertEqual(package.keys(), ['owner', 'qacontact',
+                         'collection', 'package'])
 
 
 if __name__ == '__main__':

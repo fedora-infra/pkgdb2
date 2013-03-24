@@ -56,6 +56,23 @@ class Packagetests(Modeltests):
                          "shouldopen=True)",
                          packages[0].__repr__())
 
+    def test_to_json(self):
+        """ Test the to_json function of Package. """
+        create_package(self.session)
+        package = model.Package.by_name(self.session, 'guake')
+        package = package.to_json()
+        self.assertEqual(package.keys(), ['status', 'upstream_url',
+                         'name', 'summary', 'acls', 'creation_date',
+                         'review_url'])
+
+    def test_api_repr(self):
+        """ Test the api_repr function of Package. """
+        create_package(self.session)
+        package = model.Package.by_name(self.session, 'guake')
+        package = package.api_repr(1)
+        self.assertEqual(package.keys(), ['upstreamurl', 'name',
+                         'reviewurl', 'summary'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Packagetests)
