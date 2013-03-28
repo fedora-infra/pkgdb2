@@ -25,7 +25,7 @@ API for collection management.
 
 import flask
 
-import pkgdb.forms
+import pkgdb.forms as forms
 from pkgdb.api import API
 from pkgdb.lib import model
 
