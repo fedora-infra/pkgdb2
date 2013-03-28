@@ -249,7 +249,7 @@ class PersonPackageListing(BASE):
     __tablename__ = 'PersonPackageListing'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    user_id = sa.Column(sa.Integer, nullable=False)
+    user = sa.Column(sa.String(32), nullable=False)
     packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey('PackageListing.id',
@@ -269,7 +269,7 @@ class PersonPackageListing(BASE):
                              default=datetime.datetime.utcnow())
 
     __table_args__ = (
-        sa.UniqueConstraint('user_id', 'packagelisting_id'),
+        sa.UniqueConstraint('user', 'packagelisting_id'),
     )
 
     @classmethod
@@ -283,32 +283,32 @@ class PersonPackageListing(BASE):
         return session.query(cls).all()
 
     @classmethod
-    def by_userid_pkglistid(cls, session, user_id, packagelisting_id):
+    def by_user_pkglistid(cls, session, user, packagelisting_id):
         return session.query(cls).filter(
-            PersonPackageListing.user_id == user_id
+            PersonPackageListing.user == user
         ).filter(
             PersonPackageListing.packagelisting_id == packagelisting_id
         ).one()
 
     @classmethod
-    def get_or_create(cls, session, user_id, packagelisting_id):
+    def get_or_create(cls, session, user, packagelisting_id):
         """ Retrieve the PersonPackageListing which associates a person
         with a package in a certain collection.
 
         :arg session: the database session used to connect to the
             database
-        :arg user_id: the identifier (integer) of the user
+        :arg user: the username
         :arg packagelisting_id: the identifier of the PackageListing
             entry.
         """
         try:
             personpkg = session.query(cls).filter(
-                PersonPackageListing.user_id == user_id
+                PersonPackageListing.user == user
             ).filter(
                 PersonPackageListing.packagelisting_id == packagelisting_id
             ).one()
         except NoResultFound:
-            personpkg = PersonPackageListing(user_id=user_id,
+            personpkg = PersonPackageListing(user=user,
                                              packagelisting_id=
                                              packagelisting_id)
             session.add(personpkg)
@@ -317,12 +317,12 @@ class PersonPackageListing(BASE):
         return personpkg
 
     # pylint: disable-msg=R0903
-    def __init__(self, user_id, packagelisting_id):
-        self.user_id = user_id
+    def __init__(self, user, packagelisting_id):
+        self.user = user
         self.packagelisting_id = packagelisting_id
 
     def __repr__(self):
-        return 'PersonPackageListing(%r, %r)' % (self.user_id,
+        return 'PersonPackageListing(%r, %r)' % (self.user,
                                                  self.packagelisting_id)
 
 
@@ -380,7 +380,7 @@ class Collection(BASE):
     status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
                                name='collection_status'),
                        nullable=False)
-    owner = sa.Column(sa.Integer, nullable=False)
+    owner = sa.Column(sa.String(32), nullable=False)
     publishURLTemplate = sa.Column(sa.Text)
     pendingURLTemplate = sa.Column(sa.Text)
     summary = sa.Column(sa.Text)
@@ -860,7 +860,7 @@ class Log(BASE):
 
     __tablename__ = 'Log'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    user_id = sa.Column(sa.Integer, nullable=False)
+    user = sa.Column(sa.String(32), nullable=False)
     change_time = sa.Column(sa.DateTime, nullable=False,
                             default=datetime.datetime.utcnow())
     package_id = sa.Column(sa.Integer,
@@ -872,8 +872,8 @@ class Log(BASE):
                            )
     description = sa.Column(sa.Text, nullable=False)
 
-    def __init__(self, user_id, package_id, description):
-        self.user_id = user_id
+    def __init__(self, user, package_id, description):
+        self.user = user
         self.package_id = package_id
         self.description = description
 
@@ -886,15 +886,15 @@ class Log(BASE):
         session.add(self)
 
     @classmethod
-    def insert(cls, session, user_id, package, description):
+    def insert(cls, session, user, package, description):
         ''' Insert the given log entry into the database.
 
         :arg session: the session to connect to the database with
-        :arg user: the identifier of the user doing the action
+        :arg user: the username of the user doing the action
         :arg package: the `Package` object of the package changed
         :arg description: a short textual description of the action
             performed
 
         '''
-        log = Log(user_id, package.id, description)
+        log = Log(user, package.id, description)
         log.save(session)

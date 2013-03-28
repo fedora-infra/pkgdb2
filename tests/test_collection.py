@@ -49,7 +49,7 @@ class Collectiontests(Modeltests):
         """ Test the __repr__ function of Collection. """
         create_collection(self.session)
         collections = model.Collection.all(self.session)
-        self.assertEqual("Collection(u'Fedora', u'18', u'Active', 10, "
+        self.assertEqual("Collection(u'Fedora', u'18', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
                          " summary=u'Fedora 18 release', description=None)",
                          collections[0].__repr__())
@@ -63,7 +63,7 @@ class Collectiontests(Modeltests):
         self.assertEqual(len(collections), 0)
 
         collections = model.Collection.search(self.session, 'F-%', 'Active')
-        self.assertEqual("Collection(u'Fedora', u'18', u'Active', 10, "
+        self.assertEqual("Collection(u'Fedora', u'18', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
                          " summary=u'Fedora 18 release', description=None)",
                          collections[0].__repr__())

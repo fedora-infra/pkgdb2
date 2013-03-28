@@ -45,8 +45,9 @@ class PackageListingtests(Modeltests):
         create_package_listing(self.session)
         pkg = model.Package.by_name(self.session, 'guake')
         self.assertEqual(2,
-                         len(model.PackageListing.by_package_id(self.session,
-                                                        pkg.id))
+                         len(model.PackageListing.by_package_id(
+                            self.session,
+                            pkg.id))
                          )
 
     def test_repr_package_listing(self):
@@ -55,8 +56,8 @@ class PackageListingtests(Modeltests):
         pkg = model.Package.by_name(self.session, 'guake')
         packages = model.PackageListing.by_package_id(self.session,
                                                         pkg.id)
-        self.assertEqual("PackageListing(10, u'Approved', packageid=1, "
-                         "collectionid=1, qacontact=None)",
+        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+                         "packageid=1, collectionid=1, qacontact=None)",
                          packages[0].__repr__())
 
     def test_search_listing(self):
@@ -69,8 +70,8 @@ class PackageListingtests(Modeltests):
                                                pkg_owner=None,
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
-        self.assertEqual("PackageListing(10, u'Approved', packageid=1, "
-                         "collectionid=1, qacontact=None)",
+        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+                         "packageid=1, collectionid=1, qacontact=None)",
                          packages[0].__repr__())
 
     def test_api_repr(self):
@@ -78,7 +79,7 @@ class PackageListingtests(Modeltests):
         create_package_listing(self.session)
         pkg = model.Package.by_name(self.session, 'guake')
         package = model.PackageListing.by_package_id(self.session,
-                                                        pkg.id)[0]
+                                                     pkg.id)[0]
         package = package.api_repr(1)
         self.assertEqual(package.keys(), ['owner', 'qacontact',
                          'collection', 'package'])
@@ -88,7 +89,7 @@ class PackageListingtests(Modeltests):
         create_package_listing(self.session)
         pkg = model.Package.by_name(self.session, 'guake')
         package = model.PackageListing.by_package_id(self.session,
-                                                        pkg.id)[0]
+                                                     pkg.id)[0]
         package = package.to_json()
         self.assertEqual(package.keys(), ['owner', 'qacontact',
                          'collection', 'package'])

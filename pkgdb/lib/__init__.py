@@ -169,7 +169,7 @@ def pkg_change_owner(session, pkg_name, clt_name, pkg_owner, user):
 
     ## TODO: Check if flask.g.fas_user is an admin
 
-    if pkglisting.owner == user.name:
+    if pkglisting.owner == user.username:
         pkglisting.owner = pkg_owner
         if pkg_owner == 'orphan':
             pkglisting.status = 'Orphaned'
@@ -270,7 +270,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
         name=clt_name,
         version=clt_version,
         status=clt_status,
-        owner=user.id,
+        owner=user.username,
         publishURLTemplate=clt_publishurl,
         pendingURLTemplate=clt_pendingurl,
         summary=clt_summary,

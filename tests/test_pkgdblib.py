@@ -184,7 +184,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         fake_user = FakeFasUser()
-        fake_user.name = 'test'
+        fake_user.username = 'test'
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.pkg_change_owner,
                           self.session,
@@ -213,7 +213,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].owner, 'toshio')
 
         user = FakeFasUser()
-        user.name = 'toshio'
+        user.username = 'toshio'
         pkgdblib.pkg_change_owner(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
@@ -310,7 +310,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(collections), 0)
 
         collections = pkgdblib.search_collection(self.session, 'F-*', False)
-        self.assertEqual("Collection(u'Fedora', u'18', u'Active', 10, "
+        self.assertEqual("Collection(u'Fedora', u'18', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
                          " summary=u'Fedora 18 release', description=None)",
                          collections[0].__repr__())
@@ -332,7 +332,7 @@ class PkgdbLibtests(Modeltests):
                                 )
         self.session.commit()
         collection = model.Collection.by_name(self.session, 'F-19')
-        self.assertEqual("Collection(u'Fedora', u'19', u'Active', 100, "
+        self.assertEqual("Collection(u'Fedora', u'19', u'Active', u'pingou', "
                          "publishurltemplate=None, pendingurltemplate=None, "
                          "summary=u'Fedora 19 release', "
                          "description=u'Fedora 19 collection')",

@@ -47,7 +47,7 @@ DB_PATH = 'sqlite:///:memory:'
 class FakeFasUser(object):
     """ Fake FAS user used for the tests. """
     id = 100
-    name = 'pingou'
+    username = 'pingou'
     groups = ['packager', 'cla_done']
 
 
@@ -91,7 +91,7 @@ def create_collection(session):
                                   name='Fedora',
                                   version='18',
                                   status='Active',
-                                  owner=10,
+                                  owner='toshio',
                                   publishURLTemplate=None,
                                   pendingURLTemplate=None,
                                   summary='Fedora 18 release',
@@ -106,7 +106,7 @@ def create_collection(session):
                                   name='Fedora',
                                   version='devel',
                                   status='Under Development',
-                                  owner=11,
+                                  owner='kevin',
                                   publishURLTemplate=None,
                                   pendingURLTemplate=None,
                                   summary='Fedora rawhide',
@@ -163,7 +163,7 @@ def create_package_listing(session):
     devel_collec = model.Collection.by_name(session, 'devel')
 
     # Pkg: guake - Collection: F18 - Approved
-    pkgltg = model.PackageListing(owner=10,
+    pkgltg = model.PackageListing(owner='pingou',
                                   status='Approved',
                                   packageid=guake_pkg.id,
                                   collectionid=f18_collec.id,
@@ -171,7 +171,7 @@ def create_package_listing(session):
                                   )
     session.add(pkgltg)
     # Pkg: guake - Collection: devel - Approved
-    pkgltg = model.PackageListing(owner=10,
+    pkgltg = model.PackageListing(owner='pingou',
                                   status='Approved',
                                   packageid=guake_pkg.id,
                                   collectionid=devel_collec.id,
@@ -179,7 +179,7 @@ def create_package_listing(session):
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: F18 - Orphaned
-    pkgltg = model.PackageListing(owner=10,
+    pkgltg = model.PackageListing(owner='orphan',
                                   status='Orphaned',
                                   packageid=fedocal_pkg.id,
                                   collectionid=f18_collec.id,
@@ -187,7 +187,7 @@ def create_package_listing(session):
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: devel - Deprecated
-    pkgltg = model.PackageListing(owner=10,
+    pkgltg = model.PackageListing(owner='orphan',
                                   status='Deprecated',
                                   packageid=fedocal_pkg.id,
                                   collectionid=devel_collec.id,
@@ -195,7 +195,7 @@ def create_package_listing(session):
                                   )
     session.add(pkgltg)
     # Pkg: geany - Collection: F18 - Approved
-    pkgltg = model.PackageListing(owner=10,
+    pkgltg = model.PackageListing(owner='pingou',
                                   status='Approved',
                                   packageid=geany_pkg.id,
                                   collectionid=f18_collec.id,
@@ -218,11 +218,11 @@ def create_person_package(session):
     pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, devel_collec.id)
 
-    packager = model.PersonPackageListing(user_id = 10,
+    packager = model.PersonPackageListing(user='pingou',
                                           packagelisting_id=pklist_guake_f18.id
                                           )
     session.add(packager)
-    packager = model.PersonPackageListing(user_id = 20,
+    packager = model.PersonPackageListing(user='pingou',
                                           packagelisting_id=pklist_guake_devel.id
                                           )
     session.add(packager)
@@ -235,8 +235,9 @@ def create_person_package_acl(session):
 
     guake_pkg = model.Package.by_name(session, 'guake')
 
-    pkglist = model.PersonPackageListing.by_userid_pkglistid(session, 10,
-    guake_pkg.id)
+    pkglist = model.PersonPackageListing.by_user_pkglistid(session,
+                                                             'pingou',
+                                                             guake_pkg.id)
 
     packager = model.PersonPackageListingAcl(acl='commit',
                                              status='Approved',
