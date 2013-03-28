@@ -78,8 +78,8 @@ def create_tables(db_url, alembic_ini=None, debug=False):
         alembic_cfg = Config(alembic_ini)
         command.stamp(alembic_cfg, "head")
 
-    sessionmak = sessionmaker(bind=engine)
-    return sessionmak()
+    scopedsession = scoped_session(sessionmaker(bind=engine))
+    return scopedsession
 
 
 ## TODO: this is a view, create it as such...
