@@ -25,7 +25,8 @@ API for collection management.
 
 import flask
 
-import pkgdb.forms
+import pkgdb.lib as pkgdblib
+from pkgdb import SESSION
 from pkgdb.api import API
 
 
@@ -48,7 +49,7 @@ def api_packager_acl(packagername=None):
                                                )
         SESSION.commit()
         output['output'] = 'ok'
-        output['packagers'] = [pkg.to_json() for pkg in packagers]
+        output['acls'] = [pkg.to_json() for pkg in packagers]
     else:
         output = {'output': 'notok', 'error': 'Invalid request'}
         httpcode = 500
@@ -73,8 +74,9 @@ def api_packager_list(pattern=None):
     pattern = flask.request.args.get('pattern', None) or pattern
     if pattern:
         packagers = pkgdblib.search_packagers(SESSION,
-                                              pkg_name=pattern,
+                                              pattern=pattern,
                                               )
+        packagers = [pkg[0] for pkg in packagers]
         SESSION.commit()
         output['output'] = 'ok'
         output['packagers'] = packagers

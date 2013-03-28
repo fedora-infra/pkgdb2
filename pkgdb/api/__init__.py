@@ -24,6 +24,9 @@ API namespace for the Flask application.
 '''
 
 import flask
+import os
+import sys
+
 
 API = flask.Blueprint('api_ns', __name__, url_prefix = '/api')
 
@@ -32,3 +35,4 @@ API = flask.Blueprint('api_ns', __name__, url_prefix = '/api')
 def api():
     ''' Display the api information page. '''
     return flask.render_template('api.html')
+

@@ -27,15 +27,9 @@ import flask
 import os
 
 import lib as pkgdblib
-from api import API
-from api import acls
-from api import collections
-from api import packages
-from api import packagers
 
 
 __version__ = '0.1.0'
-
 
 APP = flask.Flask(__name__)
 APP.config.from_object('pkgdb.default_config')
@@ -44,8 +38,14 @@ if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
 
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
-APP.register_blueprint(API)
+# Import the API namespace
+from api import API
+from api import acls
+from api import collections
+from api import packages
+from api import packagers
 
+APP.register_blueprint(API)
 
 # pylint: disable=W0613
 @APP.teardown_request
