@@ -606,6 +606,23 @@ class PackageListing(BASE):
             query = query.filter(PackageListing.status == pkg_status)
         return query.all()
 
+    @classmethod
+    def search_owner(cls, session, pattern):
+        """ Return all the package whose owner match the pattern.
+        
+        :arg session: session with which to connect to the database
+        :arg pattern: pattern the owner of the package should match
+        """
+        query1 = session.query(sa.func.distinct(cls.owner)).filter(
+            PackageListing.owner.like(pattern)
+            )
+        query2 = session.query(
+                sa.func.distinct(PersonPackageListing.user)
+            ).filter(
+                PersonPackageListing.user.like(pattern)
+            )
+        return query1.union(query2).all()
+
     def __repr__(self):
         return 'PackageListing(%r, %r, packageid=%r, collectionid=%r,' \
                ' qacontact=%r)' % (self.owner, self.status,

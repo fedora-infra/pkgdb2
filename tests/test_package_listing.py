@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb.lib import model
-from tests import Modeltests, create_package_listing
+from tests import Modeltests, create_package_listing, create_person_package
 
 
 class PackageListingtests(Modeltests):
@@ -93,6 +93,17 @@ class PackageListingtests(Modeltests):
         package = package.to_json()
         self.assertEqual(package.keys(), ['owner', 'qacontact',
                          'collection', 'package'])
+
+    def test_search_owner(self):
+        """ Test the search_owner function of PackageListing. """
+        pkg = model.PackageListing.search_owner(self.session, 'pin%')
+        self.assertEqual(pkg, [])
+
+        create_person_package(self.session)
+
+        pkg = model.PackageListing.search_owner(self.session, 'pi%')
+        self.assertEqual(len(pkg), 1)
+        self.assertEqual(pkg[0][0], 'pingou')
 
 
 if __name__ == '__main__':

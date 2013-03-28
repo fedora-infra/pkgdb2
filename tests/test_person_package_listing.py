@@ -43,7 +43,7 @@ class PersonPackageListingtests(Modeltests):
     def test_init_package(self):
         """ Test the __init__ function of PersonPackageListing. """
         create_person_package(self.session)
-        self.assertEqual(2,
+        self.assertEqual(3,
                          len(model.PersonPackageListing.all(self.session))
                          )
 

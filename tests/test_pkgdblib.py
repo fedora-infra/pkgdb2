@@ -39,7 +39,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb.lib as pkgdblib
 from pkgdb.lib import model
 from tests import (FakeFasUser, Modeltests, create_collection,
-                   create_package)
+                   create_package, create_package_listing)
 
 
 class PkgdbLibtests(Modeltests):
@@ -352,6 +352,17 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(msg, 'Collection "F-18" already had this status')
         collection = model.Collection.by_name(self.session, 'F-18')
         self.assertEqual(collection.status, 'EOL')
+
+    def test_search_packagers(self):
+        """ Test the search_packagers function. """
+        pkg = pkgdblib.search_packagers(self.session, 'pin%')
+        self.assertEqual(pkg, [])
+
+        create_package_listing(self.session)
+
+        pkg = pkgdblib.search_packagers(self.session, 'pi%')
+        self.assertEqual(len(pkg), 1)
+        self.assertEqual(pkg[0][0], 'pingou')
 
 
 if __name__ == '__main__':

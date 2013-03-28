@@ -222,6 +222,12 @@ def create_person_package(session):
                                           packagelisting_id=pklist_guake_f18.id
                                           )
     session.add(packager)
+
+    packager = model.PersonPackageListing(user='toshio',
+                                          packagelisting_id=pklist_guake_f18.id
+                                          )
+    session.add(packager)
+
     packager = model.PersonPackageListing(user='pingou',
                                           packagelisting_id=pklist_guake_devel.id
                                           )

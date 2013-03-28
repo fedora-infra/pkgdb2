@@ -68,8 +68,12 @@ def api_packager_list(pattern=None):
 
     pattern = flask.request.args.get('pattern', None) or pattern
     if pattern:
-        #TODO: implement the logic
-        pass
+        packagers = pkgdblib.search_packagers(SESSION,
+                                              pkg_name=pattern,
+                                              )
+        SESSION.commit()
+        output['output'] = 'ok'
+        output['packagers'] = packagers
     else:
         output = {'output': 'notok', 'error': 'Invalid request'}
         httpcode = 500

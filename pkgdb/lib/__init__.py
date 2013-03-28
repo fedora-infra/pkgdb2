@@ -255,6 +255,19 @@ def search_collection(session, clt_name, eold=False):
                                    clt_status=status)
 
 
+def search_packagers(session, pattern):
+    """ Return the list of Packagers maching the given pattern.
+
+    :arg session: session with which to connect to the database
+    :arg pattern: pattern to match on the packagers
+    """
+    if '*' in pattern:
+        pattern = pattern.replace('*', '%')
+    packages = model.PackageListing.search_owner(session,
+                                                 pattern=pattern)
+    return packages
+
+
 def add_collection(session, clt_name, clt_version, clt_status,
                    clt_publishurl, clt_pendingurl, clt_summary,
                    clt_description, clt_branchname, clt_disttag,
