@@ -353,7 +353,7 @@ class PersonPackageListing(BASE):
     def to_json(self):
         """ Return a dictionnary representation of this object. """
         return dict(
-            package = self.packagelist.to_json(),
+            packagelist = self.packagelist.to_json(),
             user = self.user,
             acls = [acl.to_json() for acl in self.acls]
         )
@@ -459,6 +459,14 @@ class Collection(BASE):
             return dict(
                 name=self.name,
                 version=self.version,
+                publishurltemplate=self.publishURLTemplate,
+                pendingurltemplate=self.pendingURLTemplate,
+            )
+        elif version == 2:
+            return dict(
+                name=self.name,
+                version=self.version,
+                branchname=self.branchname,
                 publishurltemplate=self.publishURLTemplate,
                 pendingurltemplate=self.pendingURLTemplate,
             )
@@ -764,7 +772,7 @@ class PackageListing(BASE):
     def to_json(self):
         """ Return a dictionnary representation of this object. """
         return dict(package=self.package.api_repr(1),
-                    collection=self.collection.api_repr(1),
+                    collection=self.collection.api_repr(2),
                     owner=self.owner,
                     qacontact=self.qacontact,
                     )
