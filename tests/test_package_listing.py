@@ -74,6 +74,20 @@ class PackageListingtests(Modeltests):
                          "packageid=1, collectionid=1, qacontact=None)",
                          packages[0].__repr__())
 
+        packages = model.PackageListing.search(self.session,
+                                               pkg_name='g%',
+                                               clt_id=collection.id,
+                                               pkg_owner='pingou',
+                                               pkg_status=None)
+        self.assertEqual(2, len(packages))
+        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+                         "packageid=1, collectionid=1, qacontact=None)",
+                         packages[0].__repr__())
+        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+                         "packageid=3, collectionid=1, qacontact=None)",
+                         packages[1].__repr__())
+
+
     def test_api_repr(self):
         """ Test the api_repr function of PackageListing. """
         create_package_listing(self.session)

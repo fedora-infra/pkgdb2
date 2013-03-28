@@ -34,7 +34,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb.lib import model
-from tests import Modeltests, create_person_package
+from tests import (Modeltests, create_person_package,
+                   create_person_package_acl)
 
 
 class PersonPackageListingtests(Modeltests):
@@ -46,6 +47,42 @@ class PersonPackageListingtests(Modeltests):
         self.assertEqual(3,
                          len(model.PersonPackageListing.all(self.session))
                          )
+
+    def test_to_json(self):
+        """ Test the to_json function of PersonPackageListing. """
+        packager = model.PersonPackageListing.get_acl_packager(
+            self.session, 'pingou')
+        self.assertEqual(0, len(packager))
+
+        create_person_package_acl(self.session)
+
+        packager = model.PersonPackageListing.get_acl_packager(
+            self.session, 'pingou')
+        self.assertEqual(2, len(packager))
+        output = packager[0].to_json()
+        self.assertEqual(output,
+        {'acls': [{'status': u'Approved', 'acl': u'commit'}],
+         'user': u'pingou',
+         'package': {'owner': u'pingou', 'qacontact': None,
+         'collection': {'pendingurltemplate': None,
+                        'publishurltemplate': None,
+                        'version': u'18', 'name': u'Fedora'},
+         'package': {'upstreamurl': u'http://guake.org',
+                     'name': u'guake',
+                     'reviewurl': u'https://bugzilla.redhat.com/450189',
+                     'summary': u'Top down terminal for GNOME'}
+         }
+        })
+
+    def test___repr__(self):
+        """ Test the __repr__ function of PersonPackageListing. """
+        create_person_package_acl(self.session)
+
+        packager = model.PersonPackageListing.get_acl_packager(
+            self.session, 'pingou')
+        self.assertEqual(2, len(packager))
+        output = packager[0].__repr__()
+        self.assertEqual(output, "PersonPackageListing(u'pingou', 1)")
 
 
 if __name__ == '__main__':
