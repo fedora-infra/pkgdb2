@@ -268,6 +268,16 @@ def search_packagers(session, pattern):
     return packages
 
 
+def get_acl_packager(session, packager):
+    """ Return the list of ACL associated with a packager.
+
+    :arg session: session with which to connect to the database
+    :arg packager: the name of the packager to retrieve the ACLs for.
+    """
+    return model.PersonPackageListing.get_acl_packager(
+        session, packager=packager)
+
+
 def add_collection(session, clt_name, clt_version, clt_status,
                    clt_publishurl, clt_pendingurl, clt_summary,
                    clt_description, clt_branchname, clt_disttag,

@@ -39,7 +39,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb.lib as pkgdblib
 from pkgdb.lib import model
 from tests import (FakeFasUser, Modeltests, create_collection,
-                   create_package, create_package_listing)
+                   create_package, create_package_listing,
+                   create_person_package)
 
 
 class PkgdbLibtests(Modeltests):
@@ -355,14 +356,26 @@ class PkgdbLibtests(Modeltests):
 
     def test_search_packagers(self):
         """ Test the search_packagers function. """
-        pkg = pkgdblib.search_packagers(self.session, 'pin%')
+        pkg = pkgdblib.search_packagers(self.session, 'pin*')
         self.assertEqual(pkg, [])
 
         create_package_listing(self.session)
 
-        pkg = pkgdblib.search_packagers(self.session, 'pi%')
+        pkg = pkgdblib.search_packagers(self.session, 'pi*')
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0], 'pingou')
+
+    def test_get_acl_packager(self):
+        """ Test the get_acl_packager function. """
+        acls = pkgdblib.get_acl_packager(self.session, 'pingou')
+        self.assertEqual(acls, [])
+
+        create_person_package(self.session)
+
+        acls = pkgdblib.get_acl_packager(self.session, 'pingou')
+        self.assertEqual(len(acls), 2)
+        self.assertEqual(acls[0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
 
 
 if __name__ == '__main__':

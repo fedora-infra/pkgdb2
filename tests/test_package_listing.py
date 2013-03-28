@@ -105,6 +105,23 @@ class PackageListingtests(Modeltests):
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0], 'pingou')
 
+    
+    def test_get_acl_packager(self):
+        """ Test the get_acl_packager function of PersonPackageListing.
+        """
+
+        acls = model.PersonPackageListing.get_acl_packager(
+            self.session, 'pingou')
+        self.assertEqual(0, len(acls))
+
+        create_person_package(self.session)
+
+        acls = model.PersonPackageListing.get_acl_packager(
+            self.session, 'pingou')
+        self.assertEqual(2, len(acls))
+        self.assertEqual(acls[0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PackageListingtests)

@@ -194,6 +194,13 @@ class PersonPackageListingAcl(BASE):
         return 'PersonPackageListingAcl(%r, %r, personpackagelistingid=%r)' \
             % (self.acl, self.status, self.personpackagelistingid)
 
+    def to_json(self):
+        """ Return a dictionnary representation of the object. """
+        return dict(
+            acl = self.acl,
+            status = self.status
+        )
+
 
 class GroupPackageListingAcl(BASE):
     '''Acl on a package that a group owns.
@@ -259,6 +266,7 @@ class PersonPackageListing(BASE):
         nullable=False,
     )
 
+    packagelist = relation('PackageListing')
     acls = relation(PersonPackageListingAcl)
     acls2 = relation(PersonPackageListingAcl,
                      backref=backref('personpackagelisting'),
@@ -284,11 +292,28 @@ class PersonPackageListing(BASE):
 
     @classmethod
     def by_user_pkglistid(cls, session, user, packagelisting_id):
+        """ Retrieve the ACL associated with a user name and a
+        collection.
+        """
         return session.query(cls).filter(
             PersonPackageListing.user == user
         ).filter(
             PersonPackageListing.packagelisting_id == packagelisting_id
         ).one()
+
+    @classmethod
+    def get_acl_packager(cls, session, packager):
+        """ Retrieve the ACLs associated with a packager.
+
+        :arg session: the database session used to connect to the
+            database
+        :arg packager: the username of the packager to retrieve the ACls
+            of
+        """
+        acls = session.query(PersonPackageListing).filter(
+            PersonPackageListing.user == packager
+        ).all()
+        return acls
 
     @classmethod
     def get_or_create(cls, session, user, packagelisting_id):
@@ -324,6 +349,14 @@ class PersonPackageListing(BASE):
     def __repr__(self):
         return 'PersonPackageListing(%r, %r)' % (self.user,
                                                  self.packagelisting_id)
+
+    def to_json(self):
+        """ Return a dictionnary representation of this object. """
+        return dict(
+            package = self.packagelist.to_json(),
+            user = self.user,
+            acls = [acl.to_json() for acl in self.acls]
+        )
 
 
 class GroupPackageListing(BASE):
@@ -815,8 +848,8 @@ class Package(BASE):
             logging is made generic
         :returns: The new PackageListing object.
 
-        This creates a new PackageListing for this Package.  The PackageListing
-        has default values set for group acls.
+        This creates a new PackageListing for this Package.
+        The PackageListing has default values set for group acls.
         '''
         pkg_listing = PackageListing(owner=owner,
                                      status=statusname,

@@ -43,8 +43,12 @@ def api_packager_acl(packagername=None):
 
     packagername = flask.request.args.get('packagername', None) or packagername
     if packagername:
-        #TODO: implement the logic
-        pass
+        packagers = pkgdblib.get_acl_packager(SESSION,
+                                               packager=packagername,
+                                               )
+        SESSION.commit()
+        output['output'] = 'ok'
+        output['packagers'] = [pkg.to_json() for pkg in packagers]
     else:
         output = {'output': 'notok', 'error': 'Invalid request'}
         httpcode = 500
