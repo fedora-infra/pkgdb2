@@ -24,7 +24,9 @@ Top level of the pkgdb Flask application.
 '''
 
 import flask
+import os
 
+import lib as pkgdblib
 from api import API
 from api import acls
 from api import collections
@@ -34,7 +36,14 @@ from api import packagers
 
 __version__ = '0.1.0'
 
+
 APP = flask.Flask(__name__)
+APP.config.from_object('pkgdb.default_config')
+if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
+    APP.config.from_envvar('PKGDB_CONFIG')
+
+SESSION = pkgdblib.create_session(APP.config['DB_URL'])
+
 APP.register_blueprint(API)
 
 
