@@ -138,7 +138,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
                                                          pkg_user.id,
                                                          pkglisting.id)
     personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(
-                    session, personpkg.id, acl)
+        session, personpkg.id, acl)
     personpkgacl.status = status
     session.add(personpkgacl)
     session.flush()
@@ -280,7 +280,6 @@ def add_collection(session, clt_name, clt_version, clt_status,
                    clt_gitbranch, user):
     """ Add a new collection
 
-    
     """
 
     ## TODO: check if user is allowed to add a new collection
@@ -315,18 +314,19 @@ def update_collection_status(session, clt_branchname, clt_status):
     """
     try:
         collection = model.Collection.by_name(session, clt_branchname)
-        
+
         if collection.status != clt_status:
             collection.status = clt_status
             message = 'Collection updated to "%s"' % clt_status
         else:
-            message = 'Collection "%s" already had this status' % clt_branchname
+            message = 'Collection "%s" already had this status' % \
+                clt_branchname
         session.add(collection)
         session.flush()
         return message
     except NoResultFound:  # pragma: no cover
         raise PkgdbException('Could not find collection "%s"' %
-            clt_branchname)
+                             clt_branchname)
     except SQLAlchemyError, err:  # pragma: no cover
         raise PkgdbException('Could not update the status of collection'
-            '"%s".' % clt_branchname)
+                             '"%s".' % clt_branchname)

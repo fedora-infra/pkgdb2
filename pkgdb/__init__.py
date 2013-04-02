@@ -47,6 +47,7 @@ from api import packagers
 
 APP.register_blueprint(API)
 
+
 # pylint: disable=W0613
 @APP.teardown_request
 def shutdown_session(exception=None):

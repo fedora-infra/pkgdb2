@@ -45,8 +45,8 @@ def api_packager_acl(packagername=None):
     packagername = flask.request.args.get('packagername', None) or packagername
     if packagername:
         packagers = pkgdblib.get_acl_packager(SESSION,
-                                               packager=packagername,
-                                               )
+                                              packager=packagername,
+                                              )
         SESSION.commit()
         output['output'] = 'ok'
         output['acls'] = [pkg.to_json() for pkg in packagers]

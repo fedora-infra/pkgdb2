@@ -111,7 +111,8 @@ def api_package_orphan():
         pkg_owner = form.pkg_owner.data
 
         try:
-            for pkg_name, pkg_branch in itertools.product(pkg_names, pkg_branchs):
+            for pkg_name, pkg_branch in itertools.product(
+                    pkg_names, pkg_branchs):
                 message = pkgdblib.pkg_change_owner(SESSION,
                                                     pkg_name=pkg_name,
                                                     clt_name=clt_name,
@@ -163,7 +164,8 @@ def api_package_unorphan():
         pkg_owner = form.pkg_owner.data
 
         try:
-            for pkg_name, pkg_branch in itertools.product(pkg_names, pkg_branchs):
+            for pkg_name, pkg_branch in itertools.product(
+                    pkg_names, pkg_branchs):
                 message = pkgdblib.pkg_change_owner(SESSION,
                                                     pkg_name=pkg_name,
                                                     pkg_branch=pkg_branch,
@@ -212,12 +214,13 @@ def api_package_deprecate():
         pkg_branchs = form.clt_name.data.split(',')
 
         try:
-            for pkg_name, pkg_branch in itertools.product(pkg_names, pkg_branchs):
+            for pkg_name, pkg_branch in itertools.product(
+                    pkg_names, pkg_branchs):
                 message = pkgdblib.pkg_deprecate(SESSION,
-                                                    pkg_name=pkg_name,
-                                                    clt_name=clt_name,
-                                                    user=flask.g.fas_user,
-                                                    )
+                                                 pkg_name=pkg_name,
+                                                 clt_name=clt_name,
+                                                 user=flask.g.fas_user,
+                                                 )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -267,12 +270,12 @@ def api_package_list(pkgname=None):
 
     try:
         packages = pkgdblib.search_package(SESSION,
-                                            pkg_name=pattern,
-                                            clt_name=branches,
-                                            pkg_owner=owner,
-                                            orphaned=orphaned,
-                                            deprecated=deprecated,
-                                            )
+                                           pkg_name=pattern,
+                                           clt_name=branches,
+                                           pkg_owner=owner,
+                                           orphaned=orphaned,
+                                           deprecated=deprecated,
+                                           )
         SESSION.commit()
         output['output'] = 'ok'
         output['packages'] = [pkg.to_json() for pkg in packages]

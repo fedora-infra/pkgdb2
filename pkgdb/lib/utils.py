@@ -155,9 +155,12 @@ class StatusCache(dict):
             status_value = MEMCACHE.get(mc_id)
 
             if not status_value:
-                status = session.query(StatusTranslation).filter(and_(
-                    StatusTranslationTable.c.language=='C',
-                    StatusTranslationTable.c.statusname==status_id)).one()
+                status = session.query(StatusTranslation).filter(
+                    and_(
+                        StatusTranslationTable.c.language == 'C',
+                        StatusTranslationTable.c.statusname == status_id
+                    )
+                ).one()
         else:
             # Have an id, look for a statusname
 
@@ -168,8 +171,8 @@ class StatusCache(dict):
             if not status_value:
                 try:
                     status = session.query(StatusTranslation).filter(and_(
-                        StatusTranslation.language=='C',
-                        StatusTranslation.statuscodeid==status_id)).one()
+                        StatusTranslation.language == 'C',
+                        StatusTranslation.statuscodeid == status_id)).one()
                 except DataError:
                     # If status_id was not an integer we get a DataError.  In
                     # that case, we know we won't find the value we want
@@ -178,7 +181,7 @@ class StatusCache(dict):
         if not status_value:
             if not status:
                 raise KeyError(_('Unknown status: %(status)s') %
-                    {'status': status_id})
+                               {'status': status_id})
 
             status_value = status.statuscodeid
             # Save in memcache for the next status lookup
@@ -195,12 +198,12 @@ class StatusCache(dict):
         '''
         status_map = {}
         for status in session.query(StatusTranslation).filter(
-                StatusTranslationlanguage=='C').all():
+                StatusTranslationlanguage == 'C').all():
             status_map[Hasher(status.statusname).hexdigest()
                        ] = status.statuscodeid
             status_map[status.statuscodeid] = status.statusname
         MEMCACHE.set_multi(status_map, key_prefix='pkgdb:status:',
-            time=self.timeout)
+                           time=self.timeout)
 
 
 def get_bz():
@@ -213,12 +216,12 @@ def get_bz():
         return _bugzilla
     # Get a connection to bugzilla
     bz_server = config.get('bugzilla.queryurl', config.get('bugzilla.url',
-        'https://bugzilla.redhat.com'))
+                           'https://bugzilla.redhat.com'))
     bz_url = bz_server + '/xmlrpc.cgi'
     bz_user = config.get('bugzilla.user')
     bz_pass = config.get('bugzilla.password')
     _bugzilla = RHBugzilla3(url=bz_url, user=bz_user, password=bz_pass,
-            cookiefile=None)
+                            cookiefile=None)
     return _bugzilla
 
 
@@ -245,7 +248,7 @@ This is mostly connections to services like FAS, bugzilla, and loading
     password = config.get('fas.password', 'admin')
 
     fas = AccountSystem(fas_url, username=username, password=password,
-            cache_session=False)
+                        cache_session=False)
     fas.cache = UserCache(fas)
 
     view.variable_providers.append(custom_template_vars)
@@ -273,7 +276,8 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         f = gzip.GzipFile(None, 'rb', None, os.fdopen(fdno, 'rb', bufsize))
         while 1:
             tmp = f.read(bufsize)
-            if tmp == "": break
+            if tmp == "":
+                break
             out.write(tmp)
         out.flush()
         f.close()
@@ -286,7 +290,8 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
                                   shell=False)
         while 1:
             tmp = xz_cmd.stdout.read(bufsize)
-            if tmp == "": break
+            if tmp == "":
+                break
             out.write(tmp)
         out.flush()
     elif compr == 'bzip2':
@@ -294,7 +299,8 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         decompressor = bz2.BZ2Decompressor()
         while 1:
             chunk = f.read(bufsize)
-            if chunk == "": break
+            if chunk == "":
+                break
             try:
                 tmp = decompressor.decompress(tmp)
             except EOFError:
@@ -304,7 +310,7 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         f.close()
     else:
         raise rpmUtils.RpmUtilsError, \
-              'Unsupported payload compressor: "%s"' % compr
+            'Unsupported payload compressor: "%s"' % compr
 
 __all__ = [LOG, MEMCACHE, STATUS, admin_grp, critpath_grps, fas, get_bz,
-        init_globals, is_xhr, pkger_grp, rpm2cpio, to_unicode]
+           init_globals, is_xhr, pkger_grp, rpm2cpio, to_unicode]

@@ -197,8 +197,8 @@ class PersonPackageListingAcl(BASE):
     def to_json(self):
         """ Return a dictionnary representation of the object. """
         return dict(
-            acl = self.acl,
-            status = self.status
+            acl=self.acl,
+            status=self.status
         )
 
 
@@ -353,9 +353,9 @@ class PersonPackageListing(BASE):
     def to_json(self):
         """ Return a dictionnary representation of this object. """
         return dict(
-            packagelist = self.packagelist.to_json(),
-            user = self.user,
-            acls = [acl.to_json() for acl in self.acls]
+            packagelist=self.packagelist.to_json(),
+            user=self.user,
+            acls=[acl.to_json() for acl in self.acls]
         )
 
 
@@ -650,18 +650,18 @@ class PackageListing(BASE):
     @classmethod
     def search_owner(cls, session, pattern):
         """ Return all the package whose owner match the pattern.
-        
+
         :arg session: session with which to connect to the database
         :arg pattern: pattern the owner of the package should match
         """
         query1 = session.query(sa.func.distinct(cls.owner)).filter(
             PackageListing.owner.like(pattern)
-            )
+        )
         query2 = session.query(
-                sa.func.distinct(PersonPackageListing.user)
-            ).filter(
-                PersonPackageListing.user.like(pattern)
-            )
+            sa.func.distinct(PersonPackageListing.user)
+        ).filter(
+            PersonPackageListing.user.like(pattern)
+        )
         return query1.union(query2).all()
 
     def __repr__(self):
