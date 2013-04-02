@@ -27,7 +27,7 @@ import flask
 
 from sqlalchemy.orm.exc import NoResultFound
 
-import pkgdb.forms
+import pkgdb.forms as forms
 import pkgdb.lib as pkgdblib
 from pkgdb.api import API
 from pkgdb.lib import model
@@ -47,6 +47,7 @@ def api_acl_get(packagename=None):
     '''
     packagename = flask.request.args.get('packagename', None) or packagename
     httpcode = 200
+    output = {}
     if packagename:
         try:
             packages = pkgdblib.get_acl_package(SESSION, packagename)
