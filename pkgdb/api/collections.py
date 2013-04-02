@@ -25,6 +25,7 @@ API for collection management.
 
 import flask
 
+import pkgdb.lib as pkgdblib
 import pkgdb.forms as forms
 from pkgdb.api import API
 from pkgdb.lib import model
@@ -123,7 +124,7 @@ def api_collection_status():
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -142,7 +143,7 @@ def api_collection_status():
 
 
 @API.route('/collection/list/')
-@API.route('/collection/list/<pattern>')
+@API.route('/collection/list/<pattern>/')
 def api_collection_list(pattern=None):
     ''' List collections.
 
@@ -151,17 +152,17 @@ def api_collection_list(pattern=None):
     output = {}
 
     pattern = flask.request.args.get('pattern', None) or pattern
-    eold = bool(flask.request.args.get('eold', False))
+    status = flask.request.args.get('status', None)
     if pattern:
-        packages = pkgdblib.search_collection(SESSION,
-                                              clt_name=pattern,
-                                              eold=eold
-                                              )
+        collections = pkgdblib.search_collection(SESSION,
+                                                 clt_name=pattern,
+                                                 status=status
+                                                 )
     else:
         collections = model.Collection.all(SESSION)
-        output = {'collections':
-                  [collec.api_repr(1) for collec in collections]
-                  }
+    output = {'collections':
+              [collec.api_repr(1) for collec in collections]
+              }
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode

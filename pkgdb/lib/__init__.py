@@ -236,19 +236,15 @@ def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
                                        pkg_status=status)
 
 
-def search_collection(session, clt_name, eold=False):
+def search_collection(session, clt_name, status=None):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database
     :arg clt_name: pattern to match the collection
-    :kwarg eold: boolean to filter in or out the collection which have
-        been "end of life"'d (defaults to False)
+    :kwarg status: status of the collection to search for
     """
     if '*' in clt_name:
         clt_name = clt_name.replace('*', '%')
-    status = None
-    if eold:
-        status = 'EOL'
 
     return model.Collection.search(session,
                                    clt_name=clt_name,
