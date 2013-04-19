@@ -1,0 +1,66 @@
+.acls tr td {
+    vertical-align: text-top;
+}
+
+body#summary #mainNav li#summaryTab a,
+body#collections #mainNav li#collectionsTab a,
+body#packagers #mainNav li#packagersTab a,
+body#packages #mainNav li#packagesTab a {
+    background-color: #fff;
+    color: #444;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/** Web App Styles **/
+/* Links to other web apps */
+a.bodhi {
+  padding-left: 20px;
+  background: url(https://fedoraproject.org/static/images/icons/fedora-infra-icon_bodhi.png) 0 50% no-repeat;
+}
+
+a.koji {
+  padding-left: 20px;
+  background: url(https://fedoraproject.org/static/images/icons/fedora-infra-icon_koji.png) 0 50% no-repeat;
+}
+
+a.bugz {
+  padding-left: 20px;
+  background: url(https://fedoraproject.org/static/images/icons/fedora-infra-icon_bugzilla.png) 0 50% no-repeat;
+}
+
+a.pkgdb {
+  padding-left: 20px;
+  background: url(https://fedoraproject.org/static/mages/icons/fedora-infra-icon_pkgdb.png) 0 50% no-repeat;
+}
+
+a.cvs {
+  padding-left: 20px;
+  background: url(https://fedoraproject.org/static/images/icons/fedora-infra-icon_source-control.png) 0 50% no-repeat;
+}
+
+#actions {
+  line-height: 1;
+  list-style: none;
+  margin: 1ex 0!important;
+  padding: 1ex 0ex 0ex 0ex;
+}
+
+#actions li {
+    display: inline;
+    margin-right: 1ex;
+}
+
+#metainfo th{
+    text-align: left;
+    background: none repeat scroll 0 0 #DDDDDD;
+}
+
+#metainfo th{
+    border: 1px solid #000000;
+    padding: 0.6ex;
+}
