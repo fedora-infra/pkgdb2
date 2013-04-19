@@ -40,8 +40,8 @@ def list_packagers(motif=None):
     pattern = flask.request.args.get('motif', motif) or '*'
 
     packagers = pkgdblib.search_packagers(SESSION,
-                                         pattern=pattern
-                                         )
+                                          pattern=pattern
+                                          )
 
     return flask.render_template(
         'list_packagers.html',
@@ -55,8 +55,8 @@ def packager_info(packager):
 
     packages = []
     try:
-        packages = pkgdblib.search_package(SESSION,'*',
-                                          pkg_owner=packager)
+        packages = pkgdblib.search_package(SESSION, '*',
+                                           pkg_owner=packager)
     except NoResultFound:
         SESSION.rollback()
 

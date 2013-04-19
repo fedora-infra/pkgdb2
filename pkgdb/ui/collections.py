@@ -40,8 +40,8 @@ def list_collections(motif=None):
     pattern = flask.request.args.get('motif', motif) or '*'
 
     collections = pkgdblib.search_collection(SESSION,
-                                            pattern=pattern
-                                            )
+                                             pattern=pattern
+                                             )
 
     return flask.render_template(
         'list_collections.html',
