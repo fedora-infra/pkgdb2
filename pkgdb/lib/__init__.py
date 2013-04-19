@@ -208,9 +208,29 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
     session.flush()
 
 
-def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
-                   deprecated):
+def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
+                   orphaned=False, deprecated=False):
     """ Return the list of packages matching the given criteria.
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name: the name of the package
+    """
+    if '*' in pkg_name:
+        pkg_name = pkg_name.replace('*', '%')
+    if orphaned:
+        pkg_owner = 'orphan'
+    status = None
+    if deprecated:
+        status = 'Deprecated'
+
+    return model.Package.search(session, pkg_name=pkg_name,
+                                pkg_owner=pkg_owner, pkg_status=status)
+
+
+def search_package_listing(session, pkg_name, clt_name=None,
+                           pkg_owner=None, orphaned=False,
+                           deprecated=False):
+    """ Return the list of packages listing matching the given criteria.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
@@ -222,32 +242,35 @@ def search_package(session, pkg_name, clt_name, pkg_owner, orphaned,
     if '*' in pkg_name:
         pkg_name = pkg_name.replace('*', '%')
     if orphaned:
-        pkg_name = 'orphan'
+        pkg_owner = 'orphan'
     status = None
     if deprecated:
         status = 'Deprecated'
 
-    collection = model.Collection.by_name(session, clt_name)
+    clt_id = None
+    if clt_name:
+        collection = model.Collection.by_name(session, clt_name)
+        clt_id = collection.id
 
     return model.PackageListing.search(session,
                                        pkg_name=pkg_name,
-                                       clt_id=collection.id,
+                                       clt_id=clt_id,
                                        pkg_owner=pkg_owner,
                                        pkg_status=status)
 
 
-def search_collection(session, clt_name, status=None):
+def search_collection(session, pattern, status=None):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database
-    :arg clt_name: pattern to match the collection
+    :arg pattern: pattern to match the collection
     :kwarg status: status of the collection to search for
     """
-    if '*' in clt_name:
-        clt_name = clt_name.replace('*', '%')
+    if '*' in pattern:
+        pattern = pattern.replace('*', '%')
 
     return model.Collection.search(session,
-                                   clt_name=clt_name,
+                                   clt_name=pattern,
                                    clt_status=status)
 
 
