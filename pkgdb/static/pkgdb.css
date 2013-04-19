@@ -2,7 +2,7 @@
     vertical-align: text-top;
 }
 
-body#summary #mainNav li#summaryTab a,
+body#index #mainNav li#indexTab a,
 body#collections #mainNav li#collectionsTab a,
 body#packagers #mainNav li#packagersTab a,
 body#packages #mainNav li#packagesTab a {
