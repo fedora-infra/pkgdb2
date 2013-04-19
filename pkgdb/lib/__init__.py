@@ -227,38 +227,6 @@ def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
                                 pkg_owner=pkg_owner, pkg_status=status)
 
 
-def search_package_listing(session, pkg_name, clt_name=None,
-                           pkg_owner=None, orphaned=False,
-                           deprecated=False):
-    """ Return the list of packages listing matching the given criteria.
-
-    :arg session: session with which to connect to the database
-    :arg pkg_name: the name of the package
-    :arg clt_name: the name of the collection
-    :arg pkg_owner: name of the new owner of the package
-    :arg orphaned: a boolean to restricted to orphaned packages
-    :arg deprecated: a boolean to restricted to deprecated packages
-    """
-    if '*' in pkg_name:
-        pkg_name = pkg_name.replace('*', '%')
-    if orphaned:
-        pkg_owner = 'orphan'
-    status = None
-    if deprecated:
-        status = 'Deprecated'
-
-    clt_id = None
-    if clt_name:
-        collection = model.Collection.by_name(session, clt_name)
-        clt_id = collection.id
-
-    return model.PackageListing.search(session,
-                                       pkg_name=pkg_name,
-                                       clt_id=clt_id,
-                                       pkg_owner=pkg_owner,
-                                       pkg_status=status)
-
-
 def search_collection(session, pattern, status=None):
     """ Return the list of Collection matching the given criteria.
 
