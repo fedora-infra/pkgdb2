@@ -40,7 +40,7 @@ def search():
     ''' Redirect to the correct url to perform the appropriate search.
     '''
     search_type = flask.request.args.get('type', 'package')
-    search_term = flask.request.args.get('term', 'a*')
+    search_term = flask.request.args.get('term', 'a*') or None
     
     if search_type == 'packager':
         return flask.redirect(flask.url_for('.list_packagers',
