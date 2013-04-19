@@ -57,7 +57,7 @@ class PkgdbLibtests(Modeltests):
                                     pkg_owner='pingou',
                                     pkg_reviewURL=None,
                                     pkg_shouldopen=None,
-                                    pkg_upstreamURL=None)
+                                    pkg_upstreamURL='http://guake.org')
         self.assertEqual(msg, 'Package created')
         self.session.commit()
         packages = model.Package.all(self.session)
@@ -244,9 +244,8 @@ class PkgdbLibtests(Modeltests):
                                        deprecated=None,
                                        )
         self.assertEqual(len(pkgs), 1)
-        self.assertEqual(pkgs[0].collection.branchname, 'F-18')
-        self.assertEqual(pkgs[0].package.name, 'guake')
-        self.assertEqual(pkgs[0].owner, 'pingou')
+        self.assertEqual(pkgs[0].name, 'guake')
+        self.assertEqual(pkgs[0].upstream_url, 'http://guake.org')
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',

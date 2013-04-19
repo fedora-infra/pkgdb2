@@ -155,7 +155,7 @@ def api_collection_list(pattern=None):
     status = flask.request.args.get('status', None)
     if pattern:
         collections = pkgdblib.search_collection(SESSION,
-                                                 clt_name=pattern,
+                                                 pattern=pattern,
                                                  status=status
                                                  )
     else:
