@@ -20,42 +20,31 @@
 #
 
 '''
-Top level of the pkgdb Flask application.
+UI namespace for the Flask application.
 '''
 
 import flask
-import os
-
-import lib as pkgdblib
 
 
-__version__ = '0.1.0'
-
-APP = flask.Flask(__name__)
-APP.config.from_object('pkgdb.default_config')
-if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
-    APP.config.from_envvar('PKGDB_CONFIG')
-
-SESSION = pkgdblib.create_session(APP.config['DB_URL'])
-
-# Import the API namespace
-from api import API
-from api import acls
-from api import collections
-from api import packages
-from api import packagers
-APP.register_blueprint(API)
-
-# Import the UI namespace
-from ui import UI
-from ui import packages
-from ui import packagers
-from ui import collections
-APP.register_blueprint(UI)
+UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
 
 
-# pylint: disable=W0613
-@APP.teardown_request
-def shutdown_session(exception=None):
-    """ Remove the DB session at the end of each request. """
-    SESSION.remove()
+@UI.route('/')
+def index():
+    ''' Display the index package DB page. '''
+    return flask.render_template('index.html')
+
+
+@UI.route('/search/')
+def search():
+    ''' Redirect to the correct url to perform the appropriate search.
+    '''
+    search_type = flask.request.args.get('type', 'package')
+    search_term = flask.request.args.get('term', 'a*')
+    
+    if search_type == 'packager':
+        return flask.redirect(flask.url_for('.list_packagers',
+            motif=search_term))
+    else:
+        return flask.redirect(flask.url_for('.list_packages',
+            motif=search_term))

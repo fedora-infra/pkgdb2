@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{% block title %}Fedora Package Database{% endblock %}</title>
+    <link rel="shortcut icon"
+        href="http://koji.fedoraproject.org/koji-static/images/koji.ico"/>
+    <link rel="stylesheet" type="text/css" media="screen" 
+        href="http://koji.fedoraproject.org/koji-static/koji.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" 
+        href="{{ url_for('static', filename='pkgdb.css') }}"/>
+  </head>
+  <body id="{%block tag %}{% endblock %}">
+
+    <div id="wrap">
+      <div id="innerwrap">
+
+        <!-- HEADER -->
+        <div id="header">
+          <img src="{{ url_for('static', filename='packagedb-logo.png') }}" alt="PackageDB Logo" id="kojiLogo"/>
+          <form action="{{url_for('.search')}}" id="headerSearch">
+            <select name="type">
+              <option value="package">Packages</option>
+              <option value="packager">Packagers</option>
+            </select>
+            <input type="text" name="term"/>
+            <input type="submit" value="Search"/>
+          </form>
+        </div><!-- end header -->
+
+        <!-- MAIN NAVIGATION -->
+        <div id="mainNav">
+          <h4 class="hide">Main Site Links:</h4>
+          <ul>
+            <li id="summaryTab"><a href="{{url_for('.index')}}">Home</a></li>
+            <li id="packagesTab"><a href="{{url_for('.list_packages')}}">Packages</a></li>
+            <li id="packagersTab"><a href="{{url_for('.list_packagers')}}">Packagers</a></li>
+            <li id="collectionsTab"><a href="{{url_for('.list_collections')}}">Collections</a></li>
+            <li id="tagsTab"><a href="{{url_for('.list_packages')}}">Stats</a></li>
+          </ul>
+        </div><!-- end mainNav -->
+
+        <span id="loginInfo">
+          <a href="login">login</a>
+        </span>
+
+        <div id="content">
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul id="flashes">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+        </div>
+
+        <p id="footer">
+          Copyright &copy; 2013 Red Hat
+          <a href="https://fedorahosted.org/packagedb/">pkgdb</a>
+        </p>
+
+      </div>
+    </div>
+
+    {% block jscripts %}
+    {% endblock %}
+
+  </body>
+</html>

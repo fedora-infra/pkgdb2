@@ -1,0 +1,20 @@
+{% extends "master.html" %}
+
+{% block title %} {{ super() }} {% endblock %}
+
+{%block tag %}packagers{% endblock %}
+
+{% block content %}
+
+<h1>Search packagers</h1>
+
+<ul>
+{% for packager in packagers %}
+    <li>
+        <a href="{{url_for('.packager_info', packager=packager)}}">
+            {{ packager }}</a>
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "master.html" %}
+
+{% block title %} {{ super() }} {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>Search packages</h1>
+
+{% for pkg in packages %}
+    <a href="{{url_for('.package_info', packagename=pkg.name)}}">
+            {{ pkg.name }}</a>
+    -- {{ pkg.summary }}
+    (
+    {% for listing in pkg.listings %}
+        {{ listing.collection.branchname }}
+    {% endfor %}
+    )
+{% endfor %}
+</table>
+
+{% endblock %}

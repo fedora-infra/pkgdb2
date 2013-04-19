@@ -1,0 +1,75 @@
+{% extends "master.html" %}
+
+{% block title %} {{ package.name }} | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>{{ package.name }}</h1>
+
+<p>
+    {{ package.summary }}
+</p>
+
+<ul id="actions">
+    <li>
+        <a href="http://koji.fedoraproject.org/koji/search?type=package&match=glob&terms={{ package.name }}"
+        class="koji">
+        Builds status</a>
+    </li>
+    <li>
+        <a href="https://admin.fedoraproject.org/updates/{{ package.name }}"
+        class="bodhi">
+        Updates status</a>
+    </li>
+    <li>
+        <a href="http://pkgs.fedoraproject.org/cgit/{{ package.name }}.git/"
+        class="cvs">
+        Package source</a>
+    </li>
+    <li>
+        <a href="https://apps.fedoraproject.org/packages/{{ package.name }}/bugs"
+        class="bugz">
+        Bugs reports</a>
+    </li>
+</ul>
+
+<table id="metainfo">
+    <tr>
+        <th>Status</th>
+        <td>{{ package.status }}</td>
+    </tr>
+    <tr>
+        <th>Created on</th>
+        <td>{{ package.date_created }}</td>
+    </tr>
+</table>
+
+{% for pkg in package_acl %}
+    <h3>{{ pkg.collection.name }} {{ pkg.collection.version }}</h3>
+    <p>owner: {{ pkg.owner }}</p>
+    <table class="acls">
+        {% for maintainer in pkg.people %}
+        <tr>
+            <td>{{ maintainer.user }}</td>
+            <td>
+                <table>
+                {% for acl in maintainer.acls %}
+                    <tr>
+                        <td>{{ acl.acl }}</td>
+                        <td>
+                            <img src="{{ url_for('static', filename='%s.png' % acl.status) }}" 
+                                 title="{{ acl.status }}" alt="{{ acl.status }}"/ >
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endfor %}
+</table>
+
+{% endblock %}

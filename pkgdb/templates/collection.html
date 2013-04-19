@@ -1,0 +1,38 @@
+{% extends "master.html" %}
+
+{% block title %} {{ collection.name }} {{ collection.version }} | PkgDB {% endblock %}
+
+{%block tag %}collections{% endblock %}
+
+{% block content %}
+
+<h1>{{ collection.name }} {{ collection.version }}</h1>
+
+<p>
+    Status : <img src="{{ url_for('static', filename='%s.png' % collection.status) }}" 
+              title="{{ collection.status }}" alt="{{ collection.status }}"/ >
+</p>
+
+<table>
+    <tr>
+        <td>Name:</td>
+        <td>{{ collection.name }}</td>
+    </tr>
+    <tr>
+        <td>Version:</td>
+        <td>{{ collection.version }}</td>
+    </tr>
+    <tr>
+        <td>Branch-name:</td>
+        <td>{{ collection.branchname }}</td>
+    </tr>
+    <tr>
+        <td>Description:</td>
+        <td>{{ collection.description }}</td>
+    </tr>
+    <tr>
+        <td>Dist-tag:</td>
+        <td>{{ collection.distTag }}</td>
+    </tr>
+</table>
+{% endblock %}

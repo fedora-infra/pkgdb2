@@ -1,0 +1,22 @@
+{% extends "master.html" %}
+
+{% block title %} {{ super() }} {% endblock %}
+
+{% block content %}
+
+<h1>Fedora Package Database -- Version 1.0.0</h1>
+
+<h3>Overview</h3>
+The Package Database is a central repository of package information in
+Fedora. You will eventually be able to find and change all the
+metainformation about a package by searching the database. The current
+implementation is focused on the data that package developers and release
+engineers need to create packages and spin them into a distribution. 
+
+<table>
+    {% for pkg in latest_pkgs %}
+    <tr><td>{{ pkg.name }}</td></tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

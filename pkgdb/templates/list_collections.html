@@ -1,0 +1,21 @@
+{% extends "master.html" %}
+
+{% block title %} {{ super() }} {% endblock %}
+
+{%block tag %}collections{% endblock %}
+
+{% block content %}
+
+<h1>Search collections</h1>
+
+<ul>
+{% for collection in collections %}
+    <li>
+        <a href="{{url_for('.collection_info', collection=collection.branchname)}}">
+            {{ collection.name }} {{ collection.version }}
+            ({{ collection. branchname }}) </a>
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}
