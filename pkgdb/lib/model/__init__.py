@@ -631,6 +631,7 @@ class PackageListing(BASE):
         :arg pkg_name: the name of the package
         :arg clt_id: the identifier of the collection
         :arg pkg_owner: name of the new owner of the package
+        :arg pkg_status: status of the package
         """
         # Get all the packages matching the name
         stmt = session.query(Package).filter(
@@ -639,8 +640,9 @@ class PackageListing(BASE):
         # Match the other criteria
         query = session.query(cls).filter(
             PackageListing.packageid == stmt.c.id
-        ).filter(
-            PackageListing.collectionid == clt_id)
+        )
+        if clt_id:
+            query = query.filter(PackageListing.collectionid == clt_id)
         if pkg_owner:
             query = query.filter(PackageListing.owner == pkg_owner)
         if pkg_status:
@@ -893,6 +895,24 @@ class Package(BASE):
 
         '''
         return session.query(cls).all()
+
+    @classmethod
+    def search(cls, session, pkg_name, pkg_owner=None, pkg_status=None):
+        """ Search the Packages for the one fitting the given pattern.
+
+        :arg session: session with which to connect to the database
+        :arg pkg_name: the name of the package
+        :arg pkg_owner: name of the new owner of the package
+        :arg pkg_status: status of the package
+        """
+        query = session.query(Package).filter(
+                Package.name.like(pkg_name))
+        if pkg_owner:
+            query = query.join(PackageListing).filter(
+                PackageListing.owner == pkg_owner)
+        if pkg_status:
+            query = query.filter(Package.status == pkg_status)
+        return query.all()
 
     def to_json(self):
         ''' Return a dictionnary representation of the object.
