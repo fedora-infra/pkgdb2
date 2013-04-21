@@ -76,6 +76,7 @@ class PersonPackageListingAcltests(Modeltests):
             'F-18',
             persopkglisting[0].personpackagelist.packagelist.collection.branchname)
         self.assertEqual('Awaiting Review', persopkglisting[0].status)
+        self.assertEqual('approveacls', persopkglisting[0].acl)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PersonPackageListingAcltests)
