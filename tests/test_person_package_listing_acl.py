@@ -78,6 +78,34 @@ class PersonPackageListingAcltests(Modeltests):
         self.assertEqual('Awaiting Review', persopkglisting[0].status)
         self.assertEqual('approveacls', persopkglisting[0].acl)
 
+    def test_get_pending_acl_package(self):
+        """ Test the get_pending_acl_package of PersonPackageListingAcl.
+        """
+        create_person_package_acl(self.session)
+
+        persopkglisting = model.PersonPackageListingAcl.get_pending_acl_package(
+            self.session, 'pingou', 'geany')
+        self.assertEqual(0, len(persopkglisting))
+
+        persopkglisting = model.PersonPackageListingAcl.get_pending_acl_package(
+            self.session, 'pingou', 'guake')
+        self.assertEqual(1, len(persopkglisting))
+
+        self.assertEqual(
+            'pingou',
+            persopkglisting[0].personpackagelist.user)
+
+        self.assertEqual(
+            'guake',
+            persopkglisting[0].personpackagelist.packagelist.package.name)
+
+        self.assertEqual(
+            'F-18',
+            persopkglisting[0].personpackagelist.packagelist.collection.branchname)
+        self.assertEqual('Awaiting Review', persopkglisting[0].status)
+        self.assertEqual('approveacls', persopkglisting[0].acl)
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PersonPackageListingAcltests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

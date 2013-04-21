@@ -378,14 +378,36 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
 
-    def test_get_pending_acl(self):
-        """ Test the get_pending_acl function. """
-        pending_acls = pkgdblib.get_pending_acl(self.session, 'pingou')
+    def test_get_pending_acl_user(self):
+        """ Test the get_pending_acl_user function. """
+        pending_acls = pkgdblib.get_pending_acl_user(
+            self.session, 'pingou')
         self.assertEqual(pending_acls, [])
 
         create_person_package_acl(self.session)
 
-        pending_acls = pkgdblib.get_pending_acl(self.session, 'pingou')
+        pending_acls = pkgdblib.get_pending_acl_user(
+            self.session, 'pingou')
+        self.assertEqual(len(pending_acls), 1)
+        self.assertEqual(pending_acls[0]['package'], 'guake')
+        self.assertEqual(pending_acls[0]['collection'], 'F-18')
+        self.assertEqual(pending_acls[0]['acl'], 'approveacls')
+        self.assertEqual(pending_acls[0]['status'], 'Awaiting Review')
+
+    def test_get_pending_acl_user_package(self):
+        """ Test the get_pending_acl_user_package function. """
+        pending_acls = pkgdblib.get_pending_acl_user_package(
+            self.session, 'pingou', 'guake')
+        self.assertEqual(pending_acls, [])
+
+        create_person_package_acl(self.session)
+
+        pending_acls = pkgdblib.get_pending_acl_user_package(
+            self.session, 'pingou', 'geany')
+        self.assertEqual(len(pending_acls), 0)
+
+        pending_acls = pkgdblib.get_pending_acl_user_package(
+            self.session, 'pingou', 'guake')
         self.assertEqual(len(pending_acls), 1)
         self.assertEqual(pending_acls[0]['package'], 'guake')
         self.assertEqual(pending_acls[0]['collection'], 'F-18')
