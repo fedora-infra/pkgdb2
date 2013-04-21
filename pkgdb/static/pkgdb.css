@@ -10,6 +10,11 @@
     vertical-align: text-top;
 }
 
+#header input {
+    border-radius: 10px;
+}
+
+
 body#index #mainNav li#indexTab a,
 body#collections #mainNav li#collectionsTab a,
 body#packagers #mainNav li#packagersTab a,
