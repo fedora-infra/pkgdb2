@@ -48,7 +48,7 @@
 
 {% for pkg in package_acl %}
     <h3>{{ pkg.collection.name }} {{ pkg.collection.version }}</h3>
-    <p>owner: {{ pkg.owner }}</p>
+    <p class="owner">owner: {{ pkg.owner }}</p>
     <table class="acls">
         {% for maintainer in pkg.people %}
         <tr>

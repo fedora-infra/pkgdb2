@@ -77,3 +77,8 @@ a.cvs {
     border: 1px solid #000000;
     padding: 0.6ex;
 }
+
+.acls, .owner {
+    padding: 0px;
+    margin: 0px;
+}
