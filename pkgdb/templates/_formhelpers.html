@@ -31,11 +31,9 @@
     <td>{{ field.label }}</td>
     <td>{{ field(**kwargs)|safe }}</td>
 {% if after %} <td>{{ after }}</td>{% endif %}
-</tr>
 {% if field.errors %}
-<tr class="errors">
 {% for error in field.errors %}
-<td>{{ error }}</td>
+<td class="errors">{{ error }}</td>
 {% endfor %}
 </tr>
 {% endif %}
