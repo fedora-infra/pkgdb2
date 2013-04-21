@@ -906,7 +906,7 @@ class Package(BASE):
         :arg pkg_status: status of the package
         """
         query = session.query(Package).filter(
-                Package.name.like(pkg_name))
+            Package.name.like(pkg_name))
         if pkg_owner:
             query = query.join(PackageListing).filter(
                 PackageListing.owner == pkg_owner)

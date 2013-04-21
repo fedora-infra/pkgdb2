@@ -68,7 +68,7 @@ class AddPackageForm(wtf.Form):
     pkg_summary = wtf.TextField('Summary',
                                 [wtf.validators.Required()])
     pkg_reviewURL = wtf.TextField('Review URL',
-                            [wtf.validators.Required()])
+                                  [wtf.validators.Required()])
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
@@ -101,7 +101,6 @@ class AddPackageForm(wtf.Form):
             for collec in kwargs['collections']:
                 tmp.append((collec.branchname, collec.branchname))
             self.pkg_collection.choices = tmp
-
 
 
 class SetAclPackageForm(wtf.Form):

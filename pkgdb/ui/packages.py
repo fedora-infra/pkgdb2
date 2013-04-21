@@ -106,7 +106,7 @@ def package_new():
                 pkg_upstreamURL=pkg_upstreamURL,
                 user=FakeFasUser(),
                 #user=flask.g.fas_user,
-                )
+            )
             SESSION.commit()
             flask.flash(message)
             return flask.redirect(flask.url_for('.list_packages'))
