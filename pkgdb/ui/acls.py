@@ -59,7 +59,7 @@ def request_acl(package):
             SESSION.commit()
             flask.flash(message)
             return flask.redirect(flask.url_for('.package_info',
-                packagename=package))
+                package=package))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(err.message, 'error')
@@ -74,10 +74,10 @@ def request_acl(package):
 @UI.route('/acl/<package>/update/<user>/', methods=('GET', 'POST'))
 @UI.route('/acl/<package>/update/<user>/<branch>/', methods=('GET', 'POST'))
 def update_acl(package, user, branch=None):
-    ''' Request acls for a specific package. '''
+    ''' Update the acls for a specific user on a package. '''
 
-    pending_acls = pkgdblib.get_pending_acl_user_package(
-        SESSION, user, package)
+    pending_acls = pkgdblib.get_acl_user_package(
+        SESSION, user, package, status=None)
     if branch is not None:
         pending_acls2 = []
         for acls in pending_acls:
@@ -106,7 +106,7 @@ def update_acl(package, user, branch=None):
             SESSION.commit()
             flask.flash('ACLs updated')
             return flask.redirect(flask.url_for('.package_info',
-                packagename=package))
+                package=package))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(err.message, 'error')
