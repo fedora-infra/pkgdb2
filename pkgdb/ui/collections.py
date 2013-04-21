@@ -32,6 +32,13 @@ from pkgdb import SESSION
 from pkgdb.ui import UI
 
 
+class FakeFasUser(object):
+    """ Fake FAS user used for the tests. """
+    id = 100
+    username = 'pingou'
+    groups = ['packager', 'cla_done']
+
+
 @UI.route('/collections/')
 @UI.route('/collections/<motif>/')
 @UI.route('/collections/<motif>')
@@ -64,4 +71,52 @@ def collection_info(collection):
     return flask.render_template(
         'collection.html',
         collection=collection,
+    )
+
+
+## TODO: Restricted to admin
+@UI.route('/collection/new/', methods=('GET', 'POST'))
+def collection_new():
+    ''' Page to create a new collection. '''
+
+    form = pkgdb.forms.AddCollectionForm()
+    if form.validate_on_submit():
+        clt_name = form.collection_name.data
+        clt_version = form.collection_version.data
+        clt_status = form.collection_status.data
+        clt_publishurl = form.collection_publishURLTemplate.data
+        clt_pendingurl = form.collection_pendingURLTemplate.data
+        clt_summary = form.collection_summary.data
+        clt_description = form.collection_description.data
+        clt_branchname = form.collection_branchname.data
+        clt_disttag = form.collection_distTag.data
+        clt_gitbranch = form.collection_git_branch_name.data
+
+        try:
+            message = pkgdblib.add_collection(
+                SESSION,
+                clt_name=clt_name,
+                clt_version=clt_version,
+                clt_status=clt_status,
+                clt_publishurl=clt_publishurl,
+                clt_pendingurl=clt_pendingurl,
+                clt_summary=clt_summary,
+                clt_description=clt_description,
+                clt_branchname=clt_branchname,
+                clt_disttag=clt_disttag,
+                clt_gitbranch=clt_gitbranch,
+                ## TODO: switch to flask.g.fas_user
+                user=FakeFasUser(),
+                #user=flask.g.fas_user,
+            )
+            SESSION.commit()
+            flask.flash(message)
+            return flask.redirect(flask.url_for('.list_collections'))
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            flask.flash(err.message, 'error')
+
+    return flask.render_template(
+        'collection_new.html',
+        form=form,
     )
