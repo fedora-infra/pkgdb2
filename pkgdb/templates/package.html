@@ -53,19 +53,13 @@
         {% for maintainer in pkg.people %}
         <tr>
             <td>{{ maintainer.user }}</td>
-            <td>
-                <table>
-                {% for acl in maintainer.acls %}
-                    <tr>
-                        <td>{{ acl.acl }}</td>
-                        <td>
-                            <img src="{{ url_for('static', filename='%s.png' % acl.status) }}" 
-                                 title="{{ acl.status }}" alt="{{ acl.status }}"/ >
-                        </td>
-                    </tr>
-                {% endfor %}
-                </table>
-            </td>
+            {% for acl in maintainer.acls %}
+                <td>{{ acl.acl }}</td>
+                <td>
+                    <img src="{{ url_for('static', filename='%s.png' % acl.status) }}"
+                         title="{{ acl.status }}" alt="{{ acl.status }}"/ >
+                </td>
+            {% endfor %}
         </tr>
         {% endfor %}
     </table>
