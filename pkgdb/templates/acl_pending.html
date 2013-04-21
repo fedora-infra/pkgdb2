@@ -1,0 +1,44 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %} Pending ACLs | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>Pending ACLs</h1>
+
+
+<table id="pending">
+    <tr>
+        <th>User</th>
+        <th>Package</th>
+        <th>Collection</th>
+        <th>ACL</th>
+        <th>Status</th>
+    </tr>
+    {% for pending_acl in pending_acls %}
+    <tr>
+        <td>{{ pending_acl['user'] }}</td>
+        <td>
+            <a href="{{ url_for('.package_info',
+                     package=pending_acl['package']) }}">
+                {{ pending_acl['package'] }}
+            </a>
+        </td>
+        <td>{{ pending_acl['collection'] }}</td>
+        <td>{{ pending_acl['acl'] }}</td>
+        <td>{{ pending_acl['status'] }}</td>
+        <td>
+            <a href="{{ url_for('.update_acl',
+                     package=pending_acl['package'],
+                     user=pending_acl['user']) }}">
+                <input type="submit" value="Update"/>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

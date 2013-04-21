@@ -66,6 +66,18 @@
 
         </div>
 
+        {% if options is defined %}
+        <div id="options">
+            <div id="options_title">
+                <h3>Options</h3>
+            </div>
+            <div id="delimiter"></div>
+            <div id="options_content">
+                {% block options %}{% endblock %}
+            </div>
+        </div>
+        {% endif %}
+
         <p id="footer">
           Copyright &copy; 2013 Red Hat
           <a href="https://fedorahosted.org/packagedb/">pkgdb</a>

@@ -130,6 +130,67 @@ class SetAclPackageForm(wtf.Form):
     )
 
 
+class RequestAclPackageForm(wtf.Form):
+    pkg_branch = wtf.SelectMultipleField('Branch',
+                                 [wtf.validators.Required()],
+                                 choices=[('', '')])
+    pkg_acl = wtf.SelectMultipleField(
+        'ACL',
+        [wtf.validators.Required()],
+        choices=[('commit', 'commit'),
+                 ('build', 'build'),
+                 ('watchbugzilla', 'watchbugzilla'),
+                 ('watchcommits', 'watchcommits'),
+                 ('approveacls', 'approveacls')]
+    )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(RequestAclPackageForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            tmp = []
+            for collec in kwargs['collections']:
+                tmp.append((collec.branchname, collec.branchname))
+            self.pkg_branch.choices = tmp
+
+
+class UpdateAclPackageForm(wtf.Form):
+    pkg_branch = wtf.SelectMultipleField('Branch',
+                                 [wtf.validators.Required()],
+                                 choices=[('', '')])
+    pkg_acl = wtf.SelectMultipleField(
+        'ACL',
+        [wtf.validators.Required()],
+        choices=[('commit', 'commit'),
+                 ('build', 'build'),
+                 ('watchbugzilla', 'watchbugzilla'),
+                 ('watchcommits', 'watchcommits'),
+                 ('approveacls', 'approveacls')]
+    )
+    acl_status = wtf.SelectField(
+        'Status',
+        [wtf.validators.Required()],
+        choices=[('Awaiting Review', 'Awaiting Review'),
+                 ('Approved', 'Approved'),
+                 ('Denied', 'Denied'),
+                 ('Obsolete', 'Obsolete'),
+                 ('Removed', 'Removed')]
+    )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(UpdateAclPackageForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            tmp = []
+            for collec in kwargs['collections']:
+                tmp.append((collec, collec))
+            self.pkg_branch.choices = tmp
+
+
 class PackageStatusForm(wtf.Form):
     pkg_name = wtf.TextField('Package name',
                              [wtf.validators.Required()])

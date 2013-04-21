@@ -61,7 +61,8 @@ height:87px
     font-size: 16px;
 }
 
-#headerSearch input[type="submit"]
+#headerSearch input[type="submit"], #pending input[type="submit"],
+.acls input[type="submit"], #options input[type="submit"]
 {
     background-color: white;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15) inset;
@@ -80,8 +81,7 @@ height:87px
 #kojiLogo {
     /* Used only for the koji logo icon */
     display:inline-block;
-padding-top:8px;
-
+    padding-top:8px;
 }
 
 #PoweredByKojiLogo {

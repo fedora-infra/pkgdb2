@@ -4,6 +4,18 @@
 
 {%block tag %}packages{% endblock %}
 
+{% set options = True %}
+{%block options %}
+<ul>
+    <li>
+        <a href="{{ url_for('.request_acl',
+                 package=package.name) }}">
+            <input type="submit" value="Request ACLs"/>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
 {% block content %}
 
 <h1>{{ package.name }}</h1>
@@ -60,6 +72,16 @@
                          title="{{ acl.status }}" alt="{{ acl.status }}"/ >
                 </td>
             {% endfor %}
+            {% if maintainer.acls %}
+                <td>
+                    <a href="{{ url_for('.update_acl',
+                        package=package.name,
+                        user=maintainer.user,
+                        branch=pkg.collection.branchname) }}">
+                        <input type="submit" value="Update ACLs"/>
+                    </a>
+                </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>

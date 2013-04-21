@@ -14,7 +14,6 @@
     border-radius: 10px;
 }
 
-
 body#index #mainNav li#indexTab a,
 body#collections #mainNav li#collectionsTab a,
 body#packagers #mainNav li#packagersTab a,
@@ -27,6 +26,41 @@ body#packages #mainNav li#packagesTab a {
     -moz-border-radius-topright: 5px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+}
+
+#content {
+    float:left;
+    width:74%px;
+}
+
+#options {
+    float:right;
+    width:23%;
+    margin-right: 5px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15) inset;
+    border-radius: 10px 10px 10px 10px;
+}
+
+#delimiter {
+    background-color:#193b6c;
+    height: 10px;
+}
+
+#options_title {
+    border-radius: 10px 10px 0px 0px;
+    padding: 1px 0em 1px 1em;
+    margin: 0px 0px 0px 0px;
+    background: #34609f;
+    color: #fff;
+}
+
+#options_content ul {
+    list-style-type: none;
+    margin-right: 5px;
+}
+
+#options input[type="submit"] {
+    width: 90%;
 }
 
 /** Web App Styles **/
@@ -99,6 +133,10 @@ a.cvs {
 #legend th {
     min-width: 0px;
     padding-left: 0.5em;
+}
+
+#pending th {
+    text-align: left;
 }
 
 .italic {

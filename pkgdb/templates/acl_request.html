@@ -1,0 +1,25 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %} {{ package }} ACL | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>Request ACLs on package: {{ package }}</h1>
+
+
+<form action="{{ url_for('.request_acl', package=package) }}" method="post">
+  <table>
+    {{ render_field_in_row(form.pkg_branch) }}
+    {{ render_field_in_row(form.pkg_acl) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Create">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {{ form.csrf_token }}
+  </p>
+
+</form>
+{% endblock %}

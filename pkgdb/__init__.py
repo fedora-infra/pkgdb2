@@ -59,6 +59,7 @@ from ui import UI
 from ui import packages
 from ui import packagers
 from ui import collections
+from ui import acls
 APP.register_blueprint(UI)
 
 

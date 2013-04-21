@@ -1,0 +1,40 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_cell %}
+
+{% block title %} {{ package }} ACL | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>Update ACLs on package: {{ package }}</h1>
+
+{% if pending_acls %}
+<p>
+    User {{ user }} asked for the following ACLs:
+</p>
+<ul>
+    {% for acls in pending_acls %}
+    <li>{{ acls['collection'] }} -- {{ acls['acl'] }}</li>
+    {% endfor %}
+</ul>
+
+<form action="{{ url_for('.update_acl', package=package, user=user) }}" method="post">
+  <table>
+    {{ render_field_in_cell(form.pkg_branch) }}
+    {{ render_field_in_cell(form.pkg_acl) }}
+    {{ render_field_in_cell(form.acl_status) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Update">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {{ form.csrf_token }}
+  </p>
+
+</form>
+{% else %}
+<p>
+    No pending ACLs for this user on this package.
+</p>
+{% endif %}
+{% endblock %}
