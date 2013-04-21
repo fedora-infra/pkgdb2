@@ -82,3 +82,33 @@ a.cvs {
     padding: 0px;
     margin: 0px;
 }
+
+#legend {
+    margin-top: 2em;
+    font-size: 85%;
+}
+
+#legend td {
+    padding-left: 0.5em;
+}
+
+#legend td img {
+    padding-right: 0.5em;
+}
+
+#legend th {
+    min-width: 0px;
+    padding-left: 0.5em;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.underline {
+    text-decoration: underline;
+}

@@ -66,4 +66,29 @@
 {% endfor %}
 </table>
 
+
+<table id="legend">
+    <tr>
+        <th>Approved:</th>
+        <td>
+            <img src="{{ url_for('static', filename='Approved.png') }}"
+                title="Approved" alt="Approved"/ >
+        </td>
+        <th>Awaiting Review:</th>
+        <td>
+            <img src="{{ url_for('static', filename='Awaiting Review.png') }}"
+                title="Awaiting Review" alt="Awaiting Review"/ >
+        </td>
+        <th>Denied:</th>
+        <td>
+            <img src="{{ url_for('static', filename='Denied.png') }}"
+                title="Denied" alt="Denied"/ >
+        </td>
+        <th>Obsolete:</th>
+        <td>
+            <img src="{{ url_for('static', filename='Obsolete.png') }}"
+                title="Obsolete" alt="Obsolete"/ >
+        </td>
+    </tr>
+</table>
 {% endblock %}
