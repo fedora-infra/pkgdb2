@@ -4,6 +4,18 @@
 
 {%block tag %}packages{% endblock %}
 
+
+{% set options = True %}
+{%block options %}
+<ul>
+    <li>
+        <a href="{{ url_for('.package_new') }}">
+            <input type="submit" value="New package"/>
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
 {% block content %}
 
 <h1>Search packages</h1>
