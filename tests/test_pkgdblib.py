@@ -394,20 +394,24 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pending_acls[0]['acl'], 'approveacls')
         self.assertEqual(pending_acls[0]['status'], 'Awaiting Review')
 
-    def test_get_pending_acl_user_package(self):
-        """ Test the get_pending_acl_user_package function. """
-        pending_acls = pkgdblib.get_pending_acl_user_package(
+    def test_get_acl_user_package(self):
+        """ Test the get_acl_user_package function. """
+        pending_acls = pkgdblib.get_acl_user_package(
             self.session, 'pingou', 'guake')
         self.assertEqual(pending_acls, [])
 
         create_person_package_acl(self.session)
 
-        pending_acls = pkgdblib.get_pending_acl_user_package(
+        pending_acls = pkgdblib.get_acl_user_package(
             self.session, 'pingou', 'geany')
         self.assertEqual(len(pending_acls), 0)
 
-        pending_acls = pkgdblib.get_pending_acl_user_package(
+        pending_acls = pkgdblib.get_acl_user_package(
             self.session, 'pingou', 'guake')
+        self.assertEqual(len(pending_acls), 2)
+
+        pending_acls = pkgdblib.get_acl_user_package(
+            self.session, 'pingou', 'guake', status='Awaiting Review')
         self.assertEqual(len(pending_acls), 1)
         self.assertEqual(pending_acls[0]['package'], 'guake')
         self.assertEqual(pending_acls[0]['collection'], 'F-18')

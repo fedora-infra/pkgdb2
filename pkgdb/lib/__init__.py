@@ -373,7 +373,7 @@ def get_pending_acl_user(session, user):
     return output
 
 
-def get_pending_acl_user_package(session, user, package):
+def get_acl_user_package(session, user, package, status=None):
     """ Return the pending ACLs on a specified package for the specified
     user.
     The method returns a list of dictionnary containing the package name
@@ -383,10 +383,11 @@ def get_pending_acl_user_package(session, user, package):
     :arg session: session with which to connect to the database
     :arg user: the user owning the packages on which to retrieve the
         list of pending ACLs.
+    :arg status: the status of the package to retrieve the ACLs of
     """
     output = []
-    for package in model.PersonPackageListingAcl.get_pending_acl_package(
-            session, user, package):
+    for package in model.PersonPackageListingAcl.get_acl_package(
+            session, user, package, status=status):
         if package.personpackagelist.user == user:
             output.append(
                 {'package': package.personpackagelist.packagelist.package.name,
