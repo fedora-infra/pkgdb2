@@ -7,7 +7,7 @@
     <link rel="shortcut icon" type="image/vnd.microsoft.icon"
         href="http://fedoraproject.org/static/images/favicon.ico"/>
     <link rel="stylesheet" type="text/css" media="screen"
-        href="http://koji.fedoraproject.org/koji-static/koji.css"/>
+        href="{{ url_for('static', filename='koji.css') }}"/>
     <link rel="stylesheet" type="text/css" media="screen"
         href="{{ url_for('static', filename='pkgdb.css') }}"/>
   </head>
@@ -42,7 +42,12 @@
         </div><!-- end mainNav -->
 
         <span id="loginInfo">
-          <a href="login">login</a>
+          {% if g.fas_user %}
+            <span class="text">logged in as </span>{{ g.fas_user.username }} |
+            <a href="{{ url_for('.logout') }}">log out</a>
+          {% else %}
+            <a href="{{ url_for('.login') }}">login</a>
+          {% endif %}
         </span>
 
         <div id="content">
