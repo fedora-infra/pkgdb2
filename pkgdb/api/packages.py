@@ -64,7 +64,7 @@ def api_package_new():
                                            pkg_collection=pkg_collection,
                                            pkg_owner=pkg_owner,
                                            pkg_upstreamURL=pkg_upstreamURL,
-                                           )
+                                           user=flask.g.fas_user)
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]

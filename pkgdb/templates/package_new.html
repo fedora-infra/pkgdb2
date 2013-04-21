@@ -1,0 +1,31 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %} New package | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>Create a new package</h1>
+
+
+<form action="{{ url_for('.package_new') }}" method="post">
+  <table>
+    {{ render_field_in_row(form.pkg_name) }}
+    {{ render_field_in_row(form.pkg_summary) }}
+    {{ render_field_in_row(form.pkg_status) }}
+    {{ render_field_in_row(form.pkg_collection) }}
+    {{ render_field_in_row(form.pkg_owner) }}
+    {{ render_field_in_row(form.pkg_shouldopen) }}
+    {{ render_field_in_row(form.pkg_reviewURL) }}
+    {{ render_field_in_row(form.pkg_upstreamURL) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Create">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {{ form.csrf_token }}
+  </p>
+
+</form>
+{% endblock %}

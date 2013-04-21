@@ -51,7 +51,7 @@ def create_session(db_url, debug=False, pool_recycle=3600):
 
 
 def add_package(session, pkg_name, pkg_summary, pkg_status,
-                pkg_collection, pkg_owner, pkg_reviewURL=None,
+                pkg_collection, pkg_owner, user, pkg_reviewURL=None,
                 pkg_shouldopen=None, pkg_upstreamURL=None):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
@@ -60,10 +60,15 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     :arg pkg_name:
     ...
     """
+    ## TODO: check user is allowed to perform this action
+    if user is None:
+        raise PkgdbException("You're not allowed to add a package")
+
     if ',' in pkg_name:
         pkg_name = [item.strip() for item in pkg_name.split(',')]
     else:
         pkg_name = [pkg_name]
+
     if ',' in pkg_collection:
         pkg_collection = [item.strip() for item in pkg_collection.split(',')]
     else:
@@ -78,22 +83,35 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
                                 upstream_url=pkg_upstreamURL
                                 )
         session.add(package)
+
+        for collec in pkg_collection:
+            collection = model.Collection.by_name(session, collec)
+            pkglisting = package.create_listing(owner=pkg_owner,
+                                                collection=collection,
+                                                statusname=pkg_status)
+            session.add(pkglisting)
     try:
         session.flush()
     except SQLAlchemyError, err:  # pragma: no cover
-        raise PkgdbException('Could not add packages')
+        raise PkgdbException('Could not add packages to collections')
 
-    for collec in pkg_collection:
-        collection = model.Collection.by_name(session, collec)
-        pkglisting = package.create_listing(owner=pkg_owner,
-                                            collection=collection,
-                                            statusname=pkg_status)
-        session.add(pkglisting)
+    # Add all new ACLs to the owner
+    for pkg in pkg_name:
+        for collec in pkg_collection:
+            for acl in ['commit', 'watchbugzilla', 'watchcommits',
+                        'approveacls', 'build']:
+                set_acl_package(session=session,
+                                pkg_name=pkg,
+                                clt_name=collec,
+                                pkg_user=pkg_owner,
+                                acl=acl,
+                                status='Approved',
+                                user=user)
     try:
         session.flush()
         return 'Package created'
     except SQLAlchemyError, err:  # pragma: no cover
-        raise PkgdbException('Could not add packages')
+        raise PkgdbException('Could not add ACLs')
 
 
 def get_acl_package(session, pkg_name):
@@ -135,7 +153,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
                                                             collection.id)
     ## TODO: how do we get pkg_user's object?
     personpkg = model.PersonPackageListing.get_or_create(session,
-                                                         pkg_user.id,
+                                                         pkg_user,
                                                          pkglisting.id)
     personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(
         session, personpkg.id, acl)

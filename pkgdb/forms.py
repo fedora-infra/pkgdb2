@@ -67,8 +67,8 @@ class AddPackageForm(wtf.Form):
                              [wtf.validators.Required()])
     pkg_summary = wtf.TextField('Summary',
                                 [wtf.validators.Required()])
-    pkg_reviewURL = wtf.URL('Review URL', [wtf.validators.Required(),
-                            wtf.validators.URL()])
+    pkg_reviewURL = wtf.TextField('Review URL',
+                            [wtf.validators.Required()])
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
@@ -80,15 +80,28 @@ class AddPackageForm(wtf.Form):
     )
     pkg_shouldopen = wtf.BooleanField('Should open',
                                       [wtf.validators.Required()],
-                                      value=True)
+                                      default=True)
     pkg_collection = wtf.SelectMultipleField(
         'Collection',
         [wtf.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_owner = wtf.TextField('Owner', [wtf.validators.optional()])
+    pkg_owner = wtf.TextField('Owner', [wtf.validators.Required()])
     pkg_upstreamURL = wtf.TextField('Upstream URL',
                                     [wtf.validators.optional()])
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        pkg_collection.
+        """
+        super(AddPackageForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            tmp = []
+            for collec in kwargs['collections']:
+                tmp.append((collec.branchname, collec.branchname))
+            self.pkg_collection.choices = tmp
+
 
 
 class SetAclPackageForm(wtf.Form):
