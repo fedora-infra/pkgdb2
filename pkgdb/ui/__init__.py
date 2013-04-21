@@ -42,6 +42,9 @@ def search():
     search_type = flask.request.args.get('type', 'package')
     search_term = flask.request.args.get('term', 'a*') or None
 
+    if not search_term.endswith('*'):
+        search_term += '*'
+
     if search_type == 'packager':
         return flask.redirect(flask.url_for('.list_packagers',
                                             motif=search_term))
