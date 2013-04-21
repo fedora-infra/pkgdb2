@@ -67,9 +67,6 @@ height:87px
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15) inset;
     border-radius: 10px 10px 10px 10px;
     color: #3D69A8;
-/*
-    font-weight: bold;
-*/
 }
 #headerSearch input[type="text"]
 {
