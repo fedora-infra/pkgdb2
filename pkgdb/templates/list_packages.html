@@ -8,7 +8,9 @@
 
 <h1>Search packages</h1>
 
+<ul>
 {% for pkg in packages %}
+    <li>
     <a href="{{url_for('.package_info', packagename=pkg.name)}}">
             {{ pkg.name }}</a>
     -- {{ pkg.summary }}
@@ -17,7 +19,8 @@
         {{ listing.collection.branchname }}
     {% endfor %}
     )
+    </li>
 {% endfor %}
-</table>
+</ul>
 
 {% endblock %}
