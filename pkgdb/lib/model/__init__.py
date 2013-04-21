@@ -210,6 +210,36 @@ class PersonPackageListingAcl(BASE):
         )
         return query.all()
 
+    @classmethod
+    def get_pending_acl_package(cls, session, user, package):
+        """ Return the pending ACLs for the specified package owned by
+        user.
+        
+        """
+        # Get all the packages of this person
+        stmt = session.query(Package.id).filter(
+            Package.name == package
+        ).subquery()
+
+        stmt2 = session.query(PackageListing.id).filter(
+            PackageListing.owner == user
+        ).filter(
+            PackageListing.packageid == stmt
+        ).subquery()
+
+        stmt3 = session.query(PersonPackageListing.id
+        ).filter(
+            PersonPackageListing.packagelisting_id.in_(stmt2)
+        ).subquery()
+
+        # Match the other criteria
+        query = session.query(cls).filter(
+            cls.personpackagelistingid.in_(stmt3)
+        ).filter(
+            cls.status == 'Awaiting Review'
+        )
+        return query.all()
+
     def __init__(self, acl, status, personpackagelistingid):
         self.personpackagelistingid = personpackagelistingid
         self.acl = acl
