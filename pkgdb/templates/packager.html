@@ -11,7 +11,7 @@
 <ul>
 {% for package in packages %}
     <li>
-        <a href="{{url_for('.package_info', packagename=package.name)}}">
+        <a href="{{url_for('.package_info', package=package.name)}}">
             {{ package.name }}</a>
         -- {{ package.summary }}
         (

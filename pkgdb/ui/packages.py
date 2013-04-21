@@ -57,10 +57,11 @@ def list_packages(motif=None):
     )
 
 
-@UI.route('/package/<packagename>/')
-def package_info(packagename):
+@UI.route('/package/<package>/')
+def package_info(package):
     ''' Display the information about the specified package. '''
 
+    packagename = package
     package = []
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, packagename)
