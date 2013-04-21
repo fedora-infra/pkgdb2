@@ -148,9 +148,16 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
 
     ## TODO: check is user is allowed to change package
 
-    pkglisting = model.PackageListing.by_pkgid_collectionid(session,
+    try:
+        pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
                                                             collection.id)
+    except NoResultFound:
+        pkglisting = package.create_listing(owner=pkg_user,
+                                            collection=collection,
+                                            statusname='Approved')
+        session.add(pkglisting)
+        session.flush()
     ## TODO: how do we get pkg_user's object?
     personpkg = model.PersonPackageListing.get_or_create(session,
                                                          pkg_user,
