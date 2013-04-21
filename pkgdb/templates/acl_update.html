@@ -11,13 +11,20 @@
 
 {% if pending_acls %}
 <p>
-    User {{ user }} asked for the following ACLs:
+    User {{ user }} has for the following ACLs:
 </p>
-<ul>
+<table>
     {% for acls in pending_acls %}
-    <li>{{ acls['collection'] }} -- {{ acls['acl'] }}</li>
+    <tr>
+        <td>{{ acls['collection'] }}</td>
+        <td>{{ acls['acl'] }}</td>
+        <td>
+            <img src="{{ url_for('static', filename='%s.png' % acls['status']) }}"
+                title="{{ acls['status'] }}" alt="{{ acls['status'] }}"/ >
+        </td>
+    </tr>
     {% endfor %}
-</ul>
+</table>
 
 <form action="{{ url_for('.update_acl', package=package, user=user) }}" method="post">
   <table>
