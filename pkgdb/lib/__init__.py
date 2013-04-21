@@ -346,3 +346,28 @@ def update_collection_status(session, clt_branchname, clt_status):
     except SQLAlchemyError, err:  # pragma: no cover
         raise PkgdbException('Could not update the status of collection'
                              '"%s".' % clt_branchname)
+
+
+def get_pending_acl(session, user):
+    """ Return the pending ACLs on any of the packages owned by the
+    specified user.
+    The method returns a list of dictionnary containing the package name
+    the collection branchname, the requested ACL and the user that
+    requested that ACL.
+
+    :arg session: session with which to connect to the database
+    :arg user: the user owning the packages on which to retrieve the
+        list of pending ACLs.
+    """
+    output = []
+    for package in model.PersonPackageListingAcl.get_pending_acl(
+            session, user):
+        output.append(
+            {'package': package.personpackagelist.packagelist.package.name,
+             'user': package.personpackagelist.user,
+             'collection': package.personpackagelist.packagelist.collection.branchname,
+             'acl': package.acl,
+             'status': package.status,
+             }
+        )
+    return output
