@@ -48,3 +48,23 @@ def search():
     else:
         return flask.redirect(flask.url_for('.list_packages',
                                             motif=search_term))
+
+
+@UI.route('/login/', methods=['GET', 'POST'])
+def login():
+    if 'next' in flask.request.args:
+        next_url = flask.request.args['next']
+    else:
+        next_url = flask.url_for('.index')
+
+    if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
+        return flask.redirect(next_url)
+    else:
+        return fas.login(return_url=next_url)
+
+
+@UI.route('/logout/')
+def logout():
+    if flask.g.fas_user:
+        fas.logout()
+    return flask.redirect(flask.url_for('.index'))
