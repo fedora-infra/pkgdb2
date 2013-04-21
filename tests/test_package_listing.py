@@ -56,7 +56,7 @@ class PackageListingtests(Modeltests):
         pkg = model.Package.by_name(self.session, 'guake')
         packages = model.PackageListing.by_package_id(self.session,
                                                         pkg.id)
-        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+        self.assertEqual("PackageListing(id:1, u'pingou', u'Approved', "
                          "packageid=1, collectionid=1, qacontact=None)",
                          packages[0].__repr__())
 
@@ -70,7 +70,7 @@ class PackageListingtests(Modeltests):
                                                pkg_owner=None,
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
-        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+        self.assertEqual("PackageListing(id:1, u'pingou', u'Approved', "
                          "packageid=1, collectionid=1, qacontact=None)",
                          packages[0].__repr__())
 
@@ -80,10 +80,10 @@ class PackageListingtests(Modeltests):
                                                pkg_owner='pingou',
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
-        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+        self.assertEqual("PackageListing(id:1, u'pingou', u'Approved', "
                          "packageid=1, collectionid=1, qacontact=None)",
                          packages[0].__repr__())
-        self.assertEqual("PackageListing(u'pingou', u'Approved', "
+        self.assertEqual("PackageListing(id:5, u'pingou', u'Approved', "
                          "packageid=3, collectionid=1, qacontact=None)",
                          packages[1].__repr__())
 

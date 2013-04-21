@@ -43,7 +43,7 @@ class PersonPackageListingAcltests(Modeltests):
     def test_init_package_listing_acl(self):
         """ Test the __init__ function of PersonPackageListingAcl. """
         create_person_package_acl(self.session)
-        self.assertEqual(1,
+        self.assertEqual(2,
                          len(model.PersonPackageListingAcl.all(self.session))
                          )
 
@@ -55,6 +55,27 @@ class PersonPackageListingAcltests(Modeltests):
                          " personpackagelistingid=1)",
                          person[0].__repr__())
 
+    def test_get_pending_acl(self):
+        """ Test the get_pending_acl function of PersonPackageListingAcl.
+        """
+        create_person_package_acl(self.session)
+
+        persopkglisting = model.PersonPackageListingAcl.get_pending_acl(
+            self.session, 'pingou')
+        self.assertEqual(1, len(persopkglisting))
+
+        self.assertEqual(
+            'pingou',
+            persopkglisting[0].personpackagelist.user)
+
+        self.assertEqual(
+            'guake',
+            persopkglisting[0].personpackagelist.packagelist.package.name)
+
+        self.assertEqual(
+            'F-18',
+            persopkglisting[0].personpackagelist.packagelist.collection.branchname)
+        self.assertEqual('Awaiting Review', persopkglisting[0].status)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PersonPackageListingAcltests)

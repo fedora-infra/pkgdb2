@@ -213,17 +213,13 @@ def create_person_package(session):
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     f18_collec = model.Collection.by_name(session, 'F-18')
     devel_collec = model.Collection.by_name(session, 'devel')
+
     pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, f18_collec.id)
     pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, devel_collec.id)
 
     packager = model.PersonPackageListing(user='pingou',
-                                          packagelisting_id=pklist_guake_f18.id
-                                          )
-    session.add(packager)
-
-    packager = model.PersonPackageListing(user='toshio',
                                           packagelisting_id=pklist_guake_f18.id
                                           )
     session.add(packager)
@@ -236,20 +232,27 @@ def create_person_package(session):
 
 
 def create_person_package_acl(session):
-    """ Add ACLs of a packagr on a package. """
+    """ Add ACLs of a packager on a package. """
     create_person_package(session)
 
     guake_pkg = model.Package.by_name(session, 'guake')
+    collection_f18 = model.Collection.by_name(session, 'F-18')
+    guake_pkglisting = model.PackageListing.by_pkgid_collectionid(
+        session, guake_pkg.id, collection_f18.id)
 
-    pkglist = model.PersonPackageListing.by_user_pkglistid(session,
-                                                             'pingou',
-                                                             guake_pkg.id)
+    pkglist = model.PersonPackageListing.by_user_pkglistid(
+        session, 'pingou', guake_pkglisting.id)
 
     packager = model.PersonPackageListingAcl(acl='commit',
                                              status='Approved',
                                              personpackagelistingid=pkglist.id
                                              )
+    session.add(packager)
 
+    packager = model.PersonPackageListingAcl(acl='approveacls',
+                                             status='Awaiting Review',
+                                             personpackagelistingid=pkglist.id
+                                             )
     session.add(packager)
     session.commit()
 

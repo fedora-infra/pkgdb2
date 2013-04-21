@@ -151,6 +151,8 @@ class PersonPackageListingAcl(BASE):
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
 
+    personpackagelist = relation('PersonPackageListing')
+
     __table_args__ = (
         sa.UniqueConstraint('personpackagelistingid', 'acl'),
     )
@@ -184,6 +186,29 @@ class PersonPackageListingAcl(BASE):
                                              status=None,
                                              acl=acl)
         return pkgacl
+
+    @classmethod
+    def get_pending_acl(cls, session, user):
+        """ Return the pending ACLs on packages owner by user.
+        
+        """
+        # Get all the packages of this person
+        stmt = session.query(PackageListing.id).filter(
+            PackageListing.owner == user
+        ).subquery()
+
+        stmt2 = session.query(PersonPackageListing.id
+        ).filter(
+            PersonPackageListing.packagelisting_id.in_(stmt)
+        ).subquery()
+
+        # Match the other criteria
+        query = session.query(cls).filter(
+            cls.personpackagelistingid.in_(stmt2)
+        ).filter(
+            cls.status == 'Awaiting Review'
+        )
+        return query.all()
 
     def __init__(self, acl, status, personpackagelistingid):
         self.personpackagelistingid = personpackagelistingid
@@ -347,8 +372,8 @@ class PersonPackageListing(BASE):
         self.packagelisting_id = packagelisting_id
 
     def __repr__(self):
-        return 'PersonPackageListing(%r, %r)' % (self.user,
-                                                 self.packagelisting_id)
+        return 'PersonPackageListing(id:%r, %r, %r)' % (
+            self.id, self.user, self.packagelisting_id)
 
     def to_json(self):
         """ Return a dictionnary representation of this object. """
@@ -667,8 +692,8 @@ class PackageListing(BASE):
         return query1.union(query2).all()
 
     def __repr__(self):
-        return 'PackageListing(%r, %r, packageid=%r, collectionid=%r,' \
-               ' qacontact=%r)' % (self.owner, self.status,
+        return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r,' \
+               ' qacontact=%r)' % (self.id, self.owner, self.status,
                                    self.packageid, self.collectionid,
                                    self.qacontact)
 

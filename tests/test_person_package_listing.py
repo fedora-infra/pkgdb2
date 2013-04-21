@@ -44,7 +44,7 @@ class PersonPackageListingtests(Modeltests):
     def test_init_package(self):
         """ Test the __init__ function of PersonPackageListing. """
         create_person_package(self.session)
-        self.assertEqual(3,
+        self.assertEqual(2,
                          len(model.PersonPackageListing.all(self.session))
                          )
 
@@ -61,19 +61,21 @@ class PersonPackageListingtests(Modeltests):
         self.assertEqual(2, len(packager))
         output = packager[0].to_json()
         self.assertEqual(output,
-        {'acls': [{'status': u'Approved', 'acl': u'commit'}],
-         'user': u'pingou',
-         'packagelist': {'owner': u'pingou', 'qacontact': None,
+        {'packagelist': {'owner': u'pingou', 'qacontact': None,
          'collection': {'pendingurltemplate': None,
                         'publishurltemplate': None,
                         'branchname': u'F-18',
-                        'version': u'18', 'name': u'Fedora'},
+                        'version': u'18',
+                        'name': u'Fedora'},
          'package': {'upstreamurl': u'http://guake.org',
                      'name': u'guake',
                      'reviewurl': u'https://bugzilla.redhat.com/450189',
-                     'summary': u'Top down terminal for GNOME'}
-         }
-        })
+                     'summary': u'Top down terminal for GNOME'}},
+         'acls': [
+            {'status': u'Awaiting Review', 'acl': u'approveacls'},
+            {'status': u'Approved', 'acl': u'commit'}],
+         'user': u'pingou'}
+        )
 
     def test___repr__(self):
         """ Test the __repr__ function of PersonPackageListing. """
@@ -83,7 +85,8 @@ class PersonPackageListingtests(Modeltests):
             self.session, 'pingou')
         self.assertEqual(2, len(packager))
         output = packager[0].__repr__()
-        self.assertEqual(output, "PersonPackageListing(u'pingou', 1)")
+        self.assertEqual(output,
+                         "PersonPackageListing(id:1, u'pingou', 1)")
 
 
 if __name__ == '__main__':
