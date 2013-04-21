@@ -28,20 +28,12 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION
+from pkgdb import SESSION, FakeFasUser
 from pkgdb.ui import UI
-
-
-class FakeFasUser(object):
-    """ Fake FAS user used for the tests. """
-    id = 100
-    username = 'pingou'
-    groups = ['packager', 'cla_done']
 
 
 @UI.route('/collections/')
 @UI.route('/collections/<motif>/')
-@UI.route('/collections/<motif>')
 def list_collections(motif=None):
     ''' Display the list of collections corresponding to the motif. '''
 
@@ -58,7 +50,6 @@ def list_collections(motif=None):
 
 
 @UI.route('/collection/<collection>/')
-@UI.route('/collection/<collection>')
 def collection_info(collection):
     ''' Display the information about the specified collection. '''
 
@@ -75,7 +66,7 @@ def collection_info(collection):
 
 
 ## TODO: Restricted to admin
-@UI.route('/collection/new/', methods=('GET', 'POST'))
+@UI.route('/new/collection/', methods=('GET', 'POST'))
 def collection_new():
     ''' Page to create a new collection. '''
 

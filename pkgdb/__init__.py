@@ -38,6 +38,14 @@ if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
 
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
+
+class FakeFasUser(object):
+    """ Fake FAS user used for the tests. """
+    id = 100
+    username = 'pingou'
+    groups = ['packager', 'cla_done']
+
+
 # Import the API namespace
 from api import API
 from api import acls
