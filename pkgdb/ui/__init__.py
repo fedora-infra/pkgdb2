@@ -65,6 +65,6 @@ def login():
 
 @UI.route('/logout/')
 def logout():
-    if flask.g.fas_user:
+    if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         fas.logout()
     return flask.redirect(flask.url_for('.index'))
