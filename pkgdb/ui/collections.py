@@ -34,6 +34,7 @@ from pkgdb.ui import UI
 
 @UI.route('/collections/')
 @UI.route('/collections/<motif>/')
+@UI.route('/collections/<motif>')
 def list_collections(motif=None):
     ''' Display the list of collections corresponding to the motif. '''
 
@@ -50,6 +51,7 @@ def list_collections(motif=None):
 
 
 @UI.route('/collection/<collection>/')
+@UI.route('/collection/<collection>')
 def collection_info(collection):
     ''' Display the information about the specified collection. '''
 

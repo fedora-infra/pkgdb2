@@ -33,6 +33,7 @@ from pkgdb.lib import model
 
 ## Collection
 @API.route('/collection/new/', methods=['POST'])
+@API.route('/collection/new', methods=['POST'])
 def api_collection_new():
     ''' Create a new collection.
 
@@ -96,8 +97,9 @@ def api_collection_new():
     return jsonout
 
 
-@API.route('/collection/status/', methods=['POST'])
-def api_collection_status():
+@API.route('/collection/<collection>/status/', methods=['POST'])
+@API.route('/collection/<collection>/status', methods=['POST'])
+def api_collection_status(collection):
     ''' Update the status of collection.
 
     :arg branchname: String of the collection branch name to change.
@@ -112,19 +114,25 @@ def api_collection_status():
         clt_branchname = form.collection_branchname.data
         clt_status = form.collection_status.data
 
-        try:
-            message = pkgdblib.update_collection_status(
-                SESSION,
-                clt_branchname,
-                clt_status,
-            )
-            SESSION.commit()
-            output['output'] = 'ok'
-            output['messages'] = [message]
-        except pkgdblib.PkgdbException, err:
-            SESSION.rollback()
+        if collection == clt_branchname:
+            try:
+                message = pkgdblib.update_collection_status(
+                    SESSION,
+                    clt_branchname,
+                    clt_status,
+                )
+                SESSION.commit()
+                output['output'] = 'ok'
+                output['messages'] = [message]
+            except pkgdblib.PkgdbException, err:
+                SESSION.rollback()
+                output['output'] = 'notok'
+                output['error'] = err.message
+                httpcode = 500
+        else:
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = "You're trying to update the " \
+                              "wrong collection"
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -142,8 +150,9 @@ def api_collection_status():
     return jsonout
 
 
-@API.route('/collection/list/')
-@API.route('/collection/list/<pattern>/')
+@API.route('/collections/')
+@API.route('/collections/<pattern>/')
+@API.route('/collections/<pattern>')
 def api_collection_list(pattern=None):
     ''' List collections.
 

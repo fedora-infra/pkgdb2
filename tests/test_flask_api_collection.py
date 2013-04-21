@@ -53,10 +53,8 @@ class FlaskApiCollectionTest(Modeltests):
 
     def test_collection_status(self):
         """ Test the api_collection_status function.  """
-        output = self.app.post('/api/collection/status')
-        self.assertEqual(output.status_code, 301)
 
-        output = self.app.post('/api/collection/status/')
+        output = self.app.post('/api/collection/F-18/status/')
         self.assertEqual(output.status_code, 500)
         self.assertEqual(output.data,
                          '{\n  "output": "notok",\n  '
@@ -67,7 +65,15 @@ class FlaskApiCollectionTest(Modeltests):
 
         data = {'collection_branchname': 'F-18',
                 'collection_status' : 'EOL'}
-        output = self.app.post('/api/collection/status/', data=data)
+        output = self.app.post('/api/collection/F-19/status/', data=data)
+        self.assertEqual(output.status_code, 500)
+        self.assertEqual(output.data,
+                         '{\n  "output": "notok",\n  '
+                         '"error": "You\'re trying to update the wrong '
+                         'collection"\n}')
+        data = {'collection_branchname': 'F-18',
+                'collection_status' : 'EOL'}
+        output = self.app.post('/api/collection/F-18/status', data=data)
         self.assertEqual(output.status_code, 500)
         self.assertEqual(output.data,
                          '{\n  "output": "notok",\n  '
@@ -77,7 +83,7 @@ class FlaskApiCollectionTest(Modeltests):
 
         data = {'collection_branchname': 'F-18',
                 'collection_status' : 'EOL'}
-        output = self.app.post('/api/collection/status/', data=data)
+        output = self.app.post('/api/collection/F-18/status', data=data)
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
@@ -90,22 +96,22 @@ class FlaskApiCollectionTest(Modeltests):
 
     def test_collection_list(self):
         """ Test the api_collection_list function.  """
-        output = self.app.get('/api/collection/list/F-*')
-        self.assertEqual(output.status_code, 301)
+        output = self.app.get('/api/collections/F-*')
+        self.assertEqual(output.status_code, 200)
 
-        output = self.app.get('/api/collection/list/F-*/')
+        output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
                          '{\n  "collections": []\n}')
 
-        output = self.app.get('/api/collection/list/F-*/')
+        output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
                          '{\n  "collections": []\n}')
 
         create_collection(self.session)
 
-        output = self.app.get('/api/collection/list/')
+        output = self.app.get('/api/collections/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
@@ -115,7 +121,7 @@ class FlaskApiCollectionTest(Modeltests):
                          ['pendingurltemplate', 'publishurltemplate',
                           'version', 'name'])
 
-        output = self.app.get('/api/collection/list/F-*/')
+        output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
@@ -129,8 +135,6 @@ class FlaskApiCollectionTest(Modeltests):
 
     def test_collection_new(self):
         """ Test the api_collection_new function.  """
-        output = self.app.post('/api/collection/new')
-        self.assertEqual(output.status_code, 301)
 
         output = self.app.post('/api/collection/new/')
         self.assertEqual(output.status_code, 500)
