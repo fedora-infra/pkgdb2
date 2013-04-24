@@ -149,9 +149,10 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     ## TODO: check is user is allowed to change package
 
     try:
-        pkglisting = model.PackageListing.by_pkgid_collectionid(session,
-                                                            package.id,
-                                                            collection.id)
+        pkglisting = model.PackageListing.by_pkgid_collectionid(
+            session,
+            package.id,
+            collection.id)
     except NoResultFound:
         pkglisting = package.create_listing(owner=pkg_user,
                                             collection=collection,

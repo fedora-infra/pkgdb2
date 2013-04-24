@@ -131,9 +131,10 @@ class SetAclPackageForm(wtf.Form):
 
 
 class RequestAclPackageForm(wtf.Form):
-    pkg_branch = wtf.SelectMultipleField('Branch',
-                                 [wtf.validators.Required()],
-                                 choices=[('', '')])
+    pkg_branch = wtf.SelectMultipleField(
+        'Branch',
+        [wtf.validators.Required()],
+        choices=[('', '')])
     pkg_acl = wtf.SelectMultipleField(
         'ACL',
         [wtf.validators.Required()],
@@ -157,9 +158,10 @@ class RequestAclPackageForm(wtf.Form):
 
 
 class UpdateAclPackageForm(wtf.Form):
-    pkg_branch = wtf.SelectMultipleField('Branch',
-                                 [wtf.validators.Required()],
-                                 choices=[('', '')])
+    pkg_branch = wtf.SelectMultipleField(
+        'Branch',
+        [wtf.validators.Required()],
+        choices=[('', '')])
     pkg_acl = wtf.SelectMultipleField(
         'ACL',
         [wtf.validators.Required()],

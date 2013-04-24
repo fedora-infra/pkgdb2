@@ -190,14 +190,15 @@ class PersonPackageListingAcl(BASE):
     @classmethod
     def get_pending_acl(cls, session, user):
         """ Return the pending ACLs on packages owner by user.
-        
+
         """
         # Get all the packages of this person
         stmt = session.query(PackageListing.id).filter(
             PackageListing.owner == user
         ).subquery()
 
-        stmt2 = session.query(PersonPackageListing.id
+        stmt2 = session.query(
+            PersonPackageListing.id
         ).filter(
             PersonPackageListing.packagelisting_id.in_(stmt)
         ).subquery()
@@ -212,10 +213,10 @@ class PersonPackageListingAcl(BASE):
 
     @classmethod
     def get_acl_package(cls, session, user, package,
-                                status="Awaiting Review"):
+                        status="Awaiting Review"):
         """ Return the pending ACLs for the specified package owned by
         user.
-        
+
         """
         # Get all the packages of this person
         stmt = session.query(Package.id).filter(
@@ -226,7 +227,8 @@ class PersonPackageListingAcl(BASE):
             PackageListing.packageid == stmt
         ).subquery()
 
-        stmt3 = session.query(PersonPackageListing.id
+        stmt3 = session.query(
+            PersonPackageListing.id
         ).filter(
             PersonPackageListing.packagelisting_id.in_(stmt2)
         ).filter(
@@ -718,7 +720,7 @@ class PackageListing(BASE):
         query = session.query(cls).filter(
             PackageListing.packageid == stmt.c.id
         )
-        
+
         if clt_id:
             query = query.filter(PackageListing.collectionid == clt_id)
         if pkg_owner:

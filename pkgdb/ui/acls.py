@@ -58,8 +58,9 @@ def request_acl(package):
                 )
             SESSION.commit()
             flask.flash(message)
-            return flask.redirect(flask.url_for('.package_info',
-                package=package))
+            return flask.redirect(
+                flask.url_for('.package_info',
+                              package=package))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(err.message, 'error')
@@ -69,6 +70,7 @@ def request_acl(package):
         form=form,
         package=package,
     )
+
 
 ## TODO: user logged in
 @UI.route('/acl/<package>/update/<user>/', methods=('GET', 'POST'))
@@ -105,8 +107,9 @@ def update_acl(package, user, branch=None):
                 )
             SESSION.commit()
             flask.flash('ACLs updated')
-            return flask.redirect(flask.url_for('.package_info',
-                package=package))
+            return flask.redirect(
+                flask.url_for('.package_info',
+                              package=package))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(err.message, 'error')
