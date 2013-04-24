@@ -235,7 +235,7 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
 
 def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
                    orphaned=False, status='Approved', page=None,
-                   limit=None):
+                   limit=None, count=False):
     """ Return the list of packages matching the given criteria.
 
     :arg session: session with which to connect to the database
@@ -246,6 +246,9 @@ def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
     :kwarg deprecated: boolean to restrict search to deprecated packages
     :kwarg page: the page number to apply to the results
     :kwarg limit: the number of results to return
+    :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+
     """
     if '*' in pkg_name:
         pkg_name = pkg_name.replace('*', '%')
@@ -267,7 +270,7 @@ def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
 
 
 def search_collection(session, pattern, status=None, page=None,
-                      limit=None):
+                      limit=None, count=False):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database
@@ -275,6 +278,9 @@ def search_collection(session, pattern, status=None, page=None,
     :kwarg status: status of the collection to search for
     :kwarg page: the page number to apply to the results
     :kwarg limit: the number of results to return
+    :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+
     """
     if '*' in pattern:
         pattern = pattern.replace('*', '%')
@@ -295,13 +301,16 @@ def search_collection(session, pattern, status=None, page=None,
                                    limit=limit)
 
 
-def search_packagers(session, pattern, page=None, limit=None):
+def search_packagers(session, pattern, page=None, limit=None,
+                     count=False):
     """ Return the list of Packagers maching the given pattern.
 
     :arg session: session with which to connect to the database
     :arg pattern: pattern to match on the packagers
     :kwarg page: the page number to apply to the results
     :kwarg limit: the number of results to return
+    :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
 
     """
     if '*' in pattern:

@@ -558,7 +558,7 @@ class Collection(BASE):
 
     @classmethod
     def search(cls, session, clt_name, clt_status=None, offset=None,
-               limit=None):
+               limit=None, count=False):
         ''' Return the Collections matching the criteria.
 
         :arg cls: the class object
@@ -567,6 +567,8 @@ class Collection(BASE):
         :kwarg clt_status: the status of the Collection
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
 
         '''
         # Get all the packages matching the name
@@ -575,6 +577,10 @@ class Collection(BASE):
         )
         if clt_status:
             query = query.filter(Collection.status == clt_status)
+
+        if count:
+            return query.count()
+
         if offset:
             query = query.offset(offset)
         if limit:
@@ -689,7 +695,7 @@ class PackageListing(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, clt_id, pkg_owner=None,
-               pkg_status=None, offset=None, limit=None):
+               pkg_status=None, offset=None, limit=None, count=False):
         """
         Return the list of packages matching the given criteria
 
@@ -700,6 +706,8 @@ class PackageListing(BASE):
         :arg pkg_status: status of the package
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
 
         """
         # Get all the packages matching the name
@@ -717,6 +725,10 @@ class PackageListing(BASE):
             query = query.filter(PackageListing.owner == pkg_owner)
         if pkg_status:
             query = query.filter(PackageListing.status == pkg_status)
+
+        if count:
+            return query.count()
+
         if offset:
             query = query.offset(offset)
         if limit:
@@ -724,13 +736,16 @@ class PackageListing(BASE):
         return query.all()
 
     @classmethod
-    def search_owner(cls, session, pattern, offset=None, limit=None):
+    def search_owner(cls, session, pattern, offset=None, limit=None,
+                     count=False):
         """ Return all the package whose owner match the pattern.
 
         :arg session: session with which to connect to the database
         :arg pattern: pattern the owner of the package should match
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
 
         """
         query1 = session.query(sa.func.distinct(cls.owner)).filter(
@@ -742,6 +757,10 @@ class PackageListing(BASE):
             PersonPackageListing.user.like(pattern)
         )
         query = query1.union(query2)
+
+        if count:
+            return query.count()
+
         if offset:
             query = query.offset(offset)
         if limit:
@@ -980,7 +999,7 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_owner=None, pkg_status=None,
-               offset=None, limit=None):
+               offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database
@@ -989,6 +1008,8 @@ class Package(BASE):
         :kwarg pkg_status: status of the package
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
 
         """
         query = session.query(Package).filter(
@@ -998,6 +1019,10 @@ class Package(BASE):
                 PackageListing.owner == pkg_owner)
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
+
+        if count:
+            return query.count()
+
         if offset:
             query = query.offset(offset)
         if limit:
