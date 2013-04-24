@@ -267,7 +267,7 @@ def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
 
     return model.Package.search(session, pkg_name=pkg_name,
                                 pkg_owner=pkg_owner, pkg_status=status,
-                                offset=page, limit=limit)
+                                offset=page, limit=limit, count=count)
 
 
 def search_collection(session, pattern, status=None, page=None,
@@ -299,7 +299,8 @@ def search_collection(session, pattern, status=None, page=None,
                                    clt_name=pattern,
                                    clt_status=status,
                                    offset=page,
-                                   limit=limit)
+                                   limit=limit,
+                                   count=count)
 
 
 def search_packagers(session, pattern, page=None, limit=None,
@@ -329,7 +330,8 @@ def search_packagers(session, pattern, page=None, limit=None,
     packages = model.PackageListing.search_owner(session,
                                                  pattern=pattern,
                                                  offset=page,
-                                                 limit=limit)
+                                                 limit=limit,
+                                                 count=count)
     return packages
 
 
