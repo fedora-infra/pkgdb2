@@ -27,6 +27,8 @@ pkgdb default configuration.
 # url to the database server:
 DB_URL = 'sqlite:////var/tmp/packagedb2.sqlite'
 
+# the number of items to display on the search pages
+ITEMS_PER_PAGE = 50
 
 # secret key used to generate unique csrf token
 SECRET_KEY = '<insert here your own key>'

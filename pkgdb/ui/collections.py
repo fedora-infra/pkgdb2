@@ -24,28 +24,52 @@ UI namespace for the Flask application.
 '''
 
 import flask
+from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser
+from pkgdb import SESSION, FakeFasUser, APP
 from pkgdb.ui import UI
 
 
 @UI.route('/collections/')
+@UI.route('/collections/page/<int:page>/')
 @UI.route('/collections/<motif>/')
-def list_collections(motif=None):
+@UI.route('/collections/<motif>/page/<int:page>/')
+def list_collections(motif=None, page=1):
     ''' Display the list of collections corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
+    limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
 
-    collections = pkgdblib.search_collection(SESSION,
-                                             pattern=pattern
-                                             )
+    try:
+        int(limit)
+    except ValueError:
+        limit = APP.config['ITEMS_PER_PAGE']
+        flask.flash('Incorrect limit provided, using default', 'errors')
+
+    collections = pkgdblib.search_collection(
+        SESSION,
+        pattern=pattern,
+        page=page,
+        limit=limit,
+    )
+    collections_count = pkgdblib.search_collection(
+        SESSION,
+        pattern=pattern,
+        page=page,
+        limit=limit,
+        count=True
+    )
+    total_page = int(ceil(collections_count / float(limit)))
 
     return flask.render_template(
         'list_collections.html',
         collections=collections,
+        motif=motif,
+        total_page=total_page,
+        page=page
     )
 
 

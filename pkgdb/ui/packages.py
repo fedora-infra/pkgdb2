@@ -24,36 +24,65 @@ UI namespace for the Flask application.
 '''
 
 import flask
+from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser
+from pkgdb import SESSION, FakeFasUser, APP
 from pkgdb.ui import UI
 
 
 @UI.route('/packages/')
+@UI.route('/packages/page/<int:page>/')
 @UI.route('/packages/<motif>/')
-def list_packages(motif=None):
+@UI.route('/packages/<motif>/page/<int:page>/')
+def list_packages(motif=None, page=1):
     ''' Display the list of packages corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
-    deprecated = bool(flask.request.args.get('deprecated', False))
+    status = flask.request.args.get('status', None)
+    limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
 
-    packages = pkgdblib.search_package(SESSION,
-                                       pkg_name=pattern,
-                                       clt_name=branches,
-                                       pkg_owner=owner,
-                                       orphaned=orphaned,
-                                       deprecated=deprecated,
-                                       )
+    try:
+        int(limit)
+    except ValueError:
+        limit = APP.config['ITEMS_PER_PAGE']
+        flask.flash('Incorrect limit provided, using default', 'errors')
+
+
+    packages = pkgdblib.search_package(
+        SESSION,
+        pkg_name=pattern,
+        clt_name=branches,
+        pkg_owner=owner,
+        orphaned=orphaned,
+        status=status,
+        page=page,
+        limit=limit,
+    )
+    packages_count = pkgdblib.search_package(
+        SESSION,
+        pkg_name=pattern,
+        clt_name=branches,
+        pkg_owner=owner,
+        orphaned=orphaned,
+        status=status,
+        page=page,
+        limit=limit,
+        count=True
+    )
+    total_page = int(ceil(packages_count / float(limit)))
 
     return flask.render_template(
         'list_packages.html',
         packages=packages,
+        motif=motif,
+        total_page=total_page,
+        page=page
     )
 
 

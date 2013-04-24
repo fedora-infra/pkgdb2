@@ -19,6 +19,34 @@
 
 <h1>Search collections</h1>
 
+{% if total_page %}
+<table>
+    <tr>
+        <td>
+        {% if page > 1%}
+            <a href="{{ url_for('.list_collections', motif=motif,
+                                page=page - 1) }}">
+                < Previous
+            </a>
+        {% else %}
+            < Previous
+        {% endif %}
+        </td>
+        <td>{{ page }} / {{ total_page }}</td>
+        <td>
+            {% if page < total_page %}
+            <a href="{{ url_for('.list_collections', motif=motif,
+                                page=page + 1) }}">
+                Next >
+            </a>
+            {% else %}
+            Next >
+            {% endif %}
+        </td>
+    </tr>
+</table>
+{% endif %}
+
 <ul>
 {% for collection in collections %}
     <li>

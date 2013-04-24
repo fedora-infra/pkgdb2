@@ -24,28 +24,52 @@ UI namespace for the Flask application.
 '''
 
 import flask
+from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION
+from pkgdb import SESSION, APP
 from pkgdb.ui import UI
 
 
 @UI.route('/packagers/')
+@UI.route('/packagers/page/<int:page>/')
 @UI.route('/packagers/<motif>/')
-def list_packagers(motif=None):
+@UI.route('/packagers/<motif>/page/<int:page>/')
+def list_packagers(motif=None, page=1):
     ''' Display the list of packagers corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
+    limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
 
-    packagers = pkgdblib.search_packagers(SESSION,
-                                          pattern=pattern
-                                          )
+    try:
+        int(limit)
+    except ValueError:
+        limit = APP.config['ITEMS_PER_PAGE']
+        flask.flash('Incorrect limit provided, using default', 'errors')
+
+    packagers = pkgdblib.search_packagers(
+        SESSION,
+        pattern=pattern,
+        page=page,
+        limit=limit,
+    )
+    packagers_count = pkgdblib.search_packagers(
+        SESSION,
+        pattern=pattern,
+        page=page,
+        limit=limit,
+        count=True,
+    )
+    total_page = int(ceil(packagers_count / float(limit)))
 
     return flask.render_template(
         'list_packagers.html',
         packagers=[pkg[0] for pkg in packagers],
+        motif=motif,
+        total_page=total_page,
+        page=page
     )
 
 
