@@ -243,7 +243,7 @@ class PkgdbLibtests(Modeltests):
                                        clt_name='F-18',
                                        pkg_owner=None,
                                        orphaned=None,
-                                       deprecated=None,
+                                       status=None,
                                        )
         self.assertEqual(len(pkgs), 1)
         self.assertEqual(pkgs[0].name, 'guake')
@@ -254,7 +254,7 @@ class PkgdbLibtests(Modeltests):
                                        clt_name='F-18',
                                        pkg_owner=None,
                                        orphaned=True,
-                                       deprecated=None,
+                                       status=None,
                                        )
         self.assertEqual(len(pkgs), 0)
 
@@ -263,7 +263,7 @@ class PkgdbLibtests(Modeltests):
                                        clt_name='F-18',
                                        pkg_owner=None,
                                        orphaned=None,
-                                       deprecated=True,
+                                       status='Deprecated',
                                        )
         self.assertEqual(len(pkgs), 0)
 

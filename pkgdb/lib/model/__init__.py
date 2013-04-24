@@ -557,13 +557,16 @@ class Collection(BASE):
         return session.query(cls).all()
 
     @classmethod
-    def search(cls, session, clt_name, clt_status=None):
+    def search(cls, session, clt_name, clt_status=None, offset=None,
+               limit=None):
         ''' Return the Collections matching the criteria.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
         :arg clt_name: pattern to retrict the Collection queried
         :kwarg clt_status: the status of the Collection
+        :kwarg offset: the offset to apply to the results
+        :kwarg limit: the number of results to return
 
         '''
         # Get all the packages matching the name
@@ -572,6 +575,10 @@ class Collection(BASE):
         )
         if clt_status:
             query = query.filter(Collection.status == clt_status)
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
         return query.all()
 
 
@@ -682,7 +689,7 @@ class PackageListing(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, clt_id, pkg_owner=None,
-               pkg_status=None):
+               pkg_status=None, offset=None, limit=None):
         """
         Return the list of packages matching the given criteria
 
@@ -691,6 +698,9 @@ class PackageListing(BASE):
         :arg clt_id: the identifier of the collection
         :arg pkg_owner: name of the new owner of the package
         :arg pkg_status: status of the package
+        :kwarg offset: the offset to apply to the results
+        :kwarg limit: the number of results to return
+
         """
         # Get all the packages matching the name
         stmt = session.query(Package).filter(
@@ -700,20 +710,28 @@ class PackageListing(BASE):
         query = session.query(cls).filter(
             PackageListing.packageid == stmt.c.id
         )
+        
         if clt_id:
             query = query.filter(PackageListing.collectionid == clt_id)
         if pkg_owner:
             query = query.filter(PackageListing.owner == pkg_owner)
         if pkg_status:
             query = query.filter(PackageListing.status == pkg_status)
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
         return query.all()
 
     @classmethod
-    def search_owner(cls, session, pattern):
+    def search_owner(cls, session, pattern, offset=None, limit=None):
         """ Return all the package whose owner match the pattern.
 
         :arg session: session with which to connect to the database
         :arg pattern: pattern the owner of the package should match
+        :kwarg offset: the offset to apply to the results
+        :kwarg limit: the number of results to return
+
         """
         query1 = session.query(sa.func.distinct(cls.owner)).filter(
             PackageListing.owner.like(pattern)
@@ -723,7 +741,12 @@ class PackageListing(BASE):
         ).filter(
             PersonPackageListing.user.like(pattern)
         )
-        return query1.union(query2).all()
+        query = query1.union(query2)
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
+        return query.all()
 
     def __repr__(self):
         return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r,' \
@@ -956,13 +979,17 @@ class Package(BASE):
         return session.query(cls).all()
 
     @classmethod
-    def search(cls, session, pkg_name, pkg_owner=None, pkg_status=None):
+    def search(cls, session, pkg_name, pkg_owner=None, pkg_status=None,
+               offset=None, limit=None):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database
         :arg pkg_name: the name of the package
-        :arg pkg_owner: name of the new owner of the package
-        :arg pkg_status: status of the package
+        :kwarg pkg_owner: name of the new owner of the package
+        :kwarg pkg_status: status of the package
+        :kwarg offset: the offset to apply to the results
+        :kwarg limit: the number of results to return
+
         """
         query = session.query(Package).filter(
             Package.name.like(pkg_name))
@@ -971,6 +998,10 @@ class Package(BASE):
                 PackageListing.owner == pkg_owner)
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
         return query.all()
 
     def to_json(self):

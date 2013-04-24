@@ -234,49 +234,92 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
 
 
 def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
-                   orphaned=False, deprecated=False):
+                   orphaned=False, status='Approved', page=None,
+                   limit=None):
     """ Return the list of packages matching the given criteria.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
+    :kwarg clt_name: branchname of the collection to search
+    :kwarg pkg_owner: owner of the packages searched
+    :kwarg orphaned: boolean to restrict search to orphaned packages
+    :kwarg deprecated: boolean to restrict search to deprecated packages
+    :kwarg page: the page number to apply to the results
+    :kwarg limit: the number of results to return
     """
     if '*' in pkg_name:
         pkg_name = pkg_name.replace('*', '%')
     if orphaned:
         pkg_owner = 'orphan'
-    status = None
-    if deprecated:
-        status = 'Deprecated'
+
+    if limit is not None:
+        try:
+            int(limit)
+        except ValueError:
+            raise PkgdbException('Wrong limit provided')
+
+    if page is not None and limit is not None and limit != 0:
+        page = (page - 1) * int(limit)
 
     return model.Package.search(session, pkg_name=pkg_name,
-                                pkg_owner=pkg_owner, pkg_status=status)
+                                pkg_owner=pkg_owner, pkg_status=status,
+                                offset=page, limit=limit)
 
 
-def search_collection(session, pattern, status=None):
+def search_collection(session, pattern, status=None, page=None,
+                      limit=None):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database
     :arg pattern: pattern to match the collection
     :kwarg status: status of the collection to search for
+    :kwarg page: the page number to apply to the results
+    :kwarg limit: the number of results to return
     """
     if '*' in pattern:
         pattern = pattern.replace('*', '%')
 
+    if limit is not None:
+        try:
+            int(limit)
+        except ValueError:
+            raise PkgdbException('Wrong limit provided')
+
+    if page is not None and limit is not None and limit != 0:
+        page = (page - 1) * int(limit)
+
     return model.Collection.search(session,
                                    clt_name=pattern,
-                                   clt_status=status)
+                                   clt_status=status,
+                                   offset=page,
+                                   limit=limit)
 
 
-def search_packagers(session, pattern):
+def search_packagers(session, pattern, page=None, limit=None):
     """ Return the list of Packagers maching the given pattern.
 
     :arg session: session with which to connect to the database
     :arg pattern: pattern to match on the packagers
+    :kwarg page: the page number to apply to the results
+    :kwarg limit: the number of results to return
+
     """
     if '*' in pattern:
         pattern = pattern.replace('*', '%')
+
+    if limit is not None:
+        try:
+            int(limit)
+        except ValueError:
+            raise PkgdbException('Wrong limit provided')
+
+    if page is not None and limit is not None and limit != 0:
+        page = (page - 1) * int(limit)
+
     packages = model.PackageListing.search_owner(session,
-                                                 pattern=pattern)
+                                                 pattern=pattern,
+                                                 offset=page,
+                                                 limit=limit)
     return packages
 
 
