@@ -1,10 +1,8 @@
+
 .errors {
     color: red;
 }
 
-#flashes li {
-    color: green;
-}
 
 .acls tr td {
     vertical-align: text-top;
