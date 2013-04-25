@@ -57,6 +57,10 @@ body#packages #mainNav li#packagesTab a {
     margin-right: 5px;
 }
 
+#options_content li {
+    margin-bottom: 5px;
+}
+
 #options input[type="submit"] {
     width: 90%;
 }

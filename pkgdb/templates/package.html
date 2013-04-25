@@ -8,6 +8,16 @@
 {%block options %}
 <ul>
     <li>
+        <a href="#">
+            <input type="submit" value="Watch package"/>
+        </a>
+    </li>
+    <li>
+        <a href="#">
+            <input type="submit" value="Apply for co-maintainer"/>
+        </a>
+    </li>
+    <li>
         <a href="{{ url_for('.request_acl',
                  package=package.name) }}">
             <input type="submit" value="Request ACLs"/>
