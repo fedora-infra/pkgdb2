@@ -8,12 +8,14 @@
 {%block options %}
 <ul>
     <li>
-        <a href="#">
+        <a href="{{ url_for('.watch_package',
+                 package=package.name) }}">
             <input type="submit" value="Watch package"/>
         </a>
     </li>
     <li>
-        <a href="#">
+        <a href="{{ url_for('.comaintain_package',
+                 package=package.name) }}">
             <input type="submit" value="Apply for co-maintainer"/>
         </a>
     </li>

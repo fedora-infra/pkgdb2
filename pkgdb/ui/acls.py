@@ -71,6 +71,61 @@ def request_acl(package):
         package=package,
     )
 
+## TODO: user logged in
+@UI.route('/acl/<package>/watch/', methods=('GET', 'POST'))
+def watch_package(package):
+    pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
+    pkg_acls = ['watchcommits', 'watchbugzilla']
+    pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
+    try:
+        for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+            pkgdblib.set_acl_package(
+                SESSION,
+                pkg_name=package,
+                clt_name=collec,
+                pkg_user=FakeFasUser().username,  # TODO: port to flask.g.fas_user
+                acl=acl,
+                status='Approved',
+                user=FakeFasUser(),  # TODO: port to flask.g.fas_user
+                #user=flask.g.fas_user,
+            )
+        SESSION.commit()
+        flask.flash('ACLs updated')
+        return flask.redirect(
+            flask.url_for('.package_info',
+                          package=package))
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        flask.flash(err.message, 'error')
+
+
+## TODO: user logged in
+@UI.route('/acl/<package>/comaintain/', methods=('GET', 'POST'))
+def comaintain_package(package):
+    pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
+    pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
+    pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
+    try:
+        for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+            pkgdblib.set_acl_package(
+                SESSION,
+                pkg_name=package,
+                clt_name=collec,
+                pkg_user=FakeFasUser().username,  # TODO: port to flask.g.fas_user
+                acl=acl,
+                status='Awaiting Review',
+                user=FakeFasUser(),  # TODO: port to flask.g.fas_user
+                #user=flask.g.fas_user,
+            )
+        SESSION.commit()
+        flask.flash('ACLs updated')
+        return flask.redirect(
+            flask.url_for('.package_info',
+                          package=package))
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        flask.flash(err.message, 'error')
+
 
 ## TODO: user logged in
 @UI.route('/acl/<package>/update/<user>/', methods=('GET', 'POST'))
