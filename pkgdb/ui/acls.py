@@ -45,7 +45,7 @@ def request_acl(package):
 
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
-                message = pkgdblib.set_acl_package(
+                pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
                     clt_name=collec,
@@ -57,7 +57,7 @@ def request_acl(package):
                     #user=flask.g.fas_user,
                 )
             SESSION.commit()
-            flask.flash(message)
+            flask.flash('ACLs updated')
             return flask.redirect(
                 flask.url_for('.package_info',
                               package=package))
