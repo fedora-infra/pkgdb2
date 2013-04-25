@@ -29,7 +29,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser
+from pkgdb import SESSION, FakeFasUser, APP
 from pkgdb.ui import UI
 
 
@@ -45,6 +45,9 @@ def request_acl(package):
 
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+                acl_status = 'Awaiting Review'
+                if acl in APP.config['AUTO_APPROVE']:
+                    acl_status = 'Approved'
                 pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
@@ -52,7 +55,7 @@ def request_acl(package):
                     #pkg_user=flask.g.fas_user.username,
                     pkg_user=FakeFasUser().username,
                     acl=acl,
-                    status='Awaiting Review',
+                    status=acl_status,
                     user=FakeFasUser(),  # TODO: port to flask.g.fas_user
                     #user=flask.g.fas_user,
                 )
@@ -148,6 +151,10 @@ def update_acl(package, user, branch=None):
         pkg_branchs = form.pkg_branch.data
         pkg_acls = form.pkg_acl.data
         acl_status = form.acl_status.data
+
+        if acl_status == 'Awaiting Review' and \
+                acl in APP.config['AUTO_APPROVE']:
+            acl_status = 'Approved'
 
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):

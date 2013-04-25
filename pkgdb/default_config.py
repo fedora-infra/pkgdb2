@@ -32,3 +32,6 @@ ITEMS_PER_PAGE = 50
 
 # secret key used to generate unique csrf token
 SECRET_KEY = '<insert here your own key>'
+
+# List the ACL which are auto-approved (don't need reviewing)
+AUTO_APPROVE = ['watchcommits', 'watchbugzilla']
