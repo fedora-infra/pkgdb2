@@ -3,7 +3,6 @@
     color: red;
 }
 
-
 .acls tr td {
     vertical-align: text-top;
 }
@@ -37,6 +36,9 @@ body#packages #mainNav li#packagesTab a {
     margin-right: 5px;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15) inset;
     border-radius: 10px 10px 10px 10px;
+    position: absolute;
+    top:120px;
+    right:0;
 }
 
 #delimiter {
