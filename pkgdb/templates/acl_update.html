@@ -26,7 +26,7 @@
     {% endfor %}
 </table>
 
-<form action="{{ url_for('.update_acl', package=package, user=user) }}" method="post">
+<form action="{{ url_for('.update_acl', package=package, user=user, branch=branch) }}" method="post">
   <table>
     {{ render_field_in_cell(form.pkg_branch) }}
     {{ render_field_in_cell(form.pkg_acl) }}

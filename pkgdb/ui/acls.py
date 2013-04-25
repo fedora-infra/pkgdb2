@@ -86,6 +86,7 @@ def update_acl(package, user, branch=None):
             if acls['collection'] == branch:
                 pending_acls2.append(acls)
         pending_acls = pending_acls2
+
     collections = set([item['collection'] for item in pending_acls])
     form = pkgdb.forms.UpdateAclPackageForm(collections=collections)
     if form.validate_on_submit():
@@ -95,7 +96,7 @@ def update_acl(package, user, branch=None):
 
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
-                message = pkgdblib.set_acl_package(
+                pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
                     clt_name=collec,
@@ -119,6 +120,7 @@ def update_acl(package, user, branch=None):
         form=form,
         package=package,
         user=user,
+        branch=branch,
         pending_acls=pending_acls,
     )
 
