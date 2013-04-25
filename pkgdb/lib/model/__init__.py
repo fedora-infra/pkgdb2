@@ -185,6 +185,7 @@ class PersonPackageListingAcl(BASE):
                                              personpkg_id,
                                              status=None,
                                              acl=acl)
+            session.add(pkgacl)
         return pkgacl
 
     @classmethod

@@ -166,7 +166,6 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(
         session, personpkg.id, acl)
     personpkgacl.status = status
-    session.add(personpkgacl)
     session.flush()
 
 
