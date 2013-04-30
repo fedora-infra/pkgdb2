@@ -447,13 +447,12 @@ def get_acl_user_package(session, user, package, status=None):
     output = []
     for package in model.PackageListingAcl.get_acl_package(
             session, user, package, status=status):
-        if package.fas_name == user:
-            output.append(
-                {'package': package.packagelist.package.name,
-                 'user': package.fas_name,
-                 'collection': package.packagelist.collection.branchname,
-                 'acl': package.acl,
-                 'status': package.status,
-                 }
-            )
+        output.append(
+            {'package': package.packagelist.package.name,
+             'user': package.fas_name,
+             'collection': package.packagelist.collection.branchname,
+             'acl': package.acl,
+             'status': package.status,
+             }
+        )
     return output
