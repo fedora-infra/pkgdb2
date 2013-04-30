@@ -40,7 +40,7 @@ import pkgdb.lib as pkgdblib
 from pkgdb.lib import model
 from tests import (FakeFasUser, Modeltests, create_collection,
                    create_package, create_package_listing,
-                   create_person_package, create_person_package_acl)
+                   create_package_acl)
 
 
 class PkgdbLibtests(Modeltests):
@@ -54,7 +54,7 @@ class PkgdbLibtests(Modeltests):
                                     pkg_summary='Drop down terminal',
                                     pkg_status='Approved',
                                     pkg_collection='F-18',
-                                    pkg_owner='pingou',
+                                    pkg_poc='user://pingou',
                                     pkg_reviewURL=None,
                                     pkg_shouldopen=None,
                                     pkg_upstreamURL='http://guake.org',
@@ -66,11 +66,11 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual('guake', packages[0].name)
 
         pkgdblib.add_package(self.session,
-                             pkg_name='geany,fedocal',
+                             pkg_name=['geany', 'fedocal'],
                              pkg_summary='Drop down terminal',
                              pkg_status='Approved',
                              pkg_collection='devel, F-18',
-                             pkg_owner='pingou',
+                             pkg_poc='user://pingou',
                              pkg_reviewURL=None,
                              pkg_shouldopen=None,
                              pkg_upstreamURL=None,
@@ -94,7 +94,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].people[0].user, 'pingou')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'user://pingou')
 
     def test_set_acl_package(self):
         """ Test the set_acl_package function. """
@@ -105,7 +105,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='test',
                           clt_name='F-17',
-                          pkg_user='pingou',
+                          pkg_user='user://pingou',
                           acl='nothing',
                           status='Appr',
                           user=FakeFasUser(),
@@ -117,7 +117,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-17',
-                          pkg_user='pingou',
+                          pkg_user='user://pingou',
                           acl='nothing',
                           status='Appr',
                           user=FakeFasUser(),
@@ -130,7 +130,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='guake',
                           clt_name='F-18',
                           acl='nothing',
-                          pkg_user='pingou',
+                          pkg_user='user://pingou',
                           status='Appro',
                           user=FakeFasUser(),
                           )
@@ -141,7 +141,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          pkg_user='pingou',
+                          pkg_user='user://pingou',
                           acl='nothing',
                           status='Approved',
                           user=FakeFasUser(),
@@ -151,7 +151,7 @@ class PkgdbLibtests(Modeltests):
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
-                                 pkg_user='pingou',
+                                 pkg_user='user://pingou',
                                  acl='commit',
                                  status='Approved',
                                  user=FakeFasUser(),
@@ -160,7 +160,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(len(pkg_acl[0].people), 1)
+        self.assertEqual(len(pkg_acl[0].acls), 4)
 
     def test_pkg_change_owner(self):
         """ Test the pkg_change_owner function. """
@@ -172,7 +172,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='test',
                           clt_name='F-17',
                           user=FakeFasUser(),
-                          pkg_owner='toshio',
+                          pkg_poc='user://toshio',
                           )
         self.session.rollback()
 
@@ -182,7 +182,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='guake',
                           clt_name='F-17',
                           user=FakeFasUser(),
-                          pkg_owner='toshio',
+                          pkg_poc='user://toshio',
                           )
         self.session.rollback()
 
@@ -194,26 +194,26 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='guake',
                           clt_name='F-18',
                           user=fake_user,
-                          pkg_owner='toshio',
+                          pkg_poc='user://toshio',
                           )
         self.session.rollback()
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].owner, 'pingou')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'user://pingou')
 
         pkgdblib.pkg_change_owner(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=FakeFasUser(),
-                                 pkg_owner='toshio',
+                                 pkg_poc='user://toshio',
                                  )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].owner, 'toshio')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'user://toshio')
 
         user = FakeFasUser()
         user.username = 'toshio'
@@ -221,13 +221,13 @@ class PkgdbLibtests(Modeltests):
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=user,
-                                 pkg_owner='orphan',
+                                 pkg_poc='orphan',
                                  )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].owner, 'orphan')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
         self.assertEqual(pkg_acl[0].status, 'Orphaned')
 
     def test_create_session(self):
@@ -241,7 +241,7 @@ class PkgdbLibtests(Modeltests):
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',
                                        clt_name='F-18',
-                                       pkg_owner=None,
+                                       pkg_poc=None,
                                        orphaned=None,
                                        status=None,
                                        )
@@ -252,7 +252,7 @@ class PkgdbLibtests(Modeltests):
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',
                                        clt_name='F-18',
-                                       pkg_owner=None,
+                                       pkg_poc=None,
                                        orphaned=True,
                                        status=None,
                                        )
@@ -261,7 +261,7 @@ class PkgdbLibtests(Modeltests):
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',
                                        clt_name='F-18',
-                                       pkg_owner=None,
+                                       pkg_poc=None,
                                        orphaned=None,
                                        status='Deprecated',
                                        )
@@ -298,7 +298,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].owner, 'pingou')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'user://pingou')
         self.assertEqual(pkg_acl[0].status, 'Deprecated')
 
     def test_search_collection(self):
@@ -364,19 +364,22 @@ class PkgdbLibtests(Modeltests):
 
         pkg = pkgdblib.search_packagers(self.session, 'pi*')
         self.assertEqual(len(pkg), 1)
-        self.assertEqual(pkg[0][0], 'pingou')
+        self.assertEqual(pkg[0][0], 'user://pingou')
 
     def test_get_acl_packager(self):
         """ Test the get_acl_packager function. """
         acls = pkgdblib.get_acl_packager(self.session, 'pingou')
         self.assertEqual(acls, [])
 
-        create_person_package(self.session)
+        create_package_acl(self.session)
 
         acls = pkgdblib.get_acl_packager(self.session, 'pingou')
-        self.assertEqual(len(acls), 2)
+        self.assertEqual(len(acls), 4)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
+        self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
     def test_get_pending_acl_user(self):
         """ Test the get_pending_acl_user function. """
@@ -384,14 +387,14 @@ class PkgdbLibtests(Modeltests):
             self.session, 'pingou')
         self.assertEqual(pending_acls, [])
 
-        create_person_package_acl(self.session)
+        create_package_acl(self.session)
 
         pending_acls = pkgdblib.get_pending_acl_user(
             self.session, 'pingou')
         self.assertEqual(len(pending_acls), 1)
         self.assertEqual(pending_acls[0]['package'], 'guake')
-        self.assertEqual(pending_acls[0]['collection'], 'F-18')
-        self.assertEqual(pending_acls[0]['acl'], 'approveacls')
+        self.assertEqual(pending_acls[0]['collection'], 'devel')
+        self.assertEqual(pending_acls[0]['acl'], 'commit')
         self.assertEqual(pending_acls[0]['status'], 'Awaiting Review')
 
     def test_get_acl_user_package(self):
@@ -400,22 +403,22 @@ class PkgdbLibtests(Modeltests):
             self.session, 'pingou', 'guake')
         self.assertEqual(pending_acls, [])
 
-        create_person_package_acl(self.session)
+        create_package_acl(self.session)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'pingou', 'geany')
+            self.session, 'user://pingou', 'geany')
         self.assertEqual(len(pending_acls), 0)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'pingou', 'guake')
-        self.assertEqual(len(pending_acls), 2)
+            self.session, 'user://pingou', 'guake')
+        self.assertEqual(len(pending_acls), 4)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'pingou', 'guake', status='Awaiting Review')
+            self.session, 'user://toshio', 'guake', status='Awaiting Review')
         self.assertEqual(len(pending_acls), 1)
         self.assertEqual(pending_acls[0]['package'], 'guake')
-        self.assertEqual(pending_acls[0]['collection'], 'F-18')
-        self.assertEqual(pending_acls[0]['acl'], 'approveacls')
+        self.assertEqual(pending_acls[0]['collection'], 'devel')
+        self.assertEqual(pending_acls[0]['acl'], 'commit')
         self.assertEqual(pending_acls[0]['status'], 'Awaiting Review')
 
 

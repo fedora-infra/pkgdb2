@@ -51,7 +51,7 @@ def create_session(db_url, debug=False, pool_recycle=3600):
 
 
 def add_package(session, pkg_name, pkg_summary, pkg_status,
-                pkg_collection, pkg_owner, user, pkg_reviewURL=None,
+                pkg_collection, pkg_poc, user, pkg_reviewURL=None,
                 pkg_shouldopen=None, pkg_upstreamURL=None):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
@@ -64,15 +64,18 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     if user is None:
         raise PkgdbException("You're not allowed to add a package")
 
-    if ',' in pkg_name:
-        pkg_name = [item.strip() for item in pkg_name.split(',')]
-    else:
-        pkg_name = [pkg_name]
+    if isinstance(pkg_name, str) or isinstance(pkg_name, unicode):
+        if ',' in pkg_name:
+            pkg_name = [item.strip() for item in pkg_name.split(',')]
+        else:
+            pkg_name = [pkg_name]
 
-    if ',' in pkg_collection:
-        pkg_collection = [item.strip() for item in pkg_collection.split(',')]
-    else:
-        pkg_collection = [pkg_collection]
+    if isinstance(pkg_collection, str) \
+            or isinstance(pkg_collection, unicode):
+        if ',' in pkg_collection:
+            pkg_collection = [item.strip() for item in pkg_collection.split(',')]
+        else:
+            pkg_collection = [pkg_collection]
 
     for pkg in pkg_name:
         package = model.Package(name=pkg,
@@ -86,7 +89,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
 
         for collec in pkg_collection:
             collection = model.Collection.by_name(session, collec)
-            pkglisting = package.create_listing(owner=pkg_owner,
+            pkglisting = package.create_listing(point_of_contact=pkg_poc,
                                                 collection=collection,
                                                 statusname=pkg_status)
             session.add(pkglisting)
@@ -99,11 +102,11 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     for pkg in pkg_name:
         for collec in pkg_collection:
             for acl in ['commit', 'watchbugzilla', 'watchcommits',
-                        'approveacls', 'build']:
+                        'approveacls']:
                 set_acl_package(session=session,
                                 pkg_name=pkg,
                                 clt_name=collec,
-                                pkg_user=pkg_owner,
+                                pkg_user=pkg_poc,
                                 acl=acl,
                                 status='Approved',
                                 user=user)
@@ -160,22 +163,22 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         session.add(pkglisting)
         session.flush()
     ## TODO: how do we get pkg_user's object?
-    personpkg = model.PersonPackageListing.get_or_create(session,
-                                                         pkg_user,
-                                                         pkglisting.id)
-    personpkgacl = model.PersonPackageListingAcl.get_or_create_personpkgid_acl(
-        session, personpkg.id, acl)
-    personpkgacl.status = status
+    personpkg = model.PackageListingAcl.get_or_create(session,
+                                                      pkg_user,
+                                                      pkglisting.id,
+                                                      acl=acl,
+                                                      status=status)
+    personpkg.status = status
     session.flush()
 
 
-def pkg_change_owner(session, pkg_name, clt_name, pkg_owner, user):
+def pkg_change_owner(session, pkg_name, clt_name, pkg_poc, user):
     """ Change the owner of a package.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
     :arg clt_name: the name of the collection
-    :arg pkg_owner: name of the new owner of the package.
+    :arg pkg_poc: name of the new point of contact for the package.
     :arg user: the user making the action
     """
     try:
@@ -194,9 +197,9 @@ def pkg_change_owner(session, pkg_name, clt_name, pkg_owner, user):
 
     ## TODO: Check if flask.g.fas_user is an admin
 
-    if pkglisting.owner == user.username:
-        pkglisting.owner = pkg_owner
-        if pkg_owner == 'orphan':
+    if pkglisting.point_of_contact == 'user://%s' % user.username:
+        pkglisting.point_of_contact = pkg_poc
+        if pkg_poc == 'orphan':
             pkglisting.status = 'Orphaned'
         session.add(pkglisting)
         session.flush()
@@ -233,7 +236,7 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
     session.flush()
 
 
-def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
+def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
                    orphaned=False, status='Approved', page=None,
                    limit=None, count=False):
     """ Return the list of packages matching the given criteria.
@@ -241,7 +244,7 @@ def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
     :kwarg clt_name: branchname of the collection to search
-    :kwarg pkg_owner: owner of the packages searched
+    :kwarg pkg_poc: point of contact of the packages searched
     :kwarg orphaned: boolean to restrict search to orphaned packages
     :kwarg deprecated: boolean to restrict search to deprecated packages
     :kwarg page: the page number to apply to the results
@@ -253,7 +256,8 @@ def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
     if '*' in pkg_name:
         pkg_name = pkg_name.replace('*', '%')
     if orphaned:
-        pkg_owner = 'orphan'
+        pkg_poc = 'orphan'
+        pkg_status = 'Orphaned'
 
     if limit is not None:
         try:
@@ -265,7 +269,7 @@ def search_package(session, pkg_name, clt_name=None, pkg_owner=None,
         page = (page - 1) * int(limit)
 
     return model.Package.search(session, pkg_name=pkg_name,
-                                pkg_owner=pkg_owner, pkg_status=status,
+                                pkg_poc=pkg_poc, pkg_status=status,
                                 offset=page, limit=limit, count=count)
 
 
@@ -326,11 +330,13 @@ def search_packagers(session, pattern, page=None, limit=None,
     if page is not None and limit is not None and limit != 0:
         page = (page - 1) * int(limit)
 
-    packages = model.PackageListing.search_owner(session,
-                                                 pattern=pattern,
-                                                 offset=page,
-                                                 limit=limit,
-                                                 count=count)
+    packages = model.PackageListing.search_point_of_contact(
+        session,
+        pattern=pattern,
+        offset=page,
+        limit=limit,
+        count=count)
+
     return packages
 
 
@@ -340,7 +346,7 @@ def get_acl_packager(session, packager):
     :arg session: session with which to connect to the database
     :arg packager: the name of the packager to retrieve the ACLs for.
     """
-    return model.PersonPackageListing.get_acl_packager(
+    return model.PackageListingAcl.get_acl_packager(
         session, packager=packager)
 
 
@@ -414,12 +420,12 @@ def get_pending_acl_user(session, user):
         list of pending ACLs.
     """
     output = []
-    for package in model.PersonPackageListingAcl.get_pending_acl(
+    for package in model.PackageListingAcl.get_pending_acl(
             session, user):
         output.append(
-            {'package': package.personpackagelist.packagelist.package.name,
-             'user': package.personpackagelist.user,
-             'collection': package.personpackagelist.packagelist.collection.branchname,
+            {'package': package.packagelist.package.name,
+             'user': package.fas_name,
+             'collection': package.packagelist.collection.branchname,
              'acl': package.acl,
              'status': package.status,
              }
@@ -440,13 +446,13 @@ def get_acl_user_package(session, user, package, status=None):
     :arg status: the status of the package to retrieve the ACLs of
     """
     output = []
-    for package in model.PersonPackageListingAcl.get_acl_package(
+    for package in model.PackageListingAcl.get_acl_package(
             session, user, package, status=status):
-        if package.personpackagelist.user == user:
+        if package.fas_name == user:
             output.append(
-                {'package': package.personpackagelist.packagelist.package.name,
-                 'user': package.personpackagelist.user,
-                 'collection': package.personpackagelist.packagelist.collection.branchname,
+                {'package': package.packagelist.package.name,
+                 'user': package.fas_name,
+                 'collection': package.packagelist.collection.branchname,
                  'acl': package.acl,
                  'status': package.status,
                  }

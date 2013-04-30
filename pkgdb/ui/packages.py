@@ -58,7 +58,7 @@ def list_packages(motif=None, page=1):
         SESSION,
         pkg_name=pattern,
         clt_name=branches,
-        pkg_owner=owner,
+        pkg_poc=owner,
         orphaned=orphaned,
         status=status,
         page=page,
@@ -68,7 +68,7 @@ def list_packages(motif=None, page=1):
         SESSION,
         pkg_name=pattern,
         clt_name=branches,
-        pkg_owner=owner,
+        pkg_poc=owner,
         orphaned=orphaned,
         status=status,
         page=page,
@@ -98,10 +98,27 @@ def package_info(package):
     except NoResultFound:
         SESSION.rollback()
 
+    package_acls = []
+    for pkg in package_acl:
+        tmp = {}
+        tmp['collection'] = '%s %s' %(pkg.collection.name,
+                                      pkg.collection.version)
+        tmp['branchname'] = pkg.collection.branchname
+        tmp['point_of_contact'] = pkg.point_of_contact
+        acls = {}
+        for acl in pkg.acls:
+            tmp2 = {'acl': acl.acl, 'status': acl.status}
+            if acl.fas_name in acls:
+                acls[acl.fas_name].append(tmp2)
+            else:
+                acls[acl.fas_name] = [tmp2]
+        tmp['acls'] = acls
+        package_acls.append(tmp)
+
     return flask.render_template(
         'package.html',
         package=package,
-        package_acl=package_acl,
+        package_acl=package_acls,
     )
 
 
@@ -120,7 +137,7 @@ def package_new():
         pkg_status = form.pkg_status.data
         pkg_shouldopen = form.pkg_shouldopen.data
         pkg_collection = form.pkg_collection.data
-        pkg_owner = form.pkg_owner.data
+        pkg_poc = form.pkg_poc.data
         pkg_upstreamURL = form.pkg_upstreamURL.data
 
         try:
@@ -131,8 +148,9 @@ def package_new():
                 pkg_reviewURL=pkg_reviewURL,
                 pkg_status=pkg_status,
                 pkg_shouldopen=pkg_shouldopen,
-                pkg_collection=','.join(pkg_collection),
-                pkg_owner=pkg_owner,
+                pkg_collection=pkg_collection,
+                # TODO: port to flask.g.fas_user:
+                pkg_poc='user://%s' % pkg_poc,
                 pkg_upstreamURL=pkg_upstreamURL,
                 user=FakeFasUser(),
                 #user=flask.g.fas_user,

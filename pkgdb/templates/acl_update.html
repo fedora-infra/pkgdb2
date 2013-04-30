@@ -11,7 +11,7 @@
 
 {% if pending_acls %}
 <p>
-    User {{ user }} has for the following ACLs:
+    User {{ user.split('//')[1] }} has for the following ACLs:
 </p>
 <table>
     {% for acls in pending_acls %}
@@ -26,7 +26,8 @@
     {% endfor %}
 </table>
 
-<form action="{{ url_for('.update_acl', package=package, user=user, branch=branch) }}" method="post">
+<form action="{{ url_for('.update_acl', package=package,
+                         user=user.split('//')[1], branch=branch) }}" method="post">
   <table>
     {{ render_field_in_cell(form.pkg_branch) }}
     {{ render_field_in_cell(form.pkg_acl) }}

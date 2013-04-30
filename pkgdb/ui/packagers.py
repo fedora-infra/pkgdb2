@@ -55,6 +55,7 @@ def list_packagers(motif=None, page=1):
         page=page,
         limit=limit,
     )
+
     packagers_count = pkgdblib.search_packagers(
         SESSION,
         pattern=pattern,
@@ -80,7 +81,7 @@ def packager_info(packager):
     packages = []
     try:
         packages = pkgdblib.search_package(SESSION, '*',
-                                           pkg_owner=packager)
+                                           pkg_poc='user://%s' % packager)
     except NoResultFound:
         SESSION.rollback()
 

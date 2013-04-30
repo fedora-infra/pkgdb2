@@ -43,7 +43,8 @@
 
         <span id="loginInfo">
           {% if g.fas_user %}
-            <span class="text">logged in as </span>{{ g.fas_user.username }} |
+            <span class="text">logged in as </span>
+            <a href="{{url_for('.packager_info', packager=g.fas_user.username)}}">{{ g.fas_user.username }}</a> |
             <a href="{{ url_for('.logout') }}">log out</a>
           {% else %}
             <a href="{{ url_for('.login') }}">login</a>

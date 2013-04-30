@@ -71,25 +71,25 @@
 </table>
 
 {% for pkg in package_acl %}
-    <h3>{{ pkg.collection.name }} {{ pkg.collection.version }}</h3>
-    <p class="owner">owner: {{ pkg.owner }}</p>
+    <h3>{{ pkg['collection'] }}</h3>
+    <p class="owner">Point of contact: {{ pkg['point_of_contact'].split('//')[1] }}</p>
     <table class="acls">
-        {% for maintainer in pkg.people %}
+        {% for maintainer in pkg['acls'] %}
         <tr>
-            <td>{{ maintainer.user }}</td>
-            {% for acl in maintainer.acls %}
-                <td>{{ acl.acl }}</td>
+            <td>{{ maintainer.split('//')[1] }}</td>
+            {% for acl in pkg['acls'][maintainer] %}
+                <td> {{ acl['acl'] }}</td>
                 <td>
-                    <img src="{{ url_for('static', filename='%s.png' % acl.status) }}"
-                         title="{{ acl.status }}" alt="{{ acl.status }}"/ >
+                    <img src="{{ url_for('static', filename='%s.png' % acl['status']) }}"
+                     title="{{ acl['status'] }}" alt="{{ acl['status'] }}"/ >
                 </td>
             {% endfor %}
-            {% if maintainer.acls %}
+            {% if pkg['acls'][maintainer] %}
                 <td>
                     <a href="{{ url_for('.update_acl',
                         package=package.name,
-                        user=maintainer.user,
-                        branch=pkg.collection.branchname) }}">
+                        user=maintainer.split('//')[1],
+                        branch=pkg['branchname']) }}">
                         <input type="submit" value="Update ACLs"/>
                     </a>
                 </td>
@@ -98,7 +98,6 @@
         {% endfor %}
     </table>
 {% endfor %}
-</table>
 
 
 <table id="legend">

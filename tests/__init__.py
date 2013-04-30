@@ -126,7 +126,7 @@ def create_package(session):
                             status = 'Approved',
                             review_url='https://bugzilla.redhat.com/450189',
                             shouldopen=None,
-                            upstream_url='http://guake.org'
+                            upstream_url='http://guake.org',
                             )
     session.add(package)
 
@@ -135,7 +135,7 @@ def create_package(session):
                             status = 'Approved',
                             review_url='https://bugzilla.redhat.com/915074',
                             shouldopen=None,
-                            upstream_url='http://fedorahosted.org/fedocal'
+                            upstream_url='http://fedorahosted.org/fedocal',
                             )
     session.add(package)
 
@@ -144,7 +144,7 @@ def create_package(session):
                             status = 'Approved',
                             review_url=None,
                             shouldopen=None,
-                            upstream_url=None
+                            upstream_url=None,
                             )
     session.add(package)
 
@@ -163,49 +163,44 @@ def create_package_listing(session):
     devel_collec = model.Collection.by_name(session, 'devel')
 
     # Pkg: guake - Collection: F18 - Approved
-    pkgltg = model.PackageListing(owner='pingou',
+    pkgltg = model.PackageListing(point_of_contact='user://pingou',
                                   status='Approved',
                                   packageid=guake_pkg.id,
                                   collectionid=f18_collec.id,
-                                  qacontact=None,
                                   )
     session.add(pkgltg)
     # Pkg: guake - Collection: devel - Approved
-    pkgltg = model.PackageListing(owner='pingou',
+    pkgltg = model.PackageListing(point_of_contact='user://pingou',
                                   status='Approved',
                                   packageid=guake_pkg.id,
                                   collectionid=devel_collec.id,
-                                  qacontact=None,
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: F18 - Orphaned
-    pkgltg = model.PackageListing(owner='orphan',
+    pkgltg = model.PackageListing(point_of_contact='orphan',
                                   status='Orphaned',
                                   packageid=fedocal_pkg.id,
                                   collectionid=f18_collec.id,
-                                  qacontact=None,
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: devel - Deprecated
-    pkgltg = model.PackageListing(owner='orphan',
+    pkgltg = model.PackageListing(point_of_contact='orphan',
                                   status='Deprecated',
                                   packageid=fedocal_pkg.id,
                                   collectionid=devel_collec.id,
-                                  qacontact=None,
                                   )
     session.add(pkgltg)
     # Pkg: geany - Collection: F18 - Approved
-    pkgltg = model.PackageListing(owner='pingou',
+    pkgltg = model.PackageListing(point_of_contact='user://pingou',
                                   status='Approved',
                                   packageid=geany_pkg.id,
                                   collectionid=f18_collec.id,
-                                  qacontact=None,
                                   )
     session.add(pkgltg)
     session.commit()
 
 
-def create_person_package(session):
+def create_package_acl(session):
     """ Add packagers to packages. """
     create_package_listing(session)
 
@@ -219,42 +214,42 @@ def create_person_package(session):
     pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, devel_collec.id)
 
-    packager = model.PersonPackageListing(user='pingou',
-                                          packagelisting_id=pklist_guake_f18.id
-                                          )
+    packager = model.PackageListingAcl(fas_name='user://pingou',
+                                       packagelisting_id=pklist_guake_f18.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
     session.add(packager)
 
-    packager = model.PersonPackageListing(user='pingou',
-                                          packagelisting_id=pklist_guake_devel.id
-                                          )
+    packager = model.PackageListingAcl(fas_name='user://pingou',
+                                       packagelisting_id=pklist_guake_f18.id,
+                                       acl='watchcommits',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='user://pingou',
+                                       packagelisting_id=pklist_guake_devel.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='user://pingou',
+                                       packagelisting_id=pklist_guake_devel.id,
+                                       acl='watchcommits',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='user://toshio',
+                                       packagelisting_id=pklist_guake_devel.id,
+                                       acl='commit',
+                                       status='Awaiting Review',
+                                       )
     session.add(packager)
     session.commit()
 
-
-def create_person_package_acl(session):
-    """ Add ACLs of a packager on a package. """
-    create_person_package(session)
-
-    guake_pkg = model.Package.by_name(session, 'guake')
-    collection_f18 = model.Collection.by_name(session, 'F-18')
-    guake_pkglisting = model.PackageListing.by_pkgid_collectionid(
-        session, guake_pkg.id, collection_f18.id)
-
-    pkglist = model.PersonPackageListing.by_user_pkglistid(
-        session, 'pingou', guake_pkglisting.id)
-
-    packager = model.PersonPackageListingAcl(acl='commit',
-                                             status='Approved',
-                                             personpackagelistingid=pkglist.id
-                                             )
-    session.add(packager)
-
-    packager = model.PersonPackageListingAcl(acl='approveacls',
-                                             status='Awaiting Review',
-                                             personpackagelistingid=pkglist.id
-                                             )
-    session.add(packager)
-    session.commit()
 
 
 if __name__ == '__main__':

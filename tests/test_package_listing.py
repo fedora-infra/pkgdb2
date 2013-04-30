@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb.lib import model
-from tests import Modeltests, create_package_listing, create_person_package
+from tests import Modeltests, create_package_listing, create_package_acl
 
 
 class PackageListingtests(Modeltests):
@@ -56,8 +56,8 @@ class PackageListingtests(Modeltests):
         pkg = model.Package.by_name(self.session, 'guake')
         packages = model.PackageListing.by_package_id(self.session,
                                                         pkg.id)
-        self.assertEqual("PackageListing(id:1, u'pingou', u'Approved', "
-                         "packageid=1, collectionid=1, qacontact=None)",
+        self.assertEqual("PackageListing(id:1, u'user://pingou', "
+                         "u'Approved', packageid=1, collectionid=1)",
                          packages[0].__repr__())
 
     def test_search_listing(self):
@@ -70,21 +70,21 @@ class PackageListingtests(Modeltests):
                                                pkg_owner=None,
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
-        self.assertEqual("PackageListing(id:1, u'pingou', u'Approved', "
-                         "packageid=1, collectionid=1, qacontact=None)",
+        self.assertEqual("PackageListing(id:1, u'user://pingou', "
+                         "u'Approved', packageid=1, collectionid=1)",
                          packages[0].__repr__())
 
         packages = model.PackageListing.search(self.session,
                                                pkg_name='g%',
                                                clt_id=collection.id,
-                                               pkg_owner='pingou',
+                                               pkg_owner='user://pingou',
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
-        self.assertEqual("PackageListing(id:1, u'pingou', u'Approved', "
-                         "packageid=1, collectionid=1, qacontact=None)",
+        self.assertEqual("PackageListing(id:1, u'user://pingou', "
+                         "u'Approved', packageid=1, collectionid=1)",
                          packages[0].__repr__())
-        self.assertEqual("PackageListing(id:5, u'pingou', u'Approved', "
-                         "packageid=3, collectionid=1, qacontact=None)",
+        self.assertEqual("PackageListing(id:5, u'user://pingou', "
+                         "u'Approved', packageid=3, collectionid=1)",
                          packages[1].__repr__())
 
 
@@ -95,7 +95,7 @@ class PackageListingtests(Modeltests):
         package = model.PackageListing.by_package_id(self.session,
                                                      pkg.id)[0]
         package = package.api_repr(1)
-        self.assertEqual(package.keys(), ['owner', 'qacontact',
+        self.assertEqual(package.keys(), ['point_of_contact',
                          'collection', 'package'])
 
     def test_to_json(self):
@@ -105,36 +105,41 @@ class PackageListingtests(Modeltests):
         package = model.PackageListing.by_package_id(self.session,
                                                      pkg.id)[0]
         package = package.to_json()
-        self.assertEqual(package.keys(), ['owner', 'qacontact',
+        self.assertEqual(package.keys(), ['point_of_contact',
                          'collection', 'package'])
 
-    def test_search_owner(self):
-        """ Test the search_owner function of PackageListing. """
-        pkg = model.PackageListing.search_owner(self.session, 'pin%')
+    def test_search_point_of_contact(self):
+        """ Test the search_point_of_contact function of PackageListing. """
+        pkg = model.PackageListing.search_point_of_contact(
+            self.session, 'pin%')
         self.assertEqual(pkg, [])
 
-        create_person_package(self.session)
+        create_package_acl(self.session)
 
-        pkg = model.PackageListing.search_owner(self.session, 'pi%')
+        pkg = model.PackageListing.search_point_of_contact(
+            self.session, 'pi%')
         self.assertEqual(len(pkg), 1)
-        self.assertEqual(pkg[0][0], 'pingou')
+        self.assertEqual(pkg[0][0], 'user://pingou')
 
     
     def test_get_acl_packager(self):
         """ Test the get_acl_packager function of PersonPackageListing.
         """
 
-        acls = model.PersonPackageListing.get_acl_packager(
+        acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
         self.assertEqual(0, len(acls))
 
-        create_person_package(self.session)
+        create_package_acl(self.session)
 
-        acls = model.PersonPackageListing.get_acl_packager(
+        acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
-        self.assertEqual(2, len(acls))
+        self.assertEqual(4, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
+        self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
 
 if __name__ == '__main__':

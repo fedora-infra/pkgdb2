@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb
 from pkgdb.lib import model
-from tests import (Modeltests, FakeFasUser, create_person_package_acl)
+from tests import (Modeltests, FakeFasUser, create_package_acl)
 
 
 class FlaskApiAclsTest(Modeltests):
@@ -69,7 +69,7 @@ class FlaskApiAclsTest(Modeltests):
                          '{\n  "output": "notok",\n  '
                          '"error": "No package provided"\n}')
 
-        create_person_package_acl(self.session)
+        create_package_acl(self.session)
 
         output = self.app.get('/api/package/acl/get/guake/')
         self.assertEqual(output.status_code, 200)
@@ -79,10 +79,12 @@ class FlaskApiAclsTest(Modeltests):
         self.assertEqual(len(output['acls']), 2)
         self.assertEqual(output['acls'][0]['collection']['branchname'],
                          'F-18')
-        self.assertEqual(output['acls'][0]['owner'], 'pingou')
+        self.assertEqual(output['acls'][0]['point_of_contact'],
+                         'user://pingou')
         self.assertEqual(output['acls'][1]['collection']['branchname'],
                          'devel')
-        self.assertEqual(output['acls'][1]['owner'], 'pingou')
+        self.assertEqual(output['acls'][1]['point_of_contact'],
+                         'user://pingou')
 
     def test_acl_update(self):
         """ Test the api_acl_update function.  """

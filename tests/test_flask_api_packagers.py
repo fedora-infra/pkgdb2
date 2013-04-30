@@ -36,8 +36,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb
 from pkgdb.lib import model
-from tests import (Modeltests, FakeFasUser, create_person_package,
-                   create_person_package_acl)
+from tests import Modeltests, FakeFasUser, create_package_acl
 
 
 class FlaskApiPackagersTest(Modeltests):
@@ -68,7 +67,7 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.data,
                          '{\n  "output": "ok",\n  "acls": []\n}')
 
-        create_person_package_acl(self.session)
+        create_package_acl(self.session)
 
         output = self.app.get('/api/packager/acl/pingou/')
         self.assertEqual(output.status_code, 200)
@@ -76,11 +75,11 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['output', 'acls'])
         self.assertEqual(output['output'], 'ok')
-        self.assertEqual(len(output['acls']), 2)
+        self.assertEqual(len(output['acls']), 4)
         self.assertEqual(output['acls'][0].keys(),
-                         ['packagelist', 'acls', 'user'])
+                         ['status', 'fas_name', 'packagelist', 'acl'])
         self.assertEqual(output['acls'][0]['packagelist'].keys(),
-                         ['owner', 'qacontact', 'collection', 'package'])
+                         ['package', 'collection', 'point_of_contact'])
         self.assertEqual(output['acls'][0]['packagelist']['package'].keys(),
                          ['upstreamurl', 'name', 'reviewurl', 'summary'])
         self.assertEqual(output['acls'][0]['packagelist']['collection'].keys(),
@@ -109,7 +108,7 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.data,
                          '{\n  "output": "ok",\n  "packagers": []\n}')
 
-        create_person_package_acl(self.session)
+        create_package_acl(self.session)
 
         output = self.app.get('/api/packager/list/pin*/')
         self.assertEqual(output.status_code, 200)
@@ -118,7 +117,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['output', 'packagers'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['packagers']), 1)
-        self.assertEqual(output['packagers'][0], 'pingou')
+        self.assertEqual(output['packagers'][0], 'user://pingou')
 
 
 if __name__ == '__main__':

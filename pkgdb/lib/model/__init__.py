@@ -122,203 +122,16 @@ def collection_package_create_view(*args, **kw):
            'ORDER BY c.name, c.version;' % sql_string
 
 
-class PersonPackageListingAcl(BASE):
-    '''Acl on a package that a person owns.
+class PackageListingAcl(BASE):
+    '''Give a person or a group ACLs on a specific PackageListing.
 
-    Table -- PersonPackageListingAcl
+    Table -- PackageListingAcl
     '''
 
-    __tablename__ = 'PersonPackageListingAcl'
+    __tablename__ = 'PackageListingAcl'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    acl = sa.Column(sa.Enum('commit', 'build', 'watchbugzilla',
-                            'watchcommits', 'approveacls',
-                            name='acl'),
-                    nullable=False
-                    )
-    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
-                               'Obsolete', 'Removed',
-                               name='package_status'),
-                       nullable=False)
-    personpackagelistingid = sa.Column(sa.Integer,
-                                       sa.ForeignKey('PersonPackageListing.id',
-                                                     ondelete='CASCADE',
-                                                     onupdate='CASCADE'
-                                                     ),
-                                       nullable=False,
-                                       )
-
-    date_created = sa.Column(sa.DateTime, nullable=False,
-                             default=datetime.datetime.utcnow())
-
-    personpackagelist = relation('PersonPackageListing')
-
-    __table_args__ = (
-        sa.UniqueConstraint('personpackagelistingid', 'acl'),
-    )
-
-    @classmethod
-    def all(cls, session):
-        ''' Return the list of all Collections present in the database.
-
-        :arg cls: the class object
-        :arg session: the database session used to query the information.
-
-        '''
-        return session.query(cls).all()
-
-    @classmethod
-    def get_or_create_personpkgid_acl(cls, session, personpkg_id, acl):
-        """ Return the PersonPackageListingAcl for the provided
-        PersonPackageListing identifier and ACL.
-
-        :arg session:
-        :arg personpkg_id:
-        :arg acl:
-        """
-        try:
-            pkgacl = session.query(cls).filter_by(personpackagelistingid=
-                                                  personpkg_id
-                                                  ).filter_by(acl=acl).one()
-        except NoResultFound:
-            pkgacl = PersonPackageListingAcl(personpackagelistingid=
-                                             personpkg_id,
-                                             status=None,
-                                             acl=acl)
-            session.add(pkgacl)
-        return pkgacl
-
-    @classmethod
-    def get_pending_acl(cls, session, user):
-        """ Return the pending ACLs on packages owner by user.
-
-        """
-        # Get all the packages of this person
-        stmt = session.query(PackageListing.id).filter(
-            PackageListing.owner == user
-        ).subquery()
-
-        stmt2 = session.query(
-            PersonPackageListing.id
-        ).filter(
-            PersonPackageListing.packagelisting_id.in_(stmt)
-        ).subquery()
-
-        # Match the other criteria
-        query = session.query(cls).filter(
-            cls.personpackagelistingid.in_(stmt2)
-        ).filter(
-            cls.status == 'Awaiting Review'
-        )
-        return query.all()
-
-    @classmethod
-    def get_acl_package(cls, session, user, package,
-                        status="Awaiting Review"):
-        """ Return the pending ACLs for the specified package owned by
-        user.
-
-        """
-        # Get all the packages of this person
-        stmt = session.query(Package.id).filter(
-            Package.name == package
-        ).subquery()
-
-        stmt2 = session.query(PackageListing.id).filter(
-            PackageListing.packageid == stmt
-        ).subquery()
-
-        stmt3 = session.query(
-            PersonPackageListing.id
-        ).filter(
-            PersonPackageListing.packagelisting_id.in_(stmt2)
-        ).filter(
-            PersonPackageListing.user == user
-        ).subquery()
-
-        # Match the other criteria
-        query = session.query(cls).filter(
-            cls.personpackagelistingid.in_(stmt3)
-        )
-
-        if status:
-            query = query.filter(
-                cls.status == 'Awaiting Review'
-            )
-        return query.all()
-
-    def __init__(self, acl, status, personpackagelistingid):
-        self.personpackagelistingid = personpackagelistingid
-        self.acl = acl
-        self.status = status
-
-    def __repr__(self):
-        return 'PersonPackageListingAcl(%r, %r, personpackagelistingid=%r)' \
-            % (self.acl, self.status, self.personpackagelistingid)
-
-    def to_json(self):
-        """ Return a dictionnary representation of the object. """
-        return dict(
-            acl=self.acl,
-            status=self.status
-        )
-
-
-class GroupPackageListingAcl(BASE):
-    '''Acl on a package that a group owns.
-
-    Table -- GroupPackageListingAcl
-    '''
-
-    __tablename__ = 'GroupPackageListingAcl'
-
-    id = sa.Column(sa.Integer, primary_key=True)
-    acl = sa.Column(sa.Enum('commit', 'build', 'watchbugzilla',
-                            'watchcommits', 'approveacls',
-                            name='acl'),
-                    nullable=False
-                    )
-    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
-                               'Obsolete', 'Removed',
-                               name='package_status'),
-                       nullable=False)
-    group_packagelisting_id = sa.Column(sa.Integer,
-                                        sa.ForeignKey('GroupPackageListing.id',
-                                                      ondelete='CASCADE',
-                                                      onupdate='CASCADE'
-                                                      ),
-                                        nullable=False,
-                                        )
-
-    date_created = sa.Column(sa.DateTime, nullable=False,
-                             default=datetime.datetime.utcnow())
-
-    __table_args__ = (
-        sa.UniqueConstraint('group_packagelisting_id', 'acl'),
-    )
-
-    def __init__(self, acl, status=None, group_packagelisting_id=None):
-        self.group_packagelisting_id = group_packagelisting_id
-        self.acl = acl
-        self.status = status
-
-    def __repr__(self):
-        return 'GroupPackageListingAcl(%r, %r, group_packagelisting_id=%r)'\
-            % (self.acl, self.status, self.group_packagelisting_id)
-
-
-class PersonPackageListing(BASE):
-    '''Associate a person with a PackageListing.
-
-    People who are watching or can modify a packagelisting.
-
-    Table -- PersonPackageListing
-    '''
-
-    __tablename__ = 'PersonPackageListing'
-
-    id = sa.Column(sa.Integer, primary_key=True)
-    user = sa.Column(sa.String(32), nullable=False)
+    fas_name = sa.Column(sa.String(32), nullable=False)
     packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey('PackageListing.id',
@@ -327,19 +140,23 @@ class PersonPackageListing(BASE):
                       ),
         nullable=False,
     )
-
-    packagelist = relation('PackageListing')
-    acls = relation(PersonPackageListingAcl)
-    acls2 = relation(PersonPackageListingAcl,
-                     backref=backref('personpackagelisting'),
-                     collection_class=attribute_mapped_collection('acl')
-                     )
+    acl = sa.Column(sa.Enum('commit', 'watchbugzilla',
+                            'watchcommits', 'approveacls',
+                            name='acl'),
+                    nullable=False
+                    )
+    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
+                               'Obsolete', 'Removed',
+                               name='package_status'),
+                       nullable=False)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
 
+    packagelist = relation('PackageListing')
+
     __table_args__ = (
-        sa.UniqueConstraint('user', 'packagelisting_id'),
+        sa.UniqueConstraint('fas_name', 'packagelisting_id', 'acl'),
     )
 
     @classmethod
@@ -358,9 +175,9 @@ class PersonPackageListing(BASE):
         collection.
         """
         return session.query(cls).filter(
-            PersonPackageListing.user == user
+            PackageListingAcl.fas_name == user
         ).filter(
-            PersonPackageListing.packagelisting_id == packagelisting_id
+            PackageListingAcl.packagelisting_id == packagelisting_id
         ).one()
 
     @classmethod
@@ -372,13 +189,41 @@ class PersonPackageListing(BASE):
         :arg packager: the username of the packager to retrieve the ACls
             of
         """
-        acls = session.query(PersonPackageListing).filter(
-            PersonPackageListing.user == packager
+        acls = session.query(PackageListingAcl).filter(
+            PackageListingAcl.fas_name == 'user://%s' % packager
         ).all()
         return acls
 
     @classmethod
-    def get_or_create(cls, session, user, packagelisting_id):
+    def get_acl_package(cls, session, user, package,
+                        status="Awaiting Review"):
+        """ Return the pending ACLs for the specified package owned by
+        user.
+
+        """
+        # Get all the packages of this person
+        stmt = session.query(Package.id).filter(
+            Package.name == package
+        ).subquery()
+
+        stmt2 = session.query(PackageListing.id).filter(
+            PackageListing.packageid == stmt
+        ).subquery()
+
+        query = session.query(cls).filter(
+            PackageListingAcl.packagelisting_id.in_(stmt2)
+        ).filter(
+            PackageListingAcl.fas_name == user
+        )
+
+        if status:
+            query = query.filter(
+                cls.status == status
+            )
+        return query.all()
+
+    @classmethod
+    def get_or_create(cls, session, user, packagelisting_id, acl, status):
         """ Retrieve the PersonPackageListing which associates a person
         with a package in a certain collection.
 
@@ -387,79 +232,70 @@ class PersonPackageListing(BASE):
         :arg user: the username
         :arg packagelisting_id: the identifier of the PackageListing
             entry.
+        :arg acl: the ACL that person has on that package
+        :arg status: the status of the ACL
         """
         try:
-            personpkg = session.query(cls).filter(
-                PersonPackageListing.user == user
+            personpkg = session.query(PackageListingAcl).filter(
+                PackageListingAcl.fas_name == user
             ).filter(
-                PersonPackageListing.packagelisting_id == packagelisting_id
+                PackageListingAcl.packagelisting_id == packagelisting_id
+            ).filter(
+                PackageListingAcl.acl == acl
             ).one()
         except NoResultFound:
-            personpkg = PersonPackageListing(user=user,
-                                             packagelisting_id=
-                                             packagelisting_id)
+            personpkg = PackageListingAcl(
+                fas_name=user,
+                packagelisting_id=packagelisting_id,
+                acl=acl,
+                status=status)
             session.add(personpkg)
             session.flush()
 
         return personpkg
 
+    @classmethod
+    def get_pending_acl(cls, session, user):
+        """ Return for all the packages of which `user` is point of
+        contact the ACL which have status 'Awaiting Review'.
+
+        :arg session:
+        :arg user:
+        """
+        stmt = session.query(PackageListing.id).filter(
+            PackageListing.point_of_contact == 'user://%s' % user
+        ).subquery()
+
+        # Match the other criteria
+        query = session.query(cls).filter(
+            cls.packagelisting_id.in_(stmt)
+        ).filter(
+            cls.status == 'Awaiting Review'
+        )
+        return query.all()
+        
+
     # pylint: disable-msg=R0903
-    def __init__(self, user, packagelisting_id):
-        self.user = user
+    def __init__(self, fas_name, packagelisting_id, acl, status):
+        self.fas_name = fas_name
         self.packagelisting_id = packagelisting_id
+        self.acl = acl
+        self.status = status
 
     def __repr__(self):
-        return 'PersonPackageListing(id:%r, %r, %r)' % (
-            self.id, self.user, self.packagelisting_id)
+        return 'PackageListingAcl(id:%r, %r, PackageListing:%r, Acl:%s, ' \
+            '%s)' % (
+            self.id, self.fas_name, self.packagelisting_id, self.acl,
+            self.status)
 
     def to_json(self):
         """ Return a dictionnary representation of this object. """
         return dict(
             packagelist=self.packagelist.to_json(),
-            user=self.user,
-            acls=[acl.to_json() for acl in self.acls]
+            fas_name=self.fas_name,
+            acl=self.acl,
+            status=self.status,
         )
-
-
-class GroupPackageListing(BASE):
-    '''Associate a group with a PackageListing.
-
-    Table -- GroupPackageListing
-    '''
-
-    __tablename__ = 'GroupPackageListing'
-
-    id = sa.Column(sa.Integer, primary_key=True)
-    groupid = sa.Column(sa.Integer, nullable=False)
-    packageListingId = sa.Column(
-        sa.Integer,
-        sa.ForeignKey('PackageListing.id',
-                      ondelete='CASCADE',
-                      onupdate='CASCADE'
-                      ),
-        nullable=False,
-    )
-
-    acls = relation(GroupPackageListingAcl)
-    acls2 = relation(GroupPackageListingAcl,
-                     backref=backref('grouppackagelisting'),
-                     collection_class=attribute_mapped_collection('acl')
-                     )
-
-    date_created = sa.Column(sa.DateTime, nullable=False,
-                             default=datetime.datetime.utcnow())
-
-    __table_args__ = (
-        sa.UniqueConstraint('groupid', 'packageListingId'),
-    )
-
-    def __init__(self, groupname, packagelistingid=None):
-        self.groupname = groupname
-        self.packagelistingid = packagelistingid
-
-    def __repr__(self):
-        return 'GroupPackageListing(%r, %r)' % (self.groupname,
-                                                self.packagelistingid)
 
 
 class Collection(BASE):
@@ -621,18 +457,17 @@ class PackageListing(BASE):
                                         onupdate="CASCADE"
                                         ),
                           nullable=False)
+    point_of_contact = sa.Column(sa.Text, nullable=False)
     collectionid = sa.Column(sa.Integer,
                              sa.ForeignKey('Collection.id',
                                            ondelete="CASCADE",
                                            onupdate="CASCADE"
                                            ),
                              nullable=False)
-    owner = sa.Column(sa.Integer, nullable=False)
-    qacontact = sa.Column(sa.Integer)
     status = sa.Column(sa.Enum('Approved', 'Removed', 'Deprecated', 'Orphaned',
                                name='pl_status'),
                        nullable=False)
-    statuschange = sa.Column(sa.DateTime, nullable=False,
+    status_change = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
     __table_args__ = (
         sa.UniqueConstraint('packageid', 'collectionid'),
@@ -640,25 +475,18 @@ class PackageListing(BASE):
 
     package = relation("Package")
     collection = relation("Collection")
-    people = relation(PersonPackageListing)
-    people2 = relation(
-        PersonPackageListing,
+    acls = relation(PackageListingAcl)
+    acls2 = relation(
+        PackageListingAcl,
         backref=backref('packagelisting'),
         collection_class=attribute_mapped_collection('username')
     )
-    groups = relation(GroupPackageListing)
-    groups2 = relation(
-        GroupPackageListing,
-        backref=backref('packagelisting'),
-        collection_class=attribute_mapped_collection('groupname')
-    )
 
-    def __init__(self, owner, status, packageid=None, collectionid=None,
-                 qacontact=None):
+    def __init__(self, point_of_contact, status, packageid=None,
+                 collectionid=None):
         self.packageid = packageid
         self.collectionid = collectionid
-        self.owner = owner
-        self.qacontact = qacontact
+        self.point_of_contact = point_of_contact
         self.status = status
 
     packagename = association_proxy('package', 'name')
@@ -725,7 +553,8 @@ class PackageListing(BASE):
         if clt_id:
             query = query.filter(PackageListing.collectionid == clt_id)
         if pkg_owner:
-            query = query.filter(PackageListing.owner == pkg_owner)
+            query = query.filter(
+                PackageListing.point_of_contact == pkg_owner)
         if pkg_status:
             query = query.filter(PackageListing.status == pkg_status)
 
@@ -739,25 +568,30 @@ class PackageListing(BASE):
         return query.all()
 
     @classmethod
-    def search_owner(cls, session, pattern, offset=None, limit=None,
-                     count=False):
-        """ Return all the package whose owner match the pattern.
+    def search_point_of_contact(cls, session, pattern, offset=None,
+                                limit=None, count=False):
+        """ Return all the package whose point_of_contact match the
+        pattern.
 
         :arg session: session with which to connect to the database
-        :arg pattern: pattern the owner of the package should match
+        :arg pattern: pattern the point_of_contact of the package should
+            match
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
 
         """
-        query1 = session.query(sa.func.distinct(cls.owner)).filter(
-            PackageListing.owner.like(pattern)
-        )
+        pattern = '%%://%s' % pattern
+        query1 = session.query(
+            sa.func.distinct(cls.point_of_contact)).filter(
+                PackageListing.point_of_contact.like(pattern)
+            )
+
         query2 = session.query(
-            sa.func.distinct(PersonPackageListing.user)
+            sa.func.distinct(PackageListingAcl.fas_name)
         ).filter(
-            PersonPackageListing.user.like(pattern)
+            PackageListingAcl.fas_name.like(pattern)
         )
         query = query1.union(query2)
 
@@ -771,10 +605,10 @@ class PackageListing(BASE):
         return query.all()
 
     def __repr__(self):
-        return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r,' \
-               ' qacontact=%r)' % (self.id, self.owner, self.status,
-                                   self.packageid, self.collectionid,
-                                   self.qacontact)
+        return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r' \
+               ')' % (self.id, self.point_of_contact,
+                                   self.status, self.packageid,
+                                   self.collectionid)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize PackageListing in messages. """
@@ -782,8 +616,7 @@ class PackageListing(BASE):
             return dict(
                 package=self.package.api_repr(version),
                 collection=self.collection.api_repr(version),
-                owner=self.owner,
-                qacontact=self.qacontact,
+                point_of_contact=self.point_of_contact,
             )
         else:  # pragma: no cover
             raise NotImplementedError("Unsupported version %r" % version)
@@ -879,8 +712,7 @@ class PackageListing(BASE):
         """ Return a dictionnary representation of this object. """
         return dict(package=self.package.api_repr(1),
                     collection=self.collection.api_repr(2),
-                    owner=self.owner,
-                    qacontact=self.qacontact,
+                    point_of_contact=self.point_of_contact,
                     )
 
 
@@ -950,14 +782,13 @@ class Package(BASE):
         else:  # pragma: no cover
             raise NotImplementedError("Unsupported version %r" % version)
 
-    def create_listing(self, collection, owner, statusname,
-                       qacontact=None, author_name=None):
+    def create_listing(self, collection, point_of_contact, statusname,
+                       author_name=None):
         '''Create a new PackageListing branch on this Package.
 
         :arg collection: Collection that the new PackageListing lives on
         :arg owner: The owner of the PackageListing
         :arg statusname: Status to set the PackageListing to
-        :kwarg qacontact: QAContact for this PackageListing in bugzilla.
         :kwarg author_name: Author of the change.  Note: will remove when
             logging is made generic
         :returns: The new PackageListing object.
@@ -965,29 +796,12 @@ class Package(BASE):
         This creates a new PackageListing for this Package.
         The PackageListing has default values set for group acls.
         '''
-        pkg_listing = PackageListing(owner=owner,
+        pkg_listing = PackageListing(point_of_contact=point_of_contact,
                                      status=statusname,
-                                     collectionid=collection.id,
-                                     qacontact=qacontact)
+                                     collectionid=collection.id)
         pkg_listing.packageid = self.id
-        for group in DEFAULT_GROUPS:
-            new_group = GroupPackageListing(groupname=group,
-                                            packagelistingid=pkg_listing.id)
-            #pylint:disable-msg=E1101
-            #pkg_listing.groups2[group] = new_group
-            #pylint:enable-msg=E1101
-            for acl, status in DEFAULT_GROUPS[group].iteritems():
-                if status:
-                    acl_status = 'Approved'
-                else:
-                    acl_status = 'Denied'
-                group_acl = GroupPackageListingAcl(
-                    acl=acl,
-                    status=acl_status,
-                    group_packagelisting_id=new_group.id)
 
         #TODO: Create a log message
-
         return pkg_listing
 
     @classmethod
@@ -1001,13 +815,13 @@ class Package(BASE):
         return session.query(cls).all()
 
     @classmethod
-    def search(cls, session, pkg_name, pkg_owner=None, pkg_status=None,
+    def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
                offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database
         :arg pkg_name: the name of the package
-        :kwarg pkg_owner: name of the new owner of the package
+        :kwarg pkg_poc: name of the new point of contact for the package
         :kwarg pkg_status: status of the package
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
@@ -1017,9 +831,9 @@ class Package(BASE):
         """
         query = session.query(Package).filter(
             Package.name.like(pkg_name))
-        if pkg_owner:
+        if pkg_poc:
             query = query.join(PackageListing).filter(
-                PackageListing.owner == pkg_owner)
+                PackageListing.point_of_contact == pkg_poc)
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
 

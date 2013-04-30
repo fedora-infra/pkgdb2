@@ -86,7 +86,7 @@ class AddPackageForm(wtf.Form):
         [wtf.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_owner = wtf.TextField('Owner', [wtf.validators.Required()])
+    pkg_poc = wtf.TextField('Point of contact', [wtf.validators.Required()])
     pkg_upstreamURL = wtf.TextField('Upstream URL',
                                     [wtf.validators.optional()])
 
@@ -112,7 +112,6 @@ class SetAclPackageForm(wtf.Form):
         'ACL',
         [wtf.validators.Required()],
         choices=[('commit', 'commit'),
-                 ('build', 'build'),
                  ('watchbugzilla', 'watchbugzilla'),
                  ('watchcommits', 'watchcommits'),
                  ('approveacls', 'approveacls')]
@@ -139,7 +138,6 @@ class RequestAclPackageForm(wtf.Form):
         'ACL',
         [wtf.validators.Required()],
         choices=[('commit', 'commit'),
-                 ('build', 'build'),
                  ('watchbugzilla', 'watchbugzilla'),
                  ('watchcommits', 'watchcommits'),
                  ('approveacls', 'approveacls')]
@@ -166,7 +164,6 @@ class UpdateAclPackageForm(wtf.Form):
         'ACL',
         [wtf.validators.Required()],
         choices=[('commit', 'commit'),
-                 ('build', 'build'),
                  ('watchbugzilla', 'watchbugzilla'),
                  ('watchcommits', 'watchcommits'),
                  ('approveacls', 'approveacls')]
@@ -214,7 +211,7 @@ class PackageOwnerForm(wtf.Form):
                              [wtf.validators.Required()])
     clt_name = wtf.TextField('Fedora branch',
                              [wtf.validators.Required()])
-    pkg_owner = wtf.TextField('New package owner',
+    pkg_poc = wtf.TextField('New point of contact',
                               [wtf.validators.Required()])
 
 

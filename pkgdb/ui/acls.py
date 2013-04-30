@@ -53,7 +53,7 @@ def request_acl(package):
                     pkg_name=package,
                     clt_name=collec,
                     #pkg_user=flask.g.fas_user.username,
-                    pkg_user=FakeFasUser().username,
+                    pkg_user='user://%s' % FakeFasUser().username,
                     acl=acl,
                     status=acl_status,
                     user=FakeFasUser(),  # TODO: port to flask.g.fas_user
@@ -86,7 +86,8 @@ def watch_package(package):
                 SESSION,
                 pkg_name=package,
                 clt_name=collec,
-                pkg_user=FakeFasUser().username,  # TODO: port to flask.g.fas_user
+                # TODO: port to flask.g.fas_user:
+                pkg_user='user://%s' % FakeFasUser().username, 
                 acl=acl,
                 status='Approved',
                 user=FakeFasUser(),  # TODO: port to flask.g.fas_user
@@ -110,13 +111,17 @@ def comaintain_package(package):
     pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
     try:
         for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+            acl_status = 'Awaiting Review'
+            if acl in APP.config['AUTO_APPROVE']:
+                acl_status = 'Approved'
             pkgdblib.set_acl_package(
                 SESSION,
                 pkg_name=package,
                 clt_name=collec,
-                pkg_user=FakeFasUser().username,  # TODO: port to flask.g.fas_user
+                # TODO: port to flask.g.fas_user:
+                pkg_user='user://%s' % FakeFasUser().username,
                 acl=acl,
-                status='Awaiting Review',
+                status=acl_status,
                 user=FakeFasUser(),  # TODO: port to flask.g.fas_user
                 #user=flask.g.fas_user,
             )
@@ -136,6 +141,7 @@ def comaintain_package(package):
 def update_acl(package, user, branch=None):
     ''' Update the acls for a specific user on a package. '''
 
+    user = 'user://%s' % user
     pending_acls = pkgdblib.get_acl_user_package(
         SESSION, user, package, status=None)
     if branch is not None:
@@ -152,16 +158,16 @@ def update_acl(package, user, branch=None):
         pkg_acls = form.pkg_acl.data
         acl_status = form.acl_status.data
 
-        if acl_status == 'Awaiting Review' and \
-                acl in APP.config['AUTO_APPROVE']:
-            acl_status = 'Approved'
-
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+                if acl_status == 'Awaiting Review' and \
+                        acl in APP.config['AUTO_APPROVE']:
+                    acl_status = 'Approved'
                 pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
                     clt_name=collec,
+                    # TODO: port to flask.g.fas_user:
                     pkg_user=user,
                     acl=acl,
                     status=acl_status,

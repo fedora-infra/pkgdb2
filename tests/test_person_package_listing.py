@@ -34,61 +34,70 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb.lib import model
-from tests import (Modeltests, create_person_package,
-                   create_person_package_acl)
+from tests import Modeltests, create_package_acl
 
 
-class PersonPackageListingtests(Modeltests):
-    """ PersonPackageListing tests. """
+class PackageListingAcltests(Modeltests):
+    """ PackageListingAcl tests. """
 
     def test_init_package(self):
         """ Test the __init__ function of PersonPackageListing. """
-        create_person_package(self.session)
-        self.assertEqual(2,
-                         len(model.PersonPackageListing.all(self.session))
+        create_package_acl(self.session)
+        self.assertEqual(5,
+                         len(model.PackageListingAcl.all(self.session))
                          )
 
     def test_to_json(self):
         """ Test the to_json function of PersonPackageListing. """
-        packager = model.PersonPackageListing.get_acl_packager(
+        packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
         self.assertEqual(0, len(packager))
 
-        create_person_package_acl(self.session)
+        create_package_acl(self.session)
 
-        packager = model.PersonPackageListing.get_acl_packager(
+        packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
-        self.assertEqual(2, len(packager))
+        self.assertEqual(4, len(packager))
         output = packager[0].to_json()
         self.assertEqual(output,
-        {'packagelist': {'owner': u'pingou', 'qacontact': None,
-         'collection': {'pendingurltemplate': None,
-                        'publishurltemplate': None,
-                        'branchname': u'F-18',
-                        'version': u'18',
-                        'name': u'Fedora'},
-         'package': {'upstreamurl': u'http://guake.org',
-                     'name': u'guake',
-                     'reviewurl': u'https://bugzilla.redhat.com/450189',
-                     'summary': u'Top down terminal for GNOME'}},
-         'acls': [
-            {'status': u'Awaiting Review', 'acl': u'approveacls'},
-            {'status': u'Approved', 'acl': u'commit'}],
-         'user': u'pingou'}
+        {
+            'status': u'Approved',
+            'acl': 'commit',
+            'fas_name': u'user://pingou',
+            'packagelist': {
+                'point_of_contact': u'user://pingou',
+                'collection': {
+                    'pendingurltemplate': None,
+                    'publishurltemplate': None,
+                    'branchname': u'F-18',
+                    'version': u'18',
+                    'name': u'Fedora'
+                }, 
+                'package': {
+                    'upstreamurl': u'http://guake.org',
+                    'name': u'guake',
+                    'reviewurl': u'https://bugzilla.redhat.com/450189',
+                    'summary': u'Top down terminal for GNOME'
+                }
+            }
+        }
         )
 
     def test___repr__(self):
         """ Test the __repr__ function of PersonPackageListing. """
-        create_person_package_acl(self.session)
+        create_package_acl(self.session)
 
-        packager = model.PersonPackageListing.get_acl_packager(
+        packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
-        self.assertEqual(2, len(packager))
+        self.assertEqual(4, len(packager))
         output = packager[0].__repr__()
-        self.assertEqual(output,
-                         "PersonPackageListing(id:1, u'pingou', 1)")
+        self.assertEqual(
+            output,
+            "PackageListingAcl(id:1, u'user://pingou', "
+            "PackageListing:1, Acl:commit, Approved)")
 
 
 if __name__ == '__main__':
-    SUITE = unittest.TestLoader().loadTestsFromTestCase(PersonPackageListingtests)
+    SUITE = unittest.TestLoader().loadTestsFromTestCase(
+        PackageListingAcltests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
