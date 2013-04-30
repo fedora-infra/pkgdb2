@@ -64,14 +64,13 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     if user is None:
         raise PkgdbException("You're not allowed to add a package")
 
-    if isinstance(pkg_name, str) or isinstance(pkg_name, unicode):
+    if isinstance(pkg_name, (str, unicode)):
         if ',' in pkg_name:
             pkg_name = [item.strip() for item in pkg_name.split(',')]
         else:
             pkg_name = [pkg_name]
 
-    if isinstance(pkg_collection, str) \
-            or isinstance(pkg_collection, unicode):
+    if isinstance(pkg_collection, (str, unicode)):
         if ',' in pkg_collection:
             pkg_collection = [item.strip() for item in pkg_collection.split(',')]
         else:
