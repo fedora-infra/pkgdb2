@@ -162,12 +162,12 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(len(pkg_acl[0].acls), 4)
 
-    def test_pkg_change_owner(self):
-        """ Test the pkg_change_owner function. """
+    def test_pkg_change_poc(self):
+        """ Test the pkg_change_poc function. """
         self.test_add_package()
 
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_owner,
+                          pkgdblib.pkg_change_poc,
                           self.session,
                           pkg_name='test',
                           clt_name='F-17',
@@ -177,7 +177,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_owner,
+                          pkgdblib.pkg_change_poc,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-17',
@@ -189,7 +189,7 @@ class PkgdbLibtests(Modeltests):
         fake_user = FakeFasUser()
         fake_user.username = 'test'
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_owner,
+                          pkgdblib.pkg_change_poc,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
@@ -203,7 +203,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'user://pingou')
 
-        pkgdblib.pkg_change_owner(self.session,
+        pkgdblib.pkg_change_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=FakeFasUser(),
@@ -217,7 +217,7 @@ class PkgdbLibtests(Modeltests):
 
         user = FakeFasUser()
         user.username = 'toshio'
-        pkgdblib.pkg_change_owner(self.session,
+        pkgdblib.pkg_change_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=user,

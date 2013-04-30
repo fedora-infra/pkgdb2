@@ -171,8 +171,8 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     session.flush()
 
 
-def pkg_change_owner(session, pkg_name, clt_name, pkg_poc, user):
-    """ Change the owner of a package.
+def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
+    """ Change the point of contact of a package.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package

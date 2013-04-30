@@ -113,7 +113,7 @@ def api_package_orphan():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.pkg_change_owner(SESSION,
+                message = pkgdblib.pkg_change_poc(SESSION,
                                                     pkg_name=pkg_name,
                                                     clt_name=clt_name,
                                                     pkg_owner='orphan',
@@ -166,7 +166,7 @@ def api_package_unorphan():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.pkg_change_owner(SESSION,
+                message = pkgdblib.pkg_change_poc(SESSION,
                                                     pkg_name=pkg_name,
                                                     pkg_branch=pkg_branch,
                                                     pkg_owner=pkg_owner,
