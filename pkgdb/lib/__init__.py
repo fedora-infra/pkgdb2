@@ -196,7 +196,7 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
 
     ## TODO: Check if flask.g.fas_user is an admin
 
-    if pkglisting.point_of_contact == 'user://%s' % user.username:
+    if pkglisting.point_of_contact == 'user::%s' % user.username:
         pkglisting.point_of_contact = pkg_poc
         if pkg_poc == 'orphan':
             pkglisting.status = 'Orphaned'

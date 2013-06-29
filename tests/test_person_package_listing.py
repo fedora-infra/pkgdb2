@@ -63,9 +63,9 @@ class PackageListingAcltests(Modeltests):
         {
             'status': u'Approved',
             'acl': 'commit',
-            'fas_name': u'user://pingou',
+            'fas_name': u'user::pingou',
             'packagelist': {
-                'point_of_contact': u'user://pingou',
+                'point_of_contact': u'user::pingou',
                 'collection': {
                     'pendingurltemplate': None,
                     'publishurltemplate': None,
@@ -93,7 +93,7 @@ class PackageListingAcltests(Modeltests):
         output = packager[0].__repr__()
         self.assertEqual(
             output,
-            "PackageListingAcl(id:1, u'user://pingou', "
+            "PackageListingAcl(id:1, u'user::pingou', "
             "PackageListing:1, Acl:commit, Approved)")
 
 

@@ -190,7 +190,7 @@ class PackageListingAcl(BASE):
             of
         """
         acls = session.query(PackageListingAcl).filter(
-            PackageListingAcl.fas_name == 'user://%s' % packager
+            PackageListingAcl.fas_name == 'user::%s' % packager
         ).all()
         return acls
 
@@ -263,7 +263,7 @@ class PackageListingAcl(BASE):
         :arg user:
         """
         stmt = session.query(PackageListing.id).filter(
-            PackageListing.point_of_contact == 'user://%s' % user
+            PackageListing.point_of_contact == 'user::%s' % user
         ).subquery()
 
         # Match the other criteria
@@ -582,7 +582,7 @@ class PackageListing(BASE):
             if true, returns the data if false (default).
 
         """
-        pattern = '%%://%s' % pattern
+        pattern = '%%::%s' % pattern
         query1 = session.query(
             sa.func.distinct(cls.point_of_contact)).filter(
                 PackageListing.point_of_contact.like(pattern)

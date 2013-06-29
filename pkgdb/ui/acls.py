@@ -53,7 +53,7 @@ def request_acl(package):
                     pkg_name=package,
                     clt_name=collec,
                     #pkg_user=flask.g.fas_user.username,
-                    pkg_user='user://%s' % FakeFasUser().username,
+                    pkg_user='user::%s' % FakeFasUser().username,
                     acl=acl,
                     status=acl_status,
                     user=FakeFasUser(),  # TODO: port to flask.g.fas_user
@@ -87,7 +87,7 @@ def watch_package(package):
                 pkg_name=package,
                 clt_name=collec,
                 # TODO: port to flask.g.fas_user:
-                pkg_user='user://%s' % FakeFasUser().username, 
+                pkg_user='user::%s' % FakeFasUser().username, 
                 acl=acl,
                 status='Approved',
                 user=FakeFasUser(),  # TODO: port to flask.g.fas_user
@@ -119,7 +119,7 @@ def comaintain_package(package):
                 pkg_name=package,
                 clt_name=collec,
                 # TODO: port to flask.g.fas_user:
-                pkg_user='user://%s' % FakeFasUser().username,
+                pkg_user='user::%s' % FakeFasUser().username,
                 acl=acl,
                 status=acl_status,
                 user=FakeFasUser(),  # TODO: port to flask.g.fas_user
@@ -141,7 +141,7 @@ def comaintain_package(package):
 def update_acl(package, user, branch=None):
     ''' Update the acls for a specific user on a package. '''
 
-    user = 'user://%s' % user
+    user = 'user::%s' % user
     pending_acls = pkgdblib.get_acl_user_package(
         SESSION, user, package, status=None)
     if branch is not None:

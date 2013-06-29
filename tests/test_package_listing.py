@@ -56,7 +56,7 @@ class PackageListingtests(Modeltests):
         pkg = model.Package.by_name(self.session, 'guake')
         packages = model.PackageListing.by_package_id(self.session,
                                                         pkg.id)
-        self.assertEqual("PackageListing(id:1, u'user://pingou', "
+        self.assertEqual("PackageListing(id:1, u'user::pingou', "
                          "u'Approved', packageid=1, collectionid=1)",
                          packages[0].__repr__())
 
@@ -70,20 +70,20 @@ class PackageListingtests(Modeltests):
                                                pkg_owner=None,
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
-        self.assertEqual("PackageListing(id:1, u'user://pingou', "
+        self.assertEqual("PackageListing(id:1, u'user::pingou', "
                          "u'Approved', packageid=1, collectionid=1)",
                          packages[0].__repr__())
 
         packages = model.PackageListing.search(self.session,
                                                pkg_name='g%',
                                                clt_id=collection.id,
-                                               pkg_owner='user://pingou',
+                                               pkg_owner='user::pingou',
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
-        self.assertEqual("PackageListing(id:1, u'user://pingou', "
+        self.assertEqual("PackageListing(id:1, u'user::pingou', "
                          "u'Approved', packageid=1, collectionid=1)",
                          packages[0].__repr__())
-        self.assertEqual("PackageListing(id:5, u'user://pingou', "
+        self.assertEqual("PackageListing(id:5, u'user::pingou', "
                          "u'Approved', packageid=3, collectionid=1)",
                          packages[1].__repr__())
 
@@ -119,7 +119,7 @@ class PackageListingtests(Modeltests):
         pkg = model.PackageListing.search_point_of_contact(
             self.session, 'pi%')
         self.assertEqual(len(pkg), 1)
-        self.assertEqual(pkg[0][0], 'user://pingou')
+        self.assertEqual(pkg[0][0], 'user::pingou')
 
     
     def test_get_acl_packager(self):

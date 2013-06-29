@@ -117,7 +117,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['output', 'packagers'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['packagers']), 1)
-        self.assertEqual(output['packagers'][0], 'user://pingou')
+        self.assertEqual(output['packagers'][0], 'user::pingou')
 
 
 if __name__ == '__main__':
