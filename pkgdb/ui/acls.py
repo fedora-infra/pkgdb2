@@ -141,7 +141,6 @@ def comaintain_package(package):
 def update_acl(package, user, branch=None):
     ''' Update the acls for a specific user on a package. '''
 
-    user = 'user::%s' % user
     pending_acls = pkgdblib.get_acl_user_package(
         SESSION, user, package, status=None)
     if branch is not None:
