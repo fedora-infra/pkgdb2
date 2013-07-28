@@ -423,12 +423,12 @@ class PkgdbLibtests(Modeltests):
 
     def test_has_acls(self):
         """ Test the has_acls function. """
-        self.assertFalse(pkgdblib.has_acls(self.session, 'user://pingou',
+        self.assertFalse(pkgdblib.has_acls(self.session, 'user::pingou',
             'guake', 'devel', 'approveacl'))
 
         create_package_acl(self.session)
 
-        self.assertTrue(pkgdblib.has_acls(self.session, 'user://pingou',
+        self.assertTrue(pkgdblib.has_acls(self.session, 'user::pingou',
             'guake', 'devel', 'commit'))
 
 
