@@ -68,3 +68,10 @@ APP.register_blueprint(UI)
 def shutdown_session(exception=None):
     """ Remove the DB session at the end of each request. """
     SESSION.remove()
+
+
+def is_admin():
+    """ Returns a boolean if the user logged in is an admin.
+    """
+    # TODO: Check if the user is part of the right group
+    return True
