@@ -421,6 +421,16 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pending_acls[0]['acl'], 'commit')
         self.assertEqual(pending_acls[0]['status'], 'Awaiting Review')
 
+    def test_has_acls(self):
+        """ Test the has_acls function. """
+        self.assertFalse(pkgdblib.has_acls(self.session, 'user://pingou',
+            'guake', 'devel', 'approveacl'))
+
+        create_package_acl(self.session)
+
+        self.assertTrue(pkgdblib.has_acls(self.session, 'user://pingou',
+            'guake', 'devel', 'commit'))
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)

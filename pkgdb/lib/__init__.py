@@ -442,7 +442,8 @@ def get_acl_user_package(session, user, package, status=None):
     :arg session: session with which to connect to the database
     :arg user: the user owning the packages on which to retrieve the
         list of pending ACLs.
-    :arg status: the status of the package to retrieve the ACLs of
+    :arg package: the package for which to check the acl
+    :kwarg status: the status of the package to retrieve the ACLs of
     """
     output = []
     for package in model.PackageListingAcl.get_acl_package(
@@ -456,3 +457,23 @@ def get_acl_user_package(session, user, package, status=None):
              }
         )
     return output
+
+
+def has_acls(session, user, package, branch, acl):
+    """ Return wether the specified user has the specified acl on the
+    specified package.
+
+    :arg session: session with which to connnect to the database
+    :arg user: the name of the user for which to check the acl
+    :arg package: the name of the package on which the acl should be
+        checked
+    :arg acl: the acl to check for the user on the package
+    """
+    acls = get_acl_user_package(session, user=user,
+                                package=package, status='Approved')
+    has_acls = False
+    for user_acl in acls:
+        if user_acl['collection'] == branch and user_acl['acl'] == acl:
+            has_acls = True
+            break
+    return has_acls
