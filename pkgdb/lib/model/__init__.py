@@ -475,11 +475,9 @@ class PackageListing(BASE):
 
     package = relation("Package")
     collection = relation("Collection")
-    acls = relation(PackageListingAcl)
-    acls2 = relation(
+    acls = relation(
         PackageListingAcl,
         backref=backref('packagelisting'),
-        collection_class=attribute_mapped_collection('username')
     )
 
     def __init__(self, point_of_contact, status, packageid=None,
