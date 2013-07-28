@@ -39,8 +39,8 @@
 <ul>
 {% for packager in packagers %}
     <li>
-        <a href="{{url_for('.packager_info', packager=packager.split('//')[1])}}">
-            {{ packager.split('//')[1] }}</a>
+        <a href="{{url_for('.packager_info', packager=packager)}}">
+            {{ packager }}</a>
     </li>
 {% endfor %}
 </ul>

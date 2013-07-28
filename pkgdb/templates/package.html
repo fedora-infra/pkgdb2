@@ -72,11 +72,11 @@
 
 {% for pkg in package_acl %}
     <h3>{{ pkg['collection'] }}</h3>
-    <p class="owner">Point of contact: {{ pkg['point_of_contact'].split('//')[1] }}</p>
+    <p class="owner">Point of contact: {{ pkg['point_of_contact'] }}</p>
     <table class="acls">
         {% for maintainer in pkg['acls'] %}
         <tr>
-            <td>{{ maintainer.split('//')[1] }}</td>
+            <td>{{ maintainer }}</td>
             {% for acl in pkg['acls'][maintainer] %}
                 <td> {{ acl['acl'] }}</td>
                 <td>
@@ -88,7 +88,7 @@
                 <td>
                     <a href="{{ url_for('.update_acl',
                         package=package.name,
-                        user=maintainer.split('//')[1],
+                        user=maintainer,
                         branch=pkg['branchname']) }}">
                         <input type="submit" value="Update ACLs"/>
                     </a>
