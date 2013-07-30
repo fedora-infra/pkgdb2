@@ -37,7 +37,10 @@
             <li id="packagesTab"><a href="{{url_for('.list_packages')}}">Packages</a></li>
             <li id="packagersTab"><a href="{{url_for('.list_packagers')}}">Packagers</a></li>
             <li id="collectionsTab"><a href="{{url_for('.list_collections')}}">Collections</a></li>
-            <li id="tagsTab"><a href="{{url_for('.list_packages')}}">Stats</a></li>
+            <li id="statsTab"><a href="{{url_for('.list_packages')}}">Stats</a></li>
+            {% if g.fas_user %}
+            <li id="pendingAclTab"><a href="{{url_for('.pending_acl')}}">Pending ACLs</a></li>
+            {% endif %}
           </ul>
         </div><!-- end mainNav -->
 

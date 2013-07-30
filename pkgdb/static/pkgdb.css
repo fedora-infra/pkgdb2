@@ -12,9 +12,11 @@
 }
 
 body#index #mainNav li#indexTab a,
-body#collections #mainNav li#collectionsTab a,
+body#packages #mainNav li#packagesTab a,
 body#packagers #mainNav li#packagersTab a,
-body#packages #mainNav li#packagesTab a {
+body#collections #mainNav li#collectionsTab a,
+body#stats #mainNav li#statsTab a,
+body#pendingAcl #mainNav li#pendingAclTab a {
     background-color: #fff;
     color: #444;
     -webkit-border-top-left-radius: 5px;
