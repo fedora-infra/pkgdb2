@@ -34,10 +34,8 @@ from pkgdb.ui import UI
 
 
 @UI.route('/packages/')
-@UI.route('/packages/page/<int:page>/')
 @UI.route('/packages/<motif>/')
-@UI.route('/packages/<motif>/page/<int:page>/')
-def list_packages(motif=None, page=1):
+def list_packages(motif=None):
     ''' Display the list of packages corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
@@ -46,6 +44,12 @@ def list_packages(motif=None, page=1):
     orphaned = bool(flask.request.args.get('orphaned', False))
     status = flask.request.args.get('status', None)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
+    page = flask.request.args.get('page', 1)
+
+    try:
+        page = int(page)
+    except ValueError:
+        page = 1
 
     try:
         int(limit)

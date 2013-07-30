@@ -34,14 +34,19 @@ from pkgdb.ui import UI
 
 
 @UI.route('/packagers/')
-@UI.route('/packagers/page/<int:page>/')
 @UI.route('/packagers/<motif>/')
-@UI.route('/packagers/<motif>/page/<int:page>/')
-def list_packagers(motif=None, page=1):
+@UI.route('/packagers/<motif>/')
+def list_packagers(motif=None):
     ''' Display the list of packagers corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
+    page = flask.request.args.get('page', 1)
+
+    try:
+        page = int(page)
+    except ValueError:
+        page = 1
 
     try:
         int(limit)
