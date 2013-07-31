@@ -24,6 +24,8 @@ UI namespace for the Flask application.
 '''
 
 import flask
+import pkgdb.lib as pkgdblib
+from pkgdb import SESSION
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
@@ -33,6 +35,24 @@ UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
 def index():
     ''' Display the index package DB page. '''
     return flask.render_template('index.html')
+
+
+@UI.route('/stats/')
+def stats():
+    ''' Display some statistics aboue the packages in the DB. '''
+    collections = pkgdblib.search_collection(SESSION, '*', 'Active')
+
+    packages = {}
+    for collection in collections:
+        packages_count = pkgdblib.search_package(
+            SESSION,
+            pkg_name='*',
+            clt_name=collection.branchname,
+            count=True
+        )
+        packages[collection.branchname] = packages_count
+
+    return flask.render_template('stats.html', packages=packages)
 
 
 @UI.route('/search/')

@@ -1,0 +1,30 @@
+{% extends "master.html" %}
+
+{% block title %} {{ super() }} {% endblock %}
+
+{%block tag %}stats{% endblock %}
+
+{% block content %}
+
+<h1>Fedora Package Database</h1>
+
+<p>
+    PkgDB stores currently information about {{ packages | length }}
+    Fedora releases.
+</p>
+
+
+<table>
+    <tr>
+        <th>Fedora branch / release</th>
+        <th>Number of packages</th>
+    </tr>
+    {% for collec in packages | sort %}
+    <tr>
+        <td>{{ collec }}</td>
+        <td>{{ packages[collec] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
