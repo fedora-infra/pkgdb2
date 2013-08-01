@@ -90,6 +90,10 @@ def packager_info(packager):
     except NoResultFound:
         SESSION.rollback()
 
+    if not packages:
+        flask.flash('No packager of this name found.', 'errors')
+        return flask.render_template('error.html')
+
     return flask.render_template(
         'packager.html',
         packager=packager,
