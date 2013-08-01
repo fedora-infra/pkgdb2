@@ -29,11 +29,12 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser, APP
+from pkgdb import SESSION, FakeFasUser, APP, fas_login_required
 from pkgdb.ui import UI
 
 
 @UI.route('/acl/<package>/request/', methods=('GET', 'POST'))
+@fas_login_required
 def request_acl(package):
     ''' Request acls for a specific package. '''
 
@@ -52,13 +53,10 @@ def request_acl(package):
                     SESSION,
                     pkg_name=package,
                     clt_name=collec,
-                    ## TODO: port to flask.g
-                    #pkg_user=flask.g.fas_user.username,
-                    pkg_user=FakeFasUser().username,
+                    pkg_user=flask.g.fas_user.username,
                     acl=acl,
                     status=acl_status,
-                    user=FakeFasUser(),  # TODO: port to flask.g.fas_user
-                    #user=flask.g.fas_user,
+                    user=flask.g.fas_user,
                 )
             SESSION.commit()
             flask.flash('ACLs updated')
@@ -75,8 +73,9 @@ def request_acl(package):
         package=package,
     )
 
-## TODO: user logged in
+
 @UI.route('/acl/<package>/watch/', methods=('GET', 'POST'))
+@fas_login_required
 def watch_package(package):
     pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
     pkg_acls = ['watchcommits', 'watchbugzilla']
@@ -87,12 +86,10 @@ def watch_package(package):
                 SESSION,
                 pkg_name=package,
                 clt_name=collec,
-                # TODO: port to flask.g.fas_user:
-                pkg_user=FakeFasUser().username, 
+                pkg_user=flask.g.fas_user.username,
                 acl=acl,
                 status='Approved',
-                user=FakeFasUser(),  # TODO: port to flask.g.fas_user
-                #user=flask.g.fas_user,
+                user=flask.g.fas_user,
             )
         SESSION.commit()
         flask.flash('ACLs updated')
@@ -104,8 +101,8 @@ def watch_package(package):
         flask.flash(err.message, 'error')
 
 
-## TODO: user logged in
 @UI.route('/acl/<package>/comaintain/', methods=('GET', 'POST'))
+@fas_login_required
 def comaintain_package(package):
     pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
     pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
@@ -119,12 +116,10 @@ def comaintain_package(package):
                 SESSION,
                 pkg_name=package,
                 clt_name=collec,
-                # TODO: port to flask.g.fas_user:
-                pkg_user=FakeFasUser().username,
+                pkg_user=flask.g.fas_user,
                 acl=acl,
                 status=acl_status,
-                user=FakeFasUser(),  # TODO: port to flask.g.fas_user
-                #user=flask.g.fas_user,
+                user=flask.g.fas_user,
             )
         SESSION.commit()
         flask.flash('ACLs updated')
@@ -136,9 +131,9 @@ def comaintain_package(package):
         flask.flash(err.message, 'error')
 
 
-## TODO: user logged in
 @UI.route('/acl/<package>/update/<user>/', methods=('GET', 'POST'))
 @UI.route('/acl/<package>/update/<user>/<branch>/', methods=('GET', 'POST'))
+@fas_login_required
 def update_acl(package, user, branch=None):
     ''' Update the acls for a specific user on a package. '''
 
@@ -167,12 +162,10 @@ def update_acl(package, user, branch=None):
                     SESSION,
                     pkg_name=package,
                     clt_name=collec,
-                    # TODO: port to flask.g.fas_user:
                     pkg_user=user,
                     acl=acl,
                     status=acl_status,
-                    user=FakeFasUser(),  # TODO: port to flask.g.fas_user
-                    #user=flask.g.fas_user,
+                    user=flask.g.fas_user,
                 )
             SESSION.commit()
             flask.flash('ACLs updated')
@@ -193,12 +186,10 @@ def update_acl(package, user, branch=None):
     )
 
 
-## TODO: need to be logged in
 @UI.route('/acl/pending/')
+@fas_login_required
 def pending_acl():
     ''' List the pending acls for the user logged in. '''
-    flask.g.fas_user = FakeFasUser()
-
     pending_acls = pkgdblib.get_pending_acl_user(
         SESSION, flask.g.fas_user.username)
     return flask.render_template(
