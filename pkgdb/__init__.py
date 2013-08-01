@@ -108,7 +108,7 @@ def is_admin(function):
                                                 next=flask.request.url))
         elif is_pkgdb_admin():
             flask.flash('You are not an administrator of pkgdb', 'errors')
-            return flask.redirect(flask.url_for('ui_ns.error'))
+            return flask.redirect(flask.url_for('ui_ns.msg'))
         else:
             return function(*args, **kwargs)
     return decorated_function

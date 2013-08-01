@@ -76,8 +76,8 @@ def search():
                                             motif=search_term))
 
 
-@UI.route('/error/')
-def error():
+@UI.route('/msg/')
+def msg():
     """ Page used to display error messages
     """
     return flask.render_template('error.html')
