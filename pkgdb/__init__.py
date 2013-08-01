@@ -26,7 +26,8 @@ Top level of the pkgdb Flask application.
 import flask
 import os
 
-from flask_fas_openid import FAS
+from functools import wraps
+from flask.ext.fas_openid import FAS
 
 import lib as pkgdblib
 
@@ -51,6 +52,51 @@ class FakeFasUser(object):
     groups = ['packager', 'cla_done']
 
 
+def is_pkgdb_admin():
+    """ Is the user a pkgdb admin.
+    """
+    if flask.g.fas_user is None or \
+            not flask.g.fas_user.cla_done or \
+            len(flask.g.fas_user.groups) < 1:
+        return False
+
+    return APP.config['ADMIN_GROUP'] in flask.g.fas_user.groups
+
+
+def is_pkg_admin(package, branch):
+    """ Is the user an admin for this package.
+    Admin =
+        - user has approveacls rights
+        - user is a pkgdb admin
+    """
+    if is_pkgdb_admin():
+        return True
+    else:
+        return pkgdblib.has_acls(
+            SESSION, user=flask.g.fas_user.username,
+            package=package, branch=branch, acl='approveacls')
+
+
+
+def is_admin(function):
+    """ Decorator used to check if the loged in user is a pkgdb admin
+    or not.
+    """
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        if flask.g.fas_user is None or \
+                not flask.g.fas_user.cla_done or \
+                len(flask.g.fas_user.groups) < 1:
+            return flask.redirect(flask.url_for('auth_login',
+                                                next=flask.request.url))
+        elif is_pkgdb_admin():
+            flask.flash('You are not an administrator of pkgdb', 'errors')
+            return flask.redirect(flask.url_for('.error'))
+        else:
+            return function(*args, **kwargs)
+    return decorated_function
+
+
 # Import the API namespace
 from api import API
 from api import acls
@@ -73,10 +119,3 @@ APP.register_blueprint(UI)
 def shutdown_session(exception=None):
     """ Remove the DB session at the end of each request. """
     SESSION.remove()
-
-
-def is_admin():
-    """ Returns a boolean if the user logged in is an admin.
-    """
-    # TODO: Check if the user is part of the right group
-    return True
