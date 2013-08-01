@@ -35,3 +35,6 @@ SECRET_KEY = '<insert here your own key>'
 
 # List the ACL which are auto-approved (don't need reviewing)
 AUTO_APPROVE = ['watchcommits', 'watchbugzilla']
+
+# FAS group for the pkgdb admin
+ADMIN_GROUP = 'sysadmin-cvs'
