@@ -377,6 +377,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
         session.flush()
         return 'Collection "%s" created' % collection.branchname
     except SQLAlchemyError, err:  # pragma: no cover
+        print err.message
         raise PkgdbException('Could not add Collection to the database.')
 
 
