@@ -24,8 +24,11 @@ UI namespace for the Flask application.
 '''
 
 import flask
+
+from urlparse import urlparse
+
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION
+from pkgdb import SESSION, FAS
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
@@ -75,19 +78,26 @@ def search():
 
 @UI.route('/login/', methods=['GET', 'POST'])
 def login():
+    """ Login mechanism for this application.
+    """
+    next_url = None
     if 'next' in flask.request.args:
         next_url = flask.request.args['next']
-    else:
+
+    if not next_url or next_url == flask.url_for('.login'):
         next_url = flask.url_for('.index')
 
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         return flask.redirect(next_url)
     else:
-        return fas.login(return_url=next_url)
+        return FAS.login(return_url=next_url)
 
 
 @UI.route('/logout/')
 def logout():
+    """ Log out if the user is logged in other do nothing.
+    Return to the index page at the end.
+    """
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
-        fas.logout()
+        FAS.logout()
     return flask.redirect(flask.url_for('.index'))

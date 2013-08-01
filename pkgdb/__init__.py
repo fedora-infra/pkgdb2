@@ -26,6 +26,8 @@ Top level of the pkgdb Flask application.
 import flask
 import os
 
+from flask_fas_openid import FAS
+
 import lib as pkgdblib
 
 
@@ -35,6 +37,9 @@ APP = flask.Flask(__name__)
 APP.config.from_object('pkgdb.default_config')
 if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
     APP.config.from_envvar('PKGDB_CONFIG')
+
+# Set up FAS extension
+FAS = FAS(APP)
 
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
