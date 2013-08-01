@@ -49,7 +49,7 @@ def request_acl(package):
                 acl_status = 'Awaiting Review'
                 if acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
-                elif 'packager' not in flask.g.fas_user.groups
+                elif 'packager' not in flask.g.fas_user.groups:
                     flask.flash('You must be a packager to apply to the'
                         ' ACL: %s on %s' % (acl, collec), 'errors')
                     continue
