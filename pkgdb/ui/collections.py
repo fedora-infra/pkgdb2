@@ -124,16 +124,14 @@ def collection_new():
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_gitbranch=clt_gitbranch,
-                ## TODO: switch to flask.g.fas_user
-                user=FakeFasUser(),
-                #user=flask.g.fas_user,
+                user=flask.g.fas_user,
             )
             SESSION.commit()
             flask.flash(message)
             return flask.redirect(flask.url_for('.list_collections'))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
-            flask.flash(err.message, 'error')
+            flask.flash(err.message, 'errors')
 
     return flask.render_template(
         'collection_new.html',
