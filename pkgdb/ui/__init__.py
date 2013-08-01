@@ -76,6 +76,13 @@ def search():
                                             motif=search_term))
 
 
+@UI.route('/error/')
+def error():
+    """ Page used to display error messages
+    """
+    return flask.render_template('error.html')
+
+
 @UI.route('/login/', methods=['GET', 'POST'])
 def login():
     """ Login mechanism for this application.
