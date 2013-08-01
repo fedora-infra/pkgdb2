@@ -29,7 +29,8 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser, APP
+from pkgdb import SESSION, FakeFasUser, APP, is_admin, is_pkgdb_admin, \
+    is_pkg_admin, fas_login_required
 from pkgdb.ui import UI
 
 
@@ -86,7 +87,8 @@ def list_packages(motif=None):
         packages=packages,
         motif=motif,
         total_page=total_page,
-        page=page
+        page=page,
+        admin=is_pkgdb_admin(),
     )
 
 
@@ -101,8 +103,14 @@ def package_info(package):
         package = pkgdblib.search_package(SESSION, packagename)[0]
     except NoResultFound:
         SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('error.html')
+    except IndexError:
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('error.html')
 
     package_acls = []
+    branch_admin = []
     for pkg in package_acl:
         tmp = {}
         tmp['collection'] = '%s %s' %(pkg.collection.name,
@@ -118,16 +126,19 @@ def package_info(package):
                 acls[acl.fas_name] = [tmp2]
         tmp['acls'] = acls
         package_acls.append(tmp)
+        if is_pkg_admin(package.name, pkg.collection.branchname):
+            branch_admin.append(pkg.collection.branchname)
 
     return flask.render_template(
         'package.html',
         package=package,
         package_acl=package_acls,
+        branch_admin=branch_admin,
     )
 
 
-## TODO: Restricted to admin
 @UI.route('/new/package/', methods=('GET', 'POST'))
+@is_admin
 def package_new():
     ''' Page to create a new package. '''
 
