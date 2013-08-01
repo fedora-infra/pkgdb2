@@ -80,7 +80,7 @@ def search():
 def msg():
     """ Page used to display error messages
     """
-    return flask.render_template('error.html')
+    return flask.render_template('msg.html')
 
 
 @UI.route('/login/', methods=['GET', 'POST'])
