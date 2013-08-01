@@ -4,6 +4,7 @@
 
 {%block tag %}packages{% endblock %}
 
+{% if g.fas_user %}
 {% set options = True %}
 {%block options %}
 <ul>
@@ -27,6 +28,7 @@
     </li>
 </ul>
 {% endblock %}
+{% endif %}
 
 {% block content %}
 
@@ -77,13 +79,15 @@
         {% for maintainer in pkg['acls'] %}
         <tr>
             <td>{{ maintainer }}</td>
-            {% for acl in pkg['acls'][maintainer] %}
+            {% for acl in pkg['acls'][maintainer] | sort %}
                 <td> {{ acl['acl'] }}</td>
                 <td>
                     <img src="{{ url_for('static', filename='%s.png' % acl['status']) }}"
                      title="{{ acl['status'] }}" alt="{{ acl['status'] }}"/ >
                 </td>
             {% endfor %}
+            {% if maintainer == g.fas_user.username or
+                    pkg['branchname'] in branch_admin %}
             {% if pkg['acls'][maintainer] %}
                 <td>
                     <a href="{{ url_for('.update_acl',
@@ -93,6 +97,7 @@
                         <input type="submit" value="Update ACLs"/>
                     </a>
                 </td>
+            {% endif %}
             {% endif %}
         </tr>
         {% endfor %}
