@@ -55,8 +55,9 @@ class FakeFasUser(object):
 def is_pkgdb_admin():
     """ Is the user a pkgdb admin.
     """
-    if flask.g.fas_user is None or \
-            not flask.g.fas_user.cla_done or \
+    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+        return False
+    if not flask.g.fas_user.cla_done or \
             len(flask.g.fas_user.groups) < 1:
         return False
 
@@ -69,6 +70,8 @@ def is_pkg_admin(package, branch):
         - user has approveacls rights
         - user is a pkgdb admin
     """
+    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+        return False
     if is_pkgdb_admin():
         return True
     else:
@@ -76,6 +79,20 @@ def is_pkg_admin(package, branch):
             SESSION, user=flask.g.fas_user.username,
             package=package, branch=branch, acl='approveacls')
 
+
+def fas_login_required(function):
+    """ Flask decorator to ensure that the user is logged in against FAS.
+    To use this decorator you need to have a function named 'auth_login'.
+    Without that function the redirect if the user is not logged in will not
+    work.
+    """
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        if flask.g.fas_user is None:
+            return flask.redirect(flask.url_for(
+                '.login', next=flask.request.url))
+        return function(*args, **kwargs)
+    return decorated_function
 
 
 def is_admin(function):
