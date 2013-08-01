@@ -52,8 +52,9 @@ def request_acl(package):
                     SESSION,
                     pkg_name=package,
                     clt_name=collec,
+                    ## TODO: port to flask.g
                     #pkg_user=flask.g.fas_user.username,
-                    pkg_user='user::%s' % FakeFasUser().username,
+                    pkg_user=FakeFasUser().username,
                     acl=acl,
                     status=acl_status,
                     user=FakeFasUser(),  # TODO: port to flask.g.fas_user
@@ -87,7 +88,7 @@ def watch_package(package):
                 pkg_name=package,
                 clt_name=collec,
                 # TODO: port to flask.g.fas_user:
-                pkg_user='user::%s' % FakeFasUser().username, 
+                pkg_user=FakeFasUser().username, 
                 acl=acl,
                 status='Approved',
                 user=FakeFasUser(),  # TODO: port to flask.g.fas_user
@@ -119,7 +120,7 @@ def comaintain_package(package):
                 pkg_name=package,
                 clt_name=collec,
                 # TODO: port to flask.g.fas_user:
-                pkg_user='user::%s' % FakeFasUser().username,
+                pkg_user=FakeFasUser().username,
                 acl=acl,
                 status=acl_status,
                 user=FakeFasUser(),  # TODO: port to flask.g.fas_user

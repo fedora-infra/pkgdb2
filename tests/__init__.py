@@ -163,14 +163,14 @@ def create_package_listing(session):
     devel_collec = model.Collection.by_name(session, 'devel')
 
     # Pkg: guake - Collection: F18 - Approved
-    pkgltg = model.PackageListing(point_of_contact='user::pingou',
+    pkgltg = model.PackageListing(point_of_contact='pingou',
                                   status='Approved',
                                   packageid=guake_pkg.id,
                                   collectionid=f18_collec.id,
                                   )
     session.add(pkgltg)
     # Pkg: guake - Collection: devel - Approved
-    pkgltg = model.PackageListing(point_of_contact='user::pingou',
+    pkgltg = model.PackageListing(point_of_contact='pingou',
                                   status='Approved',
                                   packageid=guake_pkg.id,
                                   collectionid=devel_collec.id,
@@ -191,7 +191,7 @@ def create_package_listing(session):
                                   )
     session.add(pkgltg)
     # Pkg: geany - Collection: F18 - Approved
-    pkgltg = model.PackageListing(point_of_contact='user::pingou',
+    pkgltg = model.PackageListing(point_of_contact='pingou',
                                   status='Approved',
                                   packageid=geany_pkg.id,
                                   collectionid=f18_collec.id,
@@ -214,35 +214,35 @@ def create_package_acl(session):
     pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, devel_collec.id)
 
-    packager = model.PackageListingAcl(fas_name='user::pingou',
+    packager = model.PackageListingAcl(fas_name='pingou',
                                        packagelisting_id=pklist_guake_f18.id,
                                        acl='commit',
                                        status='Approved',
                                        )
     session.add(packager)
 
-    packager = model.PackageListingAcl(fas_name='user::pingou',
+    packager = model.PackageListingAcl(fas_name='pingou',
                                        packagelisting_id=pklist_guake_f18.id,
                                        acl='watchcommits',
                                        status='Approved',
                                        )
     session.add(packager)
 
-    packager = model.PackageListingAcl(fas_name='user::pingou',
+    packager = model.PackageListingAcl(fas_name='pingou',
                                        packagelisting_id=pklist_guake_devel.id,
                                        acl='commit',
                                        status='Approved',
                                        )
     session.add(packager)
 
-    packager = model.PackageListingAcl(fas_name='user::pingou',
+    packager = model.PackageListingAcl(fas_name='pingou',
                                        packagelisting_id=pklist_guake_devel.id,
                                        acl='watchcommits',
                                        status='Approved',
                                        )
     session.add(packager)
 
-    packager = model.PackageListingAcl(fas_name='user::toshio',
+    packager = model.PackageListingAcl(fas_name='toshio',
                                        packagelisting_id=pklist_guake_devel.id,
                                        acl='commit',
                                        status='Awaiting Review',

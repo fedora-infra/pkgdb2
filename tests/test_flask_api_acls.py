@@ -80,11 +80,11 @@ class FlaskApiAclsTest(Modeltests):
         self.assertEqual(output['acls'][0]['collection']['branchname'],
                          'F-18')
         self.assertEqual(output['acls'][0]['point_of_contact'],
-                         'user::pingou')
+                         'pingou')
         self.assertEqual(output['acls'][1]['collection']['branchname'],
                          'devel')
         self.assertEqual(output['acls'][1]['point_of_contact'],
-                         'user::pingou')
+                         'pingou')
 
     def test_acl_update(self):
         """ Test the api_acl_update function.  """

@@ -86,7 +86,7 @@ def packager_info(packager):
     packages = []
     try:
         packages = pkgdblib.search_package(SESSION, '*',
-                                           pkg_poc='user::%s' % packager)
+                                           pkg_poc=packager)
     except NoResultFound:
         SESSION.rollback()
 

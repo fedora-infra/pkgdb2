@@ -54,7 +54,7 @@ class PkgdbLibtests(Modeltests):
                                     pkg_summary='Drop down terminal',
                                     pkg_status='Approved',
                                     pkg_collection='F-18',
-                                    pkg_poc='user::pingou',
+                                    pkg_poc='pingou',
                                     pkg_reviewURL=None,
                                     pkg_shouldopen=None,
                                     pkg_upstreamURL='http://guake.org',
@@ -70,7 +70,7 @@ class PkgdbLibtests(Modeltests):
                              pkg_summary='Drop down terminal',
                              pkg_status='Approved',
                              pkg_collection='devel, F-18',
-                             pkg_poc='user::pingou',
+                             pkg_poc='pingou',
                              pkg_reviewURL=None,
                              pkg_shouldopen=None,
                              pkg_upstreamURL=None,
@@ -94,7 +94,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'user::pingou')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
 
     def test_set_acl_package(self):
         """ Test the set_acl_package function. """
@@ -105,7 +105,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='test',
                           clt_name='F-17',
-                          pkg_user='user::pingou',
+                          pkg_user='pingou',
                           acl='nothing',
                           status='Appr',
                           user=FakeFasUser(),
@@ -117,7 +117,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-17',
-                          pkg_user='user::pingou',
+                          pkg_user='pingou',
                           acl='nothing',
                           status='Appr',
                           user=FakeFasUser(),
@@ -130,7 +130,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='guake',
                           clt_name='F-18',
                           acl='nothing',
-                          pkg_user='user::pingou',
+                          pkg_user='pingou',
                           status='Appro',
                           user=FakeFasUser(),
                           )
@@ -141,7 +141,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          pkg_user='user::pingou',
+                          pkg_user='pingou',
                           acl='nothing',
                           status='Approved',
                           user=FakeFasUser(),
@@ -151,7 +151,7 @@ class PkgdbLibtests(Modeltests):
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
-                                 pkg_user='user::pingou',
+                                 pkg_user='pingou',
                                  acl='commit',
                                  status='Approved',
                                  user=FakeFasUser(),
@@ -172,7 +172,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='test',
                           clt_name='F-17',
                           user=FakeFasUser(),
-                          pkg_poc='user::toshio',
+                          pkg_poc='toshio',
                           )
         self.session.rollback()
 
@@ -182,7 +182,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='guake',
                           clt_name='F-17',
                           user=FakeFasUser(),
-                          pkg_poc='user::toshio',
+                          pkg_poc='toshio',
                           )
         self.session.rollback()
 
@@ -194,26 +194,26 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='guake',
                           clt_name='F-18',
                           user=fake_user,
-                          pkg_poc='user::toshio',
+                          pkg_poc='toshio',
                           )
         self.session.rollback()
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].point_of_contact, 'user::pingou')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
 
         pkgdblib.pkg_change_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=FakeFasUser(),
-                                 pkg_poc='user::toshio',
+                                 pkg_poc='toshio',
                                  )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].point_of_contact, 'user::toshio')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'toshio')
 
         user = FakeFasUser()
         user.username = 'toshio'
@@ -298,7 +298,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].point_of_contact, 'user::pingou')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
         self.assertEqual(pkg_acl[0].status, 'Deprecated')
 
     def test_search_collection(self):
@@ -364,7 +364,7 @@ class PkgdbLibtests(Modeltests):
 
         pkg = pkgdblib.search_packagers(self.session, 'pi*')
         self.assertEqual(len(pkg), 1)
-        self.assertEqual(pkg[0][0], 'user::pingou')
+        self.assertEqual(pkg[0][0], 'pingou')
 
     def test_get_acl_packager(self):
         """ Test the get_acl_packager function. """
@@ -406,15 +406,15 @@ class PkgdbLibtests(Modeltests):
         create_package_acl(self.session)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'user::pingou', 'geany')
+            self.session, 'pingou', 'geany')
         self.assertEqual(len(pending_acls), 0)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'user::pingou', 'guake')
+            self.session, 'pingou', 'guake')
         self.assertEqual(len(pending_acls), 4)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'user::toshio', 'guake', status='Awaiting Review')
+            self.session, 'toshio', 'guake', status='Awaiting Review')
         self.assertEqual(len(pending_acls), 1)
         self.assertEqual(pending_acls[0]['package'], 'guake')
         self.assertEqual(pending_acls[0]['collection'], 'devel')
@@ -423,12 +423,12 @@ class PkgdbLibtests(Modeltests):
 
     def test_has_acls(self):
         """ Test the has_acls function. """
-        self.assertFalse(pkgdblib.has_acls(self.session, 'user::pingou',
+        self.assertFalse(pkgdblib.has_acls(self.session, 'pingou',
             'guake', 'devel', 'approveacl'))
 
         create_package_acl(self.session)
 
-        self.assertTrue(pkgdblib.has_acls(self.session, 'user::pingou',
+        self.assertTrue(pkgdblib.has_acls(self.session, 'pingou',
             'guake', 'devel', 'commit'))
 
 
