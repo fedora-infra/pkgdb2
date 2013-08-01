@@ -29,7 +29,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser, APP
+from pkgdb import SESSION, FakeFasUser, APP, is_admin, is_pkgdb_admin
 from pkgdb.ui import UI
 
 
@@ -69,7 +69,8 @@ def list_collections(motif=None, page=1):
         collections=collections,
         motif=motif,
         total_page=total_page,
-        page=page
+        page=page,
+        admin=is_pkgdb_admin(),
     )
 
 
@@ -82,6 +83,9 @@ def collection_info(collection):
         collection = pkgdblib.search_collection(SESSION, collection)[0]
     except NoResultFound:
         SESSION.rollback()
+    except IndexError:
+        flask.flash('No collection of this name found.', 'errors')
+        return flask.render_template('error.html')
 
     return flask.render_template(
         'collection.html',
@@ -89,8 +93,8 @@ def collection_info(collection):
     )
 
 
-## TODO: Restricted to admin
 @UI.route('/new/collection/', methods=('GET', 'POST'))
+@is_admin
 def collection_new():
     ''' Page to create a new collection. '''
 
