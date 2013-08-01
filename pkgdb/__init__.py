@@ -106,7 +106,7 @@ def is_admin(function):
                 len(flask.g.fas_user.groups) < 1:
             return flask.redirect(flask.url_for('.login',
                                                 next=flask.request.url))
-        elif is_pkgdb_admin():
+        elif not is_pkgdb_admin():
             flask.flash('You are not an administrator of pkgdb', 'errors')
             return flask.redirect(flask.url_for('ui_ns.msg'))
         else:
