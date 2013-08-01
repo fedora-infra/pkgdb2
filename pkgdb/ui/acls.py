@@ -49,6 +49,11 @@ def request_acl(package):
                 acl_status = 'Awaiting Review'
                 if acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
+                elif 'packager' not in flask.g.fas_user.groups
+                    flask.flash('You must be a packager to apply to the'
+                        ' ACL: %s on %s' % (acl, collec), 'errors')
+                    continue
+
                 pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
@@ -104,6 +109,11 @@ def watch_package(package):
 @UI.route('/acl/<package>/comaintain/', methods=('GET', 'POST'))
 @fas_login_required
 def comaintain_package(package):
+    if not 'packager' in flask.g.fas_user.groups:
+        flask.flash('You must be a packager to apply to be a comaintainer',
+            'errors')
+        return flask.redirect(flask.url_for(
+            '.package_info', package=package))
     pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
     pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
     pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
@@ -154,7 +164,20 @@ def update_acl(package, user, branch=None):
         acl_status = form.acl_status.data
 
         try:
+            branch_out = []
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+                if collec in branch_out:
+                    continue
+
+                if pkgdblib.has_acls(SESSION, user=flask.g.fas_user.username,
+                             package=package, branch=collec, acl=acl):
+
+                    flask.flash('You are not allowed to update ACLs for '
+                        'this package in this branch "%s"' % collec,
+                        'errors')
+                    branch_out.append(collec)
+                    continue
+
                 if acl_status == 'Awaiting Review' and \
                         acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
