@@ -4,6 +4,7 @@
 
 {%block tag %}collections{% endblock %}
 
+{% if admin %}
 {% set options = True %}
 {%block options %}
 <ul>
@@ -14,6 +15,7 @@
     </li>
 </ul>
 {% endblock %}
+{% endif %}
 
 {% block content %}
 
