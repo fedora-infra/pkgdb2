@@ -197,7 +197,7 @@ def update_acl(package, user, branch=None):
                               package=package))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
-            flask.flash(err.message, 'error')
+            flask.flash(err.message, 'errors')
 
     return flask.render_template(
         'acl_update.html',
