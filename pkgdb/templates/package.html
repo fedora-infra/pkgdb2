@@ -76,7 +76,8 @@
     <h3>{{ pkg['collection'] }}</h3>
     <p class="owner">
         Point of contact:
-        <a href="{{ url_for('.packager_info', packager=maintainer) }}">
+        <a href="{{ url_for('.packager_info',
+                            packager=pkg['point_of_contact']) }}">
             {{ pkg['point_of_contact'] }}
         </a>
     </p>
@@ -84,14 +85,16 @@
         {% for maintainer in pkg['acls'] %}
         <tr>
             <td>
-                <a href="{{ url_for('.packager_info', packager=maintainer) }}">
+                <a href="{{ url_for('.packager_info',
+                                    packager=maintainer) }}">
                 {{ maintainer }}
                 </a>
             </td>
             {% for acl in pkg['acls'][maintainer] | sort %}
                 <td> {{ acl['acl'] }}</td>
                 <td>
-                    <img src="{{ url_for('static', filename='%s.png' % acl['status']) }}"
+                    <img src="{{ url_for('static',
+                                         filename='%s.png' % acl['status']) }}"
                      title="{{ acl['status'] }}" alt="{{ acl['status'] }}"/ >
                 </td>
             {% endfor %}
