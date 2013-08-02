@@ -74,11 +74,20 @@
 
 {% for pkg in package_acl %}
     <h3>{{ pkg['collection'] }}</h3>
-    <p class="owner">Point of contact: {{ pkg['point_of_contact'] }}</p>
+    <p class="owner">
+        Point of contact:
+        <a href="{{ url_for('.packager_info', packager=maintainer) }}">
+            {{ pkg['point_of_contact'] }}
+        </a>
+    </p>
     <table class="acls">
         {% for maintainer in pkg['acls'] %}
         <tr>
-            <td>{{ maintainer }}</td>
+            <td>
+                <a href="{{ url_for('.packager_info', packager=maintainer) }}">
+                {{ maintainer }}
+                </a>
+            </td>
             {% for acl in pkg['acls'][maintainer] | sort %}
                 <td> {{ acl['acl'] }}</td>
                 <td>
