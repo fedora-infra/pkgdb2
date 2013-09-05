@@ -116,7 +116,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-17',
+                          clt_name='F-16',
                           pkg_user='pingou',
                           acl='nothing',
                           status='Appr',
@@ -180,7 +180,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.pkg_change_poc,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-17',
+                          clt_name='F-16',
                           user=FakeFasUser(),
                           pkg_poc='toshio',
                           )
@@ -284,7 +284,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.pkg_deprecate,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-17',
+                          clt_name='F-16',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
@@ -312,9 +312,9 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(collections), 0)
 
         collections = pkgdblib.search_collection(self.session, 'F-*', False)
-        self.assertEqual("Collection(u'Fedora', u'18', u'Active', u'toshio', "
+        self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
-                         " summary=u'Fedora 18 release', description=None)",
+                         " summary=u'Fedora 17 release', description=None)",
                          collections[0].__repr__())
 
     def test_add_collection(self):

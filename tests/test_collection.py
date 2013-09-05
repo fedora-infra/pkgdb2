@@ -43,17 +43,18 @@ class Collectiontests(Modeltests):
     def test_init_collection(self):
         """ Test the __init__ function of Collection. """
         create_collection(self.session)
-        self.assertEqual(2, len(model.Collection.all(self.session)))
+        self.assertEqual(4, len(model.Collection.all(self.session)))
 
     def test_repr_collection(self):
         """ Test the __repr__ function of Collection. """
         create_collection(self.session)
         collections = model.Collection.all(self.session)
-        self.assertEqual("Collection(u'Fedora', u'18', u'Active', u'toshio', "
+        self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
-                         " summary=u'Fedora 18 release', description=None)",
+                         " summary=u'Fedora 17 release', description=None)",
                          collections[0].__repr__())
-        self.assertEqual(collections[0].branchname, 'F-18')
+        self.assertEqual(collections[0].branchname, 'F-17')
+        self.assertEqual(collections[1].branchname, 'F-18')
 
     def test_search(self):
         """ Test the search function of Collection. """
@@ -63,10 +64,26 @@ class Collectiontests(Modeltests):
         self.assertEqual(len(collections), 0)
 
         collections = model.Collection.search(self.session, 'F-%', 'Active')
-        self.assertEqual("Collection(u'Fedora', u'18', u'Active', u'toshio', "
+        self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
-                         " summary=u'Fedora 18 release', description=None)",
+                         " summary=u'Fedora 17 release', description=None)",
                          collections[0].__repr__())
+
+        collections = model.Collection.search(self.session, 'F-%')
+        self.assertEqual(2, len(collections))
+
+        collections = model.Collection.search(
+            session=self.session,
+            clt_name='F-%',
+            offset=1)
+        self.assertEqual(1, len(collections))
+
+        collections = model.Collection.search(
+            session=self.session,
+            clt_name='F-%',
+            limit=1)
+        self.assertEqual(1, len(collections))
+
 
     def test_api_repr(self):
         """ Test the api_repr function of Collection. """

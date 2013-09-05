@@ -57,7 +57,7 @@ class PackageListingtests(Modeltests):
         packages = model.PackageListing.by_package_id(self.session,
                                                         pkg.id)
         self.assertEqual("PackageListing(id:1, u'pingou', "
-                         "u'Approved', packageid=1, collectionid=1)",
+                         "u'Approved', packageid=1, collectionid=2)",
                          packages[0].__repr__())
 
     def test_search_listing(self):
@@ -71,7 +71,7 @@ class PackageListingtests(Modeltests):
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
         self.assertEqual("PackageListing(id:1, u'pingou', "
-                         "u'Approved', packageid=1, collectionid=1)",
+                         "u'Approved', packageid=1, collectionid=2)",
                          packages[0].__repr__())
 
         packages = model.PackageListing.search(self.session,
@@ -81,10 +81,10 @@ class PackageListingtests(Modeltests):
                                                pkg_status=None)
         self.assertEqual(2, len(packages))
         self.assertEqual("PackageListing(id:1, u'pingou', "
-                         "u'Approved', packageid=1, collectionid=1)",
+                         "u'Approved', packageid=1, collectionid=2)",
                          packages[0].__repr__())
         self.assertEqual("PackageListing(id:5, u'pingou', "
-                         "u'Approved', packageid=3, collectionid=1)",
+                         "u'Approved', packageid=3, collectionid=2)",
                          packages[1].__repr__())
 
 
@@ -121,7 +121,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0], 'pingou')
 
-    
+
     def test_get_acl_packager(self):
         """ Test the get_acl_packager function of PersonPackageListing.
         """

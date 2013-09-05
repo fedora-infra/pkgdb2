@@ -116,7 +116,7 @@ class FlaskApiCollectionTest(Modeltests):
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
                          ['collections'])
-        self.assertEqual(len(output['collections']), 2)
+        self.assertEqual(len(output['collections']), 4)
         self.assertEqual(output['collections'][0].keys(),
                          ['pendingurltemplate', 'publishurltemplate',
                           'version', 'name'])
@@ -129,9 +129,9 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(output['collections'][0].keys(),
                          ['pendingurltemplate', 'publishurltemplate',
                           'version', 'name'])
-        self.assertEqual(len(output['collections']), 1)
+        self.assertEqual(len(output['collections']), 2)
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
-        self.assertEqual(output['collections'][0]['version'], '18')
+        self.assertEqual(output['collections'][0]['version'], '17')
 
     def test_collection_new(self):
         """ Test the api_collection_new function.  """
