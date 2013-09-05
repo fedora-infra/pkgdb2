@@ -89,6 +89,21 @@ def create_collection(session):
     """ Create some basic collection for testing. """
     collection = model.Collection(
                                   name='Fedora',
+                                  version='17',
+                                  status='Active',
+                                  owner='toshio',
+                                  publishURLTemplate=None,
+                                  pendingURLTemplate=None,
+                                  summary='Fedora 17 release',
+                                  description=None,
+                                  branchname='F-17',
+                                  distTag='.fc17',
+                                  git_branch_name='f17',
+                                  )
+    session.add(collection)
+
+    collection = model.Collection(
+                                  name='Fedora',
                                   version='18',
                                   status='Active',
                                   owner='toshio',
@@ -116,6 +131,22 @@ def create_collection(session):
                                   git_branch_name='master',
                                   )
     session.add(collection)
+
+    collection = model.Collection(
+                                  name='EPEL',
+                                  version='6',
+                                  status='Active',
+                                  owner='kevin',
+                                  publishURLTemplate=None,
+                                  pendingURLTemplate=None,
+                                  summary='EPEL version 6',
+                                  description=None,
+                                  branchname='el6',
+                                  distTag='.el6',
+                                  git_branch_name='el6',
+                                  )
+    session.add(collection)
+
     session.commit()
 
 
