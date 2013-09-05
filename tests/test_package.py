@@ -73,6 +73,37 @@ class Packagetests(Modeltests):
         self.assertEqual(package.keys(), ['upstreamurl', 'name',
                          'reviewurl', 'summary'])
 
+    def test_search(self):
+        """ Test the search function of Package. """
+        create_package(self.session)
+
+        packages = model.Package.search(
+            session=self.session,
+            pkg_name='g%')
+        self.assertEqual(len(packages), 2)
+        self.assertEqual(packages[0].name, 'guake')
+        self.assertEqual(packages[1].name, 'geany')
+
+        packages = model.Package.search(
+            session=self.session,
+            pkg_name='g%',
+            limit=1)
+        self.assertEqual(len(packages), 1)
+        self.assertEqual(packages[0].name, 'guake')
+
+        packages = model.Package.search(
+            session=self.session,
+            pkg_name='g%',
+            offset=1)
+        self.assertEqual(len(packages), 1)
+        self.assertEqual(packages[0].name, 'geany')
+
+        packages = model.Package.search(
+            session=self.session,
+            pkg_name='g%',
+            count=True)
+        self.assertEqual(packages, 2)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Packagetests)

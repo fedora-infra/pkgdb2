@@ -87,6 +87,47 @@ class PackageListingtests(Modeltests):
                          "u'Approved', packageid=3, collectionid=2)",
                          packages[1].__repr__())
 
+        packages = model.PackageListing.search(self.session,
+                                               pkg_name='g%',
+                                               clt_id=collection.id,
+                                               pkg_owner='pingou',
+                                               pkg_status='Approved')
+        self.assertEqual(2, len(packages))
+        self.assertEqual("PackageListing(id:1, u'pingou', "
+                         "u'Approved', packageid=1, collectionid=2)",
+                         packages[0].__repr__())
+        self.assertEqual("PackageListing(id:5, u'pingou', "
+                         "u'Approved', packageid=3, collectionid=2)",
+                         packages[1].__repr__())
+
+        packages = model.PackageListing.search(self.session,
+                                               pkg_name='g%',
+                                               clt_id=collection.id,
+                                               pkg_owner='pingou',
+                                               pkg_status='Approved',
+                                               count=True)
+        self.assertEqual(2, packages)
+
+        packages = model.PackageListing.search(self.session,
+                                               pkg_name='g%',
+                                               clt_id=collection.id,
+                                               pkg_owner='pingou',
+                                               pkg_status='Approved',
+                                               limit=1)
+        self.assertEqual("PackageListing(id:1, u'pingou', "
+                         "u'Approved', packageid=1, collectionid=2)",
+                         packages[0].__repr__())
+
+        packages = model.PackageListing.search(self.session,
+                                               pkg_name='g%',
+                                               clt_id=collection.id,
+                                               pkg_owner='pingou',
+                                               pkg_status='Approved',
+                                               offset=1)
+        self.assertEqual("PackageListing(id:5, u'pingou', "
+                         "u'Approved', packageid=3, collectionid=2)",
+                         packages[0].__repr__())
+
 
     def test_api_repr(self):
         """ Test the api_repr function of PackageListing. """
@@ -120,6 +161,18 @@ class PackageListingtests(Modeltests):
             self.session, 'pi%')
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0], 'pingou')
+
+        pkg = model.PackageListing.search_point_of_contact(
+            self.session, 'pi%', count=True)
+        self.assertEqual(pkg, 1)
+
+        pkg = model.PackageListing.search_point_of_contact(
+            self.session, 'pi%', offset=1)
+        self.assertEqual(pkg, [])
+
+        pkg = model.PackageListing.search_point_of_contact(
+            self.session, 'pi%', limit=1)
+        self.assertEqual(len(pkg), 1)
 
 
     def test_get_acl_packager(self):

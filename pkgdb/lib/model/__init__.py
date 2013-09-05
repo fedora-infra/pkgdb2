@@ -273,7 +273,7 @@ class PackageListingAcl(BASE):
             cls.status == 'Awaiting Review'
         )
         return query.all()
-        
+
 
     # pylint: disable-msg=R0903
     def __init__(self, fas_name, packagelisting_id, acl, status):
