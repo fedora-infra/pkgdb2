@@ -48,7 +48,16 @@ class FakeFasUser(object):
     """ Fake FAS user used for the tests. """
     id = 100
     username = 'pingou'
+    cla_done = True
     groups = ['packager', 'cla_done']
+
+
+class FakeFasUserAdmin(object):
+    """ Fake FAS user used for the tests. """
+    id = 1000
+    username = 'admin'
+    cla_done = True
+    groups = ['packager', 'cla_done', 'sysadmin-cvs']
 
 
 class Modeltests(unittest.TestCase):

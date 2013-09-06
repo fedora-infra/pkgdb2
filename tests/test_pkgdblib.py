@@ -38,9 +38,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb.lib as pkgdblib
 from pkgdb.lib import model
-from tests import (FakeFasUser, Modeltests, create_collection,
-                   create_package, create_package_listing,
-                   create_package_acl)
+from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
+                   create_collection, create_package,
+                   create_package_listing, create_package_acl)
 
 
 class PkgdbLibtests(Modeltests):
@@ -58,7 +58,7 @@ class PkgdbLibtests(Modeltests):
                                     pkg_reviewURL=None,
                                     pkg_shouldopen=None,
                                     pkg_upstreamURL='http://guake.org',
-                                    user=FakeFasUser())
+                                    user=FakeFasUserAdmin())
         self.assertEqual(msg, 'Package created')
         self.session.commit()
         packages = model.Package.all(self.session)
@@ -74,7 +74,7 @@ class PkgdbLibtests(Modeltests):
                              pkg_reviewURL=None,
                              pkg_shouldopen=None,
                              pkg_upstreamURL=None,
-                             user=FakeFasUser())
+                             user=FakeFasUserAdmin())
         self.session.commit()
         packages = model.Package.all(self.session)
         self.assertEqual(3, len(packages))
@@ -132,7 +132,7 @@ class PkgdbLibtests(Modeltests):
                           acl='nothing',
                           pkg_user='pingou',
                           status='Appro',
-                          user=FakeFasUser(),
+                          user=FakeFasUserAdmin(),
                           )
         self.session.rollback()
 
@@ -144,7 +144,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='pingou',
                           acl='nothing',
                           status='Approved',
-                          user=FakeFasUser(),
+                          user=FakeFasUserAdmin(),
                           )
         self.session.rollback()
 
@@ -154,7 +154,7 @@ class PkgdbLibtests(Modeltests):
                                  pkg_user='pingou',
                                  acl='commit',
                                  status='Approved',
-                                 user=FakeFasUser(),
+                                 user=FakeFasUserAdmin(),
                                  )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')

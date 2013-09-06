@@ -52,31 +52,30 @@ class FakeFasUser(object):
     groups = ['packager', 'cla_done']
 
 
-def is_pkgdb_admin():
+def is_pkgdb_admin(user):
     """ Is the user a pkgdb admin.
     """
-    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+    if not user:
         return False
-    if not flask.g.fas_user.cla_done or \
-            len(flask.g.fas_user.groups) < 1:
+    if not user.cla_done or len(user.groups) < 1:
         return False
 
-    return APP.config['ADMIN_GROUP'] in flask.g.fas_user.groups
+    return APP.config['ADMIN_GROUP'] in user.groups
 
 
-def is_pkg_admin(package, branch):
+def is_pkg_admin(user, package, branch):
     """ Is the user an admin for this package.
     Admin =
         - user has approveacls rights
         - user is a pkgdb admin
     """
-    if not hasattr(flask.g, 'fas_user') or not flask.g.fas_user:
+    if not user:
         return False
-    if is_pkgdb_admin():
+    if is_pkgdb_admin(user):
         return True
     else:
         return pkgdblib.has_acls(
-            SESSION, user=flask.g.fas_user.username,
+            SESSION, user=user.username,
             package=package, branch=branch, acl='approveacls')
 
 
@@ -106,7 +105,7 @@ def is_admin(function):
                 len(flask.g.fas_user.groups) < 1:
             return flask.redirect(flask.url_for('.login',
                                                 next=flask.request.url))
-        elif not is_pkgdb_admin():
+        elif not is_pkgdb_admin(flask.g.fas_user):
             flask.flash('You are not an administrator of pkgdb', 'errors')
             return flask.redirect(flask.url_for('ui_ns.msg'))
         else:

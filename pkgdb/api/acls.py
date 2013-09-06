@@ -103,28 +103,15 @@ def api_acl_update():
 
         try:
             for branch in pkg_branch:
-
-                # Check if user is allowed to perform this action
-                if not pkgdb.is_pkg_admin(package, collec):
-                    if user != flask.g.fas_user.username:
-                        raise pkgdblib.PkgdbException(
-                            'You are not allowed to update ACLs of someone '
-                            'else.')
-                    elif acl_status not in \
-                            ('Awaiting Review', 'Removed', 'Obsolete') \
-                            and acl not in APP.config['AUTO_APPROVE']:
-                        raise pkgdblib.PkgdbException(
-                            'You are not allowed to approve or deny '
-                            'ACLs for yourself.')
-
-                message = pkgdblib.set_acl_package(SESSION,
-                                                   pkg_name=pkg_name,
-                                                   pkg_branch=branch,
-                                                   pkg_acl=pkg_acl,
-                                                   pkg_status=pkg_status,
-                                                   pkg_user=pkg_user,
-                                                   user=flask.g.fas_user,
-                                                   )
+                message = pkgdblib.set_acl_package(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    pkg_branch=branch,
+                    pkg_acl=pkg_acl,
+                    pkg_status=pkg_status,
+                    pkg_user=pkg_user,
+                    user=flask.g.fas_user.username,
+                )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]

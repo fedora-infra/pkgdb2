@@ -88,7 +88,7 @@ def list_packages(motif=None):
         motif=motif,
         total_page=total_page,
         page=page,
-        admin=is_pkgdb_admin(),
+        admin=is_pkgdb_admin(flask.g.fas_user),
     )
 
 
@@ -133,7 +133,8 @@ def package_info(package):
             acls[acl.fas_name].append({'acl': aclname, 'status': ''})
         tmp['acls'] = acls
         package_acls.append(tmp)
-        if is_pkg_admin(package.name, pkg.collection.branchname):
+        if is_pkg_admin(flask.g.fas_user, package.name,
+                pkg.collection.branchname):
             branch_admin.append(pkg.collection.branchname)
 
     return flask.render_template(

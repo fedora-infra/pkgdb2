@@ -25,6 +25,7 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import SQLAlchemyError
 
+import pkgdb
 
 class PkgdbException(Exception):
     """ Generic Exception object used to throw pkgdb specific error.
@@ -148,7 +149,16 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
-    ## TODO: check is user is allowed to change package
+    if not pkgdb.is_pkg_admin(user, package.name, clt_name):
+        if user.username != pkg_user:
+            raise PkgdbException('You are not allowed to update ACLs of '
+            'someone else.')
+        elif status not in \
+                ('Awaiting Review', 'Removed', 'Obsolete') \
+                and acl not in pkgdb.APP.config['AUTO_APPROVE']:
+            raise PkgdbException(
+                'You are not allowed to approve or deny '
+                'ACLs for yourself.')
 
     try:
         pkglisting = model.PackageListing.by_pkgid_collectionid(

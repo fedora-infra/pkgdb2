@@ -134,7 +134,7 @@ def comaintain_package(package):
                 pkg_user=flask.g.fas_user.username,
                 acl=acl,
                 status=acl_status,
-                user=flask.g.fas_user.username,
+                user=flask.g.fas_user,
             )
         SESSION.commit()
         flask.flash('ACLs updated')
@@ -174,21 +174,6 @@ def update_acl(package, user, branch=None):
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
                 if collec in branch_out:
                     continue
-
-                if not is_pkg_admin(package, collec):
-                    if user != flask.g.fas_user.username:
-                        flask.flash('You are not allowed to update ACLs of '
-                        'someone else.', 'errors')
-                        branch_out.append(collec)
-                        continue
-                    elif acl_status not in \
-                            ('Awaiting Review', 'Removed', 'Obsolete') \
-                            and acl not in APP.config['AUTO_APPROVE']:
-                        flask.flash(
-                            'You are not allowed to approve or deny '
-                            'ACLs for yourself.', 'errors')
-                        branch_out.append(collec)
-                        continue
 
                 if acl_status == 'Awaiting Review' and \
                         acl in APP.config['AUTO_APPROVE']:
