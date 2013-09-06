@@ -92,7 +92,7 @@ def packager_info(packager):
 
     if not packages:
         flask.flash('No packager of this name found.', 'errors')
-        return flask.render_template('error.html')
+        return flask.render_template('msg.html')
 
     return flask.render_template(
         'packager.html',

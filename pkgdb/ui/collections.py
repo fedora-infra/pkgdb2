@@ -85,7 +85,7 @@ def collection_info(collection):
         SESSION.rollback()
     except IndexError:
         flask.flash('No collection of this name found.', 'errors')
-        return flask.render_template('error.html')
+        return flask.render_template('msg.html')
 
     return flask.render_template(
         'collection.html',
