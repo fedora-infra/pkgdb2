@@ -1,0 +1,29 @@
+{% extends "master.html" %}
+
+{% block title %} API | PkgDB {% endblock %}
+
+{%block tag %}index{% endblock %}
+
+{% block content %}
+
+<h2>Collections</h2>
+{% for html in collections %}
+{{ html }}
+{% endfor %}
+
+<h2>Packagers</h2>
+{% for html in packagers %}
+{{ html }}
+{% endfor %}
+
+<h2>Packages</h2>
+{% for html in packages %}
+{{ html }}
+{% endfor %}
+
+<h2>ACLs</h2>
+{% for html in acls %}
+{{ html }}
+{% endfor %}
+
+{% endblock %}

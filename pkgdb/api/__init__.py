@@ -28,8 +28,48 @@ import flask
 
 API = flask.Blueprint('api_ns', __name__, url_prefix='/api')
 
+from pkgdb.doc_utils import load_doc
+
+import acls
+import collections
+import packagers
+import packages
+
 
 @API.route('/')
 def api():
     ''' Display the api information page. '''
-    return flask.render_template('api.html')
+    api_html = load_doc(api)
+    api_collection_new = load_doc(collections.api_collection_new)
+    api_collection_status = load_doc(collections.api_collection_status)
+    api_collection_list = load_doc(collections.api_collection_list)
+
+    api_packager_acl = load_doc(packagers.api_packager_acl)
+    api_packager_list = load_doc(packagers.api_packager_list)
+
+    api_package_new = load_doc(packages.api_package_new)
+    api_package_orphan = load_doc(packages.api_package_orphan)
+    api_package_unorphan = load_doc(packages.api_package_unorphan)
+    api_package_deprecate = load_doc(packages.api_package_deprecate)
+    api_package_list = load_doc(packages.api_package_list)
+
+    api_acl_get = load_doc(acls.api_acl_get)
+    api_acl_update = load_doc(acls.api_acl_update)
+    api_acl_reassign = load_doc(acls.api_acl_reassign)
+
+    return flask.render_template(
+        'api.html',
+        collections=[
+            api_collection_new, api_collection_status, api_collection_list,
+        ],
+        packagers=[
+            api_packager_acl, api_packager_list,
+        ],
+        packages=[
+            api_package_new, api_package_orphan, api_package_unorphan,
+            api_package_deprecate, api_package_list,
+        ],
+        acls=[
+            api_acl_get, api_acl_update, api_acl_reassign,
+        ]
+    )

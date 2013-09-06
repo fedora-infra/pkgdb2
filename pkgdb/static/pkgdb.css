@@ -156,3 +156,7 @@ a.cvs {
 .underline {
     text-decoration: underline;
 }
+
+.field th {
+    text-align: left;
+}
