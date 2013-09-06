@@ -322,40 +322,70 @@ class PkgdbLibtests(Modeltests):
                                        )
         self.assertEqual(len(pkgs), 0)
 
-    def test_pkg_deprecate(self):
-        """ Test the pkg_deprecate function. """
+    def test_update_pkg_status(self):
+        """ Test the update_pkg_status function. """
         self.test_add_package()
 
+        # Wrong package
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_deprecate,
+                          pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='test',
                           clt_name='F-17',
+                          status='Deprecated',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
 
+        # Wrong collection
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_deprecate,
+                          pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-16',
+                          status='Deprecated',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
 
+        # User not allowed to deprecate the package on F-18
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_deprecate,
+                          pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
+                          status='Deprecated',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
 
-        pkgdblib.pkg_deprecate(self.session,
+        # Wrong status
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.update_pkg_status,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          status='Depreasdcated',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        # User not allowed to change status to Allowed
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.update_pkg_status,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          status='Allowed',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        # Admin can retire package
+        pkgdblib.update_pkg_status(self.session,
                                pkg_name='guake',
                                clt_name='F-18',
+                               status='Deprecated',
                                user=FakeFasUserAdmin()
                                )
 

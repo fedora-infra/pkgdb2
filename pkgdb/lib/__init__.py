@@ -27,6 +27,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 import pkgdb
 
+
 class PkgdbException(Exception):
     """ Generic Exception object used to throw pkgdb specific error.
     """
@@ -209,14 +210,16 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
         pkglisting.point_of_contact = pkg_poc
         if pkg_poc == 'orphan':
             pkglisting.status = 'Orphaned'
+        elif pkglisting.status == 'Orphaned':
+            pkglisting.status = 'Approved'
         session.add(pkglisting)
         session.flush()
     else:
         raise PkgdbException('You are now allowed to change the owner.')
 
 
-def pkg_deprecate(session, pkg_name, clt_name, user):
-    """ Deprecates a package.
+def update_pkg_status(session, pkg_name, clt_name, status, user):
+    """ Update the status of a package.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
@@ -233,24 +236,36 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
+    if status not in ['Approved', 'Removed', 'Deprecated', 'Orphaned']:
+        raise PkgdbException('Status not allowed for a package : %s' %
+                             status)
+
     pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
                                                             collection.id)
 
-    if pkgdb.is_pkgdb_admin(user):
-        # Admin can retire anything
-        pkglisting.status = 'Deprecated'
-        session.add(pkglisting)
-        session.flush()
-    elif (collection.name == 'Fedora' and collection.version == 'devel') \
-            or collection.name == 'EPEL':
-        # Users can retire EPEL and Fedora devel only
-        pkglisting.status = 'Deprecated'
+    if status == 'Deprecated':
+        if pkgdb.is_pkgdb_admin(user) \
+                or (collection.name == 'Fedora'
+                    and collection.version == 'devel') \
+                or collection.name == 'EPEL':
+            # Users can retire EPEL and Fedora devel only
+            pkglisting.status = 'Deprecated'
+            session.add(pkglisting)
+            session.flush()
+        else:
+            raise PkgdbException('You are now allowed to deprecate the package:'
+            ' %s on branch %s.' % (package.name, collection.branchname))
+    elif pkgdb.is_pkgdb_admin(user):
+        pkglisting.status = status
         session.add(pkglisting)
         session.flush()
     else:
-        raise PkgdbException('You are now allowed to deprecate the package:'
-        ' %s on branch %s.' % (package.name, collection.branchname))
+        raise PkgdbException(
+            'You are now allowed to update the status of '
+            'the package: %s on branch %s to %s.' % (
+            package.name, collection.branchname, status)
+        )
 
 
 def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
