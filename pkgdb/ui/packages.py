@@ -192,6 +192,7 @@ def package_new():
 
 
 @UI.route('/package/<package>/<collection>/orphan', methods=('GET', 'POST'))
+@packager_login_required
 def package_orphan(package, collection):
     ''' Gives the possibility to orphan or take a package. '''
 
@@ -237,6 +238,7 @@ def package_orphan(package, collection):
         flask.url_for('.package_info', package=package.name))
 
 @UI.route('/package/<package>/<collection>/take', methods=('GET', 'POST'))
+@packager_login_required
 def package_take(package, collection):
     ''' Make someone Point of contact of an orphaned package. '''
 
