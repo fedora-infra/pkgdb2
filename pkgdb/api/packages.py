@@ -216,11 +216,62 @@ def api_package_deprecate():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.pkg_deprecate(SESSION,
-                                                 pkg_name=pkg_name,
-                                                 clt_name=clt_name,
-                                                 user=flask.g.fas_user,
-                                                 )
+                message = pkgdblib.update_pkg_status(SESSION,
+                                                     pkg_name=pkg_name,
+                                                     clt_name=clt_name,
+                                                     status='Deprecated'
+                                                     user=flask.g.fas_user,
+                                                     )
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = [message]
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = err
+            httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
+
+
+@API.route('/package/undeprecate/', methods=['POST'])
+def api_package_undeprecate():
+    ''' Un-deprecate a list of packages.
+
+    :arg packagenames: List of string of the packages name.
+    :arg branches: List of string of the branches name in which these
+        packages will be un-deprecated.
+
+    '''
+    httpcode = 200
+    output = {}
+
+    form = forms.DeprecatePackageForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        pkg_names = form.pkg_name.data.split(',')
+        pkg_branchs = form.clt_name.data.split(',')
+
+        try:
+            for pkg_name, pkg_branch in itertools.product(
+                    pkg_names, pkg_branchs):
+                message = pkgdblib.update_pkg_status(SESSION,
+                                                     pkg_name=pkg_name,
+                                                     clt_name=clt_name,
+                                                     status='Approved'
+                                                     user=flask.g.fas_user,
+                                                     )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
