@@ -29,7 +29,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser, APP, fas_login_required
+from pkgdb import SESSION, FakeFasUser, APP, fas_login_required, is_pkg_admin
 from pkgdb.ui import UI
 
 
@@ -39,6 +39,9 @@ def request_acl(package):
     ''' Request acls for a specific package. '''
 
     collections = pkgdb.lib.search_collection(SESSION, '*', 'Active')
+    collections.extend(pkgdb.lib.search_collection(
+        SESSION, '*', 'Under Development'))
+
     form = pkgdb.forms.RequestAclPackageForm(collections=collections)
     if form.validate_on_submit():
         pkg_branchs = form.pkg_branch.data
@@ -114,9 +117,11 @@ def comaintain_package(package):
             'errors')
         return flask.redirect(flask.url_for(
             '.package_info', package=package))
-    pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
+
+    pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
     pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
     pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
+
     try:
         for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
             acl_status = 'Awaiting Review'
@@ -126,10 +131,10 @@ def comaintain_package(package):
                 SESSION,
                 pkg_name=package,
                 clt_name=collec,
-                pkg_user=flask.g.fas_user,
+                pkg_user=flask.g.fas_user.username,
                 acl=acl,
                 status=acl_status,
-                user=flask.g.fas_user,
+                user=flask.g.fas_user.username,
             )
         SESSION.commit()
         flask.flash('ACLs updated')
@@ -158,6 +163,7 @@ def update_acl(package, user, branch=None):
 
     collections = set([item['collection'] for item in pending_acls])
     form = pkgdb.forms.UpdateAclPackageForm(collections=collections)
+
     if form.validate_on_submit():
         pkg_branchs = form.pkg_branch.data
         pkg_acls = form.pkg_acl.data
@@ -169,18 +175,25 @@ def update_acl(package, user, branch=None):
                 if collec in branch_out:
                     continue
 
-                if pkgdblib.has_acls(SESSION, user=flask.g.fas_user.username,
-                             package=package, branch=collec, acl=acl):
-
-                    flask.flash('You are not allowed to update ACLs for '
-                        'this package in this branch "%s"' % collec,
-                        'errors')
-                    branch_out.append(collec)
-                    continue
+                if not is_pkg_admin(package, collec):
+                    if user != flask.g.fas_user.username:
+                        flask.flash('You are not allowed to update ACLs of '
+                        'someone else.', 'errors')
+                        branch_out.append(collec)
+                        continue
+                    elif acl_status not in \
+                            ('Awaiting Review', 'Removed', 'Obsolete') \
+                            and acl not in APP.config['AUTO_APPROVE']:
+                        flask.flash(
+                            'You are not allowed to approve or deny '
+                            'ACLs for yourself.', 'errors')
+                        branch_out.append(collec)
+                        continue
 
                 if acl_status == 'Awaiting Review' and \
                         acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
+
                 pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
@@ -190,8 +203,8 @@ def update_acl(package, user, branch=None):
                     status=acl_status,
                     user=flask.g.fas_user,
                 )
+                flask.flash('ACLs updated')
             SESSION.commit()
-            flask.flash('ACLs updated')
             return flask.redirect(
                 flask.url_for('.package_info',
                               package=package))
