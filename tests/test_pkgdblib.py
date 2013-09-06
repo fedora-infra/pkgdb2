@@ -198,7 +198,7 @@ class PkgdbLibtests(Modeltests):
                                  clt_name='F-18',
                                  pkg_user='pingou',
                                  acl='approveacls',
-                                 status='Remove',
+                                 status='Removed',
                                  user=FakeFasUser(),
                                  )
 
