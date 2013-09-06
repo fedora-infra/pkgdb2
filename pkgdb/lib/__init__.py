@@ -204,9 +204,8 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
                                                             package.id,
                                                             collection.id)
 
-    ## TODO: Check if flask.g.fas_user is an admin
-
-    if pkglisting.point_of_contact == user.username:
+    if pkglisting.point_of_contact == user.username \
+            or pkgdb.is_pkgdb_admin(user):
         pkglisting.point_of_contact = pkg_poc
         if pkg_poc == 'orphan':
             pkglisting.status = 'Orphaned'
@@ -238,11 +237,14 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
                                                             package.id,
                                                             collection.id)
 
-    ## TODO: Check if user is allowed to do the action
-
-    pkglisting.status = 'Deprecated'
-    session.add(pkglisting)
-    session.flush()
+    ## TODO: Who is allowed to deprecate a package?
+    if pkgdb.is_pkgdb_admin(user):
+        pkglisting.status = 'Deprecated'
+        session.add(pkglisting)
+        session.flush()
+    else:
+        raise PkgdbException('You are now allowed to deprecate the package:'
+        ' %s.' % package.name)
 
 
 def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
