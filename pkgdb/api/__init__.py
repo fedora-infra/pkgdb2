@@ -50,6 +50,7 @@ def api():
     api_package_orphan = load_doc(packages.api_package_orphan)
     api_package_unorphan = load_doc(packages.api_package_unorphan)
     api_package_deprecate = load_doc(packages.api_package_deprecate)
+    api_package_undeprecate = load_doc(packages.api_package_undeprecate)
     api_package_list = load_doc(packages.api_package_list)
 
     api_acl_get = load_doc(acls.api_acl_get)
@@ -66,7 +67,8 @@ def api():
         ],
         packages=[
             api_package_new, api_package_orphan, api_package_unorphan,
-            api_package_deprecate, api_package_list,
+            api_package_deprecate, api_package_undeprecate,
+            api_package_list,
         ],
         acls=[
             api_acl_get, api_acl_update, api_acl_reassign,
