@@ -1,4 +1,4 @@
-/* 
+/*
   Koji styling
   Copyright (c) 2007,2008, 2009, 2012 Red Hat, Inc.
 
@@ -68,6 +68,7 @@ height:87px
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15) inset;
     border-radius: 10px 10px 10px 10px;
     color: #3D69A8;
+    cursor:pointer;
 }
 #headerSearch input[type="text"]
 {
@@ -148,12 +149,12 @@ p#footer a {
 
 #mainNav ul li:hover {
     -webkit-border-top-left-radius: 5px;
--webkit-border-top-right-radius: 5px;
--moz-border-radius-topleft: 5px;
--moz-border-radius-topright: 5px;
-border-top-left-radius: 5px;
-border-top-right-radius: 5px;
-background-color:rgba(255,255,255,0.1);
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color:rgba(255,255,255,0.1);
 }
 
 body#summary #mainNav li#summaryTab a,
@@ -169,11 +170,11 @@ body#search #mainNav li#searchTab a {
     background-color: #fff;
     color: #444;
     -webkit-border-top-left-radius: 5px;
--webkit-border-top-right-radius: 5px;
--moz-border-radius-topleft: 5px;
--moz-border-radius-topright: 5px;
-border-top-left-radius: 5px;
-border-top-right-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 table {
