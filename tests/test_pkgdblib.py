@@ -344,10 +344,19 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_deprecate,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
         pkgdblib.pkg_deprecate(self.session,
                                pkg_name='guake',
                                clt_name='F-18',
-                               user=FakeFasUser()
+                               user=FakeFasUserAdmin()
                                )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
