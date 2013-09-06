@@ -221,7 +221,8 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
     return 'Point of contact of branch: %s of package: %s has been changed ' \
         'to %s' %(clt_name, pkg_name, pkg_poc)
 
-def update_pkg_status(session, pkg_name, clt_name, status, user):
+def update_pkg_status(session, pkg_name, clt_name, status, user,
+                      poc='orphan'):
     """ Update the status of a package.
 
     :arg session: session with which to connect to the database
@@ -248,18 +249,33 @@ def update_pkg_status(session, pkg_name, clt_name, status, user):
                                                             collection.id)
 
     if status == 'Deprecated':
+        # Admins can deprecate everything
+        # Users can deprecate Fedora devel and EPEL branches
         if pkgdb.is_pkgdb_admin(user) \
                 or (collection.name == 'Fedora'
                     and collection.version == 'devel') \
                 or collection.name == 'EPEL':
-            # Users can retire EPEL and Fedora devel only
             pkglisting.status = 'Deprecated'
+            pkglisting.point_of_contact = 'orphan'
             session.add(pkglisting)
             session.flush()
         else:
-            raise PkgdbException('You are now allowed to deprecate the package:'
-            ' %s on branch %s.' % (package.name, collection.branchname))
+            raise PkgdbException('You are now allowed to deprecate the '
+                'package: %s on branch %s.' % (package.name,
+                collection.branchname))
+    elif status == 'Orphaned':
+        pkglisting.status = 'Orphaned'
+        pkglisting.point_of_contact = 'orphan'
+        session.add(pkglisting)
+        session.flush()
     elif pkgdb.is_pkgdb_admin(user):
+        if status == 'Approved':
+            if pkglisting.status == 'Orphaned' and poc == 'orphan':
+                raise PkgdbException('You need to specify the point of '
+                    'contact of this package for this branch to un-orphan '
+                    'it')
+            pkglisting.point_of_contact = poc
+
         pkglisting.status = status
         session.add(pkglisting)
         session.flush()
