@@ -80,6 +80,20 @@
                             packager=pkg['point_of_contact']) }}">
             {{ pkg['point_of_contact'] }}
         </a>
+        --
+        {% if pkg['point_of_contact'] == 'orphan' %}
+        <a href="{{ url_for('.package_take',
+                            package=package.name,
+                            collection=pkg['branchname']) }}">
+            request
+        </a>
+        {% else %}
+        <a href="{{ url_for('.package_orphan',
+                            package=package.name,
+                            collection=pkg['branchname']) }}">
+            leave
+        </a>
+        {% endif %}
     </p>
     <table class="acls">
         {% for maintainer in pkg['acls'] %}

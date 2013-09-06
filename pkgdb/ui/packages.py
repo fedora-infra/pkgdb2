@@ -189,3 +189,94 @@ def package_new():
         'package_new.html',
         form=form,
     )
+
+
+@UI.route('/package/<package>/<collection>/orphan', methods=('GET', 'POST'))
+def package_orphan(package, collection):
+    ''' Gives the possibility to orphan or take a package. '''
+
+    packagename = package
+    package = None
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except NoResultFound:
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+    except IndexError:
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    for acl in package_acl:
+        if acl.collection.branchname == collection:
+            if acl.point_of_contact == flask.g.fas_user.username:
+                pkgdblib.pkg_change_poc(
+                    session=SESSION,
+                    pkg_name=package.name,
+                    clt_name=acl.collection.branchname,
+                    pkg_poc='orphan',
+                    user=flask.g.fas_user
+                )
+                flask.flash(
+                    'You are no longer point of contact on branch: %s'
+                    % collection)
+                break
+            else:
+                flask.flash(
+                    'You are not the point of contact of this package on '
+                    'branch: %s' % collection)
+
+    try:
+        SESSION.commit()
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        flask.flash(err.message, 'error')
+
+    return flask.redirect(
+        flask.url_for('.package_info', package=package.name))
+
+@UI.route('/package/<package>/<collection>/take', methods=('GET', 'POST'))
+def package_take(package, collection):
+    ''' Make someone Point of contact of an orphaned package. '''
+
+    packagename = package
+    package = None
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except NoResultFound:
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+    except IndexError:
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    for acl in package_acl:
+        if acl.collection.branchname == collection:
+            if acl.point_of_contact == 'orphan':
+                pkgdblib.pkg_change_poc(
+                    session=SESSION,
+                    pkg_name=package.name,
+                    clt_name=acl.collection.branchname,
+                    pkg_poc=flask.g.fas_user.username,
+                    user=flask.g.fas_user
+                )
+                flask.flash(
+                    'You are now the point of contact for this package on '
+                    'branch: %s' % collection)
+                break
+            else:
+                flask.flash(
+                    'This package has not been orphaned on branch: %s'
+                    % collection)
+
+    try:
+        SESSION.commit()
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        flask.flash(err.message, 'error')
+
+    return flask.redirect(
+        flask.url_for('.package_info', package=package.name))
