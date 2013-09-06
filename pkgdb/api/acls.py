@@ -27,6 +27,7 @@ import flask
 
 from sqlalchemy.orm.exc import NoResultFound
 
+import pkgdb
 import pkgdb.forms as forms
 import pkgdb.lib as pkgdblib
 from pkgdb.api import API
@@ -102,6 +103,20 @@ def api_acl_update():
 
         try:
             for branch in pkg_branch:
+
+                # Check if user is allowed to perform this action
+                if not pkgdb.is_pkg_admin(package, collec):
+                    if user != flask.g.fas_user.username:
+                        raise pkgdblib.PkgdbException(
+                            'You are not allowed to update ACLs of someone '
+                            'else.')
+                    elif acl_status not in \
+                            ('Awaiting Review', 'Removed', 'Obsolete') \
+                            and acl not in APP.config['AUTO_APPROVE']:
+                        raise pkgdblib.PkgdbException(
+                            'You are not allowed to approve or deny '
+                            'ACLs for yourself.')
+
                 message = pkgdblib.set_acl_package(SESSION,
                                                    pkg_name=pkg_name,
                                                    pkg_branch=branch,
