@@ -369,7 +369,8 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
     """
 
-    ## TODO: check if user is allowed to add a new collection
+    if not pkgdb.is_pkgdb_admin(user):
+        raise PkgdbException('You are now allowed to create collections')
 
     collection = model.Collection(
         name=clt_name,

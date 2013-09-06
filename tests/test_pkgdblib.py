@@ -383,6 +383,24 @@ class PkgdbLibtests(Modeltests):
 
     def test_add_collection(self):
         """ Test the add_collection function. """
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_collection,
+                          session=self.session,
+                          clt_name='Fedora',
+                          clt_version='19',
+                          clt_status='Active',
+                          clt_publishurl=None,
+                          clt_pendingurl=None,
+                          clt_summary='Fedora 19 release',
+                          clt_description='Fedora 19 collection',
+                          clt_branchname='F-19',
+                          clt_disttag='.fc19',
+                          clt_gitbranch='f19',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
         pkgdblib.add_collection(self.session,
                                 clt_name='Fedora',
                                 clt_version='19',
@@ -394,11 +412,11 @@ class PkgdbLibtests(Modeltests):
                                 clt_branchname='F-19',
                                 clt_disttag='.fc19',
                                 clt_gitbranch='f19',
-                                user=FakeFasUser(),
+                                user=FakeFasUserAdmin(),
                                 )
         self.session.commit()
         collection = model.Collection.by_name(self.session, 'F-19')
-        self.assertEqual("Collection(u'Fedora', u'19', u'Active', u'pingou', "
+        self.assertEqual("Collection(u'Fedora', u'19', u'Active', u'admin', "
                          "publishurltemplate=None, pendingurltemplate=None, "
                          "summary=u'Fedora 19 release', "
                          "description=u'Fedora 19 collection')",
