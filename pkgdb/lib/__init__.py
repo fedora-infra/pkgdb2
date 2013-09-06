@@ -218,6 +218,8 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
     else:
         raise PkgdbException('You are now allowed to change the owner.')
 
+    return 'Point of contact of branch: %s of package: %s has been changed ' \
+        'to %s' %(clt_name, pkg_name, pkg_poc)
 
 def update_pkg_status(session, pkg_name, clt_name, status, user):
     """ Update the status of a package.
