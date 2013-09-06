@@ -211,7 +211,7 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
         pkglisting.point_of_contact = pkg_poc
         if pkg_poc == 'orphan':
             pkglisting.status = 'Orphaned'
-        elif pkglisting.status == 'Orphaned':
+        elif pkglisting.status in ('Orphaned', 'Deprecated'):
             pkglisting.status = 'Approved'
         session.add(pkglisting)
         session.flush()
