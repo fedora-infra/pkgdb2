@@ -80,8 +80,8 @@
                             packager=pkg['point_of_contact']) }}">
             {{ pkg['point_of_contact'] }}
         </a>
-        --
         {% if 'packager' in g.fas_user.groups %}
+        --
         {% if pkg['point_of_contact'] == 'orphan' %}
         <a href="{{ url_for('.package_take',
                             package=package.name,
