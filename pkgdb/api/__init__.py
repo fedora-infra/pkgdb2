@@ -39,7 +39,6 @@ import packages
 @API.route('/')
 def api():
     ''' Display the api information page. '''
-    api_html = load_doc(api)
     api_collection_new = load_doc(collections.api_collection_new)
     api_collection_status = load_doc(collections.api_collection_status)
     api_collection_list = load_doc(collections.api_collection_list)
