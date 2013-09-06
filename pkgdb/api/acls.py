@@ -23,6 +23,7 @@
 API for ACL management.
 '''
 
+import itertools
 import flask
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -153,29 +154,35 @@ def api_acl_reassign():
     output = {}
 
     packages = flask.request.args.get('packages', None)
-    branches = flask.request.args.get('branches', None).split(',')
-    user_target = flask.request.args.get('user_target', None).split(',')
+    branches = flask.request.args.get('branches', '').split(',')
+    user_target = flask.request.args.get('user_target', '').split(',')
 
-    try:
-        messages = []
-        for (package, branch) in itertools.product(packages, branches):
-            messages.append(
-                pkgdblib.pkg_change_poc(
-                    session=SESSION,
-                    pkg_name=package,
-                    clt_name=branch,
-                    pkg_poc=user_target,
-                    user=flask.g.fas_user
-                )
-            )
-        SESSION.commit()
-        output['output'] = 'ok'
-        output['messages'] = messages
-    except pkgdblib.PkgdbException, err:
-        SESSION.rollback()
+    if not packages or not branches or not user_target:
         output['output'] = 'notok'
-        output['error'] = err
+        output['error'] = 'Invalid input submitted'
         httpcode = 500
+
+    else:
+        try:
+            messages = []
+            for (package, branch) in itertools.product(packages, branches):
+                messages.append(
+                    pkgdblib.pkg_change_poc(
+                        session=SESSION,
+                        pkg_name=package,
+                        clt_name=branch,
+                        pkg_poc=user_target,
+                        user=flask.g.fas_user
+                    )
+                )
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = messages
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = err
+            httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
