@@ -97,17 +97,17 @@ def package_info(package):
     ''' Display the information about the specified package. '''
 
     packagename = package
-    package = []
+    package = None
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename)[0]
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
     except NoResultFound:
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('error.html')
+        return flask.render_template('msg.html')
     except IndexError:
         flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('error.html')
+        return flask.render_template('msg.html')
 
     package_acls = []
     branch_admin = []
