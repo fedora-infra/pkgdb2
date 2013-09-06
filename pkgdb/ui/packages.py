@@ -174,11 +174,9 @@ def package_new():
                 pkg_status=pkg_status,
                 pkg_shouldopen=pkg_shouldopen,
                 pkg_collection=pkg_collection,
-                # TODO: port to flask.g.fas_user:
                 pkg_poc=pkg_poc,
                 pkg_upstreamURL=pkg_upstreamURL,
-                user=FakeFasUser(),
-                #user=flask.g.fas_user,
+                user=flask.g.fas_user,
             )
             SESSION.commit()
             flask.flash(message)
