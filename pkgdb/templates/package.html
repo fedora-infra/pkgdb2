@@ -90,7 +90,7 @@
                 {{ maintainer }}
                 </a>
             </td>
-            {% for acl in pkg['acls'][maintainer] | sort %}
+            {% for acl in pkg['acls'][maintainer] | sort(reverse=True) %}
                 {% if acl['status'] %}
                 <td> {{ acl['acl'] }}</td>
                 <td>
