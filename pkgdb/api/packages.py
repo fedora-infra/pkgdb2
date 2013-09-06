@@ -219,7 +219,7 @@ def api_package_deprecate():
                 message = pkgdblib.update_pkg_status(SESSION,
                                                      pkg_name=pkg_name,
                                                      clt_name=clt_name,
-                                                     status='Deprecated'
+                                                     status='Deprecated',
                                                      user=flask.g.fas_user,
                                                      )
             SESSION.commit()
@@ -269,7 +269,7 @@ def api_package_undeprecate():
                 message = pkgdblib.update_pkg_status(SESSION,
                                                      pkg_name=pkg_name,
                                                      clt_name=clt_name,
-                                                     status='Approved'
+                                                     status='Approved',
                                                      user=flask.g.fas_user,
                                                      )
             SESSION.commit()
