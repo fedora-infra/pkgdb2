@@ -10,6 +10,7 @@
 <h1>Pending ACLs</h1>
 
 
+{% if pending_acls %}
 <table id="pending">
     <tr>
         <th>User</th>
@@ -40,5 +41,10 @@
     </tr>
     {% endfor %}
 </table>
+{% else %}
+<p>
+    No pending ACLs for you
+</p>
+{% endif %}
 
 {% endblock %}
