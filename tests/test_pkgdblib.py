@@ -148,6 +148,39 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.set_acl_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          pkg_user='pingou',
+                          acl='nothing',
+                          status='Approved',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.set_acl_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          pkg_user='pingou',
+                          acl='nothing',
+                          status='Approved',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        pkgdblib.set_acl_package(self.session,
+                                 pkg_name='guake',
+                                 clt_name='F-18',
+                                 pkg_user='pingou',
+                                 acl='approveacls',
+                                 status='Awaiting Review',
+                                 user=FakeFasUser(),
+                                 )
+
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
