@@ -37,7 +37,10 @@ from pkgdb.lib import model
 @API.route('/package/acl/get/')
 @API.route('/package/acl/get/<packagename>/')
 def api_acl_get(packagename=None):
-    ''' Return the ACL for a given package.
+    ''' ``/api/package/acl/get/<packagename>/`` or ``/api/package/acl/get/?packagename=<packagename>``
+    Returns the ACL for a given package.
+
+    Accept GET queries only.
 
     :arg packagename: String of the package name that one wants the ACL
         of.
@@ -68,17 +71,20 @@ def api_acl_get(packagename=None):
 
 @API.route('/package/acl/', methods=['POST'])
 def api_acl_update():
-    ''' Update the ACL for a given package.
+    ''' ``/api/package/acl/``
+    Update the ACL for a given package.
 
-    :arg packagename: String of the package name.
-    :arg flag: String of the type of action required. Possible flags are:
-        'request', 'deny', 'approve'.
-    :arg acl: List of strings of the ACL to change/update. Possible acl
+    Accept POST queries only.
+
+    :arg pkg_name: String of the package name.
+    :arg pkg_branch: List of strings with the name of the branches to change,
+        update.
+    :arg pkg_acl: List of strings of the ACL to change/update. Possible acl
         are: 'commit', 'build', 'watchbugzilla', 'watchcommits',
         'approveacls', 'checkout'.
-    :arg branch: List of strings with the name of the branches to change,
-        update.
-    :kwarg username: the name of the user that is the target of this ACL
+    :arg pkg_status: String of the type of action required. Possible status
+        are: 'Approved', 'Awaiting Review', 'Denied', 'Obsolete', 'Removed'.
+    :kwarg pkg_user: the name of the user that is the target of this ACL
         change/update. This will only work if: 1) you are an admin,
         2) you are changing one of your package.
 
@@ -90,7 +96,7 @@ def api_acl_update():
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_branch = form.pkg_branch.data.split(',')
-        pkg_acl = form.pkg_owner.data
+        pkg_acl = form.pkg_acl.data
         pkg_status = form.pkg_status.data
         pkg_user = form.pkg_user.data
 
@@ -130,7 +136,10 @@ def api_acl_update():
 
 @API.route('/package/acl/reassign/', methods=['POST'])
 def api_acl_reassign():
-    ''' Reassign the specified packages from one user to another.
+    ''' ``/api/package/acl/reassign/``
+    Reassign the specified packages from one user to another.
+
+    Accept POST queries only.
 
     :arg packages: List of strings of the package name to reassign.
     :arg owner: User name of the current owner.

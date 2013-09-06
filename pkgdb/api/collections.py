@@ -37,9 +37,17 @@ from pkgdb.lib import model
 def api_collection_new():
     ''' Create a new collection.
 
-    :arg collectionname: String of the collection name to be created.
-    :arg version: String of the version of the collection.
-    :arg owner: String of the name of the user owner of the collection.
+    :arg collection_name: String of the collection name to be created.
+    :arg collection_version: String of the version of the collection.
+    :arg collection_status: String of the name of the user owner of the
+        collection.
+    :arg collection_publishURLTemplate:
+    :arg collection_pendingURLTemplate:
+    :arg collection_summary:
+    :arg collection_description:
+    :arg collection_branchname:
+    :arg collection_distTag:
+    :arg collection_git_branch_name:
 
     '''
     httpcode = 200
@@ -102,8 +110,8 @@ def api_collection_new():
 def api_collection_status(collection):
     ''' Update the status of collection.
 
-    :arg branchname: String of the collection branch name to change.
-    :arg status: String of the status to change the collection to
+    :arg collection_branchname: String of the collection branch name to change.
+    :arg collection_status: String of the status to change the collection to
 
     '''
     httpcode = 200
@@ -155,6 +163,9 @@ def api_collection_status(collection):
 @API.route('/collections/<pattern>')
 def api_collection_list(pattern=None):
     ''' List collections.
+
+    :arg pattern: a pattern to which the collection searched should match.
+    :arg status: restrict the search to certain status.
 
     '''
     httpcode = 200
