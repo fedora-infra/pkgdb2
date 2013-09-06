@@ -44,6 +44,8 @@ def index():
 def stats():
     ''' Display some statistics aboue the packages in the DB. '''
     collections = pkgdblib.search_collection(SESSION, '*', 'Active')
+    collections.extend(pkgdblib.search_collection(
+        SESSION, '*', 'Under Development'))
 
     packages = {}
     for collection in collections:

@@ -149,7 +149,9 @@ def package_info(package):
 def package_new():
     ''' Page to create a new package. '''
 
-    collections = pkgdb.lib.search_collection(SESSION, '*', 'Active')
+    collections = pkgdblib.search_collection(SESSION, '*', 'Active')
+    collections.extend(pkgdblib.search_collection(
+        SESSION, '*', 'Under Development'))
 
     form = pkgdb.forms.AddPackageForm(collections=collections)
     if form.validate_on_submit():
