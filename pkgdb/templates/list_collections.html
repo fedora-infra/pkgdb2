@@ -52,7 +52,8 @@
 <ul>
 {% for collection in collections %}
     <li>
-        <a href="{{url_for('.collection_info', collection=collection.branchname)}}">
+        <a href="{{url_for('.collection_info',
+                           collection=collection.branchname)}}">
             {{ collection.name }} {{ collection.version }}
             ({{ collection. branchname }}) </a>
     </li>
