@@ -91,12 +91,17 @@
                 </a>
             </td>
             {% for acl in pkg['acls'][maintainer] | sort %}
+                {% if acl['status'] %}
                 <td> {{ acl['acl'] }}</td>
                 <td>
                     <img src="{{ url_for('static',
                                          filename='%s.png' % acl['status']) }}"
                      title="{{ acl['status'] }}" alt="{{ acl['status'] }}"/ >
                 </td>
+                {% else %}
+                <td></td>
+                <td></td>
+                {% endif %}
             {% endfor %}
             {% if maintainer == g.fas_user.username or
                     pkg['branchname'] in branch_admin %}
