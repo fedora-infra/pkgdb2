@@ -392,7 +392,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
         self.assertEqual(pkg_acl[0].status, 'Deprecated')
 
     def test_search_collection(self):
