@@ -144,14 +144,38 @@ def api_acl_reassign():
     Accept POST queries only.
 
     :arg packages: List of strings of the package name to reassign.
-    :arg owner: User name of the current owner.
-    :arg user_target: User name of the new owner.
+    :arg branches: List of strings of the branchname of the Collection on
+        which to reassign the point of contact.
+    :arg user_target: User name of the new point of contact.
 
     '''
     httpcode = 200
     output = {}
 
-    #TODO: implement the logic
+    packages = flask.request.args.get('packages', None)
+    branches = flask.request.args.get('branches', None).split(',')
+    user_target = flask.request.args.get('user_target', None).split(',')
+
+    try:
+        messages = []
+        for (package, branch) in itertools.product(packages, branches):
+            messages.append(
+                pkgdblib.pkg_change_poc(
+                    session=SESSION,
+                    pkg_name=package,
+                    clt_name=branch,
+                    pkg_poc=user_target,
+                    user=flask.g.fas_user
+                )
+            )
+        SESSION.commit()
+        output['output'] = 'ok'
+        output['messages'] = messages
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        output['output'] = 'notok'
+        output['error'] = err
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
