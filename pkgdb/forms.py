@@ -27,6 +27,22 @@ import flask
 from flask.ext import wtf
 
 
+ACLS_CHOICE = [('approveacls', 'approveacls'),
+               ('commit', 'commit'),
+               ('watchbugzilla', 'watchbugzilla'),
+               ('watchcommits', 'watchcommits')]
+
+STATUS_CHOICE = [('Approved', 'Approved'),
+                 ('Awaiting Review', 'Awaiting Review'),
+                 ('Denied', 'Denied'),
+                 ('Obsolete', 'Obsolete'),
+                 ('Removed', 'Removed')]
+
+CLT_STATUS_CHOICE = [('EOL', 'EOL'),
+                     ('Active', 'Active'),
+                     ('Under Development', 'Under Development')]
+
+
 class AddCollectionForm(wtf.Form):
     collection_name = wtf.TextField('Collection name',
                                     [wtf.validators.Required()])
@@ -35,9 +51,7 @@ class AddCollectionForm(wtf.Form):
     collection_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=[('EOL', 'EOL'),
-                 ('Active', 'Active'),
-                 ('Under Development', 'Under Development')]
+        choices=CLT_STATUS_CHOICE
     )
     collection_publishURLTemplate = wtf.TextField('Publish URL template')
     collection_pendingURLTemplate = wtf.TextField('Pending URL template')
@@ -56,9 +70,7 @@ class CollectionStatusForm(wtf.Form):
     collection_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=[('EOL', 'EOL'),
-                 ('Active', 'Active'),
-                 ('Under Development', 'Under Development')]
+        choices=CLT_STATUS_CHOICE
     )
 
 
@@ -72,11 +84,7 @@ class AddPackageForm(wtf.Form):
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=[('Approved', 'Approved'),
-                 ('Awaiting Review', 'Awaiting Review'),
-                 ('Denied', 'Denied'),
-                 ('Obsolete', 'Obsolete'),
-                 ('Removed', 'Removed')]
+        choices=STATUS_CHOICE
     )
     pkg_shouldopen = wtf.BooleanField('Should open',
                                       [wtf.validators.Required()],
@@ -97,10 +105,10 @@ class AddPackageForm(wtf.Form):
         """
         super(AddPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            tmp = []
-            for collec in kwargs['collections']:
-                tmp.append((collec.branchname, collec.branchname))
-            self.pkg_collection.choices = tmp
+            self.pkg_collection.choices = [
+                (collec.branchname, collec.branchname)
+                for collec in kwargs['collections']
+            ]
 
 
 class SetAclPackageForm(wtf.Form):
@@ -111,21 +119,14 @@ class SetAclPackageForm(wtf.Form):
     pkg_acl = wtf.SelectField(
         'ACL',
         [wtf.validators.Required()],
-        choices=[('commit', 'commit'),
-                 ('watchbugzilla', 'watchbugzilla'),
-                 ('watchcommits', 'watchcommits'),
-                 ('approveacls', 'approveacls')]
+        choices=ACLS_CHOICE
     )
     pkg_user = wtf.TextField('Packager name',
                              [wtf.validators.Required()])
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=[('Approved', 'Approved'),
-                 ('Awaiting Review', 'Awaiting Review'),
-                 ('Denied', 'Denied'),
-                 ('Obsolete', 'Obsolete'),
-                 ('Removed', 'Removed')]
+        choices=STATUS_CHOICE
     )
 
 
@@ -137,10 +138,7 @@ class RequestAclPackageForm(wtf.Form):
     pkg_acl = wtf.SelectMultipleField(
         'ACL',
         [wtf.validators.Required()],
-        choices=[('commit', 'commit'),
-                 ('watchbugzilla', 'watchbugzilla'),
-                 ('watchcommits', 'watchcommits'),
-                 ('approveacls', 'approveacls')]
+        choices=ACLS_CHOICE
     )
 
     def __init__(self, *args, **kwargs):
@@ -149,10 +147,10 @@ class RequestAclPackageForm(wtf.Form):
         """
         super(RequestAclPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            tmp = []
-            for collec in kwargs['collections']:
-                tmp.append((collec.branchname, collec.branchname))
-            self.pkg_branch.choices = tmp
+            self.pkg_branch.choices = [
+                (collec.branchname, collec.branchname)
+                for collec in kwargs['collections']
+            ]
 
 
 class UpdateAclPackageForm(wtf.Form):
@@ -163,19 +161,12 @@ class UpdateAclPackageForm(wtf.Form):
     pkg_acl = wtf.SelectMultipleField(
         'ACL',
         [wtf.validators.Required()],
-        choices=[('commit', 'commit'),
-                 ('watchbugzilla', 'watchbugzilla'),
-                 ('watchcommits', 'watchcommits'),
-                 ('approveacls', 'approveacls')]
+        choices=ACLS_CHOICE
     )
     acl_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=[('Awaiting Review', 'Awaiting Review'),
-                 ('Approved', 'Approved'),
-                 ('Denied', 'Denied'),
-                 ('Obsolete', 'Obsolete'),
-                 ('Removed', 'Removed')]
+        choices=STATUS_CHOICE
     )
 
     def __init__(self, *args, **kwargs):
@@ -198,11 +189,7 @@ class PackageStatusForm(wtf.Form):
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=[('Approved', 'Approved'),
-                 ('Awaiting Review', 'Awaiting Review'),
-                 ('Denied', 'Denied'),
-                 ('Obsolete', 'Obsolete'),
-                 ('Removed', 'Removed')]
+        choices=STATUS_CHOICE
     )
 
 
