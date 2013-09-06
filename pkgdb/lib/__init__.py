@@ -237,14 +237,20 @@ def pkg_deprecate(session, pkg_name, clt_name, user):
                                                             package.id,
                                                             collection.id)
 
-    ## TODO: Who is allowed to deprecate a package?
     if pkgdb.is_pkgdb_admin(user):
+        # Admin can retire anything
+        pkglisting.status = 'Deprecated'
+        session.add(pkglisting)
+        session.flush()
+    elif (collection.name == 'Fedora' and collection.version == 'devel') \
+            or collection.name == 'EPEL':
+        # Users can retire EPEL and Fedora devel only
         pkglisting.status = 'Deprecated'
         session.add(pkglisting)
         session.flush()
     else:
         raise PkgdbException('You are now allowed to deprecate the package:'
-        ' %s.' % package.name)
+        ' %s on branch %s.' % (package.name, collection.branchname))
 
 
 def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
