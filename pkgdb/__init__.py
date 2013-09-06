@@ -81,15 +81,28 @@ def is_pkg_admin(user, package, branch):
 
 def fas_login_required(function):
     """ Flask decorator to ensure that the user is logged in against FAS.
-    To use this decorator you need to have a function named 'auth_login'.
-    Without that function the redirect if the user is not logged in will not
-    work.
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
         if flask.g.fas_user is None:
             return flask.redirect(flask.url_for(
                 '.login', next=flask.request.url))
+        return function(*args, **kwargs)
+    return decorated_function
+
+
+def packager_login_required(function):
+    """ Flask decorator to ensure that the user is logged in against FAS
+    and is part of the 'packager' group.
+    """
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        if flask.g.fas_user is None:
+            return flask.redirect(flask.url_for(
+                '.login', next=flask.request.url))
+        elif 'packager' not in flask.g.fas_user.groups:
+            flask.flash('You must be a packager', 'errors')
+            return flask.redirect(flask.url_for('ui_ns.msg'))
         return function(*args, **kwargs)
     return decorated_function
 
