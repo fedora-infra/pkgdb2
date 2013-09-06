@@ -187,7 +187,7 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package
-    :arg clt_name: the name of the collection
+    :arg clt_name: the branchname of the collection
     :arg pkg_poc: name of the new point of contact for the package.
     :arg user: the user making the action
     """
@@ -206,6 +206,7 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
                                                             collection.id)
 
     if pkglisting.point_of_contact == user.username \
+            or pkglisting.point_of_contact == 'orphan' \
             or pkgdb.is_pkgdb_admin(user):
         pkglisting.point_of_contact = pkg_poc
         if pkg_poc == 'orphan':
