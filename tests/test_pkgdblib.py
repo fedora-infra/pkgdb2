@@ -172,6 +172,7 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # You can ask for new ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
@@ -181,6 +182,27 @@ class PkgdbLibtests(Modeltests):
                                  user=FakeFasUser(),
                                  )
 
+        # You can obsolete your own ACLs
+        pkgdblib.set_acl_package(self.session,
+                                 pkg_name='guake',
+                                 clt_name='F-18',
+                                 pkg_user='pingou',
+                                 acl='approveacls',
+                                 status='Obsolete',
+                                 user=FakeFasUser(),
+                                 )
+
+        # You can remove your own ACLs
+        pkgdblib.set_acl_package(self.session,
+                                 pkg_name='guake',
+                                 clt_name='F-18',
+                                 pkg_user='pingou',
+                                 acl='approveacls',
+                                 status='Remove',
+                                 user=FakeFasUser(),
+                                 )
+
+        # An admin can approve you ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
