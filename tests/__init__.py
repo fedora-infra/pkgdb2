@@ -42,7 +42,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 from pkgdb.lib import model
 
-DB_PATH = 'sqlite:///:memory:'
+#DB_PATH = 'sqlite:///:memory:'
+## A file database is required to check the integrity, don't ask
+DB_PATH = 'sqlite:////tmp/test.sqlite'
 
 class FakeFasUser(object):
     """ Fake FAS user used for the tests. """
@@ -76,8 +78,9 @@ class Modeltests(unittest.TestCase):
     # pylint: disable=C0103
     def tearDown(self):
         """ Remove the test.db database if there is one. """
-        if os.path.exists(DB_PATH):
-            os.unlink(DB_PATH)
+        dbfile = DB_PATH.split('///')[1]
+        if os.path.exists(dbfile):
+            os.unlink(dbfile)
 
         self.session.rollback()
 
