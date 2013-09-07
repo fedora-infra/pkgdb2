@@ -54,7 +54,7 @@ class PkgdbLibtests(Modeltests):
                                     pkg_summary='Drop down terminal',
                                     pkg_status='Approved',
                                     pkg_collection='F-18',
-                                    pkg_poc='pingou',
+                                    pkg_poc='ralph',
                                     pkg_reviewURL=None,
                                     pkg_shouldopen=None,
                                     pkg_upstreamURL='http://guake.org',
@@ -70,7 +70,7 @@ class PkgdbLibtests(Modeltests):
                              pkg_summary='Drop down terminal',
                              pkg_status='Approved',
                              pkg_collection='devel, F-18',
-                             pkg_poc='pingou',
+                             pkg_poc='ralph',
                              pkg_reviewURL=None,
                              pkg_shouldopen=None,
                              pkg_upstreamURL=None,
@@ -94,7 +94,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'ralph')
 
     def test_set_acl_package(self):
         """ Test the set_acl_package function. """
@@ -154,7 +154,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_name='guake',
                           clt_name='F-18',
                           pkg_user='pingou',
-                          acl='nothing',
+                          acl='approveacls',
                           status='Approved',
                           user=FakeFasUser(),
                           )
@@ -215,7 +215,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(len(pkg_acl[0].acls), 4)
+        self.assertEqual(len(pkg_acl[0].acls), 6)
 
     def test_pkg_change_poc(self):
         """ Test the pkg_change_poc function. """
@@ -241,14 +241,12 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        fake_user = FakeFasUser()
-        fake_user.username = 'test'
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.pkg_change_poc,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          user=fake_user,
+                          user=FakeFasUser,
                           pkg_poc='toshio',
                           )
         self.session.rollback()
@@ -256,12 +254,15 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'ralph')
 
+        # PoC can change PoC
+        user = FakeFasUser()
+        user.username = 'ralph'
         pkgdblib.pkg_change_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
-                                 user=FakeFasUser(),
+                                 user=user,
                                  pkg_poc='toshio',
                                  )
 
@@ -270,8 +271,21 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'toshio')
 
+        # Admin can change PoC
+        pkgdblib.pkg_change_poc(self.session,
+                                 pkg_name='guake',
+                                 clt_name='F-18',
+                                 user=FakeFasUserAdmin(),
+                                 pkg_poc='kevin',
+                                 )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'kevin')
+
         user = FakeFasUser()
-        user.username = 'toshio'
+        user.username = 'kevin'
         pkgdblib.pkg_change_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
