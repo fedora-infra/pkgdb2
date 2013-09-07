@@ -69,6 +69,10 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
     engine.execute(collection_package_create_view(driver=engine.driver))
+    if db_url.startswith('sqlite:'):
+        def _fk_pragma_on_connect(dbapi_con, con_record):
+            dbapi_con.execute('pragma foreign_keys=ON')
+        sa.event.listen(engine, 'connect', _fk_pragma_on_connect)
 
     if alembic_ini is not None:  # pragma: no cover
         # then, load the Alembic configuration and generate the
@@ -79,7 +83,31 @@ def create_tables(db_url, alembic_ini=None, debug=False):
         command.stamp(alembic_cfg, "head")
 
     scopedsession = scoped_session(sessionmaker(bind=engine))
+    create_status(scopedsession)
     return scopedsession
+
+
+def create_status(session):
+    """ Fill in the status tables. """
+    for acl in ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']:
+        obj = PkgAcls(acl)
+        session.add(obj)
+
+    for status in ['Approved', 'Awaiting Review', 'Denied', 'Obsolete',
+            'Removed']:
+        obj = PkgAclStatus(status)
+        session.add(obj)
+
+    for status in ['EOL', 'Active', 'Under Development']:
+        obj = CollecStatus(status)
+        session.add(obj)
+
+    for status in ['Approved', 'Removed', 'Deprecated', 'Orphaned']:
+        obj = PkgStatus(status)
+        session.add(obj)
+
+    session.commit()
+
 
 
 ## TODO: this is a view, create it as such...
@@ -122,6 +150,65 @@ def collection_package_create_view(*args, **kw):
            'ORDER BY c.name, c.version;' % sql_string
 
 
+class PkgAcls(BASE):
+    __tablename__ = 'PkgAcls'
+
+    status = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, status):
+        """ Constructor. """
+        self.status = status
+
+    @classmethod
+    def all(cls, session):
+        """ Return all the Acls for packages. """
+        return session.query(cls).all()
+
+
+class PkgStatus(BASE):
+    __tablename__ = 'PkgStatus'
+
+    status = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, status):
+        """ Constructor. """
+        self.status = status
+
+    @classmethod
+    def all(cls, session):
+        """ Return all the status for packages. """
+        return session.query(cls).all()
+
+class PkgAclStatus(BASE):
+    __tablename__ = 'PkgAclStatus'
+
+    status = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, status):
+        """ Constructor. """
+        self.status = status
+
+    @classmethod
+    def all(cls, session):
+        """ Return all the status for packages. """
+        return session.query(cls).all()
+
+
+class CollecStatus(BASE):
+    __tablename__ = 'CollecStatus'
+
+    status = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, status):
+        """ Constructor. """
+        self.status = status
+
+    @classmethod
+    def all(cls, session):
+        """ Return all the status for a collection. """
+        return session.query(cls).all()
+
+
 class PackageListingAcl(BASE):
     '''Give a person or a group ACLs on a specific PackageListing.
 
@@ -140,14 +227,9 @@ class PackageListingAcl(BASE):
                       ),
         nullable=False,
     )
-    acl = sa.Column(sa.Enum('commit', 'watchbugzilla',
-                            'watchcommits', 'approveacls',
-                            name='acl'),
-                    nullable=False
-                    )
-    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
-                               'Obsolete', 'Removed',
-                               name='package_status'),
+    acl = sa.Column(sa.String(50), sa.ForeignKey('PkgAcls.status'),
+                    nullable=False)
+    status = sa.Column(sa.String(50), sa.ForeignKey('PkgAclStatus.status'),
                        nullable=False)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
@@ -274,7 +356,6 @@ class PackageListingAcl(BASE):
         )
         return query.all()
 
-
     # pylint: disable-msg=R0903
     def __init__(self, fas_name, packagelisting_id, acl, status):
         self.fas_name = fas_name
@@ -308,8 +389,7 @@ class Collection(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
-    status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
-                               name='collection_status'),
+    status = sa.Column(sa.String(50), sa.ForeignKey('CollecStatus.status'),
                        nullable=False)
     owner = sa.Column(sa.String(32), nullable=False)
     publishURLTemplate = sa.Column(sa.Text)
@@ -464,8 +544,7 @@ class PackageListing(BASE):
                                            onupdate="CASCADE"
                                            ),
                              nullable=False)
-    status = sa.Column(sa.Enum('Approved', 'Removed', 'Deprecated', 'Orphaned',
-                               name='pl_status'),
+    status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
                        nullable=False)
     status_change = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
@@ -728,9 +807,7 @@ class Package(BASE):
     summary = sa.Column(sa.Text, nullable=False)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
-    status = sa.Column(sa.Enum('Approved', 'Awaiting Review', 'Denied',
-                               'Obsolete', 'Removed',
-                               name='package_status'),
+    status = sa.Column(sa.String(50), sa.ForeignKey('PkgAclStatus.status'),
                        nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
