@@ -237,6 +237,58 @@ def package_orphan(package, collection):
     return flask.redirect(
         flask.url_for('.package_info', package=package.name))
 
+
+@UI.route('/package/<package>/<collection>/retire', methods=('GET', 'POST'))
+@packager_login_required
+def package_retire(package, collection):
+    ''' Gives the possibility to orphan or take a package. '''
+
+    packagename = package
+    package = None
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except NoResultFound:
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+    except IndexError:
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    for acl in package_acl:
+        if acl.collection.branchname == collection:
+            if acl.point_of_contact == 'orphan':
+                try:
+                    pkgdblib.update_pkg_status(
+                        session=SESSION,
+                        pkg_name=package.name,
+                        clt_name=acl.collection.branchname,
+                        status='Deprecated',
+                        user=flask.g.fas_user
+                    )
+                    flask.flash(
+                        'This package has been retired on branch: %s'
+                        % collection)
+                    break
+                except pkgdblib.PkgdbException, err:
+                    flask.flash(err.message, 'error')
+                    break
+            else:
+                flask.flash(
+                    'This package has not been orphaned on '
+                    'branch: %s' % collection)
+
+    try:
+        SESSION.commit()
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        flask.flash(err.message, 'error')
+
+    return flask.redirect(
+        flask.url_for('.package_info', package=package.name))
+
+
 @UI.route('/package/<package>/<collection>/take', methods=('GET', 'POST'))
 @packager_login_required
 def package_take(package, collection):

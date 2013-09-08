@@ -87,6 +87,10 @@
                             package=package.name,
                             collection=pkg['branchname']) }}">
             request
+        <a href="{{ url_for('.package_retire',
+                            package=package.name,
+                            collection=pkg['branchname']) }}">
+            -- retire
         </a>
         {% else %}
         <a href="{{ url_for('.package_orphan',
