@@ -212,16 +212,19 @@ def package_orphan(package, collection):
     for acl in package_acl:
         if acl.collection.branchname == collection:
             if acl.point_of_contact == flask.g.fas_user.username:
-                pkgdblib.pkg_change_poc(
-                    session=SESSION,
-                    pkg_name=package.name,
-                    clt_name=acl.collection.branchname,
-                    pkg_poc='orphan',
-                    user=flask.g.fas_user
-                )
-                flask.flash(
-                    'You are no longer point of contact on branch: %s'
-                    % collection)
+                try:
+                    pkgdblib.pkg_change_poc(
+                        session=SESSION,
+                        pkg_name=package.name,
+                        clt_name=acl.collection.branchname,
+                        pkg_poc='orphan',
+                        user=flask.g.fas_user
+                    )
+                    flask.flash(
+                        'You are no longer point of contact on branch: %s'
+                        % collection)
+                except pkgdblib.PkgdbException, err:
+                    flask.flash(err.message, 'error')
                 break
             else:
                 flask.flash(
@@ -270,10 +273,9 @@ def package_retire(package, collection):
                     flask.flash(
                         'This package has been retired on branch: %s'
                         % collection)
-                    break
                 except pkgdblib.PkgdbException, err:
                     flask.flash(err.message, 'error')
-                    break
+                break
             else:
                 flask.flash(
                     'This package has not been orphaned on '
@@ -310,16 +312,19 @@ def package_take(package, collection):
     for acl in package_acl:
         if acl.collection.branchname == collection:
             if acl.point_of_contact == 'orphan':
-                pkgdblib.pkg_change_poc(
-                    session=SESSION,
-                    pkg_name=package.name,
-                    clt_name=acl.collection.branchname,
-                    pkg_poc=flask.g.fas_user.username,
-                    user=flask.g.fas_user
-                )
-                flask.flash(
-                    'You are now the point of contact for this package on '
-                    'branch: %s' % collection)
+                try:
+                    pkgdblib.pkg_change_poc(
+                        session=SESSION,
+                        pkg_name=package.name,
+                        clt_name=acl.collection.branchname,
+                        pkg_poc=flask.g.fas_user.username,
+                        user=flask.g.fas_user
+                    )
+                    flask.flash(
+                        'You are now the point of contact for this package '
+                        'on branch: %s' % collection)
+                except pkgdblib.PkgdbException, err:
+                    flask.flash(err.message, 'error')
                 break
             else:
                 flask.flash(
