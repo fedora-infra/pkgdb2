@@ -60,7 +60,12 @@ def is_pkgdb_admin(user):
     if not user.cla_done or len(user.groups) < 1:
         return False
 
-    return APP.config['ADMIN_GROUP'] in user.groups
+    admins = APP.config['ADMIN_GROUP']
+    if isinstance(admins, basestring):
+        admins = [admins]
+    admins = set(admins)
+
+    return len(admins.intersection(set(user.groups))) > 0
 
 
 def is_pkg_admin(user, package, branch):

@@ -37,4 +37,4 @@ SECRET_KEY = '<insert here your own key>'
 AUTO_APPROVE = ['watchcommits', 'watchbugzilla']
 
 # FAS group for the pkgdb admin
-ADMIN_GROUP = 'sysadmin-cvs'
+ADMIN_GROUP = ('sysadmin-main', 'sysadmin-cvs')
