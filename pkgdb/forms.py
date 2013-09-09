@@ -58,6 +58,24 @@ class AddCollectionForm(wtf.Form):
                 (status, status)
                 for status in kwargs['clt_status']
             ]
+        if 'collection' in kwargs:
+            collection = kwargs['collection']
+            self.collection_name.data = collection.name
+            self.collection_version.data = collection.version
+            self.collection_publishURLTemplate.data = collection.publishURLTemplate
+            self.collection_pendingURLTemplate.data = collection.pendingURLTemplate
+            self.collection_summary.data = collection.summary
+            self.collection_description.data = collection.description
+            self.collection_branchname.data = collection.branchname
+            self.collection_distTag.data = collection.distTag
+            self.collection_git_branch_name.data = collection.git_branch_name
+
+            # Set the drop down menu to the current value
+            opt = (collection.status, collection.status)
+            ind = self.collection_status.choices.index(opt)
+            del(self.collection_status.choices[ind])
+            self.collection_status.choices.insert(
+                0, opt)
 
 
 class CollectionStatusForm(wtf.Form):
