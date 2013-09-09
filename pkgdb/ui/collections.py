@@ -98,7 +98,8 @@ def collection_info(collection):
 def collection_new():
     ''' Page to create a new collection. '''
 
-    form = pkgdb.forms.AddCollectionForm()
+    clt_status = pkgdb.lib.get_status(SESSION, 'clt_status')['clt_status']
+    form = pkgdb.forms.AddCollectionForm(clt_status=clt_status)
     if form.validate_on_submit():
         clt_name = form.collection_name.data
         clt_version = form.collection_version.data

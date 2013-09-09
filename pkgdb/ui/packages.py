@@ -150,11 +150,15 @@ def package_info(package):
 def package_new():
     ''' Page to create a new package. '''
 
-    collections = pkgdblib.search_collection(SESSION, '*', 'Active')
-    collections.extend(pkgdblib.search_collection(
-        SESSION, '*', 'Under Development'))
+    collections = pkgdb.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb.lib.search_collection(SESSION, '*', 'Active'))
+    pkg_status = pkgdb.lib.get_status(SESSION, 'pkg_status')['pkg_status']
 
-    form = pkgdb.forms.AddPackageForm(collections=collections)
+    form = pkgdb.forms.AddPackageForm(
+        collections=collections,
+        pkg_status_list=pkg_status,
+    )
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_summary = form.pkg_summary.data

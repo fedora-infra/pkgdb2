@@ -94,7 +94,13 @@ def api_acl_update():
     httpcode = 200
     output = {}
 
-    form = forms.SetAclPackageForm(csrf_enabled=False)
+    status = pkgdb.lib.get_status(SESSION, ['pkg_acl', 'acl_status'])
+
+    form = forms.SetAclPackageForm(
+        csrf_enabled=False,
+        pkg_acl=status['pkg_acl'],
+        acl_status=status['acl_status'],
+    )
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_branch = form.pkg_branch.data.split(',')

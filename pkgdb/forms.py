@@ -27,22 +27,6 @@ import flask
 from flask.ext import wtf
 
 
-ACLS_CHOICE = [('approveacls', 'approveacls'),
-               ('commit', 'commit'),
-               ('watchbugzilla', 'watchbugzilla'),
-               ('watchcommits', 'watchcommits')]
-
-STATUS_CHOICE = [('Approved', 'Approved'),
-                 ('Awaiting Review', 'Awaiting Review'),
-                 ('Denied', 'Denied'),
-                 ('Obsolete', 'Obsolete'),
-                 ('Removed', 'Removed')]
-
-CLT_STATUS_CHOICE = [('EOL', 'EOL'),
-                     ('Active', 'Active'),
-                     ('Under Development', 'Under Development')]
-
-
 class AddCollectionForm(wtf.Form):
     collection_name = wtf.TextField('Collection name',
                                     [wtf.validators.Required()])
@@ -51,7 +35,7 @@ class AddCollectionForm(wtf.Form):
     collection_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=CLT_STATUS_CHOICE
+        choices=[(item, item) for item in []]
     )
     collection_publishURLTemplate = wtf.TextField('Publish URL template')
     collection_pendingURLTemplate = wtf.TextField('Pending URL template')
@@ -63,6 +47,18 @@ class AddCollectionForm(wtf.Form):
                                        [wtf.validators.Required()])
     collection_git_branch_name = wtf.TextField('Git branch name')
 
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        drop-down list.
+        """
+        super(AddCollectionForm, self).__init__(*args, **kwargs)
+        if 'clt_status' in kwargs:
+            self.collection_status.choices = [
+                (status, status)
+                for status in kwargs['clt_status']
+            ]
+
 
 class CollectionStatusForm(wtf.Form):
     collection_branchname = wtf.TextField('Branch name',
@@ -70,8 +66,20 @@ class CollectionStatusForm(wtf.Form):
     collection_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=CLT_STATUS_CHOICE
+        choices=[(item, item) for item in []]
     )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        drop-down list.
+        """
+        super(CollectionStatusForm, self).__init__(*args, **kwargs)
+        if 'clt_status' in kwargs:
+            self.collection_status.choices = [
+                (status, status)
+                for status in kwargs['clt_status']
+            ]
 
 
 class AddPackageForm(wtf.Form):
@@ -84,7 +92,7 @@ class AddPackageForm(wtf.Form):
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=STATUS_CHOICE
+        choices=[(item, item) for item in []]
     )
     pkg_shouldopen = wtf.BooleanField('Should open',
                                       [wtf.validators.Required()],
@@ -101,13 +109,18 @@ class AddPackageForm(wtf.Form):
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
         uses the list of collection provided to fill the choices of the
-        pkg_collection.
+        drop-down list.
         """
         super(AddPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
             self.pkg_collection.choices = [
                 (collec.branchname, collec.branchname)
                 for collec in kwargs['collections']
+            ]
+        if 'pkg_status_list' in kwargs:
+            self.pkg_status.choices = [
+                (status, status)
+                for status in kwargs['pkg_status_list']
             ]
 
 
@@ -119,15 +132,32 @@ class SetAclPackageForm(wtf.Form):
     pkg_acl = wtf.SelectField(
         'ACL',
         [wtf.validators.Required()],
-        choices=ACLS_CHOICE
+        choices=[(item, item) for item in []]
     )
     pkg_user = wtf.TextField('Packager name',
                              [wtf.validators.Required()])
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=STATUS_CHOICE
+        choices=[(item, item) for item in []]
     )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        drop-down list.
+        """
+        super(SetAclPackageForm, self).__init__(*args, **kwargs)
+        if 'pkg_status' in kwargs:
+            self.pkg_status.choices = [
+                (status, status)
+                for status in kwargs['pkg_status']
+            ]
+        if 'acl_status' in kwargs:
+            self.pkg_acl.choices = [
+                (status, status)
+                for status in kwargs['acl_status']
+            ]
 
 
 class RequestAclPackageForm(wtf.Form):
@@ -135,15 +165,17 @@ class RequestAclPackageForm(wtf.Form):
         'Branch',
         [wtf.validators.Required()],
         choices=[('', '')])
+
     pkg_acl = wtf.SelectMultipleField(
         'ACL',
         [wtf.validators.Required()],
-        choices=ACLS_CHOICE
+        choices=[('', '')]
     )
 
     def __init__(self, *args, **kwargs):
-        """ Calls the default constructor with the normal arguments.
-        Fill the SelectField using the additionnal arguments provided.
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        drop-down list.
         """
         super(RequestAclPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
@@ -151,6 +183,12 @@ class RequestAclPackageForm(wtf.Form):
                 (collec.branchname, collec.branchname)
                 for collec in kwargs['collections']
             ]
+        if 'pkg_acl_list' in kwargs:
+            self.pkg_acl.choices = [
+                (status, status)
+                for status in kwargs['pkg_acl_list']
+            ]
+
 
 
 class UpdateAclPackageForm(wtf.Form):
@@ -161,12 +199,12 @@ class UpdateAclPackageForm(wtf.Form):
     pkg_acl = wtf.SelectMultipleField(
         'ACL',
         [wtf.validators.Required()],
-        choices=ACLS_CHOICE
+        choices=[(item, item) for item in []]
     )
     acl_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=STATUS_CHOICE
+        choices=[(item, item) for item in []]
     )
 
     def __init__(self, *args, **kwargs):
@@ -175,10 +213,20 @@ class UpdateAclPackageForm(wtf.Form):
         """
         super(UpdateAclPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            tmp = []
-            for collec in kwargs['collections']:
-                tmp.append((collec, collec))
-            self.pkg_branch.choices = tmp
+            self.pkg_branch.choices = [
+                (collec, collec)
+                for collec in kwargs['collections']
+            ]
+        if 'pkg_status' in kwargs:
+            self.acl_status.choices = [
+                (status, status)
+                for status in kwargs['pkg_status']
+            ]
+        if 'pkg_acl_list' in kwargs:
+            self.pkg_acl.choices = [
+                (status, status)
+                for status in kwargs['pkg_acl_list']
+            ]
 
 
 class PackageStatusForm(wtf.Form):
@@ -189,8 +237,20 @@ class PackageStatusForm(wtf.Form):
     pkg_status = wtf.SelectField(
         'Status',
         [wtf.validators.Required()],
-        choices=STATUS_CHOICE
+        choices=[(item, item) for item in []]
     )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        drop-down list.
+        """
+        super(PackageStatusForm, self).__init__(*args, **kwargs)
+        if 'pkg_status' in kwargs:
+            self.pkg_status.choices = [
+                (status, status)
+                for status in kwargs['pkg_status']
+            ]
 
 
 class PackageOwnerForm(wtf.Form):

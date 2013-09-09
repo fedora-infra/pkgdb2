@@ -43,7 +43,16 @@ def api_package_new():
     httpcode = 200
     output = {}
 
-    form = forms.AddPackageForm(csrf_enabled=False)
+    collections = pkgdb.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb.lib.search_collection(SESSION, '*', 'Active'))
+    pkg_status = pkgdb.lib.get_status(SESSION, 'pkg_status')['pkg_status']
+
+    form = forms.AddPackageForm(
+        csrf_enabled=False,
+        collections=collections,
+        pkg_status_list=pkg_status,
+    )
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_summary = form.pkg_summary.data
@@ -104,7 +113,9 @@ def api_package_orphan():
     httpcode = 200
     output = {}
 
-    form = forms.PackageOwnerForm(csrf_enabled=False)
+    form = forms.PackageOwnerForm(
+        csrf_enabled=False
+    )
     if form.validate_on_submit():
         pkg_names = form.pkg_name.data.split(',')
         pkg_branchs = form.clt_name.data.split(',')
@@ -157,7 +168,9 @@ def api_package_unorphan():
     httpcode = 200
     output = {}
 
-    form = forms.PackageOwnerForm(csrf_enabled=False)
+    form = forms.PackageOwnerForm(
+        csrf_enabled=False,
+    )
     if form.validate_on_submit():
         pkg_names = form.pkg_name.data.split(',')
         pkg_branchs = form.pkg_branch.data.split(',')

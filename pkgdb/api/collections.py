@@ -53,7 +53,12 @@ def api_collection_new():
     httpcode = 200
     output = {}
 
-    form = forms.AddCollectionForm(csrf_enabled=False)
+    clt_status = pkgdblib.get_status(SESSION, 'clt_status')['clt_status']
+
+    form = forms.AddCollectionForm(
+        csrf_enabled=False,
+        clt_status=clt_status,
+    )
     if form.validate_on_submit():
         clt_name = form.collection_name.data
         clt_version = form.collection_version.data
@@ -117,7 +122,12 @@ def api_collection_status(collection):
     httpcode = 200
     output = {}
 
-    form = forms.CollectionStatusForm(csrf_enabled=False)
+    clt_status = pkgdblib.get_status(SESSION, 'clt_status')['clt_status']
+
+    form = forms.CollectionStatusForm(
+        csrf_enabled=False,
+        clt_status=clt_status,
+    )
     if form.validate_on_submit():
         clt_branchname = form.collection_branchname.data
         clt_status = form.collection_status.data

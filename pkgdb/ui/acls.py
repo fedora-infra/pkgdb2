@@ -38,11 +38,15 @@ from pkgdb.ui import UI
 def request_acl(package):
     ''' Request acls for a specific package. '''
 
-    collections = pkgdb.lib.search_collection(SESSION, '*', 'Active')
-    collections.extend(pkgdb.lib.search_collection(
-        SESSION, '*', 'Under Development'))
+    collections = pkgdb.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb.lib.search_collection(SESSION, '*', 'Active'))
+    pkg_acl = pkgdb.lib.get_status(SESSION, 'pkg_acl')['pkg_acl']
 
-    form = pkgdb.forms.RequestAclPackageForm(collections=collections)
+    form = pkgdb.forms.RequestAclPackageForm(
+        collections=collections,
+        pkg_acl_list=pkg_acl
+        )
     if form.validate_on_submit():
         pkg_branchs = form.pkg_branch.data
         pkg_acls = form.pkg_acl.data
@@ -162,7 +166,13 @@ def update_acl(package, user, branch=None):
         pending_acls = pending_acls2
 
     collections = set([item['collection'] for item in pending_acls])
-    form = pkgdb.forms.UpdateAclPackageForm(collections=collections)
+    status = pkgdb.lib.get_status(SESSION, ['pkg_acl', 'pkg_status'])
+
+    form = pkgdb.forms.UpdateAclPackageForm(
+        collections=collections,
+        pkg_acl_list=status['pkg_acl'],
+        pkg_status=status['pkg_status'],
+        )
 
     if form.validate_on_submit():
         pkg_branchs = form.pkg_branch.data
