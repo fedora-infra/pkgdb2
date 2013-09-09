@@ -273,6 +273,31 @@ class PackageListingAcl(BASE):
         return session.query(cls).all()
 
     @classmethod
+    def get_top_maintainers(cls, session, limit=10):
+        """ Return the username and number of commits ACLs ordered by number
+        of commits.
+
+        :arg session: session with which to connect to the database
+        :arg limit: the number of top maintainer to return, defaults to 10.
+
+        """
+        query = session.query(
+            sa.func.distinct(cls.fas_name),
+            sa.func.count(sa.func.distinct(PackageListing.package_id)).label('cnt')
+        ).filter(
+            cls.packagelisting_id == PackageListing.id
+        ).filter(
+            cls.acl == 'commit'
+        ).filter(
+            cls.status == 'Approved'
+        ).group_by(
+            cls.fas_name
+        ).order_by(
+            'cnt DESC'
+        ).limit(limit)
+        return query.all()
+
+    @classmethod
     def by_user_pkglistid(cls, session, user, packagelisting_id):
         """ Retrieve the ACL associated with a user name and a
         collection.
@@ -699,6 +724,27 @@ class PackageListing(BASE):
             query = query.offset(offset)
         if limit:
             query = query.limit(limit)
+        return query.all()
+
+    @classmethod
+    def get_top_poc(cls, session, limit=10):
+        """ Return the username and number of commits ACLs ordered by number
+        of commits.
+
+        :arg session: session with which to connect to the database
+        :arg limit: the number of top maintainer to return, defaults to 10.
+
+        """
+        query = session.query(
+            sa.func.distinct(PackageListing.point_of_contact),
+            sa.func.count(sa.func.distinct(PackageListing.package_id)).label('cnt')
+        ).filter(
+            PackageListing.status == 'Approved'
+        ).group_by(
+            PackageListing.point_of_contact
+        ).order_by(
+            'cnt DESC'
+        )
         return query.all()
 
     def __repr__(self):
