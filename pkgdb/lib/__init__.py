@@ -317,6 +317,12 @@ def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
+    if page is not None:
+        try:
+            int(page)
+        except ValueError:
+            raise PkgdbException('Wrong page provided')
+
     if page is not None and limit is not None and limit != 0:
         page = (page - 1) * int(limit)
 
