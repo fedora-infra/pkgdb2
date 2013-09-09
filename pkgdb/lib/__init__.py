@@ -578,3 +578,21 @@ def get_status(session, status='all'):
     if 'acl_status' in status:
         output['acl_status'] = model.AclStatus.all_txt(session)
     return output
+
+
+def get_top_maintainers(session, top=10):
+    """ Return the specified top maintainer having the most commit rights
+
+    :arg session: session with which to connect to the database
+    :arg top: the number of results to return, defaults to 10.
+    """
+    return model.PackageListingAcl.get_top_maintainers(session, top)
+
+
+def get_top_poc(session, top=10):
+    """ Return the specified top point of contact.
+
+    :arg session: session with which to connect to the database
+    :arg top: the number of results to return, defaults to 10.
+    """
+    return model.PackageListing.get_top_poc(session, top)
