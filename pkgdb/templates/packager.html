@@ -8,6 +8,19 @@
 
 <h1>{{ packager }}</h1>
 
+<table>
+    <tr>
+        <th>Point of contact:</th>
+        <td>{{ packages | length }}</td>
+    </tr>
+    <tr>
+        <th>Co-maintainer:</th>
+        <td>{{ packages_co | length}}</td>
+    </tr>
+</table>
+
+{% if packages %}
+<h3>Point of contact: </h3>
 <ul>
 {% for package in packages %}
     <li>
@@ -24,5 +37,28 @@
     </li>
 {% endfor %}
 </ul>
+{% endif %}
+
+{% if packages_co %}
+<h3>Co-maintainer: </h3>
+<ul>
+{% for package in packages_co %}
+    <li>
+        <a href="{{url_for('.package_info', package=package.name)}}">
+            {{ package.name }}</a>
+        -- {{ package.summary }}
+        (
+            {% for listing in package.listings %}
+                {% for acl in listing.acls %}
+                {% if listing.point_of_contact != packager and acl.acl == 'commit' and acl.status == 'Approved' and acl.fas_name == packager %}
+                {{ listing.collection.branchname }}
+                {% endif %}
+                {% endfor %}
+            {% endfor %}
+        )
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
 
 {% endblock %}
