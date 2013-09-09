@@ -208,36 +208,36 @@ def create_package_listing(session):
     # Pkg: guake - Collection: F18 - Approved
     pkgltg = model.PackageListing(point_of_contact='pingou',
                                   status='Approved',
-                                  packageid=guake_pkg.id,
-                                  collectionid=f18_collec.id,
+                                  package_id=guake_pkg.id,
+                                  collection_id=f18_collec.id,
                                   )
     session.add(pkgltg)
     # Pkg: guake - Collection: devel - Approved
     pkgltg = model.PackageListing(point_of_contact='pingou',
                                   status='Approved',
-                                  packageid=guake_pkg.id,
-                                  collectionid=devel_collec.id,
+                                  package_id=guake_pkg.id,
+                                  collection_id=devel_collec.id,
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: F18 - Orphaned
     pkgltg = model.PackageListing(point_of_contact='orphan',
                                   status='Orphaned',
-                                  packageid=fedocal_pkg.id,
-                                  collectionid=f18_collec.id,
+                                  package_id=fedocal_pkg.id,
+                                  collection_id=f18_collec.id,
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: devel - Deprecated
     pkgltg = model.PackageListing(point_of_contact='orphan',
                                   status='Deprecated',
-                                  packageid=fedocal_pkg.id,
-                                  collectionid=devel_collec.id,
+                                  package_id=fedocal_pkg.id,
+                                  collection_id=devel_collec.id,
                                   )
     session.add(pkgltg)
     # Pkg: geany - Collection: F18 - Approved
     pkgltg = model.PackageListing(point_of_contact='pingou',
                                   status='Approved',
-                                  packageid=geany_pkg.id,
-                                  collectionid=f18_collec.id,
+                                  package_id=geany_pkg.id,
+                                  collection_id=f18_collec.id,
                                   )
     session.add(pkgltg)
     session.commit()
