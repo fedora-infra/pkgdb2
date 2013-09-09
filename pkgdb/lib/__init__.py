@@ -408,6 +408,17 @@ def get_acl_packager(session, packager):
         session, packager=packager)
 
 
+def get_package_maintained(session, packager):
+    """ Return all the package  maintained by a given packager.
+
+    :arg session: session with which to connect to the database
+    :arg packager: the name of the packager to retrieve the ACLs for.
+
+    """
+    return model.Package.get_package_of_user(session, packager)
+
+
+
 def add_collection(session, clt_name, clt_version, clt_status,
                    clt_publishurl, clt_pendingurl, clt_summary,
                    clt_description, clt_branchname, clt_disttag,

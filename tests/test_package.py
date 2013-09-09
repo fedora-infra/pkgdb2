@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb.lib import model
-from tests import Modeltests, create_package
+from tests import Modeltests, create_package, create_package_acl
 
 
 class Packagetests(Modeltests):
@@ -103,6 +103,18 @@ class Packagetests(Modeltests):
             pkg_name='g%',
             count=True)
         self.assertEqual(packages, 2)
+
+    def test_get_package_of_user(self):
+        """ Test the get_package_of_user function of Package. """
+        create_package_acl(self.session)
+
+        packages = model.Package.get_package_of_user(
+            self.session, user='pingou'
+        )
+        self.assertEqual(len(packages), 1)
+        self.assertEqual(packages[0].name, 'guake')
+        self.assertEqual(packages[0].listings[0].collection.branchname, 'F-18')
+        self.assertEqual(packages[0].listings[1].collection.branchname, 'devel')
 
 
 if __name__ == '__main__':

@@ -925,10 +925,12 @@ class Package(BASE):
 
         """
         query = session.query(Package).filter(
-            Package.name.like(pkg_name))
+            Package.name.like(pkg_name)
+        )
         if pkg_poc:
             query = query.join(PackageListing).filter(
-                PackageListing.point_of_contact == pkg_poc)
+                PackageListing.point_of_contact == pkg_poc
+            )
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
 
@@ -939,6 +941,33 @@ class Package(BASE):
             query = query.offset(offset)
         if limit:
             query = query.limit(limit)
+        return query.all()
+
+    @classmethod
+    def get_package_of_user(cls, session, user, pkg_status=None):
+        """ Return the list of packages on which a given user has commit
+        rights.
+
+        :arg session: session with which to connect to the database.
+        :arg user: the FAS username of the user of interest.
+        :kwarg pkg_status: the status of the packages considered.
+
+        """
+        query = session.query(Package).filter(
+            Package.id == PackageListing.package_id
+        ).filter(
+            PackageListing.id == PackageListingAcl.packagelisting_id
+        ).filter(
+            PackageListingAcl.fas_name == user
+        ).filter(
+            PackageListingAcl.acl == 'commit'
+        ).filter(
+            PackageListingAcl.status == 'Approved'
+        )
+
+        if pkg_status:
+            query = query.filter(Package.status == pkg_status)
+
         return query.all()
 
     def to_json(self):
