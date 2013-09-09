@@ -744,7 +744,7 @@ class PackageListing(BASE):
             PackageListing.point_of_contact
         ).order_by(
             'cnt DESC'
-        )
+        ).limit(limit)
         return query.all()
 
     def __repr__(self):
