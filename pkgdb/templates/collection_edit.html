@@ -1,0 +1,33 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+
+{% block title %} Edit collection | PkgDB {% endblock %}
+
+{%block tag %}collections{% endblock %}
+
+{% block content %}
+
+<h1>Edit collection</h1>
+
+<form action="{{ url_for('.collection_edit', collection=collection.branchname) }}" method="post">
+  <table>
+    {{ render_field_in_row(form.collection_name) }}
+    {{ render_field_in_row(form.collection_version) }}
+    {{ render_field_in_row(form.collection_status) }}
+    {{ render_field_in_row(form.collection_publishURLTemplate) }}
+    {{ render_field_in_row(form.collection_pendingURLTemplate) }}
+    {{ render_field_in_row(form.collection_summary) }}
+    {{ render_field_in_row(form.collection_description) }}
+    {{ render_field_in_row(form.collection_branchname) }}
+    {{ render_field_in_row(form.collection_distTag) }}
+    {{ render_field_in_row(form.collection_git_branch_name) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Edit">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {{ form.csrf_token }}
+  </p>
+
+</form>
+{% endblock %}
