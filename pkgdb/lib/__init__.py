@@ -452,6 +452,57 @@ def add_collection(session, clt_name, clt_version, clt_status,
         raise PkgdbException('Could not add Collection to the database.')
 
 
+def edit_collection(session, collection, clt_name=None, clt_version=None,
+                    clt_status=None, clt_publishurl=None, clt_pendingurl=None,
+                    clt_summary=None, clt_description=None, clt_branchname=None,
+                    clt_disttag=None, clt_gitbranch=None, user=None):
+    """ Edit a specified collection
+
+    """
+
+    edited = False
+
+    if clt_name and clt_name != collection.name:
+        collection.name = clt_name
+        edited = True
+    if clt_version and clt_version != collection.version:
+        collection.version = clt_version
+        edited = True
+    if clt_status and clt_status != collection.status:
+        collection.status = clt_status
+        edited = True
+    if clt_publishurl and clt_publishurl != collection.publishURLTemplate:
+        collection.publishURLTemplate = clt_publishurl
+        edited = True
+    if clt_pendingurl and clt_pendingurl != collection.pendingURLTemplate:
+        collection.pendingURLTemplate = clt_pendingurl
+        edited = True
+    if clt_summary and clt_summary != collection.summary:
+        collection.summary = clt_summary
+        edited = True
+    if clt_description and clt_description != collection.description:
+        collection.description = clt_description
+        edited = True
+    if clt_branchname and clt_branchname != collection.branchname:
+        collection.branchname = clt_branchname
+        edited = True
+    if clt_disttag and clt_disttag != collection.distTag:
+        collection.distTag = clt_disttag
+        edited = True
+    if clt_gitbranch and clt_gitbranch != collection.git_branch_name:
+        collection.git_branch_name = clt_gitbranch
+        edited = True
+
+    if edited:
+        try:
+            session.add(collection)
+            session.flush()
+            return 'Collection "%s" created' % collection.branchname
+        except SQLAlchemyError, err:  # pragma: no cover
+            print err.message
+            raise PkgdbException('Could not edit Collection.')
+
+
 def update_collection_status(session, clt_branchname, clt_status):
     """ Update the status of a collection.
 
