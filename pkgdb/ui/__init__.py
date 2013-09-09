@@ -57,7 +57,18 @@ def stats():
         )
         packages[collection.branchname] = packages_count
 
-    return flask.render_template('stats.html', packages=packages)
+    # Top maintainers
+    top_maintainers = pkgdblib.get_top_maintainers(SESSION)
+    # Top point of contact
+    top_poc = pkgdblib.get_top_poc(SESSION)
+    print top_maintainers, top_poc
+
+    return flask.render_template(
+        'stats.html',
+        packages=packages,
+        top_maintainers=top_maintainers,
+        top_poc=top_poc,
+    )
 
 
 @UI.route('/search/')

@@ -27,4 +27,34 @@
     {% endfor %}
 </table>
 
+<h2>Top maintainers</h2>
+
+<table>
+    {% for row in top_maintainers %}
+    <tr>
+        <td>
+            {{ row[0] }}
+        </td>
+        <td>
+            {{ row[1] }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Top point of contact</h2>
+
+<table>
+    {% for row in top_poc %}
+    <tr>
+        <td>
+            {{ row[0] }}
+        </td>
+        <td>
+            {{ row[1] }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
 {% endblock %}
