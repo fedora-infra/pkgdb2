@@ -16,7 +16,9 @@
         -- {{ package.summary }}
         (
         {% for listing in package.listings %}
+            {% if listing.point_of_contact == packager %}
             {{ listing.collection.branchname }}
+            {% endif %}
         {% endfor %}
         )
     </li>
