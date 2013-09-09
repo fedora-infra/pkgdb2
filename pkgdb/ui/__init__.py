@@ -61,7 +61,6 @@ def stats():
     top_maintainers = pkgdblib.get_top_maintainers(SESSION)
     # Top point of contact
     top_poc = pkgdblib.get_top_poc(SESSION)
-    print top_maintainers, top_poc
 
     return flask.render_template(
         'stats.html',
