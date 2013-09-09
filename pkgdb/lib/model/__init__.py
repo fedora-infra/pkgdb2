@@ -144,7 +144,7 @@ def collection_package_create_view(*args, **kw):
     return '%s CollectionPackage AS '\
            'SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs '\
            'FROM "PackageListing" pl, "Collection" c '\
-           'WHERE pl.collectionid = c.id '\
+           'WHERE pl.collection_id = c.id '\
            'AND pl.status = "Approved" '\
            'GROUP BY c.id, c.name, c.version, c.status '\
            'ORDER BY c.name, c.version;' % sql_string
@@ -310,7 +310,7 @@ class PackageListingAcl(BASE):
         ).subquery()
 
         stmt2 = session.query(PackageListing.id).filter(
-            PackageListing.packageid == stmt
+            PackageListing.package_id == stmt
         ).subquery()
 
         query = session.query(cls).filter(
@@ -552,14 +552,14 @@ class PackageListing(BASE):
 
     __tablename__ = 'PackageListing'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    packageid = sa.Column(sa.Integer,
+    package_id = sa.Column(sa.Integer,
                           sa.ForeignKey('Package.id',
                                         ondelete="CASCADE",
                                         onupdate="CASCADE"
                                         ),
                           nullable=False)
     point_of_contact = sa.Column(sa.Text, nullable=False)
-    collectionid = sa.Column(sa.Integer,
+    collection_id = sa.Column(sa.Integer,
                              sa.ForeignKey('Collection.id',
                                            ondelete="CASCADE",
                                            onupdate="CASCADE"
@@ -570,7 +570,7 @@ class PackageListing(BASE):
     status_change = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
     __table_args__ = (
-        sa.UniqueConstraint('packageid', 'collectionid'),
+        sa.UniqueConstraint('package_id', 'collection_id'),
     )
 
     package = relation("Package")
@@ -580,10 +580,10 @@ class PackageListing(BASE):
         backref=backref('packagelisting'),
     )
 
-    def __init__(self, point_of_contact, status, packageid=None,
-                 collectionid=None):
-        self.packageid = packageid
-        self.collectionid = collectionid
+    def __init__(self, point_of_contact, status, package_id=None,
+                 collection_id=None):
+        self.package_id = package_id
+        self.collection_id = collection_id
         self.point_of_contact = point_of_contact
         self.status = status
 
@@ -599,7 +599,7 @@ class PackageListing(BASE):
         """
 
         return session.query(cls).filter(
-            PackageListing.packageid == pkgid
+            PackageListing.package_id == pkgid
         ).all()
 
     @classmethod
@@ -617,9 +617,9 @@ class PackageListing(BASE):
 
         '''
         return session.query(cls).filter(
-            PackageListing.packageid == pkgid
+            PackageListing.package_id == pkgid
         ).filter(
-            PackageListing.collectionid == collectionid
+            PackageListing.collection_id == collectionid
         ).one()
 
     @classmethod
@@ -645,11 +645,11 @@ class PackageListing(BASE):
         ).subquery()
         # Match the other criteria
         query = session.query(cls).filter(
-            PackageListing.packageid == stmt.c.id
+            PackageListing.package_id == stmt.c.id
         )
 
         if clt_id:
-            query = query.filter(PackageListing.collectionid == clt_id)
+            query = query.filter(PackageListing.collection_id == clt_id)
         if pkg_owner:
             query = query.filter(
                 PackageListing.point_of_contact == pkg_owner)
@@ -704,8 +704,8 @@ class PackageListing(BASE):
     def __repr__(self):
         return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r' \
                ')' % (self.id, self.point_of_contact,
-                                   self.status, self.packageid,
-                                   self.collectionid)
+                                   self.status, self.package_id,
+                                   self.collection_id)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize PackageListing in messages. """
@@ -893,8 +893,8 @@ class Package(BASE):
         '''
         pkg_listing = PackageListing(point_of_contact=point_of_contact,
                                      status=statusname,
-                                     collectionid=collection.id)
-        pkg_listing.packageid = self.id
+                                     collection_id=collection.id)
+        pkg_listing.package_id = self.id
 
         #TODO: Create a log message
         return pkg_listing
