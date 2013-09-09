@@ -557,6 +557,32 @@ class PkgdbLibtests(Modeltests):
         self.assertTrue(pkgdblib.has_acls(self.session, 'pingou',
             'guake', 'devel', 'commit'))
 
+    def test_get_status(self):
+        """ Test the get_status function. """
+        obs = pkgdblib.get_status(self.session)
+
+        acl_status = ['Approved', 'Awaiting Review', 'Denied', 'Obsolete',
+                      'Removed']
+        self.assertEqual(obs['acl_status'], acl_status)
+
+        pkg_status = ['Approved', 'Deprecated', 'Orphaned', 'Removed']
+        self.assertEqual(obs['pkg_status'], pkg_status)
+
+        clt_status = ['Active', 'EOL', 'Under Development']
+        self.assertEqual(obs['clt_status'], clt_status)
+
+        pkg_acl = ['approveacls', 'commit', 'watchbugzilla', 'watchcommits']
+        self.assertEqual(obs['pkg_acl'], pkg_acl)
+
+        obs = pkgdblib.get_status(self.session, 'acl_status')
+        self.assertEqual(obs.keys(), ['acl_status'])
+        self.assertEqual(obs['acl_status'], acl_status)
+
+        obs = pkgdblib.get_status(self.session, ['acl_status', 'pkg_acl'])
+        self.assertEqual(obs.keys(), ['pkg_acl', 'acl_status'])
+        self.assertEqual(obs['pkg_acl'], pkg_acl)
+        self.assertEqual(obs['acl_status'], acl_status)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)

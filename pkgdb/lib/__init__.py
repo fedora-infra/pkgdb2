@@ -531,3 +531,32 @@ def has_acls(session, user, package, branch, acl):
             has_acls = True
             break
     return has_acls
+
+
+def get_status(session, status='all'):
+    """ Return a dictionnary containing all the status and acls.
+
+    :arg session: session with which to connnect to the database
+    :kwarg status: single keyword or multiple keywords used to retrict
+        querying only for some of the status rather than all.
+        Defaults to 'all' other options are: clt_status, pkg_status,
+        pkg_acl, acl_status
+    :return: a dictionnary with all the status extracted from the database,
+        keys are: clt_status, pkg_status, pkg_acl, acl_status
+    """
+    output = {}
+
+    if status == 'all':
+        status = ['clt_status', 'pkg_status', 'pkg_acl', 'acl_status']
+    elif isinstance(status, basestring):
+        status = [status]
+
+    if 'clt_status' in status:
+        output['clt_status'] = model.CollecStatus.all_txt(session)
+    if 'pkg_status' in status:
+        output['pkg_status'] = model.PkgStatus.all_txt(session)
+    if 'pkg_acl' in status:
+        output['pkg_acl'] = model.PkgAcls.all_txt(session)
+    if 'acl_status' in status:
+        output['acl_status'] = model.AclStatus.all_txt(session)
+    return output
