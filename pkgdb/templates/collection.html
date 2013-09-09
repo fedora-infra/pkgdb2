@@ -9,8 +9,11 @@
 <h1>{{ collection.name }} {{ collection.version }}</h1>
 
 <p>
-    Status : <img src="{{ url_for('static', filename='%s.png' % collection.status) }}" 
+    Status : <img src="{{ url_for('static', filename='%s.png' % collection.status) }}"
               title="{{ collection.status }}" alt="{{ collection.status }}"/ >
+    (<a href="{{ url_for('.collection_edit', collection=collection.branchname) }}">
+        edit
+    </a>)
 </p>
 
 <table>
