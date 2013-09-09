@@ -95,7 +95,7 @@ def create_status(session):
 
     for status in ['Approved', 'Awaiting Review', 'Denied', 'Obsolete',
             'Removed']:
-        obj = PkgAclStatus(status)
+        obj = AclStatus(status)
         session.add(obj)
 
     for status in ['EOL', 'Active', 'Under Development']:
@@ -162,7 +162,12 @@ class PkgAcls(BASE):
     @classmethod
     def all(cls, session):
         """ Return all the Acls for packages. """
-        return session.query(cls).all()
+        return session.query(cls.status).all()
+
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the Acls in plain text for packages. """
+        return [item.status for item in session.query(cls).all()]
 
 
 class PkgStatus(BASE):
@@ -177,10 +182,16 @@ class PkgStatus(BASE):
     @classmethod
     def all(cls, session):
         """ Return all the status for packages. """
-        return session.query(cls).all()
+        return session.query(cls.status).all()
 
-class PkgAclStatus(BASE):
-    __tablename__ = 'PkgAclStatus'
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the status in plain text for packages. """
+        return [item.status for item in session.query(cls).all()]
+
+
+class AclStatus(BASE):
+    __tablename__ = 'AclStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -191,7 +202,12 @@ class PkgAclStatus(BASE):
     @classmethod
     def all(cls, session):
         """ Return all the status for packages. """
-        return session.query(cls).all()
+        return session.query(cls.status).all()
+
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the status in plain text for packages. """
+        return [item.status for item in session.query(cls).all()]
 
 
 class CollecStatus(BASE):
@@ -207,6 +223,11 @@ class CollecStatus(BASE):
     def all(cls, session):
         """ Return all the status for a collection. """
         return session.query(cls).all()
+
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the status in plain text for a collection. """
+        return [item.status for item in session.query(cls).all()]
 
 
 class PackageListingAcl(BASE):
@@ -229,7 +250,7 @@ class PackageListingAcl(BASE):
     )
     acl = sa.Column(sa.String(50), sa.ForeignKey('PkgAcls.status'),
                     nullable=False)
-    status = sa.Column(sa.String(50), sa.ForeignKey('PkgAclStatus.status'),
+    status = sa.Column(sa.String(50), sa.ForeignKey('AclStatus.status'),
                        nullable=False)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
@@ -807,7 +828,7 @@ class Package(BASE):
     summary = sa.Column(sa.Text, nullable=False)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
-    status = sa.Column(sa.String(50), sa.ForeignKey('PkgAclStatus.status'),
+    status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
                        nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
