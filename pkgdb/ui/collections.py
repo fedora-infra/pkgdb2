@@ -73,7 +73,6 @@ def list_collections(motif=None, page=1):
         admin=is_pkgdb_admin(flask.g.fas_user),
     )
 
-
 @UI.route('/collection/<collection>/')
 def collection_info(collection):
     ''' Display the information about the specified collection. '''
@@ -92,6 +91,72 @@ def collection_info(collection):
         collection=collection,
     )
 
+
+@UI.route('/collection/<collection>/edit', methods=('GET', 'POST'))
+@is_admin
+def collection_edit(collection):
+    ''' Allows to edit the information about the specified collection. '''
+
+    collections = []
+    try:
+        collection = pkgdblib.search_collection(SESSION, collection)[0]
+    except NoResultFound:
+        SESSION.rollback()
+    except IndexError:
+        flask.flash('No collection of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    clt_status = pkgdb.lib.get_status(SESSION, 'clt_status')['clt_status']
+    form = pkgdb.forms.AddCollectionForm(
+        clt_status=clt_status
+    )
+
+    if form.validate_on_submit():
+        clt_name = form.collection_name.data
+        clt_version = form.collection_version.data
+        clt_status = form.collection_status.data
+        clt_publishurl = form.collection_publishURLTemplate.data
+        clt_pendingurl = form.collection_pendingURLTemplate.data
+        clt_summary = form.collection_summary.data
+        clt_description = form.collection_description.data
+        clt_branchname = form.collection_branchname.data
+        clt_disttag = form.collection_distTag.data
+        clt_gitbranch = form.collection_git_branch_name.data
+
+        try:
+            pkgdblib.edit_collection(
+                SESSION,
+                collection=collection,
+                clt_name=clt_name,
+                clt_version=clt_version,
+                clt_status=clt_status,
+                clt_publishurl=clt_publishurl,
+                clt_pendingurl=clt_pendingurl,
+                clt_summary=clt_summary,
+                clt_description=clt_description,
+                clt_branchname=clt_branchname,
+                clt_disttag=clt_disttag,
+                clt_gitbranch=clt_gitbranch,
+                user=flask.g.fas_user,
+            )
+            SESSION.commit()
+            flask.flash('Collection "%s" edited' % clt_name)
+            return flask.redirect(flask.url_for(
+                '.collection_info', collection=collection.branchname))
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            flask.flash(err.message, 'errors')
+    else:
+        form = pkgdb.forms.AddCollectionForm(
+            clt_status=clt_status,
+           collection=collection
+        )
+
+    return flask.render_template(
+        'collection_edit.html',
+        form=form,
+        collection=collection,
+    )
 
 @UI.route('/new/collection/', methods=('GET', 'POST'))
 @is_admin
