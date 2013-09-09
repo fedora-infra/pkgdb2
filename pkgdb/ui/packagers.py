@@ -94,7 +94,8 @@ def packager_info(packager):
         SESSION.rollback()
 
     # clean co-maintained packages and split out PoC packages
-    for cnt in range(len(packages_co)):
+    cnt = 0
+    while cnt < len(packages_co):
         maint = True
         for acls in packages_co[cnt].listings:
             if acls.point_of_contact != packager:
@@ -103,6 +104,7 @@ def packager_info(packager):
             packages.append(packages_co[cnt])
             del(packages_co[cnt])
             cnt -=1
+        cnt += 1
 
     if not packages and not packages_co:
         flask.flash('No packager of this name found.', 'errors')
