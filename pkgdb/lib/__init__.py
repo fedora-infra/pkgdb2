@@ -186,8 +186,18 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
                                                       pkglisting.id,
                                                       acl=acl,
                                                       status=status)
+    prev_status = personpkg.status
     personpkg.status = status
     session.flush()
+    model.Log.insert(
+            session,
+            user.username,
+            package,
+            'user: %s set acl: %s of package: %s from: %s to: %s on '
+            'branch: %s' % (
+                user.username, acl, package.name, prev_status, status,
+                collection.branchname)
+        )
 
 
 def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
@@ -212,6 +222,8 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
     pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
                                                             collection.id)
+
+    prev_poc = pkglisting.point_of_contact
 
     if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
         raise PkgdbException(
@@ -240,6 +252,13 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
 
     session.add(pkglisting)
     session.flush()
+    model.Log.insert(
+            session,
+            user.username,
+            package,
+            'user: %s change PoC of package: %s from: %s to: %s' % (
+                user.username, package.name, prev_poc, pkg_poc)
+        )
 
     return 'Point of contact of branch: %s of package: %s has been changed ' \
         'to %s' %(clt_name, pkg_name, pkg_poc)
@@ -271,6 +290,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                                                             package.id,
                                                             collection.id)
 
+    prev_status = pkglisting.status
     if status == 'Deprecated':
         # Admins can deprecate everything
         # Users can deprecate Fedora devel and EPEL branches
@@ -278,6 +298,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                 or (collection.name == 'Fedora'
                     and collection.version == 'devel') \
                 or collection.name == 'EPEL':
+
             pkglisting.status = 'Deprecated'
             pkglisting.point_of_contact = 'orphan'
             session.add(pkglisting)
@@ -302,12 +323,21 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
         pkglisting.status = status
         session.add(pkglisting)
         session.flush()
+
     else:
         raise PkgdbException(
             'You are now allowed to update the status of '
             'the package: %s on branch %s to %s.' % (
             package.name, collection.branchname, status)
         )
+
+    model.Log.insert(
+        session,
+        user.username,
+        package,
+        'user: %s updated Package: %s status from %s to %s' % (
+            user.username, package.name, prev_status, status)
+    )
 
 
 def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
@@ -432,6 +462,40 @@ def search_packagers(session, pattern, page=None, limit=None,
     return packages
 
 
+def search_logs(session, from_date=None, page=None, limit=None,
+        count=False):
+    """ Return the list of Collection matching the given criteria.
+
+    :arg session: session with which to connect to the database
+    :kwarg from_date: a date from which to retrieve the logs
+    :kwarg page: the page number to apply to the results
+    :kwarg limit: the number of results to return
+    :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+
+    """
+    if limit is not None:
+        try:
+            int(limit)
+        except ValueError:
+            raise PkgdbException('Wrong limit provided')
+
+    if page is not None:
+        try:
+            int(page)
+        except ValueError:
+            raise PkgdbException('Wrong page provided')
+
+    if page is not None and limit is not None and limit != 0:
+        page = (page - 1) * int(limit)
+
+    return model.Log.search(session,
+                            from_date=from_date,
+                            offset=page,
+                            limit=limit,
+                            count=count)
+
+
 def get_acl_packager(session, packager):
     """ Return the list of ACL associated with a packager.
 
@@ -480,6 +544,13 @@ def add_collection(session, clt_name, clt_version, clt_status,
     try:
         session.add(collection)
         session.flush()
+        model.Log.insert(
+            session,
+            user.username,
+            None,
+            'user: %s created collection: %s' % (
+                user.username, collection.name)
+        )
         return 'Collection "%s" created' % collection.branchname
     except SQLAlchemyError, err:  # pragma: no cover
         print err.message
@@ -534,6 +605,13 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
         try:
             session.add(collection)
             session.flush()
+            model.Log.insert(
+            session,
+            user.username,
+            None,
+            'user: %s edited collection: %s' % (
+                user.username, collection.name)
+        )
             return 'Collection "%s" created' % collection.branchname
         except SQLAlchemyError, err:  # pragma: no cover
             print err.message
@@ -547,17 +625,29 @@ def update_collection_status(session, clt_branchname, clt_status):
     :arg clt_branchname: branchname of the collection
     :arg clt_status: status of the collection
     """
+
     try:
         collection = model.Collection.by_name(session, clt_branchname)
 
         if collection.status != clt_status:
+            prev_status = collection.status
             collection.status = clt_status
             message = 'Collection updated to "%s"' % clt_status
+            session.add(collection)
+            session.flush()
+            model.Log.insert(
+                session,
+                user.username,
+                None,
+                'user: %s changed Collection: %s status from %s to %s' % (
+                    user.username, collection.name, prev_status, clt_status)
+            )
         else:
             message = 'Collection "%s" already had this status' % \
                 clt_branchname
-        session.add(collection)
-        session.flush()
+
+
+
         return message
     except NoResultFound:  # pragma: no cover
         raise PkgdbException('Could not find collection "%s"' %
