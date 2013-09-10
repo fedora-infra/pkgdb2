@@ -820,6 +820,28 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0], 'pingou')
 
+        pkg = pkgdblib.search_packagers(self.session, 'pi*', page=0)
+        self.assertEqual(len(pkg), 1)
+        self.assertEqual(pkg[0][0], 'pingou')
+
+        pkg = pkgdblib.search_packagers(self.session, 'pi*', limit=1, page=1)
+        self.assertEqual(len(pkg), 1)
+        self.assertEqual(pkg[0][0], 'pingou')
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_packagers,
+                          self.session,
+                          'p*',
+                          limit='a'
+                          )
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_packagers,
+                          self.session,
+                          'p*',
+                          page='a'
+                          )
+
     def test_get_acl_packager(self):
         """ Test the get_acl_packager function. """
         acls = pkgdblib.get_acl_packager(self.session, 'pingou')
