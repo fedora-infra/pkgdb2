@@ -147,6 +147,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the set_acl_package function. """
         self.test_add_package()
 
+        # Not allowed to set acl on non-existant package
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
@@ -159,6 +160,7 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # Not allowed to set non-existant collection
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
@@ -171,18 +173,20 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # Not allowed to set non-existant status
         self.assertRaises(IntegrityError,
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          acl='nothing',
+                          acl='commit',
                           pkg_user='pingou',
                           status='Appro',
                           user=FakeFasUserAdmin(),
                           )
         self.session.rollback()
 
+        # Not allowed to set non-existant acl
         self.assertRaises(IntegrityError,
                           pkgdblib.set_acl_package,
                           self.session,
@@ -195,6 +199,7 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # Not allowed to set acl for yourself
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
@@ -207,13 +212,40 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # Not allowed to set acl for someone else
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          pkg_user='pingou',
-                          acl='nothing',
+                          pkg_user='ralph',
+                          acl='commit',
+                          status='Approved',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        # Not allowed to set acl approveacl to a group
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.set_acl_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          pkg_user='group::perl',
+                          acl='approveacls',
+                          status='Approved',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
+        # Group must ends with -sig
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.set_acl_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          pkg_user='group::perl',
+                          acl='commit',
                           status='Approved',
                           user=FakeFasUser(),
                           )
