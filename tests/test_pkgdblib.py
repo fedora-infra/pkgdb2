@@ -715,14 +715,43 @@ class PkgdbLibtests(Modeltests):
         collections = pkgdblib.search_collection(self.session, 'EPEL*')
         self.assertEqual(len(collections), 0)
 
-        collections = pkgdblib.search_collection(self.session, 'F-*', True)
+        collections = pkgdblib.search_collection(self.session, 'F-*',
+                                                 status='EOL')
         self.assertEqual(len(collections), 0)
 
-        collections = pkgdblib.search_collection(self.session, 'F-*', False)
+        collections = pkgdblib.search_collection(self.session, 'F-*')
+        self.assertEqual(len(collections), 2)
         self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
                          " summary=u'Fedora 17 release', description=None)",
                          collections[0].__repr__())
+
+        collections = pkgdblib.search_collection(
+            self.session,
+            'F-*',
+            limit=1)
+        self.assertEqual(len(collections), 1)
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_collection,
+                          self.session,
+                          'F-*',
+                          limit='a'
+                          )
+
+        collections = pkgdblib.search_collection(
+            self.session,
+            'F-*',
+            limit=1,
+            page=2)
+        self.assertEqual(len(collections), 1)
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_collection,
+                          self.session,
+                          'F-*',
+                          page='a'
+                          )
 
     def test_add_collection(self):
         """ Test the add_collection function. """
