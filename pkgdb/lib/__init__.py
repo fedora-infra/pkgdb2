@@ -216,7 +216,7 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
     if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
         raise PkgdbException(
                 'Invalid group "%s" all groups in pkgdb should end with '
-                '"-sig".' % pkg_user)
+                '"-sig".' % pkg_poc)
 
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
