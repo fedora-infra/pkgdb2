@@ -465,6 +465,50 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkgs[0].upstream_url, 'http://guake.org')
 
         pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       clt_name='F-18',
+                                       pkg_poc=None,
+                                       orphaned=None,
+                                       status=None,
+                                       )
+        self.assertEqual(len(pkgs), 2)
+        self.assertEqual(pkgs[0].name, 'guake')
+        self.assertEqual(pkgs[1].name, 'geany')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       clt_name='F-18',
+                                       pkg_poc=None,
+                                       orphaned=None,
+                                       status=None,
+                                       limit=1
+                                       )
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0].name, 'guake')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       clt_name='F-18',
+                                       pkg_poc=None,
+                                       orphaned=None,
+                                       status=None,
+                                       limit=1,
+                                       page=2
+                                       )
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0].name, 'geany')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       clt_name='F-18',
+                                       pkg_poc=None,
+                                       orphaned=None,
+                                       status=None,
+                                       page=2
+                                       )
+        self.assertEqual(len(pkgs), 0)
+
+        pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',
                                        clt_name='F-18',
                                        pkg_poc=None,
@@ -481,6 +525,28 @@ class PkgdbLibtests(Modeltests):
                                        status='Deprecated',
                                        )
         self.assertEqual(len(pkgs), 0)
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_package,
+                          self.session,
+                          pkg_name='g*',
+                          clt_name='F-18',
+                          pkg_poc=None,
+                          orphaned=None,
+                          status=None,
+                          limit='a'
+                          )
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_package,
+                          self.session,
+                          pkg_name='g*',
+                          clt_name='F-18',
+                          pkg_poc=None,
+                          orphaned=None,
+                          status=None,
+                          page='a'
+                          )
 
     def test_update_pkg_status(self):
         """ Test the update_pkg_status function. """
