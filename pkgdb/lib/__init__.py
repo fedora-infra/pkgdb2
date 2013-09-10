@@ -150,10 +150,10 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         raise PkgdbException('No collection found by this name')
 
     if not pkgdb.is_pkg_admin(user, package.name, clt_name):
-        if user.username != pkg_user:
+        if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
-            'someone else.')
-        elif status not in \
+                                 'someone else.')
+        elif user.username == pkg_user and status not in \
                 ('Awaiting Review', 'Removed', 'Obsolete') \
                 and acl not in pkgdb.APP.config['AUTO_APPROVE']:
             raise PkgdbException(
@@ -174,7 +174,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
             session,
             package.id,
             collection.id)
-    except NoResultFound:
+    except NoResultFound:  # pragma: no cover  TODO: can we test this?
         pkglisting = package.create_listing(owner=pkg_user,
                                             collection=collection,
                                             statusname='Approved')
