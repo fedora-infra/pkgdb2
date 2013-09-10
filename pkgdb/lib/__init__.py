@@ -66,34 +66,27 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     if user is None or not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException("You're not allowed to add a package")
 
-    if isinstance(pkg_name, (str, unicode)):
-        if ',' in pkg_name:
-            pkg_name = [item.strip() for item in pkg_name.split(',')]
-        else:
-            pkg_name = [pkg_name]
-
     if isinstance(pkg_collection, (str, unicode)):
         if ',' in pkg_collection:
             pkg_collection = [item.strip() for item in pkg_collection.split(',')]
         else:
             pkg_collection = [pkg_collection]
 
-    for pkg in pkg_name:
-        package = model.Package(name=pkg,
-                                summary=pkg_summary,
-                                status=pkg_status,
-                                review_url=pkg_reviewURL,
-                                shouldopen=pkg_shouldopen,
-                                upstream_url=pkg_upstreamURL
-                                )
-        session.add(package)
+    package = model.Package(name=pkg_name,
+                            summary=pkg_summary,
+                            status=pkg_status,
+                            review_url=pkg_reviewURL,
+                            shouldopen=pkg_shouldopen,
+                            upstream_url=pkg_upstreamURL
+                            )
+    session.add(package)
 
-        for collec in pkg_collection:
-            collection = model.Collection.by_name(session, collec)
-            pkglisting = package.create_listing(point_of_contact=pkg_poc,
-                                                collection=collection,
-                                                statusname=pkg_status)
-            session.add(pkglisting)
+    for collec in pkg_collection:
+        collection = model.Collection.by_name(session, collec)
+        pkglisting = package.create_listing(point_of_contact=pkg_poc,
+                                            collection=collection,
+                                            statusname=pkg_status)
+        session.add(pkglisting)
     try:
         session.flush()
     except SQLAlchemyError, err:  # pragma: no cover
@@ -106,18 +99,17 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
         raise PkgdbException(
                 'Invalid group "%s" all groups in pkgdb should end with '
-                '"-sig".' % pkg_user)
+                '"-sig".' % pkg_poc)
 
-    for pkg in pkg_name:
-        for collec in pkg_collection:
-            for acl in acls:
-                set_acl_package(session=session,
-                                pkg_name=pkg,
-                                clt_name=collec,
-                                pkg_user=pkg_poc,
-                                acl=acl,
-                                status='Approved',
-                                user=user)
+    for collec in pkg_collection:
+        for acl in acls:
+            set_acl_package(session=session,
+                            pkg_name=pkg_name,
+                            clt_name=collec,
+                            pkg_user=pkg_poc,
+                            acl=acl,
+                            status='Approved',
+                            user=user)
     try:
         session.flush()
         return 'Package created'
