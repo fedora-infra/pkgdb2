@@ -494,6 +494,9 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
 
     """
 
+    if not pkgdb.is_pkgdb_admin(user):
+        raise PkgdbException('You are now allowed to edit collections')
+
     edited = False
 
     if clt_name and clt_name != collection.name:
