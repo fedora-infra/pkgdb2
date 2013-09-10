@@ -997,7 +997,7 @@ class Log(BASE):
                                          ondelete='RESTRICT',
                                          onupdate='CASCADE'
                                          ),
-                           nullable=False,
+                           nullable=True,
                            )
     description = sa.Column(sa.Text, nullable=False)
 
@@ -1007,12 +1007,42 @@ class Log(BASE):
         self.description = description
 
     def __repr__(self):
-        return 'Log(%r, description=%r, changetime=%r)' % (
-            self.username, self.description, self.changetime)
+        return 'Log(user=%r, description=%r, change_time=%r)' % (
+            self.user, self.description,
+            self.change_time.strftime('%Y-%m-%d %H:%M:%S'))
 
-    def save(self, session):
-        ''' Save the current log entry. '''
-        session.add(self)
+    @classmethod
+    def search(cls, session, limit=None, offset=None, from_date=None,
+             count=False):
+        ''' Return the list of the last Log entries present in the database.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+        :kwarg limit: limit the result to X row
+        :kwarg offset: start the result at row X
+        :kwarg from_date: the date from which to give the entries
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+
+        '''
+        query = session.query(
+            cls
+        )
+
+        if count:
+            return query.count()
+
+        if from_date:
+            query.filter(cls.change_time <= from_date)
+
+        query.order_by(cls.change_time)
+
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
+
+        return query.all()
 
     @classmethod
     def insert(cls, session, user, package, description):
@@ -1025,5 +1055,9 @@ class Log(BASE):
             performed
 
         '''
-        log = Log(user, package.id, description)
-        log.save(session)
+        if package:
+            log = Log(user, package.id, description)
+        else:
+            log = Log(user, None, description)
+        session.add(log)
+        session.flush()
