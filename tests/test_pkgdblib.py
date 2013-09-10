@@ -300,6 +300,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the pkg_change_poc function. """
         self.test_add_package()
 
+        # Package must exists
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.pkg_change_poc,
                           self.session,
@@ -310,6 +311,7 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # Collection must exists
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.pkg_change_poc,
                           self.session,
@@ -320,6 +322,8 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # User must be the actual Point of Contact (or an admin of course,
+        # or part of the group)
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.pkg_change_poc,
                           self.session,
@@ -329,6 +333,53 @@ class PkgdbLibtests(Modeltests):
                           pkg_poc='toshio',
                           )
         self.session.rollback()
+
+        # Groups must end with -sig
+        user = FakeFasUser()
+        user.username = 'ralph'
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_change_poc,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          user=user,
+                          pkg_poc='group::perl',
+                          )
+        self.session.rollback()
+
+        # Change PoC to a group
+        pkgdblib.pkg_change_poc(
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          user=user,
+                          pkg_poc='group::perl-sig',
+                          )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'group::perl-sig')
+
+        # User must be in the group it gives the PoC to
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.pkg_change_poc,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          user=user,
+                          pkg_poc='ralph',
+                          )
+        self.session.rollback()
+
+        user.groups.append('perl-sig')
+        pkgdblib.pkg_change_poc(
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          user=user,
+                          pkg_poc='ralph',
+                          )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
@@ -363,6 +414,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'kevin')
 
+        # Orphan -> status changed to Orphaned
         user = FakeFasUser()
         user.username = 'kevin'
         pkgdblib.pkg_change_poc(self.session,
@@ -377,6 +429,21 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
         self.assertEqual(pkg_acl[0].status, 'Orphaned')
+
+        # Take orphaned package -> status changed to Approved
+        pkgdblib.pkg_change_poc(self.session,
+                                 pkg_name='guake',
+                                 clt_name='F-18',
+                                 user=FakeFasUser(),
+                                 pkg_poc=FakeFasUser().username,
+                                 )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
+        self.assertEqual(pkg_acl[0].status, 'Approved')
+
 
     def test_create_session(self):
         """ Test the create_session function. """
