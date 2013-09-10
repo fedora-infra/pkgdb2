@@ -49,6 +49,37 @@ class PkgdbLibtests(Modeltests):
     def test_add_package(self):
         """ Test the add_package function. """
         create_collection(self.session)
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_package,
+                          self.session,
+                          pkg_name='test',
+                          pkg_summary='test package',
+                          pkg_status='Approved',
+                          pkg_collection='F-18',
+                          pkg_poc='ralph',
+                          pkg_reviewURL=None,
+                          pkg_shouldopen=None,
+                          pkg_upstreamURL='http://example.org',
+                          user=FakeFasUser()
+                          )
+        self.session.rollback()
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_package,
+                          self.session,
+                          pkg_name='test',
+                          pkg_summary='test package',
+                          pkg_status='Approved',
+                          pkg_collection='F-18',
+                          pkg_poc='group::tests',
+                          pkg_reviewURL=None,
+                          pkg_shouldopen=None,
+                          pkg_upstreamURL='http://example.org',
+                          user=FakeFasUserAdmin()
+                          )
+        self.session.rollback()
+
         msg = pkgdblib.add_package(self.session,
                                     pkg_name='guake',
                                     pkg_summary='Drop down terminal',
@@ -66,11 +97,27 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual('guake', packages[0].name)
 
         pkgdblib.add_package(self.session,
-                             pkg_name=['geany', 'fedocal'],
-                             pkg_summary='Drop down terminal',
+                             pkg_name='geany',
+                             pkg_summary='GTK IDE',
                              pkg_status='Approved',
                              pkg_collection='devel, F-18',
                              pkg_poc='ralph',
+                             pkg_reviewURL=None,
+                             pkg_shouldopen=None,
+                             pkg_upstreamURL=None,
+                             user=FakeFasUserAdmin())
+        self.session.commit()
+        packages = model.Package.all(self.session)
+        self.assertEqual(2, len(packages))
+        self.assertEqual('guake', packages[0].name)
+        self.assertEqual('geany', packages[1].name)
+
+        pkgdblib.add_package(self.session,
+                             pkg_name='fedocal',
+                             pkg_summary='web calendar for Fedora',
+                             pkg_status='Approved',
+                             pkg_collection='devel, F-18',
+                             pkg_poc='group::infra-sig',
                              pkg_reviewURL=None,
                              pkg_shouldopen=None,
                              pkg_upstreamURL=None,
