@@ -101,10 +101,12 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         raise PkgdbException('Could not add packages to collections')
 
     # Add all new ACLs to the owner
+    acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
+    if pkg_poc.startswith('group::'):
+        acls = ['commit', 'watchbugzilla', 'watchcommits']
     for pkg in pkg_name:
         for collec in pkg_collection:
-            for acl in ['commit', 'watchbugzilla', 'watchcommits',
-                        'approveacls']:
+            for acl in acls:
                 set_acl_package(session=session,
                                 pkg_name=pkg,
                                 clt_name=collec,
@@ -162,6 +164,10 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
                 'You are not allowed to approve or deny '
                 'ACLs for yourself.')
 
+    if pkg_user.startswith('group::') and acl == 'approveacls':
+        raise PkgdbException(
+                'Groups cannot have "approveacls".')
+
     try:
         pkglisting = model.PackageListing.by_pkgid_collectionid(
             session,
@@ -174,6 +180,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         session.add(pkglisting)
         session.flush()
     ## TODO: how do we get pkg_user's object?
+
     personpkg = model.PackageListingAcl.get_or_create(session,
                                                       pkg_user,
                                                       pkglisting.id,
