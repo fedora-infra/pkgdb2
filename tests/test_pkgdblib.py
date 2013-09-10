@@ -801,11 +801,22 @@ class PkgdbLibtests(Modeltests):
         collection = model.Collection.by_name(self.session, 'F-18')
         self.assertEqual(collection.status, 'Active')
 
-        pkgdblib.update_collection_status(self.session, 'F-18', 'EOL')
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.update_collection_status,
+                          self.session,
+                          'F-18',
+                          'EOL',
+                          user=FakeFasUser(),
+                          )
+
+        pkgdblib.update_collection_status(
+            self.session, 'F-18', 'EOL', user=FakeFasUserAdmin())
         self.session.commit()
-        msg = pkgdblib.update_collection_status(self.session, 'F-18',
-                                                'EOL')
+
+        msg = pkgdblib.update_collection_status(
+            self.session, 'F-18', 'EOL', user=FakeFasUserAdmin())
         self.assertEqual(msg, 'Collection "F-18" already had this status')
+
         collection = model.Collection.by_name(self.session, 'F-18')
         self.assertEqual(collection.status, 'EOL')
 
