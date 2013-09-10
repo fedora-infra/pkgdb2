@@ -116,6 +116,13 @@ class Packagetests(Modeltests):
         self.assertEqual(packages[0].listings[0].collection.branchname, 'F-18')
         self.assertEqual(packages[0].listings[1].collection.branchname, 'devel')
 
+        packages = model.Package.get_package_of_user(
+            self.session,
+            user='pingou',
+            pkg_status='Awaiting Review',
+        )
+        self.assertEqual(len(packages), 0)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Packagetests)
