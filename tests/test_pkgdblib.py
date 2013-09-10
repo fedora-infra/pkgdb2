@@ -944,6 +944,60 @@ class PkgdbLibtests(Modeltests):
         pkg = pkgdblib.get_package_maintained(self.session, 'ralph')
         self.assertEqual(pkg, [])
 
+    def test_edit_collection(self):
+        """ Test the edit_collection function. """
+        create_collection(self.session)
+
+        collection = pkgdblib.search_collection(self.session, 'F-18')[0]
+
+        out = pkgdblib.edit_collection(self.session, collection,
+                                       user=FakeFasUserAdmin())
+        self.assertEqual(out, None)
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.edit_collection,
+                          self.session,
+                          collection)
+
+        out = pkgdblib.edit_collection(
+            self.session,
+            collection,
+            clt_name='Fedora youhou!',
+            clt_version='Awesome 18',
+            clt_status='EOL',
+            clt_publishurl='http://.....',
+            clt_pendingurl='http://.....',
+            clt_summary='Fedora awesome release 18',
+            clt_description='This is a description of how cool Fedora is',
+            clt_branchname='f18_b',
+            clt_disttag='fc18',
+            clt_gitbranch='F-18',
+            user=FakeFasUserAdmin(),
+            )
+
+        collections = pkgdblib.search_collection(self.session, 'F-18')
+        self.assertEqual(collections, [])
+
+        collection = pkgdblib.search_collection(self.session, 'f18_b')[0]
+        self.assertEqual(collection.name, 'Fedora youhou!')
+        self.assertEqual(collection.status, 'EOL')
+
+    def test_get_top_maintainers(self):
+        """ Test the get_top_maintainers funtion. """
+        create_package_acl(self.session)
+
+        top = pkgdblib.get_top_maintainers(self.session)
+        self.assertEqual(top, [(u'pingou', 1)])
+
+
+    def test_get_top_poc(self):
+        """ Test the get_top_poc function. """
+        create_package_acl(self.session)
+
+        top = pkgdblib.get_top_poc(self.session)
+        self.assertEqual(top, [(u'pingou', 2)])
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
