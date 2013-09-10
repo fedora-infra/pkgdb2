@@ -278,17 +278,6 @@ class PackageListingAcl(BASE):
         return query.all()
 
     @classmethod
-    def by_user_pkglistid(cls, session, user, packagelisting_id):
-        """ Retrieve the ACL associated with a user name and a
-        collection.
-        """
-        return session.query(cls).filter(
-            PackageListingAcl.fas_name == user
-        ).filter(
-            PackageListingAcl.packagelisting_id == packagelisting_id
-        ).one()
-
-    @classmethod
     def get_acl_packager(cls, session, packager):
         """ Retrieve the ACLs associated with a packager.
 
