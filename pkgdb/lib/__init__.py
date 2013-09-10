@@ -63,8 +63,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     :arg pkg_name:
     ...
     """
-    ## TODO: check user is allowed to perform this action
-    if user is None:
+    if user is None or not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException("You're not allowed to add a package")
 
     if isinstance(pkg_name, (str, unicode)):
