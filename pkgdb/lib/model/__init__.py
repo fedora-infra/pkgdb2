@@ -160,11 +160,6 @@ class PkgAcls(BASE):
         self.status = status
 
     @classmethod
-    def all(cls, session):
-        """ Return all the Acls for packages. """
-        return session.query(cls.status).all()
-
-    @classmethod
     def all_txt(cls, session):
         """ Return all the Acls in plain text for packages. """
         return [item.status for item in session.query(cls).all()]
@@ -178,11 +173,6 @@ class PkgStatus(BASE):
     def __init__(self, status):
         """ Constructor. """
         self.status = status
-
-    @classmethod
-    def all(cls, session):
-        """ Return all the status for packages. """
-        return session.query(cls.status).all()
 
     @classmethod
     def all_txt(cls, session):
@@ -200,11 +190,6 @@ class AclStatus(BASE):
         self.status = status
 
     @classmethod
-    def all(cls, session):
-        """ Return all the status for packages. """
-        return session.query(cls.status).all()
-
-    @classmethod
     def all_txt(cls, session):
         """ Return all the status in plain text for packages. """
         return [item.status for item in session.query(cls).all()]
@@ -218,11 +203,6 @@ class CollecStatus(BASE):
     def __init__(self, status):
         """ Constructor. """
         self.status = status
-
-    @classmethod
-    def all(cls, session):
-        """ Return all the status for a collection. """
-        return session.query(cls).all()
 
     @classmethod
     def all_txt(cls, session):
