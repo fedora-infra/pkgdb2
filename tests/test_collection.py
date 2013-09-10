@@ -72,6 +72,9 @@ class Collectiontests(Modeltests):
         collections = model.Collection.search(self.session, 'F-%')
         self.assertEqual(2, len(collections))
 
+        cnt = model.Collection.search(self.session, 'F-%', count=True)
+        self.assertEqual(2, cnt)
+
         collections = model.Collection.search(
             session=self.session,
             clt_name='F-%',
