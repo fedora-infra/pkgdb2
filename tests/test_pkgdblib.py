@@ -30,6 +30,8 @@ import unittest
 import sys
 import os
 
+from datetime import date
+
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
 
@@ -1007,6 +1009,54 @@ class PkgdbLibtests(Modeltests):
 
         top = pkgdblib.get_top_poc(self.session)
         self.assertEqual(top, [(u'pingou', 2)])
+
+    def test_search_logs(self):
+        """ Test the search_logs function. """
+        self.test_add_package()
+
+        # Wrong limit
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_logs,
+                          self.session,
+                          limit='a'
+                          )
+
+        # Wrong offset
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_logs,
+                          self.session,
+                          page='a'
+                          )
+
+        logs = pkgdblib.search_logs(self.session)
+
+        self.assertEqual(len(logs), 18)
+        self.assertEqual(logs[0].description, "user: admin set acl: commit "
+                         "of package: guake from: Approved to: Approved on "
+                         "branch: F-18")
+        self.assertEqual(logs[0].user, "admin")
+        self.assertEqual(logs[3].description, "user: admin set acl: approveacls "
+                         "of package: guake from: Approved to: Approved on "
+                         "branch: F-18")
+
+        logs = pkgdblib.search_logs(self.session, limit=3, page=2)
+
+        self.assertEqual(len(logs), 3)
+        self.assertEqual(logs[0].description, "user: admin set acl: approveacls "
+                         "of package: guake from: Approved to: Approved on "
+                         "branch: F-18")
+        self.assertEqual(logs[0].user, "admin")
+
+        exp = "Log(user=u'admin', description=u'user: admin set acl: approveacls " \
+              "of package: guake from: Approved to: Approved on " \
+              "branch: F-18"
+        self.assertTrue(logs[0].__repr__().startswith(exp))
+
+        logs = pkgdblib.search_logs(self.session, count=True)
+        self.assertEqual(logs, 18)
+
+        logs = pkgdblib.search_logs(self.session, from_date=date.today())
+        self.assertEqual(len(logs), 18)
 
 
 if __name__ == '__main__':
