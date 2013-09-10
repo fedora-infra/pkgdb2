@@ -104,6 +104,11 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
     if pkg_poc.startswith('group::'):
         acls = ['commit', 'watchbugzilla', 'watchcommits']
+    if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
+        raise PkgdbException(
+                'Invalid group "%s" all groups in pkgdb should end with '
+                '"-sig".' % pkg_user)
+
     for pkg in pkg_name:
         for collec in pkg_collection:
             for acl in acls:
@@ -168,6 +173,11 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         raise PkgdbException(
                 'Groups cannot have "approveacls".')
 
+    if pkg_user.startswith('group::') and not pkg_user.endswith('-sig'):
+        raise PkgdbException(
+                'Invalid group "%s" all groups in pkgdb should end with '
+                '"-sig".' % pkg_user)
+
     try:
         pkglisting = model.PackageListing.by_pkgid_collectionid(
             session,
@@ -179,7 +189,6 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
                                             statusname='Approved')
         session.add(pkglisting)
         session.flush()
-    ## TODO: how do we get pkg_user's object?
 
     personpkg = model.PackageListingAcl.get_or_create(session,
                                                       pkg_user,
@@ -213,18 +222,33 @@ def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
                                                             package.id,
                                                             collection.id)
 
-    if pkglisting.point_of_contact == user.username \
-            or pkglisting.point_of_contact == 'orphan' \
-            or pkgdb.is_pkgdb_admin(user):
-        pkglisting.point_of_contact = pkg_poc
-        if pkg_poc == 'orphan':
-            pkglisting.status = 'Orphaned'
-        elif pkglisting.status in ('Orphaned', 'Deprecated'):
-            pkglisting.status = 'Approved'
-        session.add(pkglisting)
-        session.flush()
-    else:
-        raise PkgdbException('You are now allowed to change the owner.')
+    if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
+        raise PkgdbException(
+                'Invalid group "%s" all groups in pkgdb should end with '
+                '"-sig".' % pkg_user)
+
+    if pkglisting.point_of_contact != user.username \
+            and pkglisting.point_of_contact != 'orphan' \
+            and not pkgdb.is_pkgdb_admin(user) \
+            and not pkglisting.point_of_contact.startswith('group::'):
+        raise PkgdbException('You are not allowed to change the point of '
+                             'contact.')
+
+    if pkglisting.point_of_contact.startswith('group::'):
+        group = pkglisting.point_of_contact.split('group::')[1]
+        if not group in user.groups:
+            raise PkgdbException('You are not part of the group "%s", '
+                                 'you are not allowed to change the '
+                                 'point of contact.' % group)
+
+    pkglisting.point_of_contact = pkg_poc
+    if pkg_poc == 'orphan':
+        pkglisting.status = 'Orphaned'
+    elif pkglisting.status in ('Orphaned', 'Deprecated'):
+        pkglisting.status = 'Approved'
+
+    session.add(pkglisting)
+    session.flush()
 
     return 'Point of contact of branch: %s of package: %s has been changed ' \
         'to %s' %(clt_name, pkg_name, pkg_poc)
