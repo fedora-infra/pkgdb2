@@ -522,22 +522,6 @@ class Collection(BASE):
         return query.all()
 
 
-def collection_alias(pkg_listing):
-    '''Return the collection_alias that a package listing belongs to.
-
-    :arg pkg_listing: PackageListing to find the Collection for.
-    :returns: Collection Alias.  This is either the branchname or a combination
-        of the collection name and version.
-
-    This is used to make Branch keys for the dictionary mapping of pkg listings
-    into packages.
-    '''
-    return pkg_listing.collection.simple_name
-
-# Package and PackageListing are straightforward translations.  Look at these
-# if you're looking for a straightforward example.
-
-
 class PackageListing(BASE):
     '''This associates a package with a particular collection.
 
@@ -848,10 +832,6 @@ class Package(BASE):
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
     listings = relation(PackageListing)
-    listings2 = relation(PackageListing,
-                         #backref=backref('package'),
-                         collection_class=mapped_collection(collection_alias)
-                         )
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow())
