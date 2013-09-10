@@ -25,27 +25,28 @@ WTF Forms of the pkgdb Flask application.
 
 import flask
 from flask.ext import wtf
+import wtforms
 
 
 class AddCollectionForm(wtf.Form):
-    collection_name = wtf.TextField('Collection name',
-                                    [wtf.validators.Required()])
-    collection_version = wtf.TextField('version',
-                                       [wtf.validators.Required()])
-    collection_status = wtf.SelectField(
+    collection_name = wtforms.TextField('Collection name',
+                                    [wtforms.validators.Required()])
+    collection_version = wtforms.TextField('version',
+                                       [wtforms.validators.Required()])
+    collection_status = wtforms.SelectField(
         'Status',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    collection_publishURLTemplate = wtf.TextField('Publish URL template')
-    collection_pendingURLTemplate = wtf.TextField('Pending URL template')
-    collection_summary = wtf.TextField('Summary')
-    collection_description = wtf.TextField('Description')
-    collection_branchname = wtf.TextField('Branch name',
-                                          [wtf.validators.Required()])
-    collection_distTag = wtf.TextField('Dist tag',
-                                       [wtf.validators.Required()])
-    collection_git_branch_name = wtf.TextField('Git branch name')
+    collection_publishURLTemplate = wtforms.TextField('Publish URL template')
+    collection_pendingURLTemplate = wtforms.TextField('Pending URL template')
+    collection_summary = wtforms.TextField('Summary')
+    collection_description = wtforms.TextField('Description')
+    collection_branchname = wtforms.TextField('Branch name',
+                                          [wtforms.validators.Required()])
+    collection_distTag = wtforms.TextField('Dist tag',
+                                       [wtforms.validators.Required()])
+    collection_git_branch_name = wtforms.TextField('Git branch name')
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -79,11 +80,11 @@ class AddCollectionForm(wtf.Form):
 
 
 class CollectionStatusForm(wtf.Form):
-    collection_branchname = wtf.TextField('Branch name',
-                                          [wtf.validators.Required()])
-    collection_status = wtf.SelectField(
+    collection_branchname = wtforms.TextField('Branch name',
+                                          [wtforms.validators.Required()])
+    collection_status = wtforms.SelectField(
         'Status',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
 
@@ -101,28 +102,28 @@ class CollectionStatusForm(wtf.Form):
 
 
 class AddPackageForm(wtf.Form):
-    pkg_name = wtf.TextField('Package name',
-                             [wtf.validators.Required()])
-    pkg_summary = wtf.TextField('Summary',
-                                [wtf.validators.Required()])
-    pkg_reviewURL = wtf.TextField('Review URL',
-                                  [wtf.validators.Required()])
-    pkg_status = wtf.SelectField(
+    pkg_name = wtforms.TextField('Package name',
+                             [wtforms.validators.Required()])
+    pkg_summary = wtforms.TextField('Summary',
+                                [wtforms.validators.Required()])
+    pkg_reviewURL = wtforms.TextField('Review URL',
+                                  [wtforms.validators.Required()])
+    pkg_status = wtforms.SelectField(
         'Status',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_shouldopen = wtf.BooleanField('Should open',
-                                      [wtf.validators.Required()],
+    pkg_shouldopen = wtforms.BooleanField('Should open',
+                                      [wtforms.validators.Required()],
                                       default=True)
-    pkg_collection = wtf.SelectMultipleField(
+    pkg_collection = wtforms.SelectMultipleField(
         'Collection',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_poc = wtf.TextField('Point of contact', [wtf.validators.Required()])
-    pkg_upstreamURL = wtf.TextField('Upstream URL',
-                                    [wtf.validators.optional()])
+    pkg_poc = wtforms.TextField('Point of contact', [wtforms.validators.Required()])
+    pkg_upstreamURL = wtforms.TextField('Upstream URL',
+                                    [wtforms.validators.optional()])
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -143,20 +144,20 @@ class AddPackageForm(wtf.Form):
 
 
 class SetAclPackageForm(wtf.Form):
-    pkg_name = wtf.TextField('Package name',
-                             [wtf.validators.Required()])
-    pkg_branch = wtf.TextField('Fedora branch',
-                               [wtf.validators.Required()])
-    pkg_acl = wtf.SelectField(
+    pkg_name = wtforms.TextField('Package name',
+                             [wtforms.validators.Required()])
+    pkg_branch = wtforms.TextField('Fedora branch',
+                               [wtforms.validators.Required()])
+    pkg_acl = wtforms.SelectField(
         'ACL',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_user = wtf.TextField('Packager name',
-                             [wtf.validators.Required()])
-    pkg_status = wtf.SelectField(
+    pkg_user = wtforms.TextField('Packager name',
+                             [wtforms.validators.Required()])
+    pkg_status = wtforms.SelectField(
         'Status',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
 
@@ -179,14 +180,14 @@ class SetAclPackageForm(wtf.Form):
 
 
 class RequestAclPackageForm(wtf.Form):
-    pkg_branch = wtf.SelectMultipleField(
+    pkg_branch = wtforms.SelectMultipleField(
         'Branch',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[('', '')])
 
-    pkg_acl = wtf.SelectMultipleField(
+    pkg_acl = wtforms.SelectMultipleField(
         'ACL',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[('', '')]
     )
 
@@ -210,18 +211,18 @@ class RequestAclPackageForm(wtf.Form):
 
 
 class UpdateAclPackageForm(wtf.Form):
-    pkg_branch = wtf.SelectMultipleField(
+    pkg_branch = wtforms.SelectMultipleField(
         'Branch',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[('', '')])
-    pkg_acl = wtf.SelectMultipleField(
+    pkg_acl = wtforms.SelectMultipleField(
         'ACL',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    acl_status = wtf.SelectField(
+    acl_status = wtforms.SelectField(
         'Status',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
 
@@ -248,13 +249,13 @@ class UpdateAclPackageForm(wtf.Form):
 
 
 class PackageStatusForm(wtf.Form):
-    pkg_name = wtf.TextField('Package name',
-                             [wtf.validators.Required()])
-    collection_name = wtf.TextField('Collection name',
-                                    [wtf.validators.Required()])
-    pkg_status = wtf.SelectField(
+    pkg_name = wtforms.TextField('Package name',
+                             [wtforms.validators.Required()])
+    collection_name = wtforms.TextField('Collection name',
+                                    [wtforms.validators.Required()])
+    pkg_status = wtforms.SelectField(
         'Status',
-        [wtf.validators.Required()],
+        [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
 
@@ -272,16 +273,16 @@ class PackageStatusForm(wtf.Form):
 
 
 class PackageOwnerForm(wtf.Form):
-    pkg_name = wtf.TextField('Package name',
-                             [wtf.validators.Required()])
-    clt_name = wtf.TextField('Fedora branch',
-                             [wtf.validators.Required()])
-    pkg_poc = wtf.TextField('New point of contact',
-                              [wtf.validators.Required()])
+    pkg_name = wtforms.TextField('Package name',
+                             [wtforms.validators.Required()])
+    clt_name = wtforms.TextField('Fedora branch',
+                             [wtforms.validators.Required()])
+    pkg_poc = wtforms.TextField('New point of contact',
+                              [wtforms.validators.Required()])
 
 
 class DeprecatePackageForm(wtf.Form):
-    pkg_name = wtf.TextField('Package name',
-                             [wtf.validators.Required()])
-    clt_name = wtf.TextField('Fedora branch',
-                             [wtf.validators.Required()])
+    pkg_name = wtforms.TextField('Package name',
+                             [wtforms.validators.Required()])
+    clt_name = wtforms.TextField('Fedora branch',
+                             [wtforms.validators.Required()])
