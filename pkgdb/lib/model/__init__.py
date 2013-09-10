@@ -68,7 +68,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     """
     engine = create_engine(db_url, echo=debug)
     BASE.metadata.create_all(engine)
-    engine.execute(collection_package_create_view(driver=engine.driver))
+    #engine.execute(collection_package_create_view(driver=engine.driver))
     if db_url.startswith('sqlite:'):
         def _fk_pragma_on_connect(dbapi_con, con_record):
             dbapi_con.execute('pragma foreign_keys=ON')
@@ -110,44 +110,44 @@ def create_status(session):
 
 
 
-## TODO: this is a view, create it as such...
-class CollectionPackage(Executable, ClauseElement):
-    '''Information about how many `Packages` are in a `Collection`
+### TODO: this is a view, create it as such...
+#class CollectionPackage(Executable, ClauseElement):
+    #'''Information about how many `Packages` are in a `Collection`
 
-    View -- CollectionPackage
-    '''
+    #View -- CollectionPackage
+    #'''
 
-    __tablename__ = 'CollectionPackage'
-    id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    name = sa.Column(sa.Text, nullable=False)
-    version = sa.Column(sa.Text, nullable=False)
-    status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
-                               name='collection_status'),
-                       nullable=False)
-    numpkgs = sa.Column(sa.Integer, nullable=False)
+    #__tablename__ = 'CollectionPackage'
+    #id = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    #name = sa.Column(sa.Text, nullable=False)
+    #version = sa.Column(sa.Text, nullable=False)
+    #status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
+                               #name='collection_status'),
+                       #nullable=False)
+    #numpkgs = sa.Column(sa.Integer, nullable=False)
 
-    # pylint: disable-msg=R0902, R0903
-    def __repr__(self):
-        # pylint: disable-msg=E1101
-        return 'CollectionPackage(id=%r, name=%r, version=%r,' \
-            ' status=%r, numpkgs=%r,' \
-            % (self.id, self.name, self.version, self.status,
-               self.numpkgs)
+    ## pylint: disable-msg=R0902, R0903
+    #def __repr__(self):
+        ## pylint: disable-msg=E1101
+        #return 'CollectionPackage(id=%r, name=%r, version=%r,' \
+            #' status=%r, numpkgs=%r,' \
+            #% (self.id, self.name, self.version, self.status,
+               #self.numpkgs)
 
 
-@compiles(CollectionPackage)
-def collection_package_create_view(*args, **kw):
-    sql_string = 'CREATE OR REPLACE VIEW'
-    if 'driver' in kw:
-        if kw['driver'] == 'pysqlite':
-            sql_string = 'CREATE VIEW IF NOT EXISTS'
-    return '%s CollectionPackage AS '\
-           'SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs '\
-           'FROM "PackageListing" pl, "Collection" c '\
-           'WHERE pl.collection_id = c.id '\
-           'AND pl.status = "Approved" '\
-           'GROUP BY c.id, c.name, c.version, c.status '\
-           'ORDER BY c.name, c.version;' % sql_string
+#@compiles(CollectionPackage)
+#def collection_package_create_view(*args, **kw):
+    #sql_string = 'CREATE OR REPLACE VIEW'
+    #if 'driver' in kw:
+        #if kw['driver'] == 'pysqlite':
+            #sql_string = 'CREATE VIEW IF NOT EXISTS'
+    #return '%s CollectionPackage AS '\
+           #'SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs '\
+           #'FROM "PackageListing" pl, "Collection" c '\
+           #'WHERE pl.collection_id = c.id '\
+           #'AND pl.status = "Approved" '\
+           #'GROUP BY c.id, c.name, c.version, c.status '\
+           #'ORDER BY c.name, c.version;' % sql_string
 
 
 class PkgAcls(BASE):
