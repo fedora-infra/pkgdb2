@@ -246,7 +246,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          user=FakeFasUser,
+                          user=FakeFasUser(),
                           pkg_poc='toshio',
                           )
         self.session.rollback()
