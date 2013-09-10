@@ -484,7 +484,7 @@ class PkgdbLibtests(Modeltests):
 
     def test_update_pkg_status(self):
         """ Test the update_pkg_status function. """
-        self.test_add_package()
+        create_package_acl(self.session)
 
         # Wrong package
         self.assertRaises(pkgdblib.PkgdbException,
@@ -503,7 +503,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='guake',
                           clt_name='F-16',
-                          status='Deprecated',
+                          status='Orphaned',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
@@ -543,17 +543,104 @@ class PkgdbLibtests(Modeltests):
 
         # Admin can retire package
         pkgdblib.update_pkg_status(self.session,
-                               pkg_name='guake',
-                               clt_name='F-18',
-                               status='Deprecated',
-                               user=FakeFasUserAdmin()
-                               )
+                                   pkg_name='guake',
+                                   clt_name='F-18',
+                                   status='Deprecated',
+                                   user=FakeFasUserAdmin()
+                                   )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
         self.assertEqual(pkg_acl[0].status, 'Deprecated')
+
+        # User can orphan package
+        pkgdblib.update_pkg_status(self.session,
+                                   pkg_name='guake',
+                                   clt_name='devel',
+                                   status='Orphaned',
+                                   user=FakeFasUser()
+                                   )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
+        self.assertEqual(pkg_acl[0].status, 'Deprecated')
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_acl[1].package.name, 'guake')
+        self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
+        self.assertEqual(pkg_acl[1].status, 'Orphaned')
+
+        # Admin must give a poc when un-orphan/un-retire a package
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.update_pkg_status,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='devel',
+                          status='Approved',
+                          user=FakeFasUserAdmin()
+                          )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
+        self.assertEqual(pkg_acl[0].status, 'Deprecated')
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_acl[1].package.name, 'guake')
+        self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
+        self.assertEqual(pkg_acl[1].status, 'Orphaned')
+
+
+        # Admin can un-orphan package
+        pkgdblib.update_pkg_status(self.session,
+                                   pkg_name='guake',
+                                   clt_name='devel',
+                                   status='Approved',
+                                   poc="pingou",
+                                   user=FakeFasUserAdmin()
+                                   )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
+        self.assertEqual(pkg_acl[0].status, 'Deprecated')
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_acl[1].package.name, 'guake')
+        self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
+        self.assertEqual(pkg_acl[1].status, 'Approved')
+
+        # Admin can un-retire package
+        pkgdblib.update_pkg_status(self.session,
+                                   pkg_name='guake',
+                                   clt_name='F-18',
+                                   status='Approved',
+                                   poc="pingou",
+                                   user=FakeFasUserAdmin()
+                                   )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
+        self.assertEqual(pkg_acl[0].status, 'Approved')
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_acl[1].package.name, 'guake')
+        self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
+        self.assertEqual(pkg_acl[1].status, 'Approved')
+
+        # Not Admin and status is not Orphaned nor Deprecated
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.update_pkg_status,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='devel',
+                          status='Removed',
+                          user=FakeFasUser()
+                          )
 
     def test_search_collection(self):
         """ Test the search_collection function. """
