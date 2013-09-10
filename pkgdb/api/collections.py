@@ -138,6 +138,7 @@ def api_collection_status(collection):
                     SESSION,
                     clt_branchname,
                     clt_status,
+                    user=flask.g.fas_user
                 )
                 SESSION.commit()
                 output['output'] = 'ok'

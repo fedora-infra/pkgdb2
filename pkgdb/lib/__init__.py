@@ -618,13 +618,15 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
             raise PkgdbException('Could not edit Collection.')
 
 
-def update_collection_status(session, clt_branchname, clt_status):
+def update_collection_status(session, clt_branchname, clt_status, user):
     """ Update the status of a collection.
 
     :arg session: session with which to connect to the database
     :arg clt_branchname: branchname of the collection
     :arg clt_status: status of the collection
     """
+    if not pkgdb.is_pkgdb_admin(user):
+        raise PkgdbException('You are now allowed to edit collections')
 
     try:
         collection = model.Collection.by_name(session, clt_branchname)
