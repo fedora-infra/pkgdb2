@@ -933,6 +933,16 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(obs['pkg_acl'], pkg_acl)
         self.assertEqual(obs['acl_status'], acl_status)
 
+    def test_get_package_maintained(self):
+        """ Test the get_package_maintained function. """
+        create_package_acl(self.session)
+
+        pkg = pkgdblib.get_package_maintained(self.session, 'pingou')
+        self.assertEqual(len(pkg), 1)
+        self.assertEqual(pkg[0].name, 'guake')
+
+        pkg = pkgdblib.get_package_maintained(self.session, 'ralph')
+        self.assertEqual(pkg, [])
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
