@@ -441,7 +441,7 @@ class Collection(BASE):
     def __repr__(self):
         return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
                ' pendingurltemplate=%r, summary=%r, description=%r)' % (
-                   qself.name, self.version, self.status, self.owner,
+                   self.name, self.version, self.status, self.owner,
                    self.publishURLTemplate, self.pendingURLTemplate,
                    self.summary, self.description)
 
