@@ -141,10 +141,11 @@ APP.register_blueprint(API)
 
 # Import the UI namespace
 from ui import UI
+from ui import acls
+from ui import admin
+from ui import collections
 from ui import packages
 from ui import packagers
-from ui import collections
-from ui import acls
 APP.register_blueprint(UI)
 
 
