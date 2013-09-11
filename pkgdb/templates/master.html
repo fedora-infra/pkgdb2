@@ -10,6 +10,9 @@
         href="{{ url_for('static', filename='koji.css') }}"/>
     <link rel="stylesheet" type="text/css" media="screen"
         href="{{ url_for('static', filename='pkgdb.css') }}"/>
+    <link type="text/css" rel="stylesheet"
+        href="{{ url_for('static',
+            filename='jquery-ui-1.9.2.custom.css')}}" />
   </head>
   <body id="{%block tag %}{% endblock %}">
 
@@ -94,6 +97,14 @@
     </div>
 
     {% block jscripts %}
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery-1.8.0.min.js') }}">
+    </script>
+    <script type="text/javascript"
+        src="{{ url_for('static',
+            filename='jquery-ui-1.9.2.custom.min.js') }}">
+    </script>
     {% endblock %}
 
   </body>
