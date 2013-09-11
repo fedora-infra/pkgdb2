@@ -20,6 +20,8 @@
 #
 
 import sqlalchemy
+
+from datetime import timedelta
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
@@ -271,6 +273,7 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
     return 'Point of contact of branch: %s of package: %s has been changed ' \
         'to %s' %(clt_name, pkg_name, pkg_poc)
 
+
 def update_pkg_status(session, pkg_name, clt_name, status, user,
                       poc='orphan'):
     """ Update the status of a package.
@@ -470,11 +473,12 @@ def search_packagers(session, pattern, page=None, limit=None,
     return packages
 
 
-def search_logs(session, from_date=None, page=None, limit=None,
+def search_logs(session, package=None, from_date=None, page=None, limit=None,
         count=False):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database
+    :kwarg package: retrict the logs to a certain package
     :kwarg from_date: a date from which to retrieve the logs
     :kwarg page: the page number to apply to the results
     :kwarg limit: the number of results to return
@@ -494,10 +498,23 @@ def search_logs(session, from_date=None, page=None, limit=None,
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
+    package_id = None
+    if package is not None:
+        package = search_package(session, package, limit=1)
+        if not package:
+            raise PkgdbException('No package exists')
+        else:
+            package_id = package[0].id
+
     if page is not None and limit is not None and limit != 0:
         page = (page - 1) * int(limit)
 
+    if from_date:
+        # Make sure we get all the events of the day asked
+        from_date = from_date + timedelta(days=1)
+
     return model.Log.search(session,
+                            package_id=package_id,
                             from_date=from_date,
                             offset=page,
                             limit=limit,
