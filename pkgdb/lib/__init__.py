@@ -128,14 +128,29 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         raise PkgdbException('Could not add ACLs')
 
 
-def get_acl_package(session, pkg_name):
+def get_acl_package(session, pkg_name, pkg_clt=None):
     """ Return the ACLs for the specified package.
 
     :arg session: session with which to connect to the database
     :arg pkg_name: the name of the package to retrieve the ACLs for
+    :kward pkg_clt: the branche name of the collection to retrieve the ACLs
+        of
     """
     package = model.Package.by_name(session, pkg_name)
     pkglisting = model.PackageListing.by_package_id(session, package.id)
+    if pkg_clt:
+        tmp = None
+        for pkglist in pkglisting:
+            if pkglist.collection.branchname == pkg_clt:
+                tmp = pkglist
+                break
+        if tmp is None:
+            raise PkgdbException(
+                'Collection %s is not associated with package %s' %(
+                    pkg_clt, pkg_name)
+            )
+        else:
+            pkglisting = tmp
     return pkglisting
 
 
