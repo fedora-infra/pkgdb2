@@ -1030,6 +1030,13 @@ class PkgdbLibtests(Modeltests):
                           page='a'
                           )
 
+        # Wrong package name
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.search_logs,
+                          self.session,
+                          package='asdads'
+                          )
+
         logs = pkgdblib.search_logs(self.session)
 
         self.assertEqual(len(logs), 21)
@@ -1058,6 +1065,10 @@ class PkgdbLibtests(Modeltests):
 
         logs = pkgdblib.search_logs(self.session, from_date=date.today())
         self.assertEqual(len(logs), 21)
+
+        logs = pkgdblib.search_logs(
+            self.session, from_date=date.today(), package='guake')
+        self.assertEqual(len(logs), 5)
 
 
 if __name__ == '__main__':
