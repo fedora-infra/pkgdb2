@@ -19,9 +19,9 @@
 # of Red Hat, Inc.
 #
 
-'''
+"""
 Mapping of python classes to Database Tables.
-'''
+"""
 
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
@@ -110,10 +110,10 @@ def create_status(session):
 
 ### TODO: this is a view, create it as such...
 #class CollectionPackage(Executable, ClauseElement):
-    #'''Information about how many `Packages` are in a `Collection`
+    #"""Information about how many `Packages` are in a `Collection`
 
     #View -- CollectionPackage
-    #'''
+    #"""
 
     #__tablename__ = 'CollectionPackage'
     #id = sa.Column(sa.Integer, nullable=False, primary_key=True)
@@ -208,10 +208,10 @@ class CollecStatus(BASE):
 
 
 class PackageListingAcl(BASE):
-    '''Give a person or a group ACLs on a specific PackageListing.
+    """Give a person or a group ACLs on a specific PackageListing.
 
     Table -- PackageListingAcl
-    '''
+    """
 
     __tablename__ = 'PackageListingAcl'
 
@@ -241,12 +241,12 @@ class PackageListingAcl(BASE):
 
     @classmethod
     def all(cls, session):
-        ''' Return the list of all Collections present in the database.
+        """ Return the list of all Collections present in the database.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
 
-        '''
+        """
         return session.query(cls).all()
 
     @classmethod
@@ -394,10 +394,10 @@ class PackageListingAcl(BASE):
 
 
 class Collection(BASE):
-    '''A Collection of packages.
+    """A Collection of packages.
 
     Table -- Collection
-    '''
+    """
 
     __tablename__ = 'Collection'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
@@ -467,32 +467,32 @@ class Collection(BASE):
 
     @classmethod
     def by_name(cls, session, branch_name):
-        '''Return the Collection that matches the simple name
+        """Return the Collection that matches the simple name
 
         :arg branch_name: branch name for a Collection
         :returns: The Collection that matches the name
         :raises sqlalchemy.InvalidRequestError: if the simple name is not found
 
         simple_name will be looked up as the Branch name.
-        '''
+        """
         collection = session.query(cls).filter(
             Collection.branchname == branch_name).one()
         return collection
 
     @classmethod
     def all(cls, session):
-        ''' Return the list of all Collections present in the database.
+        """ Return the list of all Collections present in the database.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
 
-        '''
+        """
         return session.query(cls).all()
 
     @classmethod
     def search(cls, session, clt_name, clt_status=None, offset=None,
                limit=None, count=False):
-        ''' Return the Collections matching the criteria.
+        """ Return the Collections matching the criteria.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
@@ -503,7 +503,7 @@ class Collection(BASE):
         :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
 
-        '''
+        """
         # Get all the packages matching the name
         query = session.query(Collection).filter(
             Collection.branchname.like(clt_name)
@@ -522,10 +522,10 @@ class Collection(BASE):
 
 
 class PackageListing(BASE):
-    '''This associates a package with a particular collection.
+    """This associates a package with a particular collection.
 
     Table -- PackageListing
-    '''
+    """
 
     __tablename__ = 'PackageListing'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
@@ -581,7 +581,7 @@ class PackageListing(BASE):
 
     @classmethod
     def by_pkgid_collectionid(cls, session, pkgid, collectionid):
-        '''Return the PackageListing for the provided package in the
+        """Return the PackageListing for the provided package in the
         specified collection.
 
         :arg pkgid: Integer, identifier of the package in the Package
@@ -592,7 +592,7 @@ class PackageListing(BASE):
             and collection iddentifier
         :raises sqlalchemy.InvalidRequestError: if the simple name is not found
 
-        '''
+        """
         return session.query(cls).filter(
             PackageListing.package_id == pkgid
         ).filter(
@@ -720,7 +720,7 @@ class PackageListing(BASE):
             raise NotImplementedError("Unsupported version %r" % version)
 
     def clone(self, branch, author_name):
-        '''Clone the permissions on this PackageListing to another `Branch`.
+        """Clone the permissions on this PackageListing to another `Branch`.
 
         :arg branch: `branchname` to make a new clone for
         :arg author_name: Author of the change.  Note, will remove when logs
@@ -730,7 +730,7 @@ class PackageListing(BASE):
             somehow.
         :returns: new branch
         :rtype: PackageListing
-        '''
+        """
         # Retrieve the PackageListing for the to clone branch
         try:
             #pylint:disable-msg=E1101
@@ -815,13 +815,13 @@ class PackageListing(BASE):
 
 
 class Package(BASE):
-    '''Software we are packaging.
+    """Software we are packaging.
 
     This is equal to the software in one of our revision control directories.
     It is unversioned and not associated with a particular collection.
 
     Table -- Package
-    '''
+    """
 
     __tablename__ = 'Package'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
@@ -876,7 +876,7 @@ class Package(BASE):
 
     def create_listing(self, collection, point_of_contact, statusname,
                        author_name=None):
-        '''Create a new PackageListing branch on this Package.
+        """Create a new PackageListing branch on this Package.
 
         :arg collection: Collection that the new PackageListing lives on
         :arg owner: The owner of the PackageListing
@@ -887,7 +887,7 @@ class Package(BASE):
 
         This creates a new PackageListing for this Package.
         The PackageListing has default values set for group acls.
-        '''
+        """
         pkg_listing = PackageListing(point_of_contact=point_of_contact,
                                      status=statusname,
                                      collection_id=collection.id)
@@ -898,12 +898,12 @@ class Package(BASE):
 
     @classmethod
     def all(cls, session):
-        ''' Return the list of all Collections present in the database.
+        """ Return the list of all Collections present in the database.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
 
-        '''
+        """
         return session.query(cls).all()
 
     @classmethod
@@ -968,8 +968,8 @@ class Package(BASE):
         return query.all()
 
     def to_json(self):
-        ''' Return a dictionnary representation of the object.
-        '''
+        """ Return a dictionnary representation of the object.
+        """
         acls = [pkg.to_json() for pkg in self.listings]
         return {'name': self.name,
                 'summary': self.summary,
@@ -982,12 +982,12 @@ class Package(BASE):
 
 
 class Log(BASE):
-    '''Base Log record.
+    """Base Log record.
 
     This is a Log record.  All logs will be entered via a subclass of this.
 
     Table -- Log
-    '''
+    """
 
     __tablename__ = 'Log'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
@@ -1016,7 +1016,7 @@ class Log(BASE):
     @classmethod
     def search(cls, session, package_id=None, from_date=None, limit=None,
                offset=None, count=False):
-        ''' Return the list of the last Log entries present in the database.
+        """ Return the list of the last Log entries present in the database.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
@@ -1026,7 +1026,7 @@ class Log(BASE):
         :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
 
-        '''
+        """
         query = session.query(
             cls
         )
@@ -1051,7 +1051,7 @@ class Log(BASE):
 
     @classmethod
     def insert(cls, session, user, package, description):
-        ''' Insert the given log entry into the database.
+        """ Insert the given log entry into the database.
 
         :arg session: the session to connect to the database with
         :arg user: the username of the user doing the action
@@ -1059,7 +1059,7 @@ class Log(BASE):
         :arg description: a short textual description of the action
             performed
 
-        '''
+        """
         if package:
             log = Log(user, package.id, description)
         else:
