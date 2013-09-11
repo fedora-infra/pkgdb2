@@ -174,6 +174,66 @@ class PackageListingtests(Modeltests):
             self.session, 'pi%', limit=1)
         self.assertEqual(len(pkg), 1)
 
+    def test_by_collectionid(self):
+        """ Test the by_collectionid method of PackageListing. """
+        create_package_acl(self.session)
+
+        # Collection 2 == F-18
+        pkg_list = model.PackageListing.by_collectionid(self.session, 2)
+        self.assertEqual(len(pkg_list), 3)
+        self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_list[1].collection.branchname, 'F-18')
+        self.assertEqual(pkg_list[2].collection.branchname, 'F-18')
+
+        # Collection 3 == devel
+        pkg_list = model.PackageListing.by_collectionid(self.session, 3)
+        self.assertEqual(len(pkg_list), 2)
+        self.assertEqual(pkg_list[0].collection.branchname, 'devel')
+        self.assertEqual(pkg_list[1].collection.branchname, 'devel')
+
+
+    def test_branch(self):
+        """ Test the branch method of PackageListing. """
+        create_package_acl(self.session)
+
+        pkg = model.Package.by_name(self.session, 'guake')
+        pkg_list = model.PackageListing.by_package_id(self.session,
+                                                     pkg.id)
+        self.assertEqual(len(pkg_list), 2)
+        self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
+        self.assertEqual(len(pkg_list[0].acls), 2)
+        self.assertEqual(pkg_list[1].collection.branchname, 'devel')
+        self.assertEqual(len(pkg_list[1].acls), 3)
+
+        # Create a new collection
+        new_collection = model.Collection(
+                                  name='Fedora',
+                                  version='19',
+                                  status='Active',
+                                  owner='toshio',
+                                  publishURLTemplate=None,
+                                  pendingURLTemplate=None,
+                                  summary='Fedora 19 release',
+                                  description=None,
+                                  branchname='F-19',
+                                  distTag='.fc19',
+                                  git_branch_name='f19',
+                                  )
+        self.session.add(new_collection)
+        self.session.commit()
+
+        # Branch guake from devel to F-19
+        pkg_list[1].branch(self.session, new_collection)
+
+        pkg_list = model.PackageListing.by_package_id(self.session,
+                                                     pkg.id)
+        self.assertEqual(len(pkg_list), 3)
+        self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_list[1].collection.branchname, 'devel')
+        self.assertEqual(len(pkg_list[1].acls), 3)
+        self.assertEqual(pkg_list[2].collection.branchname, 'F-19')
+        self.assertEqual(len(pkg_list[2].acls), 3)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PackageListingtests)

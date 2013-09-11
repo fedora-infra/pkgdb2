@@ -1167,6 +1167,60 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
         self.assertEqual(pkg_acl[1].status, 'Approved')
 
+    def test_add_branch(self):
+        """ Test the add_branch function. """
+        create_package_acl(self.session)
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(len(pkg_acl), 2)
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+
+        # Create a new collection
+        new_collection = model.Collection(
+                                  name='Fedora',
+                                  version='19',
+                                  status='Active',
+                                  owner='toshio',
+                                  publishURLTemplate=None,
+                                  pendingURLTemplate=None,
+                                  summary='Fedora 19 release',
+                                  description=None,
+                                  branchname='F-19',
+                                  distTag='.fc19',
+                                  git_branch_name='f19',
+                                  )
+        self.session.add(new_collection)
+        self.session.commit()
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_branch,
+                          session=self.session,
+                          clt_from='devel',
+                          clt_to='F-19',
+                          user=FakeFasUser()
+                          )
+
+        pkgdblib.add_branch(
+            session=self.session,
+            clt_from='devel',
+            clt_to='F-19',
+            user=FakeFasUserAdmin()
+        )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(len(pkg_acl), 3)
+        self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
+        self.assertEqual(len(pkg_acl[0].acls), 2)
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+        self.assertEqual(len(pkg_acl[1].acls), 3)
+        self.assertEqual(pkg_acl[2].collection.branchname, 'F-19')
+        self.assertEqual(len(pkg_acl[2].acls), 3)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
