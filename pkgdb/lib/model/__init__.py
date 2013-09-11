@@ -600,6 +600,20 @@ class PackageListing(BASE):
         ).one()
 
     @classmethod
+    def by_collectionid(cls, session, collectionid):
+        """Return all the PackageListing for the specified collection.
+
+        :arg collectionid: Integer, identifier of the collection in the
+            Collection table
+        :returns: The PackageListing that matches the collection iddentifier
+        :raises sqlalchemy.InvalidRequestError: if the simple name is not found
+
+        """
+        return session.query(cls).filter(
+            PackageListing.collection_id == collectionid
+        ).all()
+
+    @classmethod
     def search(cls, session, pkg_name, clt_id, pkg_owner=None,
                pkg_status=None, offset=None, limit=None, count=False):
         """
@@ -719,92 +733,31 @@ class PackageListing(BASE):
         else:  # pragma: no cover
             raise NotImplementedError("Unsupported version %r" % version)
 
-    def clone(self, branch, author_name):
+    def branch(self, session, branch_to):
         """Clone the permissions on this PackageListing to another `Branch`.
 
-        :arg branch: `branchname` to make a new clone for
-        :arg author_name: Author of the change.  Note, will remove when logs
-            are made generic
-        :raises sqlalchemy.exceptions.InvalidRequestError: when a request
-            does something that violates the SQL integrity of the database
-            somehow.
-        :returns: new branch
-        :rtype: PackageListing
+        :kwarg branch_to: the Collection object to branch to (ie: new
+            Fedora or new EPEL).
         """
-        # Retrieve the PackageListing for the to clone branch
-        try:
-            #pylint:disable-msg=E1101
-            clone_branch = PackageListing.query.join('package').join(
-                'collection'
-            ).filter(
-                and_(Package.name == self.package.name,
-                     Collection.branchname == branch)
-            ).one()
-            #pylint:enable-msg=E1101
-        except InvalidRequestError:
-            ### Create a new package listing for this release ###
+        # Create new PackageListing
+        pkg_listing = PackageListing(
+            point_of_contact=self.point_of_contact,
+            status=self.status,
+            package_id=self.package.id,
+            collection_id=branch_to.id
+        )
+        session.add(pkg_listing)
+        session.flush()
 
-            # Retrieve the collection to make the branch for
-            #pylint:disable-msg=E1101
-            clone_collection = Branch.query.filter_by(branchname=branch).one()
-            #pylint:enable-msg=E1101
-            # Create the new PackageListing
-            clone_branch = self.package.create_listing(
-                clone_collection,
-                self.owner,
-                STATUS[self.statuscode],
-                qacontact=self.qacontact,
-                author_name=author_name)
-
-        log_params = {'user': author_name,
-                      'pkg': self.package.name,
-                      'branch': branch}
-        # Iterate through the acls in the master_branch
-        #pylint:disable-msg=E1101
-        for group_name, group in self.groups2.iteritems():
-        #pylint:enable-msg=E1101
-            log_params['group'] = group_name
-            if group_name not in clone_branch.groups2:
-                # Associate the group with the packagelisting
-                #pylint:disable-msg=E1101
-                clone_branch.groups2[group_name] = \
-                    GroupPackageListing(group_name)
-                #pylint:enable-msg=E1101
-            clone_group = clone_branch.groups2[group_name]
-            for acl_name, acl in group.acls2.iteritems():
-                if acl_name not in clone_group.acls2:
-                    clone_group.acls2[acl_name] = \
-                        GroupPackageListingAcl(acl_name, acl.status)
-                else:
-                    # Set the acl to have the correct status
-                    if acl.status != clone_group.acls2[acl_name].status:
-                        clone_group.acls2[acl_name].status = acl.status
-
-                #TODO: Create a log message for this acl
-
-        #pylint:disable-msg=E1101
-        for person_name, person in self.people2.iteritems():
-        #pylint:enable-msg=E1101
-            log_params['person'] = person_name
-            if person_name not in clone_branch.people2:
-                # Associate the person with the packagelisting
-                #pylint:disable-msg=E1101
-                clone_branch.people2[person_name] = \
-                    PersonPackageListing(person_name)
-                #pylint:enable-msg=E1101
-            clone_person = clone_branch.people2[person_name]
-            for acl_name, acl in person.acls2.iteritems():
-                if acl_name not in clone_person.acls2:
-                    clone_person.acls2[acl_name] = \
-                        PersonPackageListingAcl(acl_name, acl.status)
-                else:
-                    # Set the acl to have the correct status
-                    if clone_person.acls2[acl_name].status \
-                            != acl.status:
-                        clone_person.acls2[acl_name].status = acl.status
-                #TODO: Create a log message for this acl
-
-        return clone_branch
+        # Propagates the ACLs
+        for acl in self.acls:
+            pkg_list_acl = PackageListingAcl(
+                fas_name=acl.fas_name,
+                packagelisting_id=pkg_listing.id,
+                acl=acl.acl,
+                status=acl.status)
+            session.add(pkg_list_acl)
+        session.flush()
 
     def to_json(self):
         """ Return a dictionnary representation of this object. """
