@@ -92,6 +92,14 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     except SQLAlchemyError, err:  # pragma: no cover
         raise PkgdbException('Could not add packages to collections')
 
+    model.Log.insert(
+        session,
+        user.username,
+        package,
+        'user: %s created package: %s on branch: %s for poc: %s' % (
+            user.username, package.name, collection.branchname, pkg_poc)
+        )
+
     # Add all new ACLs to the owner
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
     if pkg_poc.startswith('group::'):
