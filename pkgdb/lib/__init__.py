@@ -880,3 +880,47 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
                 clt_name)
         )
     session.flush()
+
+
+def add_branch(session, clt_from, clt_to, user):
+    """ Clone a the permission from a branch to another.
+
+    :arg session: session with which to connect to the database
+    :arg clt_from: the ``branchname`` of the collection to branch from
+    :arg clt_to: the ``branchname`` of the collection to branch to
+    :arg user: the user making the action
+    """
+    if not pkgdb.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to branch: %s to %s' % (
+            clt_from, clt_to))
+
+    try:
+        clt_from = model.Collection.by_name(session, clt_from)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % clt_from)
+
+    try:
+        clt_to = model.Collection.by_name(session, clt_to)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % clt_to)
+
+    model.Log.insert(
+        session,
+        user.username,
+        None,
+        'user: %s started branching from %s to %s' % (
+            user.username, clt_from.branchname, clt_to.branchname)
+    )
+    session.commit()
+
+    for pkglist in model.PackageListing.by_collectionid(session, clt_from.id):
+        if pkglist.status == 'Approved':
+            pkglist.branch(session, clt_to)
+
+    model.Log.insert(
+        session,
+        user.username,
+        None,
+        'user: %s finished branching from %s to %s' % (
+            user.username, clt_from.branchname, clt_to.branchname)
+    )
