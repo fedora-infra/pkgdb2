@@ -83,8 +83,7 @@ class FlaskApiCollectionTest(Modeltests):
         data = json.loads(output.data)
         self.assertEqual(data, {
             "output": "notok",
-            # TODO -- this should be "not"
-            "error": "You are now allowed to edit collections",
+            "error": "You are not allowed to edit collections",
         })
 
         create_collection(self.session)
