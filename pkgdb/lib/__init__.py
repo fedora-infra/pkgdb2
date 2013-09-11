@@ -333,7 +333,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
             session.flush()
         else:
             raise PkgdbException(
-                'You are now allowed to deprecate the '
+                'You are not allowed to deprecate the '
                 'package: %s on branch %s.' % (
                     package.name, collection.branchname))
     elif status == 'Orphaned':
@@ -355,7 +355,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
 
     else:
         raise PkgdbException(
-            'You are now allowed to update the status of '
+            'You are not allowed to update the status of '
             'the package: %s on branch %s to %s.' % (
                 package.name, collection.branchname, status)
         )
@@ -568,7 +568,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
     """
 
     if not pkgdb.is_pkgdb_admin(user):
-        raise PkgdbException('You are now allowed to create collections')
+        raise PkgdbException('You are not allowed to create collections')
 
     collection = model.Collection(
         name=clt_name,
@@ -609,7 +609,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     """
 
     if not pkgdb.is_pkgdb_admin(user):
-        raise PkgdbException('You are now allowed to edit collections')
+        raise PkgdbException('You are not allowed to edit collections')
 
     edited = False
 
@@ -669,7 +669,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
     :arg clt_status: status of the collection
     """
     if not pkgdb.is_pkgdb_admin(user):
-        raise PkgdbException('You are now allowed to edit collections')
+        raise PkgdbException('You are not allowed to edit collections')
 
     try:
         collection = model.Collection.by_name(session, clt_branchname)

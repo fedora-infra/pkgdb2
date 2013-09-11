@@ -58,14 +58,18 @@ class FlaskApiPackagersTest(Modeltests):
 
         output = self.app.get('/api/packager/acl/')
         self.assertEqual(output.status_code, 500)
-        self.assertEqual(output.data,
-                         '{\n  "output": "notok",\n  '
-                         '"error": "Invalid request"\n}')
-
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "notok",
+            "error": "Invalid request",
+        })
         output = self.app.get('/api/packager/acl/pingou/')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
-                         '{\n  "output": "ok",\n  "acls": []\n}')
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "ok",
+            "acls": [],
+        })
 
         create_package_acl(self.session)
 
@@ -76,15 +80,15 @@ class FlaskApiPackagersTest(Modeltests):
                          ['output', 'acls'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['acls']), 4)
-        self.assertEqual(output['acls'][0].keys(),
-                         ['status', 'fas_name', 'packagelist', 'acl'])
-        self.assertEqual(output['acls'][0]['packagelist'].keys(),
-                         ['package', 'collection', 'point_of_contact'])
-        self.assertEqual(output['acls'][0]['packagelist']['package'].keys(),
-                         ['upstreamurl', 'name', 'reviewurl', 'summary'])
-        self.assertEqual(output['acls'][0]['packagelist']['collection'].keys(),
-                         ['pendingurltemplate', 'publishurltemplate',
-                          'branchname', 'version', 'name'])
+        self.assertEqual(set(output['acls'][0].keys()),
+                         set(['status', 'fas_name', 'packagelist', 'acl']))
+        self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
+                         set(['package', 'collection', 'point_of_contact']))
+        self.assertEqual(set(output['acls'][0]['packagelist']['package'].keys()),
+                         set(['upstreamurl', 'name', 'reviewurl', 'summary']))
+        self.assertEqual(set(output['acls'][0]['packagelist']['collection'].keys()),
+                         set(['pendingurltemplate', 'publishurltemplate',
+                              'branchname', 'version', 'name']))
         self.assertEqual(
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
@@ -99,14 +103,19 @@ class FlaskApiPackagersTest(Modeltests):
 
         output = self.app.get('/api/packager/list/')
         self.assertEqual(output.status_code, 500)
-        self.assertEqual(output.data,
-                         '{\n  "output": "notok",\n  '
-                         '"error": "Invalid request"\n}')
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "notok",
+            "error": "Invalid request",
+        })
 
         output = self.app.get('/api/packager/list/pin*/')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data,
-                         '{\n  "output": "ok",\n  "packagers": []\n}')
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "ok",
+            "packagers": [],
+        })
 
         create_package_acl(self.session)
 
