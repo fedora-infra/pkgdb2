@@ -1083,6 +1083,90 @@ class PkgdbLibtests(Modeltests):
             self.session, from_date=date.today(), package='guake')
         self.assertEqual(len(logs), 5)
 
+    def test_unorphan_package(self):
+        """ Test the unorphan_package function. """
+        create_package_acl(self.session)
+
+        # Wrong package name
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.unorphan_package,
+                          self.session,
+                          pkg_name='asd',
+                          clt_name='devel',
+                          pkg_user='pingou',
+                          user=FakeFasUser()
+                          )
+
+        # Wrong collection
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.unorphan_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='asd',
+                          pkg_user='pingou',
+                          user=FakeFasUser()
+                          )
+
+        # Package is not orphaned
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.unorphan_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='devel',
+                          pkg_user='pingou',
+                          user=FakeFasUser()
+                          )
+
+        # Orphan package
+        pkgdblib.update_pkg_poc(self.session,
+                                pkg_name='guake',
+                                clt_name='devel',
+                                user=FakeFasUserAdmin(),
+                                pkg_poc='orphan',
+                                )
+
+        # User cannot unorphan for someone else
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.unorphan_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='devel',
+                          pkg_user='ralph',
+                          user=FakeFasUser()
+                          )
+
+        # User must be a packager
+        user = FakeFasUser()
+        user.groups = ['cla_done']
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.unorphan_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='devel',
+                          pkg_user='pingou',
+                          user=user
+                          )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_acl[1].package.name, 'guake')
+        self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
+        self.assertEqual(pkg_acl[1].status, 'Orphaned')
+
+        pkgdblib.unorphan_package(
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='devel',
+                          pkg_user='pingou',
+                          user=FakeFasUser()
+                          )
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_acl[1].package.name, 'guake')
+        self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
+        self.assertEqual(pkg_acl[1].status, 'Approved')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
