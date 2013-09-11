@@ -379,60 +379,18 @@ def package_retire(package, collection):
 def package_take(package, collection):
     ''' Make someone Point of contact of an orphaned package. '''
 
-    packagename = package
-    package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
-    except NoResultFound:
-        SESSION.rollback()
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
-    except IndexError:
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
-
-    acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
-
-    for acl in package_acl:
-        if acl.collection.branchname == collection:
-            if acl.point_of_contact == 'orphan':
-                try:
-                    for acl_str in acls:
-                        pkgdblib.set_acl_package(
-                            SESSION,
-                            pkg_name=package.name,
-                            clt_name=acl.collection.branchname,
-                            pkg_user=flask.g.fas_user.username,
-                            acl=acl_str,
-                            status='Approved',
-                            user=flask.g.fas_user
-                        )
-
-                    pkgdblib.update_pkg_poc(
-                        session=SESSION,
-                        pkg_name=package.name,
-                        clt_name=acl.collection.branchname,
-                        pkg_poc=flask.g.fas_user.username,
-                        user=flask.g.fas_user
-                    )
-                    flask.flash(
-                        'You are now the point of contact for this package '
-                        'on branch: %s' % collection)
-
-                except pkgdblib.PkgdbException, err:
-                    flask.flash(err.message, 'error')
-                break
-            else:
-                flask.flash(
-                    'This package has not been orphaned on branch: %s'
-                    % collection)
-
-    try:
+        pkgdblib.unorphan_package(
+            session=SESSION,
+            pkg_name=package,
+            clt_name=collection,
+            pkg_user=flask.g.fas_user.username,
+            user=flask.g.fas_user
+        )
         SESSION.commit()
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         flask.flash(err.message, 'error')
 
     return flask.redirect(
-        flask.url_for('.package_info', package=package.name))
+        flask.url_for('.package_info', package=package))

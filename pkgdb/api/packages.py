@@ -180,12 +180,12 @@ def api_package_unorphan():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.update_pkg_poc(
-                    SESSION,
+                message = pkgdblib.unorphan_package(
+                    session=SESSION,
                     pkg_name=pkg_name,
-                    pkg_branch=pkg_branch,
-                    pkg_owner=pkg_owner,
-                    user=flask.g.fas_user,
+                    clt_name=pkg_branch,
+                    pkg_user=pkg_owner,
+                    user=flask.g.fas_user
                 )
             SESSION.commit()
             output['output'] = 'ok'
