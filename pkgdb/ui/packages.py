@@ -217,7 +217,7 @@ def package_orphan(package, collection):
         if acl.collection.branchname == collection:
             if acl.point_of_contact == flask.g.fas_user.username:
                 try:
-                    pkgdblib.pkg_change_poc(
+                    pkgdblib.update_pkg_poc(
                         session=SESSION,
                         pkg_name=package.name,
                         clt_name=acl.collection.branchname,
@@ -317,7 +317,7 @@ def package_take(package, collection):
         if acl.collection.branchname == collection:
             if acl.point_of_contact == 'orphan':
                 try:
-                    pkgdblib.pkg_change_poc(
+                    pkgdblib.update_pkg_poc(
                         session=SESSION,
                         pkg_name=package.name,
                         clt_name=acl.collection.branchname,

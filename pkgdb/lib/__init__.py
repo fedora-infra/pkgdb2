@@ -200,7 +200,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         )
 
 
-def pkg_change_poc(session, pkg_name, clt_name, pkg_poc, user):
+def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
     """ Change the point of contact of a package.
 
     :arg session: session with which to connect to the database

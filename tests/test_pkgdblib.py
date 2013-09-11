@@ -298,13 +298,13 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(len(pkg_acl[0].acls), 6)
 
-    def test_pkg_change_poc(self):
-        """ Test the pkg_change_poc function. """
+    def test_update_pkg_poc(self):
+        """ Test the update_pkg_poc function. """
         self.test_add_package()
 
         # Package must exists
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_poc,
+                          pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='test',
                           clt_name='F-17',
@@ -315,7 +315,7 @@ class PkgdbLibtests(Modeltests):
 
         # Collection must exists
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_poc,
+                          pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-16',
@@ -327,7 +327,7 @@ class PkgdbLibtests(Modeltests):
         # User must be the actual Point of Contact (or an admin of course,
         # or part of the group)
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_poc,
+                          pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
@@ -340,7 +340,7 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'ralph'
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_poc,
+                          pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
@@ -350,7 +350,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Change PoC to a group
-        pkgdblib.pkg_change_poc(
+        pkgdblib.update_pkg_poc(
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
@@ -365,7 +365,7 @@ class PkgdbLibtests(Modeltests):
 
         # User must be in the group it gives the PoC to
         self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.pkg_change_poc,
+                          pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
@@ -375,7 +375,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         user.groups.append('perl-sig')
-        pkgdblib.pkg_change_poc(
+        pkgdblib.update_pkg_poc(
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
@@ -391,7 +391,7 @@ class PkgdbLibtests(Modeltests):
         # PoC can change PoC
         user = FakeFasUser()
         user.username = 'ralph'
-        pkgdblib.pkg_change_poc(self.session,
+        pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=user,
@@ -404,7 +404,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].point_of_contact, 'toshio')
 
         # Admin can change PoC
-        pkgdblib.pkg_change_poc(self.session,
+        pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=FakeFasUserAdmin(),
@@ -419,7 +419,7 @@ class PkgdbLibtests(Modeltests):
         # Orphan -> status changed to Orphaned
         user = FakeFasUser()
         user.username = 'kevin'
-        pkgdblib.pkg_change_poc(self.session,
+        pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=user,
@@ -433,7 +433,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].status, 'Orphaned')
 
         # Take orphaned package -> status changed to Approved
-        pkgdblib.pkg_change_poc(self.session,
+        pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
                                  clt_name='F-18',
                                  user=FakeFasUser(),

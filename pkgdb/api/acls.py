@@ -173,7 +173,7 @@ def api_acl_reassign():
             messages = []
             for (package, branch) in itertools.product(packages, branches):
                 messages.append(
-                    pkgdblib.pkg_change_poc(
+                    pkgdblib.update_pkg_poc(
                         session=SESSION,
                         pkg_name=package,
                         clt_name=branch,
