@@ -1,0 +1,30 @@
+{% extends "master.html" %}
+
+{% block title %} Admin | PkgDB {% endblock %}
+
+{%block tag %}admin{% endblock %}
+
+{% block content %}
+
+<h1>Admin interface</h1>
+
+<p>
+    This page summarize all the actions an admin can do
+</p>
+
+<ul>
+    <li>
+        <a href="{{ url_for('.collection_new') }}" >
+        Create new collection</a>
+    </li>
+    <li>
+        <a href="{{ url_for('.package_new') }}" >
+        Create new package</a>
+    </li>
+    <li>
+        <a href="{{ url_for('.admin_log') }}" >
+        Browse logs</a>
+    </li>
+</ul>
+
+{% endblock %}
