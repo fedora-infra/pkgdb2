@@ -26,6 +26,14 @@
             <input type="submit" value="Request ACLs"/>
         </a>
     </li>
+    {% if is_admin or is_poc %}
+    <li>
+        <a href="{{ url_for('.package_give',
+                 package=package.name) }}">
+            <input type="submit" value="Give package"/>
+        </a>
+    </li>
+    {% endif %}
 </ul>
 {% endblock %}
 {% endif %}
@@ -80,7 +88,7 @@
                             packager=pkg['point_of_contact']) }}">
             {{ pkg['point_of_contact'] }}
         </a>
-        {% if 'packager' in g.fas_user.groups %}
+        {% if is_admin or pkg['point_of_contact'] == 'orphan' or pkg['point_of_contact'] == g.fas_user.username  %}
         --
         {% if pkg['point_of_contact'] == 'orphan' %}
         <a href="{{ url_for('.package_take',
@@ -92,7 +100,7 @@
                             collection=pkg['branchname']) }}">
             -- retire
         </a>
-        {% else %}
+        {% elif is_admin or pkg['point_of_contact'] == g.fas_user.username %}
         <a href="{{ url_for('.package_orphan',
                             package=package.name,
                             collection=pkg['branchname']) }}">

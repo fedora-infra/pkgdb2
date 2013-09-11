@@ -109,12 +109,15 @@ def package_info(package):
 
     package_acls = []
     branch_admin = []
+    is_poc = False
     for pkg in package_acl:
         tmp = {}
         tmp['collection'] = '%s %s' % (pkg.collection.name,
                                        pkg.collection.version)
         tmp['branchname'] = pkg.collection.branchname
         tmp['point_of_contact'] = pkg.point_of_contact
+        if pkg.point_of_contact == flask.g.fas_user.username:
+            is_poc = True
         acls = {}
         for acl in pkg.acls:
             tmp2 = {'acl': acl.acl, 'status': acl.status}
@@ -140,6 +143,7 @@ def package_info(package):
         package=package,
         package_acl=package_acls,
         branch_admin=branch_admin,
+        is_poc=is_poc,
     )
 
 
@@ -192,6 +196,88 @@ def package_new():
         form=form,
     )
 
+
+@UI.route('/package/<package>/give', methods=('GET', 'POST'))
+@packager_login_required
+def package_give(package):
+    ''' Gives the PoC of a package to someone else. '''
+
+
+    packagename = package
+    package = None
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except NoResultFound:
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+    except IndexError:
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    # Restrict the branch to the one current user is PoC of (unless admin
+    # or group)
+    collect_name = []
+    for acl in package_acl:
+        if acl.point_of_contact != flask.g.fas_user.username and \
+                not is_pkgdb_admin(flask.g.fas_user) and \
+                not acl.point_of_contact.startswith('group::'):
+            pass
+        else:
+            if acl.point_of_contact.startswith('group::'):
+                group = acl.point_of_contact.split('group::')[0]
+                if group not in flask.g.fas_user.groups:
+                    pass
+            else:
+                collect_name.append(acl.collection.branchname)
+
+    form = pkgdb.forms.GivePoCForm(collections=collect_name)
+
+    acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
+
+    if form.validate_on_submit():
+        collections = form.pkg_branch.data
+        pkg_poc = form.pkg_poc.data
+        if pkg_poc.startswith('group::'):
+            acls = ['commit', 'watchbugzilla', 'watchcommits']
+
+        try:
+            for pkg_collection in collections:
+                message = pkgdblib.update_pkg_poc(
+                    SESSION,
+                    pkg_name=packagename,
+                    clt_name=pkg_collection,
+                    pkg_poc=pkg_poc,
+                    user=flask.g.fas_user,
+                )
+                flask.flash(message)
+
+                for acl in acls:
+                    pkgdblib.set_acl_package(
+                        SESSION,
+                        pkg_name=packagename,
+                        clt_name=pkg_collection,
+                        pkg_user=pkg_poc,
+                        acl=acl,
+                        status='Approved',
+                        user=flask.g.fas_user
+                    )
+
+                SESSION.commit()
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            flask.flash(err.message, 'error')
+
+        return flask.redirect(
+            flask.url_for('.package_info', package=packagename)
+        )
+
+    return flask.render_template(
+        'package_give.html',
+        form=form,
+        packagename=packagename,
+    )
 
 @UI.route('/package/<package>/<collection>/orphan', methods=('GET', 'POST'))
 @packager_login_required
@@ -306,10 +392,23 @@ def package_take(package, collection):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
+    acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
+
     for acl in package_acl:
         if acl.collection.branchname == collection:
             if acl.point_of_contact == 'orphan':
                 try:
+                    for acl_str in acls:
+                        pkgdblib.set_acl_package(
+                            SESSION,
+                            pkg_name=package.name,
+                            clt_name=acl.collection.branchname,
+                            pkg_user=flask.g.fas_user.username,
+                            acl=acl_str,
+                            status='Approved',
+                            user=flask.g.fas_user
+                        )
+
                     pkgdblib.update_pkg_poc(
                         session=SESSION,
                         pkg_name=package.name,
@@ -320,6 +419,7 @@ def package_take(package, collection):
                     flask.flash(
                         'You are now the point of contact for this package '
                         'on branch: %s' % collection)
+
                 except pkgdblib.PkgdbException, err:
                     flask.flash(err.message, 'error')
                 break

@@ -330,3 +330,25 @@ class DeprecatePackageForm(wtf.Form):
         'Fedora branch',
         [wtforms.validators.Required()]
     )
+
+
+class GivePoCForm(wtf.Form):
+    pkg_branch = wtforms.SelectMultipleField(
+        'Branch',
+        [wtforms.validators.Required()],
+        choices=[('', '')])
+    pkg_poc = wtforms.TextField(
+        'New point of contact',
+        [wtforms.validators.Required()]
+    )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(GivePoCForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            self.pkg_branch.choices = [
+                (collec, collec)
+                for collec in kwargs['collections']
+            ]
