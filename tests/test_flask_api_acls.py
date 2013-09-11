@@ -58,16 +58,19 @@ class FlaskApiAclsTest(Modeltests):
 
         output = self.app.get('/api/package/acl/get/guake/')
         self.assertEqual(output.status_code, 500)
-        self.assertEqual(output.data,
-                         '{\n  "output": "notok",\n  '
-                         '"error": "No package found with name '
-                         '\\"guake\\""\n}')
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "notok",
+            "error": "No package found with name \"guake\""
+        })
 
         output = self.app.get('/api/package/acl/get/')
         self.assertEqual(output.status_code, 500)
-        self.assertEqual(output.data,
-                         '{\n  "output": "notok",\n  '
-                         '"error": "No package provided"\n}')
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "notok",
+            "error": "No package provided",
+        })
 
         create_package_acl(self.session)
 
@@ -93,19 +96,19 @@ class FlaskApiAclsTest(Modeltests):
 
         output = self.app.post('/api/package/acl/')
         self.assertEqual(output.status_code, 500)
-        self.assertEqual(output.data,
-                         '{\n  "output": "notok",\n  '
-                         '"error_detail": [\n    '
-                         '"pkg_acl: Not a valid choice",\n    '
-                         '"pkg_status: Not a valid choice",\n    '
-                         '"pkg_name: This field is required.",\n    '
-                         '"pkg_user: This field is required.",\n    '
-                         '"pkg_branch: This field is required."\n  ],\n  '
-                         '"error": "Invalid input submitted"\n}')
-
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "notok",
+            "error_detail": [
+                "pkg_acl: Not a valid choice",
+                "pkg_status: Not a valid choice",
+                "pkg_name: This field is required.",
+                "pkg_user: This field is required.",
+                "pkg_branch: This field is required."
+            ],
+            "error": "Invalid input submitted",
+        })
         create_package_acl(self.session)
-
-
 
     def test_acl_reassign(self):
         """ Test the api_acl_reassign function. """
@@ -114,9 +117,11 @@ class FlaskApiAclsTest(Modeltests):
 
         output = self.app.post('/api/package/acl/reassign/')
         self.assertEqual(output.status_code, 500)
-        self.assertEqual(output.data,
-                         '{\n  "output": "notok",\n  '
-                         '"error": "Invalid input submitted"\n}')
+        data = json.loads(output.data)
+        self.assertEqual(data, {
+            "output": "notok",
+            "error": "Invalid input submitted",
+        })
 
 
 if __name__ == '__main__':
