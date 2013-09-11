@@ -183,12 +183,6 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         elif user.username == pkg_user and status not in \
                 ('Awaiting Review', 'Removed', 'Obsolete') \
                 and acl not in pkgdb.APP.config['AUTO_APPROVE']:
-            orphaned = False
-            for pkgacl in package_acl:
-                if pkgacl.collection.branchname == collection.branchname \
-                        and pkgacl.status in ('Deprecated', 'Orphaned'):
-                    orphaned = True
-            if not orphaned:
                 raise PkgdbException(
                     'You are not allowed to approve or deny '
                     'ACLs for yourself.')
