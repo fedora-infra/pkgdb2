@@ -988,6 +988,8 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUserAdmin(),
             )
 
+        self.assertEqual(out, 'Collection "f18_b" edited')
+
         collections = pkgdblib.search_collection(self.session, 'F-18')
         self.assertEqual(collections, [])
 
