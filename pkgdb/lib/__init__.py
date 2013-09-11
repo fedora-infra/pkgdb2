@@ -152,6 +152,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     """
     try:
         package = model.Package.by_name(session, pkg_name)
+        package_acl = get_acl_package(session, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -167,9 +168,15 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         elif user.username == pkg_user and status not in \
                 ('Awaiting Review', 'Removed', 'Obsolete') \
                 and acl not in pkgdb.APP.config['AUTO_APPROVE']:
-            raise PkgdbException(
-                'You are not allowed to approve or deny '
-                'ACLs for yourself.')
+            orphaned = False
+            for pkgacl in package_acl:
+                if pkgacl.collection.branchname == collection.branchname \
+                        and pkgacl.status in ('Deprecated', 'Orphaned'):
+                    orphaned = True
+            if not orphaned:
+                raise PkgdbException(
+                    'You are not allowed to approve or deny '
+                    'ACLs for yourself.')
 
     if pkg_user.startswith('group::') and acl == 'approveacls':
         raise PkgdbException(
@@ -267,8 +274,8 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
         session,
         user.username,
         package,
-        'user: %s change PoC of package: %s from: %s to: %s' % (
-            user.username, package.name, prev_poc, pkg_poc)
+        'user: %s change PoC of package: %s from: %s to: %s on: %s' % (
+            user.username, package.name, prev_poc, pkg_poc, clt_name)
     )
 
     return 'Point of contact of branch: %s of package: %s has been changed ' \
