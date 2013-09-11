@@ -70,7 +70,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
 
     if isinstance(pkg_collection, (str, unicode)):
         if ',' in pkg_collection:
-            pkg_collection = [item.strip() for item in pkg_collection.split(',')]
+            pkg_collection = [item.strip()
+                              for item in pkg_collection.split(',')]
         else:
             pkg_collection = [pkg_collection]
 
@@ -108,8 +109,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         acls = ['commit', 'watchbugzilla', 'watchcommits']
     if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
         raise PkgdbException(
-                'Invalid group "%s" all groups in pkgdb should end with '
-                '"-sig".' % pkg_poc)
+            'Invalid group "%s" all groups in pkgdb should end with '
+            '"-sig".' % pkg_poc)
 
     for collec in pkg_collection:
         for acl in acls:
@@ -172,12 +173,12 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
 
     if pkg_user.startswith('group::') and acl == 'approveacls':
         raise PkgdbException(
-                'Groups cannot have "approveacls".')
+            'Groups cannot have "approveacls".')
 
     if pkg_user.startswith('group::') and not pkg_user.endswith('-sig'):
         raise PkgdbException(
-                'Invalid group "%s" all groups in pkgdb should end with '
-                '"-sig".' % pkg_user)
+            'Invalid group "%s" all groups in pkgdb should end with '
+            '"-sig".' % pkg_user)
 
     try:
         pkglisting = model.PackageListing.by_pkgid_collectionid(
@@ -200,14 +201,14 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     personpkg.status = status
     session.flush()
     model.Log.insert(
-            session,
-            user.username,
-            package,
-            'user: %s set acl: %s of package: %s from: %s to: %s on '
-            'branch: %s' % (
-                user.username, acl, package.name, prev_status, status,
-                collection.branchname)
-        )
+        session,
+        user.username,
+        package,
+        'user: %s set acl: %s of package: %s from: %s to: %s on '
+        'branch: %s' % (
+            user.username, acl, package.name, prev_status, status,
+            collection.branchname)
+    )
 
 
 def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
@@ -237,22 +238,22 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
 
     if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
         raise PkgdbException(
-                'Invalid group "%s" all groups in pkgdb should end with '
-                '"-sig".' % pkg_poc)
+            'Invalid group "%s" all groups in pkgdb should end with '
+            '"-sig".' % pkg_poc)
 
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
             and not pkgdb.is_pkgdb_admin(user) \
             and not pkglisting.point_of_contact.startswith('group::'):
-        raise PkgdbException('You are not allowed to change the point of '
-                             'contact.')
+        raise PkgdbException(
+            'You are not allowed to change the point of contact.')
 
     if pkglisting.point_of_contact.startswith('group::'):
         group = pkglisting.point_of_contact.split('group::')[1]
         if not group in user.groups:
-            raise PkgdbException('You are not part of the group "%s", '
-                                 'you are not allowed to change the '
-                                 'point of contact.' % group)
+            raise PkgdbException(
+                'You are not part of the group "%s", you are not allowed to'
+                ' change the point of contact.' % group)
 
     pkglisting.point_of_contact = pkg_poc
     if pkg_poc == 'orphan':
@@ -263,15 +264,15 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
     session.add(pkglisting)
     session.flush()
     model.Log.insert(
-            session,
-            user.username,
-            package,
-            'user: %s change PoC of package: %s from: %s to: %s' % (
-                user.username, package.name, prev_poc, pkg_poc)
-        )
+        session,
+        user.username,
+        package,
+        'user: %s change PoC of package: %s from: %s to: %s' % (
+            user.username, package.name, prev_poc, pkg_poc)
+    )
 
     return 'Point of contact of branch: %s of package: %s has been changed ' \
-        'to %s' %(clt_name, pkg_name, pkg_poc)
+        'to %s' % (clt_name, pkg_name, pkg_poc)
 
 
 def update_pkg_status(session, pkg_name, clt_name, status, user,
@@ -315,9 +316,10 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
             session.add(pkglisting)
             session.flush()
         else:
-            raise PkgdbException('You are now allowed to deprecate the '
-                'package: %s on branch %s.' % (package.name,
-                collection.branchname))
+            raise PkgdbException(
+                'You are now allowed to deprecate the '
+                'package: %s on branch %s.' % (
+                    package.name, collection.branchname))
     elif status == 'Orphaned':
         pkglisting.status = 'Orphaned'
         pkglisting.point_of_contact = 'orphan'
@@ -326,9 +328,9 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
     elif pkgdb.is_pkgdb_admin(user):
         if status == 'Approved':
             if pkglisting.status == 'Orphaned' and poc == 'orphan':
-                raise PkgdbException('You need to specify the point of '
-                    'contact of this package for this branch to un-orphan '
-                    'it')
+                raise PkgdbException(
+                    'You need to specify the point of contact of this '
+                    'package for this branch to un-orphan it')
             pkglisting.point_of_contact = poc
 
         pkglisting.status = status
@@ -339,7 +341,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
         raise PkgdbException(
             'You are now allowed to update the status of '
             'the package: %s on branch %s to %s.' % (
-            package.name, collection.branchname, status)
+                package.name, collection.branchname, status)
         )
 
     model.Log.insert(
@@ -474,7 +476,7 @@ def search_packagers(session, pattern, page=None, limit=None,
 
 
 def search_logs(session, package=None, from_date=None, page=None, limit=None,
-        count=False):
+                count=False):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database
@@ -541,7 +543,6 @@ def get_package_maintained(session, packager):
     return model.Package.get_package_of_user(session, packager)
 
 
-
 def add_collection(session, clt_name, clt_version, clt_status,
                    clt_publishurl, clt_pendingurl, clt_summary,
                    clt_description, clt_branchname, clt_disttag,
@@ -584,8 +585,9 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
 def edit_collection(session, collection, clt_name=None, clt_version=None,
                     clt_status=None, clt_publishurl=None, clt_pendingurl=None,
-                    clt_summary=None, clt_description=None, clt_branchname=None,
-                    clt_disttag=None, clt_gitbranch=None, user=None):
+                    clt_summary=None, clt_description=None,
+                    clt_branchname=None, clt_disttag=None,
+                    clt_gitbranch=None, user=None):
     """ Edit a specified collection
 
     """
@@ -672,8 +674,6 @@ def update_collection_status(session, clt_branchname, clt_status, user):
         else:
             message = 'Collection "%s" already had this status' % \
                 clt_branchname
-
-
 
         return message
     except NoResultFound:  # pragma: no cover

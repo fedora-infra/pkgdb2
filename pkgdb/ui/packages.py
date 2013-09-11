@@ -58,7 +58,6 @@ def list_packages(motif=None):
         limit = APP.config['ITEMS_PER_PAGE']
         flask.flash('Incorrect limit provided, using default', 'errors')
 
-
     packages = pkgdblib.search_package(
         SESSION,
         pkg_name=pattern,
@@ -112,8 +111,8 @@ def package_info(package):
     branch_admin = []
     for pkg in package_acl:
         tmp = {}
-        tmp['collection'] = '%s %s' %(pkg.collection.name,
-                                      pkg.collection.version)
+        tmp['collection'] = '%s %s' % (pkg.collection.name,
+                                       pkg.collection.version)
         tmp['branchname'] = pkg.collection.branchname
         tmp['point_of_contact'] = pkg.point_of_contact
         acls = {}
@@ -133,7 +132,7 @@ def package_info(package):
         tmp['acls'] = acls
         package_acls.append(tmp)
         if is_pkg_admin(flask.g.fas_user, package.name,
-                pkg.collection.branchname):
+                        pkg.collection.branchname):
             branch_admin.append(pkg.collection.branchname)
 
     return flask.render_template(

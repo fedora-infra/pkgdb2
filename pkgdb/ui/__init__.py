@@ -42,6 +42,7 @@ def inject_is_admin():
     return dict(is_admin=is_pkgdb_admin(flask.g.fas_user),
                 version=__version__)
 
+
 @UI.route('/')
 def index():
     ''' Display the index package DB page. '''

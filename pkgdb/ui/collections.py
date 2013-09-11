@@ -72,6 +72,7 @@ def list_collections(motif=None, page=1):
         page=page
     )
 
+
 @UI.route('/collection/<collection>/')
 def collection_info(collection):
     ''' Display the information about the specified collection. '''
@@ -148,7 +149,7 @@ def collection_edit(collection):
     else:
         form = pkgdb.forms.AddCollectionForm(
             clt_status=clt_status,
-           collection=collection
+            collection=collection
         )
 
     return flask.render_template(
@@ -156,6 +157,7 @@ def collection_edit(collection):
         form=form,
         collection=collection,
     )
+
 
 @UI.route('/new/collection/', methods=('GET', 'POST'))
 @is_admin

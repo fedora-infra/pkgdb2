@@ -94,7 +94,7 @@ def create_status(session):
         session.add(obj)
 
     for status in ['Approved', 'Awaiting Review', 'Denied', 'Obsolete',
-            'Removed']:
+                   'Removed']:
         obj = AclStatus(status)
         session.add(obj)
 
@@ -107,8 +107,6 @@ def create_status(session):
         session.add(obj)
 
     session.commit()
-
-
 
 ### TODO: this is a view, create it as such...
 #class CollectionPackage(Executable, ClauseElement):
@@ -133,7 +131,6 @@ def create_status(session):
             #' status=%r, numpkgs=%r,' \
             #% (self.id, self.name, self.version, self.status,
                #self.numpkgs)
-
 
 #@compiles(CollectionPackage)
 #def collection_package_create_view(*args, **kw):
@@ -263,7 +260,9 @@ class PackageListingAcl(BASE):
         """
         query = session.query(
             sa.func.distinct(cls.fas_name),
-            sa.func.count(sa.func.distinct(PackageListing.package_id)).label('cnt')
+            sa.func.count(
+                sa.func.distinct(PackageListing.package_id)
+            ).label('cnt')
         ).filter(
             cls.packagelisting_id == PackageListing.id
         ).filter(
@@ -381,8 +380,8 @@ class PackageListingAcl(BASE):
     def __repr__(self):
         return 'PackageListingAcl(id:%r, %r, PackageListing:%r, Acl:%s, ' \
             '%s)' % (
-            self.id, self.fas_name, self.packagelisting_id, self.acl,
-            self.status)
+                self.id, self.fas_name, self.packagelisting_id, self.acl,
+                self.status)
 
     def to_json(self):
         """ Return a dictionnary representation of this object. """
@@ -442,9 +441,9 @@ class Collection(BASE):
     def __repr__(self):
         return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
                ' pendingurltemplate=%r, summary=%r, description=%r)' % (
-               self.name, self.version, self.status, self.owner,
-               self.publishURLTemplate, self.pendingURLTemplate,
-               self.summary, self.description)
+                   qself.name, self.version, self.status, self.owner,
+                   self.publishURLTemplate, self.pendingURLTemplate,
+                   self.summary, self.description)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize Collections in messages. """
@@ -531,22 +530,22 @@ class PackageListing(BASE):
     __tablename__ = 'PackageListing'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     package_id = sa.Column(sa.Integer,
-                          sa.ForeignKey('Package.id',
-                                        ondelete="CASCADE",
-                                        onupdate="CASCADE"
-                                        ),
-                          nullable=False)
+                           sa.ForeignKey('Package.id',
+                                         ondelete="CASCADE",
+                                         onupdate="CASCADE"
+                                         ),
+                           nullable=False)
     point_of_contact = sa.Column(sa.Text, nullable=False)
     collection_id = sa.Column(sa.Integer,
-                             sa.ForeignKey('Collection.id',
-                                           ondelete="CASCADE",
-                                           onupdate="CASCADE"
-                                           ),
-                             nullable=False)
+                              sa.ForeignKey('Collection.id',
+                                            ondelete="CASCADE",
+                                            onupdate="CASCADE"
+                                            ),
+                              nullable=False)
     status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
                        nullable=False)
     status_change = sa.Column(sa.DateTime, nullable=False,
-                             default=datetime.datetime.utcnow())
+                              default=datetime.datetime.utcnow())
     __table_args__ = (
         sa.UniqueConstraint('package_id', 'collection_id'),
     )
@@ -659,9 +658,10 @@ class PackageListing(BASE):
 
         """
         query1 = session.query(
-            sa.func.distinct(cls.point_of_contact)).filter(
-                PackageListing.point_of_contact.like(pattern)
-            )
+            sa.func.distinct(cls.point_of_contact)
+        ).filter(
+            PackageListing.point_of_contact.like(pattern)
+        )
 
         query2 = session.query(
             sa.func.distinct(PackageListingAcl.fas_name)
@@ -690,7 +690,9 @@ class PackageListing(BASE):
         """
         query = session.query(
             sa.func.distinct(PackageListing.point_of_contact),
-            sa.func.count(sa.func.distinct(PackageListing.package_id)).label('cnt')
+            sa.func.count(
+                sa.func.distinct(PackageListing.package_id)
+            ).label('cnt')
         ).filter(
             PackageListing.status == 'Approved'
         ).group_by(
@@ -702,9 +704,9 @@ class PackageListing(BASE):
 
     def __repr__(self):
         return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r' \
-               ')' % (self.id, self.point_of_contact,
-                                   self.status, self.package_id,
-                                   self.collection_id)
+               ')' % (
+                   self.id, self.point_of_contact, self.status,
+                   self.package_id, self.collection_id)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize PackageListing in messages. """
@@ -857,8 +859,8 @@ class Package(BASE):
     def __repr__(self):
         return 'Package(%r, %r, %r, ' \
             'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
-            self.name, self.summary, self.status,
-            self.upstream_url, self.review_url, self.shouldopen)
+                self.name, self.summary, self.status,
+                self.upstream_url, self.review_url, self.shouldopen)
 
     def api_repr(self, version):
         """ Used by fedmsg to serialize Packages in messages. """

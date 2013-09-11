@@ -124,12 +124,13 @@ def api_package_orphan():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.update_pkg_poc(SESSION,
-                                                    pkg_name=pkg_name,
-                                                    clt_name=clt_name,
-                                                    pkg_owner='orphan',
-                                                    user=flask.g.fas_user,
-                                                    )
+                message = pkgdblib.update_pkg_poc(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    clt_name=clt_name,
+                    pkg_owner='orphan',
+                    user=flask.g.fas_user,
+                )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -179,12 +180,13 @@ def api_package_unorphan():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.update_pkg_poc(SESSION,
-                                                    pkg_name=pkg_name,
-                                                    pkg_branch=pkg_branch,
-                                                    pkg_owner=pkg_owner,
-                                                    user=flask.g.fas_user,
-                                                    )
+                message = pkgdblib.update_pkg_poc(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    pkg_branch=pkg_branch,
+                    pkg_owner=pkg_owner,
+                    user=flask.g.fas_user,
+                )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -229,12 +231,13 @@ def api_package_deprecate():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.update_pkg_status(SESSION,
-                                                     pkg_name=pkg_name,
-                                                     clt_name=clt_name,
-                                                     status='Deprecated',
-                                                     user=flask.g.fas_user,
-                                                     )
+                message = pkgdblib.update_pkg_status(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    clt_name=clt_name,
+                    status='Deprecated',
+                    user=flask.g.fas_user,
+                )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -279,12 +282,13 @@ def api_package_undeprecate():
         try:
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
-                message = pkgdblib.update_pkg_status(SESSION,
-                                                     pkg_name=pkg_name,
-                                                     clt_name=clt_name,
-                                                     status='Approved',
-                                                     user=flask.g.fas_user,
-                                                     )
+                message = pkgdblib.update_pkg_status(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    clt_name=clt_name,
+                    status='Approved',
+                    user=flask.g.fas_user,
+                )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
@@ -333,13 +337,14 @@ def api_package_list(pkgname=None):
     deprecated = bool(flask.request.args.get('deprecated', False))
 
     try:
-        packages = pkgdblib.search_package(SESSION,
-                                           pkg_name=pattern,
-                                           clt_name=branches,
-                                           pkg_owner=owner,
-                                           orphaned=orphaned,
-                                           deprecated=deprecated,
-                                           )
+        packages = pkgdblib.search_package(
+            SESSION,
+            pkg_name=pattern,
+            clt_name=branches,
+            pkg_owner=owner,
+            orphaned=orphaned,
+            deprecated=deprecated,
+        )
         SESSION.commit()
         output['output'] = 'ok'
         output['packages'] = [pkg.to_json() for pkg in packages]

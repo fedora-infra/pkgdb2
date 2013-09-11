@@ -30,7 +30,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
 from pkgdb import (SESSION, FakeFasUser, APP, fas_login_required,
-                  is_pkg_admin, packager_login_required)
+                   is_pkg_admin, packager_login_required)
 from pkgdb.ui import UI
 
 
@@ -58,7 +58,8 @@ def request_acl(package):
                 if acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
                 elif 'packager' not in flask.g.fas_user.groups:
-                    flask.flash('You must be a packager to apply to the'
+                    flask.flash(
+                        'You must be a packager to apply to the'
                         ' ACL: %s on %s' % (acl, collec), 'errors')
                     continue
 
@@ -118,7 +119,8 @@ def watch_package(package):
 @packager_login_required
 def comaintain_package(package):
     if not 'packager' in flask.g.fas_user.groups:
-        flask.flash('You must be a packager to apply to be a comaintainer',
+        flask.flash(
+            'You must be a packager to apply to be a comaintainer',
             'errors')
         return flask.redirect(flask.url_for(
             '.package_info', package=package))

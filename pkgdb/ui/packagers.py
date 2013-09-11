@@ -86,7 +86,7 @@ def packager_info(packager):
     packages = []
     packages_co = []
     try:
-        packages_co= pkgdblib.get_package_maintained(
+        packages_co = pkgdblib.get_package_maintained(
             SESSION,
             packager=packager
         )
@@ -103,7 +103,7 @@ def packager_info(packager):
         if maint:
             packages.append(packages_co[cnt])
             del(packages_co[cnt])
-            cnt -=1
+            cnt -= 1
         cnt += 1
 
     if not packages and not packages_co:
