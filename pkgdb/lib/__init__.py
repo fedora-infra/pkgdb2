@@ -606,12 +606,12 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
             session.add(collection)
             session.flush()
             model.Log.insert(
-            session,
-            user.username,
-            None,
-            'user: %s edited collection: %s' % (
-                user.username, collection.name)
-        )
+                session,
+                user.username,
+                None,
+                'user: %s edited collection: %s' % (
+                    user.username, collection.name)
+            )
             return 'Collection "%s" created' % collection.branchname
         except SQLAlchemyError, err:  # pragma: no cover
             print err.message
