@@ -612,7 +612,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
                 'user: %s edited collection: %s' % (
                     user.username, collection.name)
             )
-            return 'Collection "%s" created' % collection.branchname
+            return 'Collection "%s" edited' % collection.branchname
         except SQLAlchemyError, err:  # pragma: no cover
             print err.message
             raise PkgdbException('Could not edit Collection.')
