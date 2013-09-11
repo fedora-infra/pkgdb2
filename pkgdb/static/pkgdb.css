@@ -57,13 +57,14 @@ body#admin #mainNav li#adminTab a {
     color: #fff;
 }
 
-#options_content ul {
-    list-style-type: none;
-    margin-right: 5px;
+#options_content {
+    margin: 5px;
 }
 
-#options_content li {
-    margin-bottom: 5px;
+#options_content ul {
+    list-style-type: none;
+    margin-left: 0;
+    padding: auto;
 }
 
 #options input[type="submit"] {
