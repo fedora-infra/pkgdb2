@@ -1032,33 +1032,32 @@ class PkgdbLibtests(Modeltests):
 
         logs = pkgdblib.search_logs(self.session)
 
-        self.assertEqual(len(logs), 18)
-        self.assertEqual(logs[0].description, "user: admin set acl: commit "
-                         "of package: guake from: Approved to: Approved on "
-                         "branch: F-18")
+        self.assertEqual(len(logs), 21)
+        self.assertEqual(logs[0].description, "user: admin created "
+                         "package: guake on branch: F-18 for poc: ralph")
         self.assertEqual(logs[0].user, "admin")
-        self.assertEqual(logs[3].description, "user: admin set acl: approveacls "
-                         "of package: guake from: Approved to: Approved on "
-                         "branch: F-18")
+        self.assertEqual(logs[3].description, "user: admin set acl: "
+                         "watchcommits of package: guake from: Approved to:"
+                         " Approved on branch: F-18")
 
         logs = pkgdblib.search_logs(self.session, limit=3, page=2)
 
         self.assertEqual(len(logs), 3)
-        self.assertEqual(logs[0].description, "user: admin set acl: approveacls "
-                         "of package: guake from: Approved to: Approved on "
-                         "branch: F-18")
+        self.assertEqual(logs[0].description, "user: admin set acl: "
+                         "watchcommits of package: guake from: Approved to:"
+                         " Approved on branch: F-18")
         self.assertEqual(logs[0].user, "admin")
 
-        exp = "Log(user=u'admin', description=u'user: admin set acl: approveacls " \
-              "of package: guake from: Approved to: Approved on " \
-              "branch: F-18"
+        exp = "Log(user=u'admin', description=u'user: admin set acl: " \
+              "watchcommits of package: guake from: Approved to:" \
+              " Approved on branch: F-18"
         self.assertTrue(logs[0].__repr__().startswith(exp))
 
         logs = pkgdblib.search_logs(self.session, count=True)
-        self.assertEqual(logs, 18)
+        self.assertEqual(logs, 21)
 
         logs = pkgdblib.search_logs(self.session, from_date=date.today())
-        self.assertEqual(len(logs), 18)
+        self.assertEqual(len(logs), 21)
 
 
 if __name__ == '__main__':
