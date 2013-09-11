@@ -96,11 +96,10 @@ def packager_info(packager):
     # clean co-maintained packages and split out PoC packages
     cnt = 0
     while cnt < len(packages_co):
-        maint = True
+        maint = []
         for acls in packages_co[cnt].listings:
-            if acls.point_of_contact != packager:
-                maint = False
-        if maint:
+            maint.append(acls.point_of_contact)
+        if packager in maint:
             packages.append(packages_co[cnt])
             del(packages_co[cnt])
             cnt -= 1
