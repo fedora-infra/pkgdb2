@@ -1033,9 +1033,9 @@ class Log(BASE):
             return query.count()
 
         if from_date:
-            query.filter(cls.change_time <= from_date)
+            query = query.filter(cls.change_time <= from_date)
 
-        query.order_by(cls.change_time)
+        query = query.order_by(cls.change_time.desc())
 
         if offset:
             query = query.offset(offset)
