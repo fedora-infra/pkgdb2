@@ -823,3 +823,66 @@ def get_top_poc(session, top=10):
     :arg top: the number of results to return, defaults to 10.
     """
     return model.PackageListing.get_top_poc(session, top)
+
+
+def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
+    """ Unorphan a specific package in favor of someone and give him the
+    appropriate ACLs.
+
+    :arg session: session with which to connect to the database
+    :arg pkg_name: the name of the package
+    :arg clt_name: the name of the collection
+    :arg pkg_user: the FAS user requesting the package
+    :arg user: the user making the action
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+        pkg_listing = get_acl_package(session, pkg_name, clt_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    if not pkg_listing.status in ('Orphaned', 'Deprecated'):
+            raise PkgdbException('Package is not orphaned on %s' % clt_name)
+
+    if not pkgdb.is_pkg_admin(user, package.name, clt_name):
+        if user.username != pkg_user and not pkg_user.startswith('group::'):
+            raise PkgdbException('You are not allowed to update ACLs of '
+                                 'someone else.')
+        elif user.username == pkg_user and 'packager' not in user.groups:
+            raise PkgdbException('You must be a packager to take a package.')
+
+    status = 'Approved'
+    pkg_listing.point_of_contact = pkg_user
+    pkg_listing.status = status
+    session.add(pkg_listing)
+    session.flush()
+
+    model.Log.insert(
+        session,
+        user.username,
+        package,
+        'user: %s un-orphaned package: %s on branch: %s' % (
+            user.username, package.name, clt_name)
+    )
+
+    acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
+
+    for acl in acls:
+        personpkg = model.PackageListingAcl.get_or_create(session,
+                                                          pkg_user,
+                                                          pkg_listing.id,
+                                                          acl=acl,
+                                                          status=status)
+        prev_status = personpkg.status
+        personpkg.status = status
+        session.add(personpkg)
+        model.Log.insert(
+            session,
+            user.username,
+            package,
+            'user: %s set acl: %s of package: %s from: %s to: %s on '
+            'branch: %s' % (
+                user.username, acl, package.name, prev_status, status,
+                clt_name)
+        )
+    session.flush()
