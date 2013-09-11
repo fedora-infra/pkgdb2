@@ -139,7 +139,7 @@ def create_collection(session):
                                   summary='Fedora rawhide',
                                   description=None,
                                   branchname='devel',
-                                  distTag='.fc19',
+                                  distTag='devel',
                                   git_branch_name='master',
                                   )
     session.add(collection)
