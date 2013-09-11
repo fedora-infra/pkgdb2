@@ -41,14 +41,14 @@ class PackageListingAcltests(Modeltests):
     """ PackageListingAcl tests. """
 
     def test_init_package(self):
-        """ Test the __init__ function of PersonPackageListing. """
+        """ Test the __init__ function of PackageListingAcl. """
         create_package_acl(self.session)
         self.assertEqual(5,
                          len(model.PackageListingAcl.all(self.session))
                          )
 
     def test_to_json(self):
-        """ Test the to_json function of PersonPackageListing. """
+        """ Test the to_json function of PackageListingAcl. """
         packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
         self.assertEqual(0, len(packager))
@@ -72,7 +72,7 @@ class PackageListingAcltests(Modeltests):
                     'branchname': u'F-18',
                     'version': u'18',
                     'name': u'Fedora'
-                }, 
+                },
                 'package': {
                     'upstreamurl': u'http://guake.org',
                     'name': u'guake',
@@ -84,7 +84,7 @@ class PackageListingAcltests(Modeltests):
         )
 
     def test___repr__(self):
-        """ Test the __repr__ function of PersonPackageListing. """
+        """ Test the __repr__ function of PackageListingAcl. """
         create_package_acl(self.session)
 
         packager = model.PackageListingAcl.get_acl_packager(
@@ -95,6 +95,25 @@ class PackageListingAcltests(Modeltests):
             output,
             "PackageListingAcl(id:1, u'pingou', "
             "PackageListing:1, Acl:commit, Approved)")
+
+    def test_get_acl_packager(self):
+        """ Test the get_acl_packager function of PackageListingAcl.
+        """
+
+        acls = model.PackageListingAcl.get_acl_packager(
+            self.session, 'pingou')
+        self.assertEqual(0, len(acls))
+
+        create_package_acl(self.session)
+
+        acls = model.PackageListingAcl.get_acl_packager(
+            self.session, 'pingou')
+        self.assertEqual(4, len(acls))
+        self.assertEqual(acls[0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
+        self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
 
 if __name__ == '__main__':
