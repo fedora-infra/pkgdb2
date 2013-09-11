@@ -133,17 +133,30 @@ class PkgdbLibtests(Modeltests):
 
     def test_get_acl_package(self):
         """ Test the get_acl_package function. """
-        self.test_add_package()
-        self.session.commit()
+        create_package_acl(self.session)
 
         packages = model.Package.all(self.session)
         self.assertEqual(3, len(packages))
         self.assertEqual('guake', packages[0].name)
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(len(pkg_acl), 2)
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'ralph')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'devel')
+        self.assertEqual(pkg_acl.collection.branchname, 'devel')
+        self.assertEqual(pkg_acl.package.name, 'guake')
+        self.assertEqual(pkg_acl.acls[0].fas_name, 'pingou')
+
+        # Collection does not exist
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.get_acl_package,
+                          self.session,
+                          'guake',
+                          'unknown')
+
 
     def test_set_acl_package(self):
         """ Test the set_acl_package function. """
