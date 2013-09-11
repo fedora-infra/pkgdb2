@@ -41,6 +41,9 @@
             {% if g.fas_user %}
             <li id="pendingAclTab"><a href="{{url_for('ui_ns.pending_acl')}}">Pending ACLs</a></li>
             {% endif %}
+            {% if is_admin %}
+            <li id="adminTab"><a href="{{url_for('ui_ns.admin')}}">Admin</a></li>
+            {% endif %}
           </ul>
         </div><!-- end mainNav -->
 

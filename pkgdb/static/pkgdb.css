@@ -16,7 +16,8 @@ body#packages #mainNav li#packagesTab a,
 body#packagers #mainNav li#packagersTab a,
 body#collections #mainNav li#collectionsTab a,
 body#stats #mainNav li#statsTab a,
-body#pendingAcl #mainNav li#pendingAclTab a {
+body#pendingAcl #mainNav li#pendingAclTab a,
+body#admin #mainNav li#adminTab a {
     background-color: #fff;
     color: #444;
     -webkit-border-top-left-radius: 5px;
