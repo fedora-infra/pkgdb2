@@ -87,8 +87,7 @@ def list_packages(motif=None):
         packages=packages,
         motif=motif,
         total_page=total_page,
-        page=page,
-        admin=is_pkgdb_admin(flask.g.fas_user),
+        page=page
     )
 
 
@@ -215,25 +214,20 @@ def package_orphan(package, collection):
 
     for acl in package_acl:
         if acl.collection.branchname == collection:
-            if acl.point_of_contact == flask.g.fas_user.username:
-                try:
-                    pkgdblib.update_pkg_poc(
-                        session=SESSION,
-                        pkg_name=package.name,
-                        clt_name=acl.collection.branchname,
-                        pkg_poc='orphan',
-                        user=flask.g.fas_user
-                    )
-                    flask.flash(
-                        'You are no longer point of contact on branch: %s'
-                        % collection)
-                except pkgdblib.PkgdbException, err:
-                    flask.flash(err.message, 'error')
-                break
-            else:
+            try:
+                pkgdblib.update_pkg_poc(
+                    session=SESSION,
+                    pkg_name=package.name,
+                    clt_name=acl.collection.branchname,
+                    pkg_poc='orphan',
+                    user=flask.g.fas_user
+                )
                 flask.flash(
-                    'You are not the point of contact of this package on '
-                    'branch: %s' % collection)
+                    'You are no longer point of contact on branch: %s'
+                    % collection)
+            except pkgdblib.PkgdbException, err:
+                flask.flash(err.message, 'error')
+            break
 
     try:
         SESSION.commit()
