@@ -1195,12 +1195,31 @@ class PkgdbLibtests(Modeltests):
         self.session.add(new_collection)
         self.session.commit()
 
+        # User cannot branch, admins are required
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_branch,
                           session=self.session,
                           clt_from='devel',
                           clt_to='F-19',
                           user=FakeFasUser()
+                          )
+
+        # Inexistant collection to branch from
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_branch,
+                          session=self.session,
+                          clt_from='blah',
+                          clt_to='F-19',
+                          user=FakeFasUserAdmin()
+                          )
+
+        # Inexistant collection to branch to
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_branch,
+                          session=self.session,
+                          clt_from='devel',
+                          clt_to='blah',
+                          user=FakeFasUserAdmin()
                           )
 
         pkgdblib.add_branch(
