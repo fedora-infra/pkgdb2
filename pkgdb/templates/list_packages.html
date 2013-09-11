@@ -5,7 +5,7 @@
 {%block tag %}packages{% endblock %}
 
 
-{% if admin %}
+{% if is_admin %}
 {% set options = True %}
 {%block options %}
 <ul>

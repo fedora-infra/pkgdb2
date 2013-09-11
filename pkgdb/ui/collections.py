@@ -69,8 +69,7 @@ def list_collections(motif=None, page=1):
         collections=collections,
         motif=motif,
         total_page=total_page,
-        page=page,
-        admin=is_pkgdb_admin(flask.g.fas_user),
+        page=page
     )
 
 @UI.route('/collection/<collection>/')

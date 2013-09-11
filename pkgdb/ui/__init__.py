@@ -28,11 +28,19 @@ import flask
 from urlparse import urlparse
 
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FAS
+from pkgdb import SESSION, FAS, is_pkgdb_admin, __version__
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
 
+
+@UI.context_processor
+def inject_is_admin():
+    """ Inject whether the user is a nuancier admin or not in every page
+    (every template).
+    """
+    return dict(is_admin=is_pkgdb_admin(flask.g.fas_user),
+                version=__version__)
 
 @UI.route('/')
 def index():

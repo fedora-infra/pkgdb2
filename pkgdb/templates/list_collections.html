@@ -4,7 +4,7 @@
 
 {%block tag %}collections{% endblock %}
 
-{% if admin %}
+{% if is_admin %}
 {% set options = True %}
 {%block options %}
 <ul>
