@@ -29,7 +29,8 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FakeFasUser, APP, fas_login_required, is_pkg_admin
+from pkgdb import (SESSION, FakeFasUser, APP, fas_login_required,
+                  is_pkg_admin, packager_login_required)
 from pkgdb.ui import UI
 
 
@@ -114,7 +115,7 @@ def watch_package(package):
 
 
 @UI.route('/acl/<package>/comaintain/', methods=('GET', 'POST'))
-@fas_login_required
+@packager_login_required
 def comaintain_package(package):
     if not 'packager' in flask.g.fas_user.groups:
         flask.flash('You must be a packager to apply to be a comaintainer',
@@ -218,7 +219,7 @@ def update_acl(package, user, branch=None):
 
 
 @UI.route('/acl/pending/')
-@fas_login_required
+@packager_login_required
 def pending_acl():
     ''' List the pending acls for the user logged in. '''
     pending_acls = pkgdblib.get_pending_acl_user(
