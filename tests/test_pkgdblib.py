@@ -150,6 +150,13 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl.package.name, 'guake')
         self.assertEqual(pkg_acl.acls[0].fas_name, 'pingou')
 
+        # Package does not exist
+        self.assertRaises(NoResultFound,
+                          pkgdblib.get_acl_package,
+                          self.session,
+                          'test',
+                          'devel')
+
         # Collection does not exist
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.get_acl_package,
