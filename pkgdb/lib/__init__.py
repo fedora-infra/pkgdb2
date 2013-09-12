@@ -1028,11 +1028,7 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
-    try:
-        pkg_listing = get_acl_package(session, pkg_name, clt_name)
-    except NoResultFound:
-        raise PkgdbException('The package %s has not been found in the'
-                             'branch %s' % (pkg_name, clt_name))
+    pkg_listing = get_acl_package(session, pkg_name, clt_name)
 
     if not pkg_listing.status in ('Orphaned', 'Deprecated'):
             raise PkgdbException('Package is not orphaned on %s' % clt_name)
@@ -1129,7 +1125,7 @@ def add_branch(session, clt_from, clt_to, user):
         if pkglist.status == 'Approved':
             try:
                 pkglist.branch(session, clt_to)
-            except SQLAlchemyError, err:
+            except SQLAlchemyError, err:  # pragma: no cover
                 messages.append(err)
 
     # Should we raise a PkgdbException if messages != [], or just return them?
