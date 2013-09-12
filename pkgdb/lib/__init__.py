@@ -61,9 +61,28 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
 
-    :arg session: session with which to connect to the database
-    :arg pkg_name:
-    ...
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :arg pkg_summary: a summary description of the package.
+    :arg pkg_status: the status of the package.
+    :arg pkg_collection: the collection in which had the package.
+    :arg pkg_poc: the point of contact for this package in this collection
+    :arg user: the user performing the action
+    :kwarg pkg_reviewURL: the url of the review-request on the bugzilla
+    :kwarg pkg_shouldopen: a boolean
+    :kwarg pkg_upstreamURL: the url of the upstream project.
+    :returns: a message informating that the package has been successfully
+        created.
+    :rtype: str()
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to add a package, only pkgdb admin can
+            - Something went wrong when adding the Package to the database
+            - Something went wrong when adding ACLs for this package in the
+                database
+            - Group is incorrect
+    :raises sqlalchemy.orm.exc.NoResultFound: when there is no collection
+        found in the database with the name ``pkg_collection``.
     """
     if user is None or not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException("You're not allowed to add a package")
@@ -131,10 +150,17 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
 def get_acl_package(session, pkg_name, pkg_clt=None):
     """ Return the ACLs for the specified package.
 
-    :arg session: session with which to connect to the database
-    :arg pkg_name: the name of the package to retrieve the ACLs for
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package to retrieve the ACLs for.
     :kward pkg_clt: the branche name of the collection to retrieve the ACLs
-        of
+        of.
+    :returns: a list of ``PackageListing``.
+    :rtype: list(PackageListing)
+    :raises pkgdb.lib.PkgdbException: when user restricted the acl to a
+        specific branch using ``pkg_clt`` and this branch could not be
+        found associated with this package.
+    :raises sqlalchemy.orm.exc.NoResultFound: when there is no package
+        found in the database with the name ``pkg_name``.
     """
     package = model.Package.by_name(session, pkg_name)
     pkglisting = model.PackageListing.by_package_id(session, package.id)
@@ -158,12 +184,25 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
                     user):
     """ Set the specified ACLs for the specified package.
 
-    :arg session: session with which to connect to the database
-    :arg pkg_name: the name of the package
-    :arg colt_name: the name of the collection
-    :arg pkg_user: the FAS user for which the ACL should be set/change
-    :arg status: the status of the ACLs
-    :arg user: the user making the action
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :arg colt_name: the name of the collection.
+    :arg pkg_user: the FAS user for which the ACL should be set/change.
+    :arg status: the status of the ACLs.
+    :arg user: the user making the action.
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The ``pkg_name`` does not correspond to any package in the
+                database.
+            - The ``clt_name`` does not correspond to any collection in the
+                database.
+            - You are not allowed to perform the action, are allowed:
+                - pkgdb admins.
+                - People with 'approveacls' rights.
+                - Anyone for 'watchcommits' and 'watchbugzilla' acls.
+                - Anyone to set status to 'Awaiting review', 'Removed' and
+                    'Obsolete'.
+                .. note:: groups cannot have 'approveacls' rights.
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -230,11 +269,26 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
 def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
     """ Change the point of contact of a package.
 
-    :arg session: session with which to connect to the database
-    :arg pkg_name: the name of the package
-    :arg clt_name: the branchname of the collection
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :arg clt_name: the branchname of the collection.
     :arg pkg_poc: name of the new point of contact for the package.
-    :arg user: the user making the action
+    :arg user: the user making the action.
+    :returns: a message informing that the point of contact has been
+        successfully changed.
+    :rtype: str()
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The ``pkg_name`` does not correspond to any package in the
+                database.
+            - The ``clt_name`` does not correspond to any collection in the
+                database.
+            - You are not allowed to perform the action, are allowed:
+                - pkgdb admins.
+                - current point of contact.
+                - anyone on orphaned packages.
+                - anyone in the group when the point of contact is set to
+                    said group.
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -295,10 +349,28 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                       poc='orphan'):
     """ Update the status of a package.
 
-    :arg session: session with which to connect to the database
-    :arg pkg_name: the name of the package
-    :arg clt_name: the name of the collection
-    :arg user: the user making the action
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :arg clt_name: the name of the collection.
+    :arg user: the user making the action.
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The provided ``pkg_name`` does not correspond to any package
+                in the database.
+            - The provided ``clt_name`` does not correspond to any collection
+                in the database.
+            - The provided ``status`` is not allowed for a package.
+            - You are not allowed to perform the action:
+                - Deprecate:
+                    - user can only deprecate on the devel branch.
+                    - admin can deprecate on all branches.
+                - Approve:
+                    - If you approve an orphaned package you need to
+                        specify a point_of_contact: ``poc``.
+                - Orphan:
+                    - anyone can orphan, this should not raise any exception.
+                - Remove:
+                    - only admin can remove.
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -374,17 +446,23 @@ def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
                    limit=None, count=False):
     """ Return the list of packages matching the given criteria.
 
-    :arg session: session with which to connect to the database
-    :arg pkg_name: the name of the package
-    :kwarg clt_name: branchname of the collection to search
-    :kwarg pkg_poc: point of contact of the packages searched
-    :kwarg orphaned: boolean to restrict search to orphaned packages
-    :kwarg deprecated: boolean to restrict search to deprecated packages
-    :kwarg page: the page number to apply to the results
-    :kwarg limit: the number of results to return
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :kwarg clt_name: branchname of the collection to search.
+    :kwarg pkg_poc: point of contact of the packages searched.
+    :kwarg orphaned: boolean to restrict search to orphaned packages.
+    :kwarg deprecated: boolean to restrict search to deprecated packages.
+    :kwarg page: the page number to apply to the results.
+    :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
-
+    :returns: a list of ``Package`` entry corresponding to the given
+        criterias.
+    :rtype: list(Package)
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The provided ``limit`` is not an integer.
+            - The provided ``page`` is not an integer.
     """
     if '*' in pkg_name:
         pkg_name = pkg_name.replace('*', '%')
@@ -416,14 +494,20 @@ def search_collection(session, pattern, status=None, page=None,
                       limit=None, count=False):
     """ Return the list of Collection matching the given criteria.
 
-    :arg session: session with which to connect to the database
-    :arg pattern: pattern to match the collection
-    :kwarg status: status of the collection to search for
-    :kwarg page: the page number to apply to the results
-    :kwarg limit: the number of results to return
+    :arg session: session with which to connect to the database.
+    :arg pattern: pattern to match the collection.
+    :kwarg status: status of the collection to search for.
+    :kwarg page: the page number to apply to the results.
+    :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
-
+    :returns: a list of ``Collection`` entry corresponding to the given
+        criterias.
+    :rtype: list(Collection)
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The provided ``limit`` is not an integer.
+            - The provided ``page`` is not an integer.
     """
     if '*' in pattern:
         pattern = pattern.replace('*', '%')
@@ -455,13 +539,19 @@ def search_packagers(session, pattern, page=None, limit=None,
                      count=False):
     """ Return the list of Packagers maching the given pattern.
 
-    :arg session: session with which to connect to the database
-    :arg pattern: pattern to match on the packagers
-    :kwarg page: the page number to apply to the results
-    :kwarg limit: the number of results to return
+    :arg session: session with which to connect to the database.
+    :arg pattern: pattern to match on the packagers.
+    :kwarg page: the page number to apply to the results.
+    :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
-
+    :returns: a list of ``PackageListing`` entry corresponding to the given
+        criterias.
+    :rtype: list(PackageListing)
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The provided ``limit`` is not an integer.
+            - The provided ``page`` is not an integer.
     """
     if '*' in pattern:
         pattern = pattern.replace('*', '%')
@@ -495,14 +585,21 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
                 count=False):
     """ Return the list of Collection matching the given criteria.
 
-    :arg session: session with which to connect to the database
-    :kwarg package: retrict the logs to a certain package
-    :kwarg from_date: a date from which to retrieve the logs
-    :kwarg page: the page number to apply to the results
-    :kwarg limit: the number of results to return
+    :arg session: session with which to connect to the database.
+    :kwarg package: retrict the logs to a certain package.
+    :kwarg from_date: a date from which to retrieve the logs.
+    :kwarg page: the page number to apply to the results.
+    :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
-
+    :returns: a list of ``Log`` entry corresponding to the given criterias.
+    :rtype: list(Log)
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The provided ``limit`` is not an integer.
+            - The provided ``page`` is not an integer.
+            - The ``package`` name specified does not correspond to any
+                package.
     """
     if limit is not None:
         try:
@@ -542,8 +639,11 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
 def get_acl_packager(session, packager):
     """ Return the list of ACL associated with a packager.
 
-    :arg session: session with which to connect to the database
+    :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
+    :returns: a list of ``PackageListingAcl`` associated to the specified
+        user.
+    :rtype: list(PackageListingAcl)
     """
     return model.PackageListingAcl.get_acl_packager(
         session, packager=packager)
@@ -552,9 +652,10 @@ def get_acl_packager(session, packager):
 def get_package_maintained(session, packager):
     """ Return all the package  maintained by a given packager.
 
-    :arg session: session with which to connect to the database
+    :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
-
+    :returns: a list of ``Package`` associated to the specified user.
+    :rtype: list(Package)
     """
     return model.Package.get_package_of_user(session, packager)
 
@@ -563,8 +664,32 @@ def add_collection(session, clt_name, clt_version, clt_status,
                    clt_publishurl, clt_pendingurl, clt_summary,
                    clt_description, clt_branchname, clt_disttag,
                    clt_gitbranch, user):
-    """ Add a new collection
+    """ Add a new collection to the database.
 
+    This method only flushes the new object, nothing is committed to the
+    database.
+
+    :arg session: the session with which to connect to the database.
+    :kwarg clt_name: the name of the collection.
+    :kwarg clt_version: the version of the collection.
+    :kwarg clt_status: the status of the collection.
+    :kwarg clt_publishurl: the publish url of the collection.
+    :kwarg clt_pendingurl: the pending url of the collection.
+    :kwarg clt_summary: the summary of the collection.
+    :kwarg clt_description: the description of the collection.
+    :kwarg clt_branchname: the branchname of the collection.
+    :kwarg clt_disttag: the dist tag of the collection.
+    :kwarg clt_gitbranch: the git branch name of the collection.
+    :kwarg user: The user performing the update.
+    :returns: a message informing that the collection was successfully
+        created.
+    :rtype: str()
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to edit a collection, only pkgdb admin can.
+            - An error occured while updating the collection in the database
+                the message returned is then the error message from the
+                database.
     """
 
     if not pkgdb.is_pkgdb_admin(user):
@@ -606,6 +731,31 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
                     clt_gitbranch=None, user=None):
     """ Edit a specified collection
 
+    This method only flushes the new object, nothing is committed to the
+    database.
+
+    :arg session: the session with which to connect to the database.
+    :arg collection: the ``Collection`` object to update.
+    :kwarg clt_name: the new name of the collection.
+    :kwarg clt_version: the new version of the collection.
+    :kwarg clt_status: the new status of the collection.
+    :kwarg clt_publishurl: the new publish url of the collection.
+    :kwarg clt_pendingurl: the new pending url of the collection.
+    :kwarg clt_summary: the new summary of the collection.
+    :kwarg clt_description: the new description of the collection.
+    :kwarg clt_branchname: the new branchname of the collection.
+    :kwarg clt_disttag: the new dist tag of the collection.
+    :kwarg clt_gitbranch: the new git branch name of the collection.
+    :kwarg user: The user performing the update.
+    :returns: a message informing that the collection was successfully
+        updated.
+    :rtype: str()
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to edit a collection, only pkgdb admin can.
+            - An error occured while updating the collection in the database
+                the message returned is then the error message from the
+                database.
     """
 
     if not pkgdb.is_pkgdb_admin(user):
@@ -664,9 +814,22 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
 def update_collection_status(session, clt_branchname, clt_status, user):
     """ Update the status of a collection.
 
+    This method only flushes the new object, nothing is committed to the
+    database.
+
     :arg session: session with which to connect to the database
     :arg clt_branchname: branchname of the collection
     :arg clt_status: status of the collection
+    :returns: a message information whether the status of the collection
+        has been updated correclty or if it was not necessary.
+    :rtype: str()
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to edit a collection, only pkgdb admin can.
+            - An error occured while updating the collection in the database
+                the message returned is then the error message from the
+                database.
+            - The specified collection could not be found in the database.
     """
     if not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to edit collections')
@@ -707,9 +870,14 @@ def get_pending_acl_user(session, user):
     the collection branchname, the requested ACL and the user that
     requested that ACL.
 
-    :arg session: session with which to connect to the database
+    :arg session: session with which to connect to the database.
     :arg user: the user owning the packages on which to retrieve the
         list of pending ACLs.
+    :returns: a list of dictionnary containing the pending ACL for the
+        specified user.
+        The dictionnary has for keys: 'package', 'user', 'collection',
+        'acl', 'status'.
+    :rtype: [{str():str()}]
     """
     output = []
     for package in model.PackageListingAcl.get_pending_acl(
@@ -726,17 +894,22 @@ def get_pending_acl_user(session, user):
 
 
 def get_acl_user_package(session, user, package, status=None):
-    """ Return the pending ACLs on a specified package for the specified
-    user.
+    """ Return the ACLs on a specified package for the specified user.
+
     The method returns a list of dictionnary containing the package name
     the collection branchname, the requested ACL and the user that
     requested that ACL.
 
-    :arg session: session with which to connect to the database
+    :arg session: session with which to connect to the database.
     :arg user: the user owning the packages on which to retrieve the
         list of pending ACLs.
-    :arg package: the package for which to check the acl
-    :kwarg status: the status of the package to retrieve the ACLs of
+    :arg package: the package for which to check the acl.
+    :kwarg status: the status of the package to retrieve the ACLs of.
+    :returns: a list of dictionnary containing the ACL the specified user
+        has on a specific package.
+        The dictionnary has for keys: 'package', 'user', 'collection',
+        'acl', 'status'.
+    :rtype: [{str():str()}]
     """
     output = []
     for package in model.PackageListingAcl.get_acl_package(
@@ -756,11 +929,14 @@ def has_acls(session, user, package, branch, acl):
     """ Return wether the specified user has the specified acl on the
     specified package.
 
-    :arg session: session with which to connnect to the database
-    :arg user: the name of the user for which to check the acl
+    :arg session: session with which to connnect to the database.
+    :arg user: the name of the user for which to check the acl.
     :arg package: the name of the package on which the acl should be
-        checked
-    :arg acl: the acl to check for the user on the package
+        checked.
+    :arg acl: the acl to check for the user on the package.
+    :returns: a boolean specifying whether specified user has this ACL on
+        this package and branch.
+    :rtype: bool()
     """
     acls = get_acl_user_package(session, user=user,
                                 package=package, status='Approved')
@@ -775,13 +951,14 @@ def has_acls(session, user, package, branch, acl):
 def get_status(session, status='all'):
     """ Return a dictionnary containing all the status and acls.
 
-    :arg session: session with which to connnect to the database
+    :arg session: session with which to connnect to the database.
     :kwarg status: single keyword or multiple keywords used to retrict
         querying only for some of the status rather than all.
         Defaults to 'all' other options are: clt_status, pkg_status,
-        pkg_acl, acl_status
-    :return: a dictionnary with all the status extracted from the database,
-        keys are: clt_status, pkg_status, pkg_acl, acl_status
+        pkg_acl, acl_status.
+    :returns: a dictionnary with all the status extracted from the database,
+        keys are: clt_status, pkg_status, pkg_acl, acl_status.
+    :rtype: dict(str():list())
     """
     output = {}
 
@@ -804,8 +981,10 @@ def get_status(session, status='all'):
 def get_top_maintainers(session, top=10):
     """ Return the specified top maintainer having the most commit rights
 
-    :arg session: session with which to connect to the database
+    :arg session: session with which to connect to the database.
     :arg top: the number of results to return, defaults to 10.
+    :returns: a list of tuple of type: (username, number_of_packages).
+    :rtype: list(tuple())
     """
     return model.PackageListingAcl.get_top_maintainers(session, top)
 
@@ -813,8 +992,10 @@ def get_top_maintainers(session, top=10):
 def get_top_poc(session, top=10):
     """ Return the specified top point of contact.
 
-    :arg session: session with which to connect to the database
+    :arg session: session with which to connect to the database.
     :arg top: the number of results to return, defaults to 10.
+    :returns: a list of tuple of type: (username, number_of_poc).
+    :rtype: list(tuple())
     """
     return model.PackageListing.get_top_poc(session, top)
 
@@ -823,17 +1004,35 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
     """ Unorphan a specific package in favor of someone and give him the
     appropriate ACLs.
 
-    :arg session: session with which to connect to the database
-    :arg pkg_name: the name of the package
-    :arg clt_name: the name of the collection
-    :arg pkg_user: the FAS user requesting the package
-    :arg user: the user making the action
+    This method only flushes the changes, nothing is committed to the
+    database.
+
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :arg clt_name: the name of the collection.
+    :arg pkg_user: the FAS user requesting the package.
+    :arg user: the user making the action.
+    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The package name provided does not correspond to any package
+                in the database.
+            - The package could not be found in the specified branch
+            - The package is not orphaned in the specified branch
+            - You are are trying to unorphan the package for someone else
+                while you are not a pkgdb admin
+            - You are trying to unorphan the package while you are not a
+                packager.
     """
     try:
         package = model.Package.by_name(session, pkg_name)
-        pkg_listing = get_acl_package(session, pkg_name, clt_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
+
+    try:
+        pkg_listing = get_acl_package(session, pkg_name, clt_name)
+    except NoResultFound:
+        raise PkgdbException('The package %s has not been found in the'
+                             'branch %s' % (pkg_name, clt_name))
 
     if not pkg_listing.status in ('Orphaned', 'Deprecated'):
             raise PkgdbException('Package is not orphaned on %s' % clt_name)
@@ -885,10 +1084,22 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
 def add_branch(session, clt_from, clt_to, user):
     """ Clone a the permission from a branch to another.
 
-    :arg session: session with which to connect to the database
-    :arg clt_from: the ``branchname`` of the collection to branch from
-    :arg clt_to: the ``branchname`` of the collection to branch to
-    :arg user: the user making the action
+    This method only flushes the new objects, the only thing committed is
+    the log message when the branching starts.
+
+    :arg session: session with which to connect to the database.
+    :arg clt_from: the ``branchname`` of the collection to branch from.
+    :arg clt_to: the ``branchname`` of the collection to branch to.
+    :arg user: the user making the action.
+    :returns: a list of errors generated while branching, these errors
+        might be the results of trying to create a PackageListing object
+        already existing.
+    :rtype: list(str)
+    :raises pkgdb.lib.PkgdbException: There are three conditions leading to
+        this exception beeing raised:
+            - You are not allowed to branch (only pkgdb admin can do it)
+            - The specified branch from is invalid (does not exist)
+            - The specified branch to is invalid (does not exist).
     """
     if not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to branch: %s to %s' % (
