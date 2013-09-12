@@ -913,9 +913,15 @@ def add_branch(session, clt_from, clt_to, user):
     )
     session.commit()
 
+    messages = []
     for pkglist in model.PackageListing.by_collectionid(session, clt_from.id):
         if pkglist.status == 'Approved':
-            pkglist.branch(session, clt_to)
+            try:
+                pkglist.branch(session, clt_to)
+            except SQLAlchemyError, err:
+                messages.append(err)
+
+    # Should we raise a PkgdbException if messages != [], or just return them?
 
     model.Log.insert(
         session,
@@ -924,3 +930,7 @@ def add_branch(session, clt_from, clt_to, user):
         'user: %s finished branching from %s to %s' % (
             user.username, clt_from.branchname, clt_to.branchname)
     )
+
+    # Go for returning them for the moment, which allows the logs to be
+    # inserted
+    return messages
