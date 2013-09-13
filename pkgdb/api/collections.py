@@ -46,11 +46,13 @@ def api_collection_new():
         collection.
     :arg collection_publishURLTemplate:
     :arg collection_pendingURLTemplate:
-    :arg collection_summary:
-    :arg collection_description:
-    :arg collection_branchname:
-    :arg collection_distTag:
-    :arg collection_git_branch_name:
+    :arg collection_summary: A summary description of the collection.
+    :arg collection_description: A description of the collection.
+    :arg collection_branchname: The short name of the collection (ie: F-18).
+    :arg collection_distTag: The dist tag used by rpm for this collection
+        (ie: .fc18).
+    :arg collection_git_branch_name: The git branch name for this collection
+        (ie: f18).
 
     '''
     httpcode = 200
