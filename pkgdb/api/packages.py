@@ -333,8 +333,8 @@ def api_package_unretire():
 @API.route('/package/list/<pattern>/')
 @API.route('/package/list/<pattern>')
 def api_package_list(pattern=None):
-    '''``/api/package/list/"pattern"/``
-        or ``/api/package/list/?pattern="pattern"``
+    '''``/api/package/list/<pattern>/``
+        or ``/api/package/list/?pattern=<pattern>``
     List packages based on a pattern. If no pattern is provided, return all
     the package.
 
