@@ -28,12 +28,21 @@ import flask
 
 API = flask.Blueprint('api_ns', __name__, url_prefix='/api')
 
+from pkgdb import __version__
 from pkgdb.doc_utils import load_doc
 
 import acls
 import collections
 import packagers
 import packages
+
+
+@API.context_processor
+def inject_pkgdb_version():
+    """ Inject whether the pkgdb version number on every template of this
+    namespace as well.
+    """
+    return dict(version=__version__)
 
 
 @API.route('/')
