@@ -32,9 +32,15 @@ from pkgdb.api import API
 
 ## Packagers
 @API.route('/packager/acl/')
+@API.route('/packager/acl')
 @API.route('/packager/acl/<packagername>/')
+@API.route('/packager/acl/<packagername>')
 def api_packager_acl(packagername=None):
-    ''' List the pending ACL action of the user.
+    '''``/api/packager/acl/<fas_username>/``
+        or ``/api/packager/acl/?packagername=<username>``
+    List the ACLs of the user.
+
+    Accept GET queries only.
 
     :arg username: String of the packager name.
 
@@ -59,10 +65,14 @@ def api_packager_acl(packagername=None):
     return jsonout
 
 
-@API.route('/packager/list/')
-@API.route('/packager/list/<pattern>/')
+@API.route('/packagers/')
+@API.route('/packagers')
+@API.route('/packagers/<pattern>/')
+@API.route('/packagers/<pattern>')
 def api_packager_list(pattern=None):
-    ''' List packagers.
+    '''``/api/packagers/<pattern>/`` or ``/api/packagers/?pattern=<pattern>``
+    List packagers based on a pattern. If no pattern is provided, return
+    all the packagers.
 
     :kwarg pattern: String of the pattern to use to list find packagers.
         If no pattern is provided, it returns the list of all packagers.

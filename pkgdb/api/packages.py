@@ -34,7 +34,10 @@ from pkgdb.api import API
 ## Package
 @API.route('/package/new/', methods=['POST'])
 def api_package_new():
-    ''' Create a new package.
+    '''``/api/package/new/``
+    Create a new package.
+
+    Accept POST queries only.
 
     :arg packagename: String of the package name to be created.
     :arg summary: String of the summary description of the package.
@@ -100,7 +103,10 @@ def api_package_new():
 
 @API.route('/package/orphan/', methods=['POST'])
 def api_package_orphan():
-    ''' Orphan a list of packages.
+    '''``/api/package/orphan/``
+    Orphan a list of packages.
+
+    Accept POST queries only.
 
     :arg packagenames: List of string of the packages name.
     :arg branches: List of string of the branches name in which these
@@ -157,7 +163,10 @@ def api_package_orphan():
 
 @API.route('/package/unorphan/', methods=['POST'])
 def api_package_unorphan():
-    ''' Unorphan a list of packages.
+    '''``/api/package/unorphan/``
+    Unorphan a list of packages.
+
+    Accept POST queries only.
 
     :arg packagenames: List of string of the packages name.
     :arg branches: List of string of the branches name in which these
@@ -211,9 +220,12 @@ def api_package_unorphan():
     return jsonout
 
 
-@API.route('/package/deprecate/', methods=['POST'])
-def api_package_deprecate():
-    ''' Deprecate a list of packages.
+@API.route('/package/retire/', methods=['POST'])
+def api_package_retire():
+    '''``/api/package/retire/``
+    Retire a list of packages.
+
+    Accept POST queries only.
 
     :arg packagenames: List of string of the packages name.
     :arg branches: List of string of the branches name in which these
@@ -262,9 +274,12 @@ def api_package_deprecate():
     return jsonout
 
 
-@API.route('/package/undeprecate/', methods=['POST'])
-def api_package_undeprecate():
-    ''' Un-deprecate a list of packages.
+@API.route('/package/unretire/', methods=['POST'])
+def api_package_unretire():
+    '''``/api/package/unretire/``
+    Un-deprecate a list of packages.
+
+    Accept POST queries only.
 
     :arg packagenames: List of string of the packages name.
     :arg branches: List of string of the branches name in which these
@@ -314,9 +329,16 @@ def api_package_undeprecate():
 
 
 @API.route('/package/list/')
-@API.route('/package/list/<pkgname>/')
-def api_package_list(pkgname=None):
-    ''' List packages.
+@API.route('/package/list')
+@API.route('/package/list/<pattern>/')
+@API.route('/package/list/<pattern>')
+def api_package_list(pattern=None):
+    '''``/api/package/list/<pattern>/``
+        or ``/api/package/list/?pattern=<pattern>``
+    List packages based on a pattern. If no pattern is provided, return all
+    the package.
+
+    Accept GET queries only
 
     :arg packagename: Pattern to list packages from their name.
     :arg branches: List of string of the branches name in which these
@@ -330,7 +352,7 @@ def api_package_list(pkgname=None):
     httpcode = 200
     output = {}
 
-    pattern = flask.request.args.get('pgkname', pkgname)
+    pattern = flask.request.args.get('pattern', pattern)
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
     orphaned = bool(flask.request.args.get('orphaned', False))

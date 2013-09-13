@@ -35,7 +35,10 @@ from pkgdb.lib import model
 @API.route('/collection/new/', methods=['POST'])
 @API.route('/collection/new', methods=['POST'])
 def api_collection_new():
-    ''' Create a new collection.
+    ''' ``/api/collection/new/``
+    Create a new collection.
+
+    Accept POST queries only.
 
     :arg collection_name: String of the collection name to be created.
     :arg collection_version: String of the version of the collection.
@@ -113,7 +116,10 @@ def api_collection_new():
 @API.route('/collection/<collection>/status/', methods=['POST'])
 @API.route('/collection/<collection>/status', methods=['POST'])
 def api_collection_status(collection):
-    ''' Update the status of collection.
+    ''' ``/api/collection/<collection branchname>/status/``
+    Update the status of collection.
+
+    Accept POST query only.
 
     :arg collection_branchname: String of the collection branch name to change.
     :arg collection_status: String of the status to change the collection to
@@ -170,10 +176,15 @@ def api_collection_status(collection):
 
 
 @API.route('/collections/')
+@API.route('/collections')
 @API.route('/collections/<pattern>/')
 @API.route('/collections/<pattern>')
 def api_collection_list(pattern=None):
-    ''' List collections.
+    '''``/api/collection/<pattern>/`` or ``/api/collections/?pattern=<pattern>``
+    List the collections based on a pattern. If no pattern is provided, it
+    will return all the collection.
+
+    Accept GET queries only.
 
     :arg pattern: a pattern to which the collection searched should match.
     :arg status: restrict the search to certain status.
