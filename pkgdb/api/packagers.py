@@ -36,7 +36,7 @@ from pkgdb.api import API
 @API.route('/packager/acl/<packagername>/')
 @API.route('/packager/acl/<packagername>')
 def api_packager_acl(packagername=None):
-    '''``/api/packager/acl/<fas_username>/``
+    '''``/api/packager/acl/<fas_username>/`` \
         or ``/api/packager/acl/?packagername=<username>``
     List the ACLs of the user.
 
