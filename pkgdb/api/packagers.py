@@ -36,8 +36,8 @@ from pkgdb.api import API
 @API.route('/packager/acl/<packagername>/')
 @API.route('/packager/acl/<packagername>')
 def api_packager_acl(packagername=None):
-    '''``/api/packager/acl/<fas_username>/``
-        or ``/api/packager/acl/?packagername=<username>``
+    '''``/api/packager/acl/"fas_username"/``
+        or ``/api/packager/acl/?packagername="fas_username"``
     List the ACLs of the user.
 
     Accept GET queries only.
@@ -70,7 +70,7 @@ def api_packager_acl(packagername=None):
 @API.route('/packagers/<pattern>/')
 @API.route('/packagers/<pattern>')
 def api_packager_list(pattern=None):
-    '''``/api/packagers/<pattern>/`` or ``/api/packagers/?pattern=<pattern>``
+    '''``/api/packagers/"pattern"/`` or ``/api/packagers/?pattern="pattern"``
     List packagers based on a pattern. If no pattern is provided, return
     all the packagers.
 

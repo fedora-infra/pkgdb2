@@ -41,8 +41,8 @@ from pkgdb.lib import model
 @API.route('/package/acl/get/<packagename>/')
 @API.route('/package/acl/get/<packagename>')
 def api_acl_get(packagename=None):
-    ''' ``/api/package/acl/get/<packagename>/``
-        or ``/api/package/acl/get/?packagename=<packagename>``
+    ''' ``/api/package/acl/get/"packagename"/``
+        or ``/api/package/acl/get/?packagename=packagename``
     Returns the ACL for a given package.
 
     Accept GET queries only.
