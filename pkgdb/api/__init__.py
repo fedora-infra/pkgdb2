@@ -67,7 +67,7 @@ def api():
         ],
         packages=[
             api_package_new, api_package_orphan, api_package_unorphan,
-            api_package_deprecate, api_package_undeprecate,
+            api_package_retire, api_package_unretire,
             api_package_list,
         ],
         acls=[
