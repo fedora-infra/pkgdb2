@@ -53,8 +53,6 @@ class FlaskApiAclsTest(Modeltests):
 
     def test_acl_get(self):
         """ Test the api_acl_get function.  """
-        output = self.app.get('/api/package/acl/get/guake')
-        self.assertEqual(output.status_code, 301)
 
         output = self.app.get('/api/package/acl/get/guake/')
         self.assertEqual(output.status_code, 500)

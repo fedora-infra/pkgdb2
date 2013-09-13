@@ -53,8 +53,6 @@ class FlaskApiPackagersTest(Modeltests):
 
     def test_packager_acl(self):
         """ Test the api_packager_acl function.  """
-        output = self.app.get('/api/packager/acl/pingou')
-        self.assertEqual(output.status_code, 301)
 
         output = self.app.get('/api/packager/acl/')
         self.assertEqual(output.status_code, 500)
@@ -98,10 +96,8 @@ class FlaskApiPackagersTest(Modeltests):
 
     def test_packager_list(self):
         """ Test the api_packager_list function.  """
-        output = self.app.get('/api/packager/list/pin*')
-        self.assertEqual(output.status_code, 301)
 
-        output = self.app.get('/api/packager/list/')
+        output = self.app.get('/api/packagers/')
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
         self.assertEqual(data, {
@@ -109,7 +105,7 @@ class FlaskApiPackagersTest(Modeltests):
             "error": "Invalid request",
         })
 
-        output = self.app.get('/api/packager/list/pin*/')
+        output = self.app.get('/api/packagers/pin*/')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         self.assertEqual(data, {
@@ -119,7 +115,7 @@ class FlaskApiPackagersTest(Modeltests):
 
         create_package_acl(self.session)
 
-        output = self.app.get('/api/packager/list/pin*/')
+        output = self.app.get('/api/packagers/pin*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
