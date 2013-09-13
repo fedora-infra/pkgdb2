@@ -28,6 +28,7 @@ import itertools
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
+from pkgdb import SESSION
 from pkgdb.api import API
 
 

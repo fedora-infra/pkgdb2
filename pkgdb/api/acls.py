@@ -31,6 +31,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb
 import pkgdb.forms as forms
 import pkgdb.lib as pkgdblib
+from pkgdb import SESSION
 from pkgdb.api import API
 from pkgdb.lib import model
 
