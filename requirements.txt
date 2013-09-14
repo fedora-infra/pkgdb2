@@ -7,3 +7,4 @@ python-openid-teams
 python-openid-cla
 docutils
 python-dateutil
+dogpile.cache
