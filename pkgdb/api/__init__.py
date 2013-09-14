@@ -55,6 +55,7 @@ def api():
     api_packager_acl = load_doc(packagers.api_packager_acl)
     api_packager_list = load_doc(packagers.api_packager_list)
 
+    api_package_info = load_doc(packages.api_package_info)
     api_package_new = load_doc(packages.api_package_new)
     api_package_orphan = load_doc(packages.api_package_orphan)
     api_package_unorphan = load_doc(packages.api_package_unorphan)
@@ -75,9 +76,9 @@ def api():
             api_packager_acl, api_packager_list,
         ],
         packages=[
+            api_package_info, api_package_list,
             api_package_new, api_package_orphan, api_package_unorphan,
             api_package_retire, api_package_unretire,
-            api_package_list,
         ],
         acls=[
             api_acl_get, api_acl_update, api_acl_reassign,

@@ -336,11 +336,54 @@ def api_package_unretire():
 def api_package_info(name=None):
     '''``/api/package/<name>/`` \
         or ``/api/package/?pattern=<name>``
+
     Return information about a specific package.
 
     Accept GET queries only
 
     :arg name: The name of the package to retrieve the information of.
+
+    Sample response:
+
+.. code-block:: javascript
+
+    {
+      "output": "ok",
+      "packages": [
+        {
+          "point_of_contact": "spot",
+          "collection": {
+            "pendingurltemplate": "http://...",
+            "publishurltemplate": "http://...",
+            "branchname": "devel",
+            "version": "devel",
+            "name": "Fedora"
+          },
+          "package": {
+            "upstreamurl": "http://guake.org",
+            "name": "guake",
+            "reviewurl": "http://bugzilla.redhat.com/450189",
+            "summary": "Drop down terminal"
+          }
+        },
+        {
+          "point_of_contact": "pingou",
+          "collection": {
+            "pendingurltemplate": "http://...",
+            "publishurltemplate": "http://...",
+            "branchname": "F-19",
+            "version": "19",
+            "name": "Fedora"
+          },
+          "package": {
+            "upstreamurl": "http://guake.org",
+            "name": "guake",
+            "reviewurl": "http://bugzilla.redhat.com/450189",
+            "summary": "Drop down terminal"
+          }
+        }
+      ]
+    }
 
     '''
     httpcode = 200
