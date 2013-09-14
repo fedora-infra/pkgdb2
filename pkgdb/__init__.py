@@ -146,6 +146,7 @@ from api import acls
 from api import collections
 from api import packages
 from api import packagers
+from api import extras
 APP.register_blueprint(API)
 
 # Import the UI namespace
