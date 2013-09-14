@@ -544,7 +544,7 @@ class PkgdbLibtests(Modeltests):
                                        clt_name='F-18',
                                        pkg_poc=None,
                                        orphaned=None,
-                                       status='Deprecated',
+                                       status='Retired',
                                        )
         self.assertEqual(len(pkgs), 0)
 
@@ -580,7 +580,7 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           pkg_name='test',
                           clt_name='F-17',
-                          status='Deprecated',
+                          status='Retired',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
@@ -596,13 +596,13 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        # User not allowed to deprecate the package on F-18
+        # User not allowed to retire the package on F-18
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
                           clt_name='F-18',
-                          status='Deprecated',
+                          status='Retired',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
@@ -633,7 +633,7 @@ class PkgdbLibtests(Modeltests):
         pkgdblib.update_pkg_status(self.session,
                                    pkg_name='guake',
                                    clt_name='F-18',
-                                   status='Deprecated',
+                                   status='Retired',
                                    user=FakeFasUserAdmin()
                                    )
 
@@ -641,7 +641,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
-        self.assertEqual(pkg_acl[0].status, 'Deprecated')
+        self.assertEqual(pkg_acl[0].status, 'Retired')
 
         # User can orphan package
         pkgdblib.update_pkg_status(self.session,
@@ -655,7 +655,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
-        self.assertEqual(pkg_acl[0].status, 'Deprecated')
+        self.assertEqual(pkg_acl[0].status, 'Retired')
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
         self.assertEqual(pkg_acl[1].package.name, 'guake')
         self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
@@ -675,7 +675,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
-        self.assertEqual(pkg_acl[0].status, 'Deprecated')
+        self.assertEqual(pkg_acl[0].status, 'Retired')
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
         self.assertEqual(pkg_acl[1].package.name, 'guake')
         self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
@@ -695,7 +695,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
-        self.assertEqual(pkg_acl[0].status, 'Deprecated')
+        self.assertEqual(pkg_acl[0].status, 'Retired')
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
         self.assertEqual(pkg_acl[1].package.name, 'guake')
         self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
@@ -720,7 +720,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
         self.assertEqual(pkg_acl[1].status, 'Approved')
 
-        # Not Admin and status is not Orphaned nor Deprecated
+        # Not Admin and status is not Orphaned nor Retired
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
@@ -948,7 +948,7 @@ class PkgdbLibtests(Modeltests):
                       'Removed']
         self.assertEqual(obs['acl_status'], acl_status)
 
-        pkg_status = ['Approved', 'Deprecated', 'Orphaned', 'Removed']
+        pkg_status = ['Approved', 'Orphaned', 'Removed', 'Retired']
         self.assertEqual(obs['pkg_status'], pkg_status)
 
         clt_status = ['Active', 'EOL', 'Under Development']

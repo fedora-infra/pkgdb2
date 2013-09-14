@@ -332,7 +332,7 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
     pkglisting.point_of_contact = pkg_poc
     if pkg_poc == 'orphan':
         pkglisting.status = 'Orphaned'
-    elif pkglisting.status in ('Orphaned', 'Deprecated'):
+    elif pkglisting.status in ('Orphaned', 'Retired'):
         pkglisting.status = 'Approved'
 
     session.add(pkglisting)
@@ -386,7 +386,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
-    if status not in ['Approved', 'Removed', 'Deprecated', 'Orphaned']:
+    if status not in ['Approved', 'Removed', 'Retired', 'Orphaned']:
         raise PkgdbException('Status not allowed for a package : %s' %
                              status)
 
@@ -395,7 +395,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                                                             collection.id)
 
     prev_status = pkglisting.status
-    if status == 'Deprecated':
+    if status == 'Retired':
         # Admins can deprecate everything
         # Users can deprecate Fedora devel and EPEL branches
         if pkgdb.is_pkgdb_admin(user) \
@@ -403,7 +403,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                     and collection.version == 'devel') \
                 or collection.name == 'EPEL':
 
-            pkglisting.status = 'Deprecated'
+            pkglisting.status = 'Retired'
             pkglisting.point_of_contact = 'orphan'
             session.add(pkglisting)
             session.flush()
@@ -455,7 +455,8 @@ def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
     :kwarg clt_name: branchname of the collection to search.
     :kwarg pkg_poc: point of contact of the packages searched.
     :kwarg orphaned: boolean to restrict search to orphaned packages.
-    :kwarg deprecated: boolean to restrict search to deprecated packages.
+    :kwarg status: allows filtering the packages by their status:
+        Approved, Retired, Removed, Orphaned.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -1034,7 +1035,7 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
 
     pkg_listing = get_acl_package(session, pkg_name, clt_name)
 
-    if not pkg_listing.status in ('Orphaned', 'Deprecated'):
+    if not pkg_listing.status in ('Orphaned', 'Retired'):
             raise PkgdbException('Package is not orphaned on %s' % clt_name)
 
     if not pkgdb.is_pkg_admin(user, package.name, clt_name):

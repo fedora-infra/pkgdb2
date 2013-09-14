@@ -102,7 +102,7 @@ def create_status(session):
         obj = CollecStatus(status)
         session.add(obj)
 
-    for status in ['Approved', 'Removed', 'Deprecated', 'Orphaned']:
+    for status in ['Approved', 'Removed', 'Retired', 'Orphaned']:
         obj = PkgStatus(status)
         session.add(obj)
 

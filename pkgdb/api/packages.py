@@ -230,7 +230,7 @@ def api_package_retire():
 
     :arg packagenames: List of string of the packages name.
     :arg branches: List of string of the branches name in which these
-        packages will be deprecated.
+        packages will be retire.
 
     '''
     httpcode = 200
@@ -248,7 +248,7 @@ def api_package_retire():
                     SESSION,
                     pkg_name=pkg_name,
                     clt_name=clt_name,
-                    status='Deprecated',
+                    status='Retired',
                     user=flask.g.fas_user,
                 )
             SESSION.commit()

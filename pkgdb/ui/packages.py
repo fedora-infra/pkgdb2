@@ -351,7 +351,7 @@ def package_retire(package, collection):
                         session=SESSION,
                         pkg_name=package.name,
                         clt_name=acl.collection.branchname,
-                        status='Deprecated',
+                        status='Retired',
                         user=flask.g.fas_user
                     )
                     flask.flash(

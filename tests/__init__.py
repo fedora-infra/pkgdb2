@@ -226,9 +226,9 @@ def create_package_listing(session):
                                   collection_id=f18_collec.id,
                                   )
     session.add(pkgltg)
-    # Pkg: fedocal - Collection: devel - Deprecated
+    # Pkg: fedocal - Collection: devel - Retired
     pkgltg = model.PackageListing(point_of_contact='orphan',
-                                  status='Deprecated',
+                                  status='Retired',
                                   package_id=fedocal_pkg.id,
                                   collection_id=devel_collec.id,
                                   )
