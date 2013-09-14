@@ -100,7 +100,6 @@ class FlaskApiCollectionTest(Modeltests):
         #self.assertEqual(output['messages'][0],
                          #'Collection updated to "EOL"')
 
-
     def test_collection_list(self):
         """ Test the api_collection_list function.  """
         output = self.app.get('/api/collections/F-*')
