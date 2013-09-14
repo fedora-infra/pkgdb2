@@ -429,6 +429,57 @@ def api_package_list(pattern=None):
     :arg status: Allows to filter packages based on their status: Approved,
         Orphaned, Retired, Removed.
 
+    Sample response:
+
+.. code-block:: javascript
+
+    {
+      "output": "ok",
+      "packages": [
+        {
+          "status": "Approved",
+          "upstreamurl": "http://guake.org",
+          "name": "guake",
+          "summary": "Drop down terminal",
+          "acls": [
+            {
+              "point_of_contact": "spot",
+              "collection": {
+                "pendingurltemplate": "http://...",
+                "publishurltemplate": "http://...",
+                "branchname": "devel",
+                "version": "devel",
+                "name": "Fedora"
+              },
+              "package": {
+                "upstreamurl": "http://guake.org",
+                "name": "guake",
+                "reviewurl": "http://bugzilla.redhat.com/450189",
+                "summary": "Drop down terminal"
+              }
+            },
+            {
+              "point_of_contact": "pingou",
+              "collection": {
+                "pendingurltemplate": "http://...",
+                "publishurltemplate": "http://...",
+                "branchname": "F-19",
+                "version": "19",
+                "name": "Fedora"
+              },
+              "package": {
+                "upstreamurl": "http://guake.org",
+                "name": "guake",
+                "reviewurl": "http://bugzilla.redhat.com/450189",
+                "summary": "Drop down terminal"
+              }
+            }
+          ],
+          "creation_date": "2013-09-09 14:43:21.578370",
+          "reviewurl": "http://bugzilla.redhat.com/450189",
+        }
+      ]
+    }
     '''
     httpcode = 200
     output = {}
