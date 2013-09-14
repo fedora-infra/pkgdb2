@@ -329,13 +329,50 @@ def api_package_unretire():
     return jsonout
 
 
-@API.route('/package/list/')
-@API.route('/package/list')
-@API.route('/package/list/<pattern>/')
-@API.route('/package/list/<pattern>')
+@API.route('/package/')
+@API.route('/package')
+@API.route('/package/<name>/')
+@API.route('/package/<name>')
+def api_package_info(name=None):
+    '''``/api/package/<name>/`` \
+        or ``/api/package/?pattern=<name>``
+    Return information about a specific package.
+
+    Accept GET queries only
+
+    :arg name: The name of the package to retrieve the information of.
+
+    '''
+    httpcode = 200
+    output = {}
+
+    name = flask.request.args.get('name', name)
+
+    try:
+        packages = pkgdblib.get_acl_package(
+            SESSION,
+            pkg_name=name,
+        )
+        output['output'] = 'ok'
+        output['packages'] = [pkg.to_json() for pkg in packages]
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        output['output'] = 'notok'
+        output['error'] = err
+        httpcode = 500
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
+
+
+@API.route('/packages/')
+@API.route('/packages')
+@API.route('/packages/<pattern>/')
+@API.route('/packages/<pattern>')
 def api_package_list(pattern=None):
-    '''``/api/package/list/<pattern>/`` \
-        or ``/api/package/list/?pattern=<pattern>``
+    '''``/api/packages/<pattern>/`` \
+        or ``/api/packages/?pattern=<pattern>``
     List packages based on a pattern. If no pattern is provided, return all
     the package.
 
@@ -346,8 +383,8 @@ def api_package_list(pattern=None):
         packages will be searched.
     :arg owner: String of the user name to to which restrict the search.
     :arg orphaned: Boolean to retrict the search to orphaned packages.
-    :arg deprecated: Boolean to retrict the search to deprecated
-        packages.
+    :arg status: Allows to filter packages based on their status: Approved,
+        Orphaned, Retired, Removed.
 
     '''
     httpcode = 200
