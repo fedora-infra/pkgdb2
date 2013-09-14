@@ -364,7 +364,7 @@ def api_package_list(pattern=None):
             SESSION,
             pkg_name=pattern,
             clt_name=branches,
-            pkg_owner=owner,
+            pkg_poc=owner,
             orphaned=orphaned,
             deprecated=deprecated,
         )
