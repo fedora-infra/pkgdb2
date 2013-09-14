@@ -102,6 +102,10 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
                             upstream_url=pkg_upstreamURL
                             )
     session.add(package)
+    try:
+        session.flush()
+    except SQLAlchemyError, err:  # pragma: no cover
+        raise PkgdbException('Could not create package')
 
     for collec in pkg_collection:
         collection = model.Collection.by_name(session, collec)
