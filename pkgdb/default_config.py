@@ -38,3 +38,8 @@ AUTO_APPROVE = ['watchcommits', 'watchbugzilla']
 
 # FAS group for the pkgdb admin
 ADMIN_GROUP = ('sysadmin-main', 'sysadmin-cvs')
+
+# The default backend for dogpile
+# Options are listed at:
+# http://dogpilecache.readthedocs.org/en/latest/api.html  (backend section)
+PKGDB_CACHE_BACKEND = 'dogpile.cache.memory'
