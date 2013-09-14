@@ -357,7 +357,7 @@ def api_package_list(pattern=None):
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
-    deprecated = bool(flask.request.args.get('deprecated', False))
+    status = flask.request.args.get('status', False)
 
     try:
         packages = pkgdblib.search_package(
@@ -366,7 +366,7 @@ def api_package_list(pattern=None):
             clt_name=branches,
             pkg_poc=owner,
             orphaned=orphaned,
-            deprecated=deprecated,
+            status=status,
         )
         SESSION.commit()
         output['output'] = 'ok'
