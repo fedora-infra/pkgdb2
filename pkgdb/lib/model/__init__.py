@@ -930,7 +930,7 @@ class Package(BASE):
                 'review_url': self.review_url,
                 'upstream_url': self.upstream_url,
                 'acls': acls,
-                'creation_date': self.date_created
+                'creation_date': str(daself.date_created)
                 }
 
 
