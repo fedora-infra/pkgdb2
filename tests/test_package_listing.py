@@ -123,10 +123,21 @@ class PackageListingtests(Modeltests):
                                                clt_id=collection.id,
                                                pkg_owner='pingou',
                                                pkg_status='Approved',
+                                               critpath=False,
                                                offset=1)
+        self.assertEqual(len(packages), 1)
         self.assertEqual("PackageListing(id:5, u'pingou', "
                          "u'Approved', packageid=3, collectionid=2)",
                          packages[0].__repr__())
+
+        packages = model.PackageListing.search(self.session,
+                                               pkg_name='g%',
+                                               clt_id=collection.id,
+                                               pkg_owner='pingou',
+                                               pkg_status='Approved',
+                                               critpath=True,
+                                               offset=1)
+        self.assertEqual(len(packages), 0)
 
 
     def test_api_repr(self):
