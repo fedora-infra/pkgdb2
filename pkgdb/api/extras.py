@@ -52,7 +52,27 @@ def __format_row(branch, package):
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def bz_acls_cached():
+def __bz_acls_cached():
+    '''Return the package attributes used by bugzilla.
+
+    :karg collection: Name of the bugzilla collection to gather data on.
+
+    Note: The data returned by this function is for the way the current
+    Fedora bugzilla is setup as of (2007/6/25).  In the future, bugzilla
+    may change to have separate products for each collection-version.
+    When that happens we'll have to change what this function returns.
+
+    The returned data looks like this:
+
+    bugzillaAcls[collection][package].attribute
+    attribute is one of:
+        :owner: FAS username for the owner
+        :qacontact: if the package has a special qacontact, their userid
+            is listed here
+        :summary: Short description of the package
+        :cclist: list of FAS userids that are watching the package
+    '''
+
     packages = pkgdblib.search_package(SESSION, '*')
     output = []
     for package in packages:
@@ -87,10 +107,72 @@ def bz_acls_cached():
     return output
 
 
+@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+def __bz_notify_cache(name=None, version=None, eol=False):
+    '''List of usernames that should be notified of changes to a package.
+
+    For the collections specified we want to retrieve all of the owners,
+    watchbugzilla, and watchcommits accounts.
+
+    :kwarg name: Set to a collection name to filter the results for that
+    :kwarg version: Set to a collection version to further filter results
+        for a single version
+    :kwarg eol: Set to True if you want to include end of life
+        distributions
+    '''
+    packages = pkgdblib.search_package(SESSION, '*')
+    output = []
+    for package in packages:
+        users = []
+        for branch in package.listings:
+            # If a name is provided and the collection hasn't this name
+            # keep moving
+            if name and branch.collection.name != name:
+                continue
+
+            # If a version is provided and the collection hasn't this version
+            # keep moving
+            if version and branch.collection.version != str(version):
+                continue
+
+            # Skip EOL branch unless asked
+            if not eol and branch.collection.status == 'EOL':
+                continue
+
+            for acl in branch.acls:
+                if acl.fas_name not in users:
+                    if acl.acl in ('commit', 'watchbugzilla',
+                                   'watchcommits'):
+                        users.append(acl.fas_name)
+
+        if users:
+            output.append('%s|%s' % (package.name, ','.join(users)))
+    return output
+
+
 @API.route('/bugzilla/')
 @API.route('/bugzilla')
 def bugzilla():
-    ''' Return a list of the Database VCS ACLs in text format. '''
+    '''Return the package attributes used by bugzilla.
+
+    :karg collection: Name of the bugzilla collection to gather data on.
+
+    Note: The data returned by this function is for the way the current
+    Fedora bugzilla is setup as of (2007/6/25).  In the future, bugzilla
+    may change to have separate products for each collection-version.
+    When that happens we'll have to change what this function returns.
+
+    The returned data looks like this:
+
+    bugzillaAcls[collection][package].attribute
+    attribute is one of:
+        :owner: FAS username for the owner
+        :qacontact: if the package has a special qacontact, their userid
+            is listed here
+        :summary: Short description of the package
+        :cclist: list of FAS userids that are watching the package
+    '''
+
     intro = """# Package Database VCS Acls
 # Text Format
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
@@ -98,9 +180,36 @@ def bugzilla():
 
 """
 
-    acls = bz_acls_cached()
+    acls = __bz_acls_cached()
 
     return flask.Response(
         intro + "\n".join(acls),
+        content_type="text/plain;charset=UTF-8"
+    )
+
+
+@API.route('/notify/')
+@API.route('/notify')
+def notify():
+    '''List of usernames that should be notified of changes to a package.
+
+    For the collections specified we want to retrieve all of the owners,
+    watchbugzilla, and watchcommits accounts.
+
+    :kwarg name: Set to a collection name to filter the results for that
+    :kwarg version: Set to a collection version to further filter results
+        for a single version
+    :kwarg eol: Set to True if you want to include end of life
+        distributions
+    '''
+
+    name = flask.request.args.get('name', None)
+    version = flask.request.args.get('version', None)
+    eol = flask.request.args.get('eol', False)
+
+    notify = __bz_notify_cache(name, version, eol)
+
+    return flask.Response(
+        "\n".join(notify),
         content_type="text/plain;charset=UTF-8"
     )
