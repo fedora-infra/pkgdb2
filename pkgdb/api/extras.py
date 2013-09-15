@@ -52,7 +52,7 @@ def __format_row(branch, package):
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def __bz_acls_cached():
+def __bz_acls_cached(name=None):
     '''Return the package attributes used by bugzilla.
 
     :karg collection: Name of the bugzilla collection to gather data on.
@@ -79,6 +79,11 @@ def __bz_acls_cached():
         branch_fed = None
         branch_epel = None
         for branch in package.listings:
+            # If a name is provided and the collection hasn't this name
+            # keep moving
+            if name and branch.collection.name != name:
+                continue
+
             # Consider the devel branch, unless it is orphan then consider
             # the next one
             if branch.collection.name == 'Fedora':
@@ -173,6 +178,8 @@ def bugzilla():
         :cclist: list of FAS userids that are watching the package
     '''
 
+    name = flask.request.args.get('collection', None)
+
     intro = """# Package Database VCS Acls
 # Text Format
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
@@ -180,7 +187,7 @@ def bugzilla():
 
 """
 
-    acls = __bz_acls_cached()
+    acls = __bz_acls_cached(name)
 
     return flask.Response(
         intro + "\n".join(acls),
