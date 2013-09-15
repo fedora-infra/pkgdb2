@@ -544,6 +544,7 @@ class PackageListing(BASE):
                               nullable=False)
     status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
                        nullable=False)
+    critpath = sa.Column(sa.Boolean, default=False, nullable=False)
     status_change = sa.Column(sa.DateTime, nullable=False,
                               default=datetime.datetime.utcnow())
     __table_args__ = (
@@ -558,11 +559,12 @@ class PackageListing(BASE):
     )
 
     def __init__(self, point_of_contact, status, package_id=None,
-                 collection_id=None):
+                 collection_id=None, critpath=False):
         self.package_id = package_id
         self.collection_id = collection_id
         self.point_of_contact = point_of_contact
         self.status = status
+        self.critpath=critpath
 
     packagename = association_proxy('package', 'name')
 
@@ -615,15 +617,18 @@ class PackageListing(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, clt_id, pkg_owner=None,
-               pkg_status=None, offset=None, limit=None, count=False):
+               pkg_status=None, critpath=None, offset=None, limit=None,
+               count=False):
         """
         Return the list of packages matching the given criteria
 
         :arg session: session with which to connect to the database
         :arg pkg_name: the name of the package
         :arg clt_id: the identifier of the collection
-        :arg pkg_owner: name of the new owner of the package
-        :arg pkg_status: status of the package
+        :kwarg pkg_owner: name of the new owner of the package
+        :kwarg pkg_status: status of the package
+        :kwarg critpath: a boolean to restrict the search to critpatch
+            packages
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -646,6 +651,9 @@ class PackageListing(BASE):
                 PackageListing.point_of_contact == pkg_owner)
         if pkg_status:
             query = query.filter(PackageListing.status == pkg_status)
+
+        if critpath is not None:
+            query = query.filter(PackageListing.critpath == critpath)
 
         if count:
             return query.count()
