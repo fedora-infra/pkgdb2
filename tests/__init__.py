@@ -52,6 +52,7 @@ class FakeFasUser(object):
     username = 'pingou'
     cla_done = True
     groups = ['packager', 'cla_done']
+    bugzilla_email = 'pingou@pingoured.fr'
 
 
 class FakeFasUserAdmin(object):

@@ -101,7 +101,6 @@ class PkgdbLibtests(Modeltests):
                           pkg_upstreamURL='http://guake.org',
                           user=FakeFasUserAdmin())
 
-
         pkgdb.lib.utils.get_packagers = mock.MagicMock()
         pkgdb.lib.utils.get_packagers.return_value = ['pingou']
 
@@ -1205,7 +1204,11 @@ class PkgdbLibtests(Modeltests):
                           user=FakeFasUser()
                           )
 
-        pkgdb.lib.utils._set_bugzilla_owner = mock.MagicMock()
+        if pkgdb.APP.config['PKGDB_BUGZILLA_IN_TESTS']:
+            pkgdb.lib.utils.get_bz_email_user = mock.MagicMock()
+            pkgdb.lib.utils.get_bz_email_user.return_value = FakeFasUser
+        else:
+            pkgdb.lib.utils._set_bugzilla_owner = mock.MagicMock()
 
         # Orphan package
         pkgdblib.update_pkg_poc(self.session,
