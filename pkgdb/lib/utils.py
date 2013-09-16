@@ -40,7 +40,7 @@ def get_fas():
     ''' Retrieve a connection to the Fedora Account System.
     '''
     global _fas
-    if _fas:
+    if _fas is not None:  # pragma: no cover
         return _fas
 
     # Get a connection to FAS
@@ -49,28 +49,48 @@ def get_fas():
         raise pkgdb.lib.PkgdbException('No PKGDB_FAS_URL configured')
 
     fas_user = pkgdb.APP.config['PKGDB_FAS_USER']
-    if not fas_user:
+    if not fas_user:  # pragma: no cover
         raise pkgdb.lib.PkgdbException('No PKGDB_FAS_USER configured')
+
     fas_pass = pkgdb.APP.config['PKGDB_FAS_PASSWORD']
-    if not fas_pass:
+    if not fas_pass:  # pragma: no cover
         raise pkgdb.lib.PkgdbException(
             'No PKGDB_FAS_PASSWORD configured')
 
     _fas = AccountSystem(fas_url, username=fas_user, password=fas_pass,
             cache_session=False)
+    return _fas
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def __get_fas_grp_member(group='packager'):
+def __get_fas_grp_member(group='packager'):  # pragma: no cover
     ''' Retrieve from FAS the list of users in the packager group.
     '''
     fas = get_fas()
 
-    return fas.group_member(group)
+    return fas.group_members(group)
+
+
+def get_packagers():
+    """ Return a list containing the name of all the packagers. """
+    output = []
+    for user in __get_fas_grp_member('packager'):
+        if user.role_type == 'user':
+            output.append(user.username)
+    return output
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def get_bz_email_user(username):
+def get_fas_group(group):
+    """ Return group information from FAS based on the specified group name.
+    """
+    fas = get_fas()
+
+    return fas.group_by_name(group)
+
+
+@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+def get_bz_email_user(username):  # pragma: no cover
     ''' Retrieve the bugzilla email associated to the provided username.
     '''
     fas = get_fas()
@@ -84,7 +104,7 @@ def get_bz():
     :raises xmlrpclib.ProtocolError: If we're unable to contact bugzilla
     '''
     global _bugzilla
-    if _bugzilla:
+    if _bugzilla:  # pragma: no cover
         return _bugzilla
 
     # Get a connection to bugzilla
@@ -92,11 +112,13 @@ def get_bz():
     if not bz_server:
         raise pkgdb.lib.PkgdbException('No PKGDB_BUGZILLA_URL configured')
     bz_url = bz_server + '/xmlrpc.cgi'
+
     bz_user = pkgdb.APP.config['PKGDB_BUGZILLA_USER']
-    if not bz_user:
+    if not bz_user:  # pragma: no cover
         raise pkgdb.lib.PkgdbException('No PKGDB_BUGZILLA_USER configured')
+
     bz_pass = pkgdb.APP.config['PKGDB_BUGZILLA_PASSWORD']
-    if not bz_pass:
+    if not bz_pass:  # pragma: no cover
         raise pkgdb.lib.PkgdbException(
             'No PKGDB_BUGZILLA_PASSWORD configured')
 
@@ -105,8 +127,8 @@ def get_bz():
     return _bugzilla
 
 
-def _set_bugzilla_owner(username, pkg_name, collectn,
-        collectn_version, bzComment=None):
+def _set_bugzilla_owner(
+        username, pkg_name, collectn, collectn_version, bzComment=None):  # pragma: no cover
     '''Change the package owner
 
      :arg user_email: User email address to change the owner.
