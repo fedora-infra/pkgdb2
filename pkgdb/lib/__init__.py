@@ -29,6 +29,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 import pkgdb
 import pkgdb.lib.model
+import pkgdb.lib.utils
 
 
 class PkgdbException(Exception):
@@ -431,6 +432,10 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
         pkglisting.status = status
         session.add(pkglisting)
         session.flush()
+        # Update Bugzilla about new owner
+        pkgdb.lib.utils._set_bugzilla_owner(
+            user.username, package.name, collection.name,
+            collection.version)
 
     else:
         raise PkgdbException(
