@@ -27,6 +27,8 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import SQLAlchemyError
 
+from fedora.client.fas2 import FASError
+
 import pkgdb
 import pkgdb.lib.model
 import pkgdb.lib.utils
@@ -36,6 +38,39 @@ class PkgdbException(Exception):
     """ Generic Exception object used to throw pkgdb specific error.
     """
     pass
+
+
+def __validate_poc(pkg_poc):
+    """ Validate is the provided ``pkg_poc`` is a valid poc for a package.
+
+    A valid poc is defined as:
+        - a user part of the `packager` group
+        - an existing group of type `pkgdb`
+
+    :arg pkg_poc: the username of the new Point of contact (POC).
+    """
+    if pkg_poc == 'orphan':
+        return
+    if pkg_poc.startswith('group::'):
+        # if pkg_poc is a group:
+        group = pkg_poc.split('group::')[1]
+        # is pkg_poc a valid group (of type pkgdb)
+        try:
+            group_obj = pkgdb.lib.utils.get_fas_group(group)
+        except FASError:  # pragma: no cover
+            raise PkgdbException('Could not find group "%s" ' % group)
+        if group_obj.group_type != 'pkgdb':
+            raise PkgdbException(
+                'Invalid group "%s" all groups maintaining packages in pkgdb '
+                'should be of type "pkgdb".' % group)
+    else:
+        # if pkg_poc is a packager
+        packagers = pkgdb.lib.utils.get_packagers()
+        if pkg_poc not in packagers:
+            raise PkgdbException(
+                'The point of contact of this package is not in the packager '
+                'group'
+            )
 
 
 def create_session(db_url, debug=False, pool_recycle=3600):
@@ -87,6 +122,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     """
     if user is None or not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException("You're not allowed to add a package")
+
+    __validate_poc(pkg_poc)
 
     if isinstance(pkg_collection, (str, unicode)):
         if ',' in pkg_collection:
@@ -311,10 +348,7 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
 
     prev_poc = pkglisting.point_of_contact
 
-    if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
-        raise PkgdbException(
-            'Invalid group "%s" all groups in pkgdb should end with '
-            '"-sig".' % pkg_poc)
+    __validate_poc(pkg_poc)
 
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
@@ -323,6 +357,7 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
         raise PkgdbException(
             'You are not allowed to change the point of contact.')
 
+    # Is current PoC a group?
     if pkglisting.point_of_contact.startswith('group::'):
         group = pkglisting.point_of_contact.split('group::')[1]
         if not group in user.groups:
@@ -427,6 +462,8 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                 raise PkgdbException(
                     'You need to specify the point of contact of this '
                     'package for this branch to un-orphan it')
+            # is the new poc valide:
+            __validate_poc(poc)
             pkglisting.point_of_contact = poc
 
         pkglisting.status = status
