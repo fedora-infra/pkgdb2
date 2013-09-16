@@ -46,7 +46,8 @@ PKGDB_CACHE_BACKEND = 'dogpile.cache.memory'
 
 
 # Bugzilla information
-PKGDB_BUGZILLA_URL = None
+PKGDB_BUGZILLA_NOTIFICATION = False
+PKGDB_BUGZILLA_URL = 'https://bugzilla.redhat.com'
 PKGDB_BUGZILLA_USER = None
 PKGDB_BUGZILLA_PASSWORD = None
 

@@ -112,15 +112,8 @@ def get_bz():
     if not bz_server:
         raise pkgdb.lib.PkgdbException('No PKGDB_BUGZILLA_URL configured')
     bz_url = bz_server + '/xmlrpc.cgi'
-
     bz_user = pkgdb.APP.config['PKGDB_BUGZILLA_USER']
-    if not bz_user:  # pragma: no cover
-        raise pkgdb.lib.PkgdbException('No PKGDB_BUGZILLA_USER configured')
-
     bz_pass = pkgdb.APP.config['PKGDB_BUGZILLA_PASSWORD']
-    if not bz_pass:  # pragma: no cover
-        raise pkgdb.lib.PkgdbException(
-            'No PKGDB_BUGZILLA_PASSWORD configured')
 
     _bugzilla = RHBugzilla3(url=bz_url, user=bz_user, password=bz_pass,
                             cookiefile=None)
@@ -128,7 +121,7 @@ def get_bz():
 
 
 def _set_bugzilla_owner(
-        username, pkg_name, collectn, collectn_version, bzComment=None):  # pragma: no cover
+        username, pkg_name, collectn, collectn_version, bzComment=None):
     '''Change the package owner
 
      :arg user_email: User email address to change the owner.
@@ -142,7 +135,7 @@ def _set_bugzilla_owner(
                 ' Package Database.  Reassigning to the new owner'\
                 ' of this component.'
 
-    user_email = get_bz_email_user(username)
+    user_email = get_bz_email_user(username).bugzilla_email
 
     bzMail = '%s' % user_email
     bzQuery = {}
@@ -157,10 +150,10 @@ def _set_bugzilla_owner(
     queryResults = get_bz().query(bzQuery) #pylint:disable-msg=E1101
 
     for bug in queryResults:
-        if config.get('bugzilla.enable_modification', False):
+        if pkgdb.APP.config['PKGDB_BUGZILLA_NOTIFICATION']:  # pragma: no cover
             bug.setassignee(assigned_to=bzMail, comment=bzComment)
         else:
-            LOG.debug(_('Would have reassigned bug #%(bug_num)s'
-            ' from %(former)s to %(current)s') % {
+            print('Would have reassigned bug #%(bug_num)s'
+            ' from %(former)s to %(current)s' % {
                 'bug_num': bug.bug_id, 'former': bug.assigned_to,
                 'current': bzMail})
