@@ -43,3 +43,14 @@ ADMIN_GROUP = ('sysadmin-main', 'sysadmin-cvs')
 # Options are listed at:
 # http://dogpilecache.readthedocs.org/en/latest/api.html  (backend section)
 PKGDB_CACHE_BACKEND = 'dogpile.cache.memory'
+
+
+# Bugzilla information
+PKGDB_BUGZILLA_URL = None
+PKGDB_BUGZILLA_USER = None
+PKGDB_BUGZILLA_PASSWORD = None
+
+# FAS information
+PKGDB_FAS_URL = None
+PKGDB_FAS_USER = None
+PKGDB_FAS_PASSWORD = None
