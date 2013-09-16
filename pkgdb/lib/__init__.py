@@ -344,6 +344,9 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
         'user: %s change PoC of package: %s from: %s to: %s on: %s' % (
             user.username, package.name, prev_poc, pkg_poc, clt_name)
     )
+    # Update Bugzilla about new owner
+    pkgdb.lib.utils._set_bugzilla_owner(
+        user.username, package.name, collection.name, collection.version)
 
     return 'Point of contact of branch: %s of package: %s has been changed ' \
         'to %s' % (clt_name, pkg_name, pkg_poc)
@@ -1033,6 +1036,11 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
+    try:
+        collection = model.Collection.by_name(session, clt_name)
+    except NoResultFound:
+        raise PkgdbException('No collection found by this name')
+
     pkg_listing = get_acl_package(session, pkg_name, clt_name)
 
     if not pkg_listing.status in ('Orphaned', 'Retired'):
@@ -1058,6 +1066,8 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
         'user: %s un-orphaned package: %s on branch: %s' % (
             user.username, package.name, clt_name)
     )
+    pkgdb.lib.utils._set_bugzilla_owner(
+        user.username, package.name, collection.name, collection.version)
 
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 
