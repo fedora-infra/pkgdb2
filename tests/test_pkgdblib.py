@@ -42,6 +42,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb
 import pkgdb.lib as pkgdblib
 from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
+                   FakeFasGroupValid, FakeFasGroupInvalid,
                    create_collection, create_package,
                    create_package_listing, create_package_acl)
 
@@ -83,6 +84,61 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        pkgdb.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb.lib.utils.get_packagers.reset_mock()
+
+        # Configuration to query FAS isn't set
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_package,
+                          self.session,
+                          pkg_name='guake',
+                          pkg_summary='Drop down terminal',
+                          pkg_status='Approved',
+                          pkg_collection='F-18',
+                          pkg_poc='ralph',
+                          pkg_reviewURL=None,
+                          pkg_shouldopen=None,
+                          pkg_upstreamURL='http://guake.org',
+                          user=FakeFasUserAdmin())
+
+
+        pkgdb.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb.lib.utils.get_packagers.return_value = ['pingou']
+
+        # 'Ralph' is not in the packager group
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_package,
+                          self.session,
+                          pkg_name='guake',
+                          pkg_summary='Drop down terminal',
+                          pkg_status='Approved',
+                          pkg_collection='F-18',
+                          pkg_poc='ralph',
+                          pkg_reviewURL=None,
+                          pkg_shouldopen=None,
+                          pkg_upstreamURL='http://guake.org',
+                          user=FakeFasUserAdmin())
+
+        pkgdb.lib.utils.get_fas_group = mock.MagicMock()
+        pkgdb.lib.utils.get_fas_group.return_value = FakeFasGroupInvalid
+
+        # Invalid FAS group returned
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_package,
+                          self.session,
+                          pkg_name='fedocal',
+                          pkg_summary='web calendar for Fedora',
+                          pkg_status='Approved',
+                          pkg_collection='devel, F-18',
+                          pkg_poc='group::infra-sig',
+                          pkg_reviewURL=None,
+                          pkg_shouldopen=None,
+                          pkg_upstreamURL=None,
+                          user=FakeFasUserAdmin())
+
+        pkgdb.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb.lib.utils.get_packagers.return_value = ['ralph', 'pingou']
+
         msg = pkgdblib.add_package(self.session,
                                     pkg_name='guake',
                                     pkg_summary='Drop down terminal',
@@ -114,6 +170,9 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(2, len(packages))
         self.assertEqual('guake', packages[0].name)
         self.assertEqual('geany', packages[1].name)
+
+        pkgdb.lib.utils.get_fas_group = mock.MagicMock()
+        pkgdb.lib.utils.get_fas_group.return_value = FakeFasGroupValid
 
         pkgdblib.add_package(self.session,
                              pkg_name='fedocal',
@@ -345,6 +404,10 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        pkgdb.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb.lib.utils.get_packagers.return_value = [
+            'pingou', 'toshio', 'ralph']
+
         # User must be the actual Point of Contact (or an admin of course,
         # or part of the group)
         self.assertRaises(pkgdblib.PkgdbException,
@@ -360,16 +423,6 @@ class PkgdbLibtests(Modeltests):
         # Groups must end with -sig
         user = FakeFasUser()
         user.username = 'ralph'
-        self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.update_pkg_poc,
-                          self.session,
-                          pkg_name='guake',
-                          clt_name='F-18',
-                          user=user,
-                          pkg_poc='group::perl',
-                          )
-        self.session.rollback()
-
         # Change PoC to a group
         pkgdblib.update_pkg_poc(
                           self.session,
@@ -384,7 +437,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'group::perl-sig')
 
-        # User must be in the group it gives the PoC to
+        # User must be in the group it takes the PoC from
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
@@ -409,6 +462,9 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'ralph')
 
+        pkgdb.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb.lib.utils.get_packagers.return_value = ['pingou', 'toshio']
+
         # PoC can change PoC
         user = FakeFasUser()
         user.username = 'ralph'
@@ -423,6 +479,20 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'toshio')
+
+        # PoC must be a packager, even for admin
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.update_pkg_poc,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='F-18',
+                          user=FakeFasUserAdmin,
+                          pkg_poc='kevin',
+                          )
+        self.session.rollback()
+
+        pkgdb.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb.lib.utils.get_packagers.return_value = ['pingou', 'kevin']
 
         # Admin can change PoC
         pkgdblib.update_pkg_poc(self.session,

@@ -62,6 +62,20 @@ class FakeFasUserAdmin(object):
     groups = ['packager', 'cla_done', 'sysadmin-cvs']
 
 
+class FakeFasGroupValid(object):
+    """ Fake FAS Group used for the tests. """
+    id = 10000
+    name = 'perl-sig'
+    group_type = 'pkgdb'
+
+
+class FakeFasGroupInvalid(object):
+    """ Fake FAS Group used for the tests. """
+    id = 10001
+    name = 'perl'
+    group_type = 'tracking'
+
+
 class Modeltests(unittest.TestCase):
     """ Model tests. """
 
