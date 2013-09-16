@@ -123,18 +123,18 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['collections'])
         self.assertEqual(len(output['collections']), 4)
-        self.assertEqual(output['collections'][0].keys(),
-                         ['pendingurltemplate', 'publishurltemplate',
-                          'version', 'name'])
+        self.assertEqual(set(output['collections'][0].keys()),
+                         set(['pendingurltemplate', 'publishurltemplate',
+                          'branchname', 'version', 'name']))
 
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
                          ['collections'])
-        self.assertEqual(output['collections'][0].keys(),
-                         ['pendingurltemplate', 'publishurltemplate',
-                          'version', 'name'])
+        self.assertEqual(set(output['collections'][0].keys()),
+                         set(['pendingurltemplate', 'publishurltemplate',
+                          'branchname', 'version', 'name']))
         self.assertEqual(len(output['collections']), 2)
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
         self.assertEqual(output['collections'][0]['version'], '17')

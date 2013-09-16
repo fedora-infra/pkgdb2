@@ -61,17 +61,9 @@ class Packagetests(Modeltests):
         create_package(self.session)
         package = model.Package.by_name(self.session, 'guake')
         package = package.to_json()
-        self.assertEqual(package.keys(), ['status', 'upstream_url',
+        self.assertEqual(set(package.keys()), set(['status', 'upstream_url',
                          'name', 'summary', 'acls', 'creation_date',
-                         'review_url'])
-
-    def test_api_repr(self):
-        """ Test the api_repr function of Package. """
-        create_package(self.session)
-        package = model.Package.by_name(self.session, 'guake')
-        package = package.api_repr(1)
-        self.assertEqual(package.keys(), ['upstreamurl', 'name',
-                         'reviewurl', 'summary'])
+                         'review_url']))
 
     def test_search(self):
         """ Test the search function of Package. """

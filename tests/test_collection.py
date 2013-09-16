@@ -88,13 +88,14 @@ class Collectiontests(Modeltests):
         self.assertEqual(1, len(collections))
 
 
-    def test_api_repr(self):
-        """ Test the api_repr function of Collection. """
+    def test_to_json(self):
+        """ Test the to_json function of Collection. """
         create_collection(self.session)
         collection = model.Collection.by_name(self.session, 'F-18')
-        collection = collection.api_repr(1)
-        self.assertEqual(collection.keys(), ['pendingurltemplate',
-                         'publishurltemplate', 'version', 'name'])
+        collection = collection.to_json()
+        self.assertEqual(set(collection.keys()), set([
+            'pendingurltemplate', 'publishurltemplate', 'branchname',
+            'version', 'name']))
 
 
 if __name__ == '__main__':

@@ -59,8 +59,11 @@ class PackageListingAcltests(Modeltests):
             self.session, 'pingou')
         self.assertEqual(4, len(packager))
         output = packager[0].to_json()
-        self.assertEqual(output,
-        {
+
+        # Because matching times in tests is hard.
+        del output['packagelist']['package']['creation_date']
+
+        target = {
             'status': u'Approved',
             'acl': 'commit',
             'fas_name': u'pingou',
@@ -74,14 +77,15 @@ class PackageListingAcltests(Modeltests):
                     'name': u'Fedora'
                 },
                 'package': {
-                    'upstreamurl': u'http://guake.org',
+                    'upstream_url': u'http://guake.org',
                     'name': u'guake',
-                    'reviewurl': u'https://bugzilla.redhat.com/450189',
+                    'status': u'Approved',
+                    'review_url': u'https://bugzilla.redhat.com/450189',
                     'summary': u'Top down terminal for GNOME'
                 }
             }
         }
-        )
+        self.assertEqual(output, target)
 
     def test___repr__(self):
         """ Test the __repr__ function of PackageListingAcl. """
