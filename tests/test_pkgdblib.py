@@ -26,6 +26,7 @@ pkgdb tests for the Collection object.
 __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 
+import mock
 import unittest
 import sys
 import os
@@ -38,8 +39,8 @@ from sqlalchemy.exc import IntegrityError
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
+import pkgdb
 import pkgdb.lib as pkgdblib
-from pkgdb.lib import model
 from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
                    create_collection, create_package,
                    create_package_listing, create_package_acl)
@@ -94,7 +95,7 @@ class PkgdbLibtests(Modeltests):
                                     user=FakeFasUserAdmin())
         self.assertEqual(msg, 'Package created')
         self.session.commit()
-        packages = model.Package.all(self.session)
+        packages = pkgdblib.model.Package.all(self.session)
         self.assertEqual(1, len(packages))
         self.assertEqual('guake', packages[0].name)
 
@@ -109,7 +110,7 @@ class PkgdbLibtests(Modeltests):
                              pkg_upstreamURL=None,
                              user=FakeFasUserAdmin())
         self.session.commit()
-        packages = model.Package.all(self.session)
+        packages = pkgdblib.model.Package.all(self.session)
         self.assertEqual(2, len(packages))
         self.assertEqual('guake', packages[0].name)
         self.assertEqual('geany', packages[1].name)
@@ -125,7 +126,7 @@ class PkgdbLibtests(Modeltests):
                              pkg_upstreamURL=None,
                              user=FakeFasUserAdmin())
         self.session.commit()
-        packages = model.Package.all(self.session)
+        packages = pkgdblib.model.Package.all(self.session)
         self.assertEqual(3, len(packages))
         self.assertEqual('guake', packages[0].name)
         self.assertEqual('geany', packages[1].name)
@@ -135,7 +136,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the get_acl_package function. """
         create_package_acl(self.session)
 
-        packages = model.Package.all(self.session)
+        packages = pkgdblib.model.Package.all(self.session)
         self.assertEqual(3, len(packages))
         self.assertEqual('guake', packages[0].name)
 
@@ -809,7 +810,7 @@ class PkgdbLibtests(Modeltests):
                                 user=FakeFasUserAdmin(),
                                 )
         self.session.commit()
-        collection = model.Collection.by_name(self.session, 'F-19')
+        collection = pkgdblib.model.Collection.by_name(self.session, 'F-19')
         self.assertEqual("Collection(u'Fedora', u'19', u'Active', u'admin', "
                          "publishurltemplate=None, pendingurltemplate=None, "
                          "summary=u'Fedora 19 release', "
@@ -820,7 +821,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the update_collection_status function. """
         create_collection(self.session)
 
-        collection = model.Collection.by_name(self.session, 'F-18')
+        collection = pkgdblib.model.Collection.by_name(self.session, 'F-18')
         self.assertEqual(collection.status, 'Active')
 
         self.assertRaises(pkgdblib.PkgdbException,
@@ -839,7 +840,7 @@ class PkgdbLibtests(Modeltests):
             self.session, 'F-18', 'EOL', user=FakeFasUserAdmin())
         self.assertEqual(msg, 'Collection "F-18" already had this status')
 
-        collection = model.Collection.by_name(self.session, 'F-18')
+        collection = pkgdblib.model.Collection.by_name(self.session, 'F-18')
         self.assertEqual(collection.status, 'EOL')
 
     def test_search_packagers(self):
@@ -1124,6 +1125,18 @@ class PkgdbLibtests(Modeltests):
                           user=FakeFasUser()
                           )
 
+        # PKGDB_BUGZILLA_* configuration not set
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.unorphan_package,
+                          self.session,
+                          pkg_name='guake',
+                          clt_name='devel',
+                          pkg_user='pingou',
+                          user=FakeFasUser()
+                          )
+
+        pkgdb.lib.utils._set_bugzilla_owner = mock.MagicMock()
+
         # Orphan package
         pkgdblib.update_pkg_poc(self.session,
                                 pkg_name='guake',
@@ -1186,7 +1199,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
 
         # Create a new collection
-        new_collection = model.Collection(
+        new_collection = pkgdblib.model.Collection(
                                   name='Fedora',
                                   version='19',
                                   status='Active',
