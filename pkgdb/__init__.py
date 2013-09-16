@@ -31,7 +31,7 @@ import dogpile.cache
 from functools import wraps
 from flask.ext.fas_openid import FAS
 
-import lib as pkgdblib
+
 
 
 __version__ = '0.1.0'
@@ -44,14 +44,17 @@ if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
 # Set up FAS extension
 FAS = FAS(APP)
 
-SESSION = pkgdblib.create_session(APP.config['DB_URL'])
-
-
 # Initialize the cache.
 cache = dogpile.cache.make_region().configure(
     APP.config.get('PKGDB_CACHE_BACKEND', 'dogpile.cache.memory'),
     **APP.config.get('PKGDB_CACHE_KWARGS', {})
 )
+
+
+import lib as pkgdblib
+
+
+SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
 
 class FakeFasUser(object):
