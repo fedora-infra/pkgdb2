@@ -34,28 +34,53 @@ from pkgdb import SESSION
 from pkgdb.api import API
 
 
-def _format_row(branch, package):
+def _format_row(branch, package, output='text'):
     """ Format a row for the bugzilla output. """
-    cclist = ','.join(
-        [pkg.fas_name
-         for pkg in branch.acls if pkg.acl == 'commit'
-            and pkg.fas_name != branch.point_of_contact]
-    )
-    output = "|".join([
-            branch.collection.name,
-            package.name,
-            package.summary,
-            branch.point_of_contact,
-            cclist,
-        ])
-    return output
+    if output == 'json':
+        groups = []
+        users = []
+
+        for pkg in branch.acls:
+            if pkg.acl == 'commit' \
+                    and pkg.fas_name != branch.point_of_contact:
+                if pkg.fas_name.startswith('group::'):
+                    groups.append(pkg.fas_name.replace('group::', '@'))
+                else:
+                    users.append(pkg.fas_name)
+        out = {
+            package.name: {
+                'qacontact': None,
+                'owner': branch.point_of_contact,
+                'summary': package.summary,
+                'cclist' : {
+                    'groups': groups,
+                    'people': users
+                }
+            }
+        }
+
+    else:
+        cclist = ','.join(
+            [pkg.fas_name
+             for pkg in branch.acls if pkg.acl == 'commit'
+                and pkg.fas_name != branch.point_of_contact]
+        )
+        out = "|".join([
+                branch.collection.name,
+                package.name,
+                package.summary,
+                branch.point_of_contact,
+                cclist,
+            ])
+    return out
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def _bz_acls_cached(name=None):
+def _bz_acls_cached(name=None, out_format='text'):
     '''Return the package attributes used by bugzilla.
 
-    :karg collection: Name of the bugzilla collection to gather data on.
+    :kwarg collection: Name of the bugzilla collection to gather data on.
+    :kwarg out_format: Specify if the output if text or json.
 
     Note: The data returned by this function is for the way the current
     Fedora bugzilla is setup as of (2007/6/25).  In the future, bugzilla
@@ -75,6 +100,9 @@ def _bz_acls_cached(name=None):
 
     packages = pkgdblib.search_package(SESSION, '*')
     output = []
+    if out_format == 'json':
+        output = {'bugzillaAcls':{},
+                  'title': 'Fedora Package Database -- Bugzilla ACLs'}
     for package in packages:
         branch_fed = None
         branch_epel = None
@@ -105,15 +133,27 @@ def _bz_acls_cached(name=None):
                         or int(branch.version) > int(branch_epel.version):
                     branch_epel = branch
 
-        if branch_fed:
-            output.append(_format_row(branch_fed, package))
-        if branch_epel:
-            output.append(_format_row(branch_epel, package))
+        if out_format == 'json':
+            if branch_fed:
+                if 'Fedora' not in output['bugzillaAcls']:
+                    output['bugzillaAcls']['Fedora'] = []
+                output['bugzillaAcls']['Fedora'].append(
+                    _format_row(branch_fed, package, output=out_format))
+            if branch_epel:
+                if 'Fedora EPEL' not in output['bugzillaAcls']:
+                    output['bugzillaAcls']['Fedora EPEL'] = []
+                output['bugzillaAcls']['Fedora EPEL'].append(
+                    _format_row(branch_epel, package, output=out_format))
+        else:
+            if branch_fed:
+                output.append(_format_row(branch_fed, package, output=out_format))
+            if branch_epel:
+                output.append(_format_row(branch_epel, package, output=out_format))
     return output
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def _bz_notify_cache(name=None, version=None, eol=False):
+def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
     '''List of usernames that should be notified of changes to a package.
 
     For the collections specified we want to retrieve all of the owners,
@@ -124,9 +164,16 @@ def _bz_notify_cache(name=None, version=None, eol=False):
         for a single version
     :kwarg eol: Set to True if you want to include end of life
         distributions
+    :kwarg out_format: Specify if the output if text or json.
     '''
     packages = pkgdblib.search_package(SESSION, '*')
     output = []
+    if out_format == 'json':
+        output = {'packages': [],
+                  'eol': eol,
+                  'name': name,
+                  'version': version,
+                  'title': 'Fedora Package Database -- Notification List'}
     for package in packages:
         users = []
         for branch in package.listings:
@@ -151,20 +198,28 @@ def _bz_notify_cache(name=None, version=None, eol=False):
                         users.append(acl.fas_name)
 
         if users:
-            output.append('%s|%s' % (package.name, ','.join(users)))
+            if out_format == 'json':
+                output['packages'].append({package.name: users})
+            else:
+                output.append('%s|%s' % (package.name, ','.join(users)))
     return output
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def _vcs_acls_cache():
+def _vcs_acls_cache(out_format='text'):
     '''Return ACLs for the version control system.
+    :kwarg out_format: Specify if the output if text or json.
 
     '''
     packages = pkgdblib.search_package(SESSION, '*')
     output = []
+    if out_format=='json':
+        output = {'packageAcls': {},
+                  'title': 'Fedora Package Database -- VCS ACLs'}
     for package in packages:
         for branch in package.listings:
             users = []
+            groups = ['@provenpackager']
 
             # Skip EOL branch
             if branch.collection.status == 'EOL':
@@ -175,13 +230,22 @@ def _vcs_acls_cache():
                     if acl.acl in ('commit'):
                         username = acl.fas_name
                         if username.startswith('group::'):
-                            username = username.replace('group::', '@')
-                        users.append(username)
+                            groups.append(username.replace('group::', '@'))
+                        else:
+                            users.append(username)
 
-            output.append('avail | @provenpackager,%s | rpms/%s/%s' % (
-                ','.join(users), package.name,
-                branch.collection.git_branch_name))
+            if out_format=='json':
+                groups = [group.replace('@', '') for group in groups]
+                output['packageAcls'][
+                    branch.collection.git_branch_name] = {
+                        'commit': {'groups': groups, 'people': users}
+                    }
+            else:
+                output.append('avail | %s,%s | rpms/%s/%s' % (
+                    ','.join(groups), ','.join(users), package.name,
+                    branch.collection.git_branch_name))
     return output
+
 
 @API.route('/bugzilla/')
 @API.route('/bugzilla')
@@ -189,6 +253,7 @@ def bugzilla():
     '''Return the package attributes used by bugzilla.
 
     :karg collection: Name of the bugzilla collection to gather data on.
+    :kwarg out_format: Specify if the output if text or json.
 
     Note: The data returned by this function is for the way the current
     Fedora bugzilla is setup as of (2007/6/25).  In the future, bugzilla
@@ -207,6 +272,9 @@ def bugzilla():
     '''
 
     name = flask.request.args.get('collection', None)
+    out_format = flask.request.args.get('format', 'text')
+    if out_format not in ('text', 'json'):
+        out_format='text'
 
     intro = """# Package Database VCS Acls
 # Text Format
@@ -215,12 +283,15 @@ def bugzilla():
 
 """
 
-    acls = _bz_acls_cached(name)
+    acls = _bz_acls_cached(name, out_format)
 
-    return flask.Response(
-        intro + "\n".join(acls),
-        content_type="text/plain;charset=UTF-8"
-    )
+    if out_format == 'json':
+        return flask.jsonify(acls)
+    else:
+        return flask.Response(
+            intro + "\n".join(acls),
+            content_type="text/plain;charset=UTF-8"
+        )
 
 
 @API.route('/notify/')
@@ -236,24 +307,33 @@ def notify():
         for a single version
     :kwarg eol: Set to True if you want to include end of life
         distributions
+    :kwarg out_format: Specify if the output if text or json.
     '''
 
     name = flask.request.args.get('name', None)
     version = flask.request.args.get('version', None)
     eol = flask.request.args.get('eol', False)
+    out_format = flask.request.args.get('format', 'text')
+    if out_format not in ('text', 'json'):
+        out_format='text'
 
-    notify = _bz_notify_cache(name, version, eol)
+    notify = _bz_notify_cache(name, version, eol, out_format)
 
-    return flask.Response(
-        "\n".join(notify),
-        content_type="text/plain;charset=UTF-8"
-    )
+
+    if out_format == 'json':
+        return flask.jsonify(notify)
+    else:
+        return flask.Response(
+            "\n".join(notify),
+            content_type="text/plain;charset=UTF-8"
+        )
 
 
 @API.route('/vcs/')
 @API.route('/vcs')
 def vcs():
     '''Return ACLs for the version control system.
+    :kwarg out_format: Specify if the output if text or json.
 
     '''
     intro = """# VCS ACLs
@@ -261,9 +341,16 @@ def vcs():
 
 """
 
-    acls = _vcs_acls_cache()
+    out_format = flask.request.args.get('format', 'text')
+    if out_format not in ('text', 'json'):
+        out_format='text'
 
-    return flask.Response(
-        intro + "\n".join(acls),
-        content_type="text/plain;charset=UTF-8"
-    )
+    acls = _vcs_acls_cache(out_format)
+
+    if out_format == 'json':
+        return flask.jsonify(acls)
+    else:
+        return flask.Response(
+            intro + "\n".join(acls),
+            content_type="text/plain;charset=UTF-8"
+        )
