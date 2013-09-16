@@ -34,7 +34,7 @@ from pkgdb import SESSION
 from pkgdb.api import API
 
 
-def __format_row(branch, package):
+def _format_row(branch, package):
     """ Format a row for the bugzilla output. """
     cclist = ','.join(
         [pkg.fas_name
@@ -52,7 +52,7 @@ def __format_row(branch, package):
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def __bz_acls_cached(name=None):
+def _bz_acls_cached(name=None):
     '''Return the package attributes used by bugzilla.
 
     :karg collection: Name of the bugzilla collection to gather data on.
@@ -106,14 +106,14 @@ def __bz_acls_cached(name=None):
                     branch_epel = branch
 
         if branch_fed:
-            output.append(__format_row(branch_fed, package))
+            output.append(_format_row(branch_fed, package))
         if branch_epel:
-            output.append(__format_row(branch_epel, package))
+            output.append(_format_row(branch_epel, package))
     return output
 
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def __bz_notify_cache(name=None, version=None, eol=False):
+def _bz_notify_cache(name=None, version=None, eol=False):
     '''List of usernames that should be notified of changes to a package.
 
     For the collections specified we want to retrieve all of the owners,
@@ -155,6 +155,34 @@ def __bz_notify_cache(name=None, version=None, eol=False):
     return output
 
 
+@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+def _vcs_acls_cache():
+    '''Return ACLs for the version control system.
+
+    '''
+    packages = pkgdblib.search_package(SESSION, '*')
+    output = []
+    for package in packages:
+        for branch in package.listings:
+            users = []
+
+            # Skip EOL branch
+            if branch.collection.status == 'EOL':
+                continue
+
+            for acl in branch.acls:
+                if acl.fas_name not in users:
+                    if acl.acl in ('commit'):
+                        username = acl.fas_name
+                        if username.startswith('group::'):
+                            username = username.replace('group::', '@')
+                        users.append(username)
+
+            output.append('avail | @provenpackager,%s | rpms/%s/%s' % (
+                ','.join(users), package.name,
+                branch.collection.git_branch_name))
+    return output
+
 @API.route('/bugzilla/')
 @API.route('/bugzilla')
 def bugzilla():
@@ -187,7 +215,7 @@ def bugzilla():
 
 """
 
-    acls = __bz_acls_cached(name)
+    acls = _bz_acls_cached(name)
 
     return flask.Response(
         intro + "\n".join(acls),
@@ -214,9 +242,28 @@ def notify():
     version = flask.request.args.get('version', None)
     eol = flask.request.args.get('eol', False)
 
-    notify = __bz_notify_cache(name, version, eol)
+    notify = _bz_notify_cache(name, version, eol)
 
     return flask.Response(
         "\n".join(notify),
+        content_type="text/plain;charset=UTF-8"
+    )
+
+
+@API.route('/vcs/')
+@API.route('/vcs')
+def vcs():
+    '''Return ACLs for the version control system.
+
+    '''
+    intro = """# VCS ACLs
+# avail|@groups,users|rpms/Package/branch
+
+"""
+
+    acls = _vcs_acls_cache()
+
+    return flask.Response(
+        intro + "\n".join(acls),
         content_type="text/plain;charset=UTF-8"
     )
