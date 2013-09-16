@@ -40,7 +40,7 @@ class PkgdbException(Exception):
     pass
 
 
-def __validate_poc(pkg_poc):
+def _validate_poc(pkg_poc):
     """ Validate is the provided ``pkg_poc`` is a valid poc for a package.
 
     A valid poc is defined as:
@@ -123,7 +123,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     if user is None or not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException("You're not allowed to add a package")
 
-    __validate_poc(pkg_poc)
+    _validate_poc(pkg_poc)
 
     if isinstance(pkg_collection, (str, unicode)):
         if ',' in pkg_collection:
@@ -348,7 +348,7 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
 
     prev_poc = pkglisting.point_of_contact
 
-    __validate_poc(pkg_poc)
+    _validate_poc(pkg_poc)
 
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
@@ -463,7 +463,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                     'You need to specify the point of contact of this '
                     'package for this branch to un-orphan it')
             # is the new poc valide:
-            __validate_poc(poc)
+            _validate_poc(poc)
             pkglisting.point_of_contact = poc
 
         pkglisting.status = status
