@@ -1,7 +1,5 @@
 - API authentication
-- API authorization
-- Branch mechanism
 - Import data from current pkgdb
-- Test
+- Test (UI)
 - update pkgdb-cli
 
