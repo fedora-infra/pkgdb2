@@ -8,3 +8,4 @@ python-openid-cla
 docutils
 python-dateutil
 dogpile.cache
+mock
