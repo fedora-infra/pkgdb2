@@ -140,16 +140,6 @@ class PackageListingtests(Modeltests):
         self.assertEqual(len(packages), 0)
 
 
-    def test_api_repr(self):
-        """ Test the api_repr function of PackageListing. """
-        create_package_listing(self.session)
-        pkg = model.Package.by_name(self.session, 'guake')
-        package = model.PackageListing.by_package_id(self.session,
-                                                     pkg.id)[0]
-        package = package.api_repr(1)
-        self.assertEqual(package.keys(), ['point_of_contact',
-                         'collection', 'package'])
-
     def test_to_json(self):
         """ Test the to_json function of PackageListing. """
         create_package_listing(self.session)

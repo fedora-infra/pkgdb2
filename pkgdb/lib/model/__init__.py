@@ -28,6 +28,7 @@ import pkg_resources
 
 import datetime
 import logging
+import time
 
 import sqlalchemy as sa
 from sqlalchemy import create_engine
@@ -383,10 +384,13 @@ class PackageListingAcl(BASE):
                 self.id, self.fas_name, self.packagelisting_id, self.acl,
                 self.status)
 
-    def to_json(self):
+    def to_json(self, _seen=None):
         """ Return a dictionnary representation of this object. """
+        _seen = _seen or []
+        cls = type(self)
+        _seen.append(cls)
         return dict(
-            packagelist=self.packagelist.to_json(),
+            packagelist=self.packagelist.to_json(_seen),
             fas_name=self.fas_name,
             acl=self.acl,
             status=self.status,
@@ -445,25 +449,15 @@ class Collection(BASE):
                    self.publishURLTemplate, self.pendingURLTemplate,
                    self.summary, self.description)
 
-    def api_repr(self, version):
+    def to_json(self, _seen=None):
         """ Used by fedmsg to serialize Collections in messages. """
-        if version == 1:
-            return dict(
-                name=self.name,
-                version=self.version,
-                publishurltemplate=self.publishURLTemplate,
-                pendingurltemplate=self.pendingURLTemplate,
-            )
-        elif version == 2:
-            return dict(
-                name=self.name,
-                version=self.version,
-                branchname=self.branchname,
-                publishurltemplate=self.publishURLTemplate,
-                pendingurltemplate=self.pendingURLTemplate,
-            )
-        else:  # pragma: no cover
-            raise NotImplementedError("Unsupported version %r" % version)
+        return dict(
+            name=self.name,
+            version=self.version,
+            branchname=self.branchname,
+            publishurltemplate=self.publishURLTemplate,
+            pendingurltemplate=self.pendingURLTemplate,
+        )
 
     @classmethod
     def by_name(cls, session, branch_name):
@@ -730,17 +724,6 @@ class PackageListing(BASE):
                    self.id, self.point_of_contact, self.status,
                    self.package_id, self.collection_id)
 
-    def api_repr(self, version):
-        """ Used by fedmsg to serialize PackageListing in messages. """
-        if version == 1:
-            return dict(
-                package=self.package.api_repr(version),
-                collection=self.collection.api_repr(version),
-                point_of_contact=self.point_of_contact,
-            )
-        else:  # pragma: no cover
-            raise NotImplementedError("Unsupported version %r" % version)
-
     def branch(self, session, branch_to):
         """Clone the permissions on this PackageListing to another `Branch`.
 
@@ -767,10 +750,12 @@ class PackageListing(BASE):
             session.add(pkg_list_acl)
         session.flush()
 
-    def to_json(self):
-        """ Return a dictionnary representation of this object. """
-        return dict(package=self.package.api_repr(1),
-                    collection=self.collection.api_repr(2),
+    def to_json(self, _seen=None):
+        """ Return a dictionary representation of this object. """
+        _seen = _seen or []
+        _seen.append(type(self))
+        return dict(package=self.package.to_json(_seen),
+                    collection=self.collection.to_json(_seen),
                     point_of_contact=self.point_of_contact,
                     )
 
@@ -822,18 +807,6 @@ class Package(BASE):
             'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
                 self.name, self.summary, self.status,
                 self.upstream_url, self.review_url, self.shouldopen)
-
-    def api_repr(self, version):
-        """ Used by fedmsg to serialize Packages in messages. """
-        if version == 1:
-            return dict(
-                name=self.name,
-                summary=self.summary,
-                reviewurl=self.review_url,
-                upstreamurl=self.upstream_url,
-            )
-        else:  # pragma: no cover
-            raise NotImplementedError("Unsupported version %r" % version)
 
     def create_listing(self, collection, point_of_contact, statusname,
                        author_name=None):
@@ -928,18 +901,27 @@ class Package(BASE):
 
         return query.all()
 
-    def to_json(self):
-        """ Return a dictionnary representation of the object.
-        """
-        acls = [pkg.to_json() for pkg in self.listings]
-        return {'name': self.name,
-                'summary': self.summary,
-                'status': self.status,
-                'review_url': self.review_url,
-                'upstream_url': self.upstream_url,
-                'acls': acls,
-                'creation_date': str(self.date_created)
-                }
+    def to_json(self, _seen=None):
+        ''' Return a dictionnary representation of the object.
+        '''
+        _seen = _seen or []
+        cls = type(self)
+
+        result = {'name': self.name,
+                  'summary': self.summary,
+                  'status': self.status,
+                  'review_url': self.review_url,
+                  'upstream_url': self.upstream_url,
+                  'creation_date': time.mktime(self.date_created.timetuple())
+                  }
+
+        _seen.append(cls)
+
+        # Protect against infinite recursion
+        if not PackageListing in _seen:
+            result['acls'] = [pkg.to_json(_seen) for pkg in self.listings]
+
+        return result
 
 
 class Log(BASE):

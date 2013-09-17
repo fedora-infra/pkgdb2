@@ -206,7 +206,7 @@ def api_collection_list(pattern=None):
     else:
         collections = model.Collection.all(SESSION)
     output = {'collections':
-              [collec.api_repr(1) for collec in collections]
+              [collec.to_json() for collec in collections]
               }
 
     jsonout = flask.jsonify(output)
