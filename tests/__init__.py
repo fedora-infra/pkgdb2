@@ -251,6 +251,7 @@ def create_package_listing(session):
                                   collection_id=devel_collec.id,
                                   )
     session.add(pkgltg)
+
     # Pkg: geany - Collection: F18 - Approved
     pkgltg = model.PackageListing(point_of_contact='pingou',
                                   status='Approved',
@@ -258,6 +259,15 @@ def create_package_listing(session):
                                   collection_id=f18_collec.id,
                                   )
     session.add(pkgltg)
+
+    # Pkg: geany - Collection: devel - Approved
+    pkgltg = model.PackageListing(point_of_contact='group::gtk-sig',
+                                  status='Approved',
+                                  package_id=geany_pkg.id,
+                                  collection_id=devel_collec.id,
+                                  )
+    session.add(pkgltg)
+
     session.commit()
 
 
@@ -267,6 +277,7 @@ def create_package_acl(session):
 
     guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
+    geany_pkg = model.Package.by_name(session, 'geany')
     f18_collec = model.Collection.by_name(session, 'F-18')
     devel_collec = model.Collection.by_name(session, 'devel')
 
@@ -274,6 +285,8 @@ def create_package_acl(session):
         session, guake_pkg.id, f18_collec.id)
     pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, devel_collec.id)
+    pkglist_geany_devel = model.PackageListing.by_pkgid_collectionid(
+        session, geany_pkg.id, devel_collec.id)
 
     packager = model.PackageListingAcl(fas_name='pingou',
                                        packagelisting_id=pklist_guake_f18.id,
@@ -309,6 +322,14 @@ def create_package_acl(session):
                                        status='Awaiting Review',
                                        )
     session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='group::gtk-sig',
+                                       packagelisting_id=pkglist_geany_devel.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
     session.commit()
 
 

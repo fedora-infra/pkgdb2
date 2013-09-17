@@ -94,7 +94,7 @@ class FlaskApiExtrasTest(Modeltests):
 
 Fedora|guake|Top down terminal for GNOME|pingou|toshio
 Fedora|fedocal|A web-based calendar for Fedora|orphan|
-Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
+Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig|"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/bugzilla/?format=json')
@@ -124,7 +124,7 @@ Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
                         }
                     },
                     {u'geany': {
-                        u'owner': u'pingou',
+                        u'owner': u'group::gtk-sig',
                         u'cclist': {
                             u'groups': [],
                             u'people': []
@@ -171,7 +171,8 @@ Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
         output = self.app.get('/api/notify/')
         self.assertEqual(output.status_code, 200)
 
-        expected = """guake|pingou,toshio"""
+        expected = """guake|pingou,toshio
+geany|group::gtk-sig"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/notify/?format=json')
@@ -181,7 +182,8 @@ Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
         expected = {
             u'title': u'Fedora Package Database -- Notification List',
             u'packages': [
-                {u'guake': [u'pingou', u'toshio']}
+                {u'guake': [u'pingou', u'toshio']},
+                {u'geany': [u'group::gtk-sig']}
             ],
             u'name': None,
             u'version': None,
@@ -227,7 +229,8 @@ avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,toshio | rpms/guake/master
 avail | @provenpackager, | rpms/fedocal/f18
 avail | @provenpackager, | rpms/fedocal/master
-avail | @provenpackager, | rpms/geany/f18"""
+avail | @provenpackager, | rpms/geany/f18
+avail | @provenpackager,@gtk-sig, | rpms/geany/master"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/vcs/?format=json')
@@ -244,7 +247,7 @@ avail | @provenpackager, | rpms/geany/f18"""
                 },
                 u'master': {
                     u'commit': {
-                        u'groups': [u'provenpackager'],
+                        u'groups': [u'provenpackager', u'gtk-sig'],
                         u'people': []
                     }
                 }

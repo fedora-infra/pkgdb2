@@ -188,7 +188,7 @@ class PackageListingtests(Modeltests):
 
         # Collection 3 == devel
         pkg_list = model.PackageListing.by_collectionid(self.session, 3)
-        self.assertEqual(len(pkg_list), 2)
+        self.assertEqual(len(pkg_list), 3)
         self.assertEqual(pkg_list[0].collection.branchname, 'devel')
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
 
