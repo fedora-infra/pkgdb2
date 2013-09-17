@@ -140,6 +140,18 @@ Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig|"""
 
         self.assertEqual(data, expected)
 
+        # Filter for a collection
+        output = self.app.get('/api/bugzilla/?collection=Fedora EPEL')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """# Package Database VCS Acls
+# Text Format
+# Collection|Package|Description|Owner|Initial QA|Initial CCList
+# Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
+
+"""
+        self.assertEqual(output.data, expected)
+
     def test_api_notify_empty(self):
         """ Test the api_notify function with an empty database. """
 
