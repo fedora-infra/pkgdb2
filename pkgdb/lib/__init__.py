@@ -382,7 +382,7 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
     )
     # Update Bugzilla about new owner
     pkgdb.lib.utils._set_bugzilla_owner(
-        user.username, package.name, collection.name, collection.version)
+        pkg_poc, package.name, collection.name, collection.version)
 
     return 'Point of contact of branch: %s of package: %s has been changed ' \
         'to %s' % (clt_name, pkg_name, pkg_poc)
@@ -471,7 +471,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
         session.flush()
         # Update Bugzilla about new owner
         pkgdb.lib.utils._set_bugzilla_owner(
-            user.username, package.name, collection.name,
+            poc, package.name, collection.name,
             collection.version)
 
     else:
