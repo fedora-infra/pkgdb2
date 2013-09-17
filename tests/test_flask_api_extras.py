@@ -239,20 +239,51 @@ avail | @provenpackager,@gtk-sig, | rpms/geany/master"""
 
         expected = {
             u'packageAcls': {
-                u'f18': {
-                    u'commit': {
-                        u'groups': [u'provenpackager'],
-                        u'people': []
+                u'guake': {
+                    u'f18': {
+                        u'commit': {
+                            u'groups': [u'provenpackager'],
+                            u'people': [u'pingou']
+                        }
+                    },
+                    u'master': {
+                        u'commit': {
+                            u'groups': [u'provenpackager'],
+                            u'people': [u'pingou', u'toshio']
+                        }
                     }
                 },
-                u'master': {
-                    u'commit': {
-                        u'groups': [u'provenpackager', u'gtk-sig'],
-                        u'people': []
+                u'geany': {
+                    u'f18': {
+                        u'commit': {
+                            u'groups': [u'provenpackager'],
+                            u'people': []
+                        }
+                    },
+                    u'master': {
+                        u'commit': {
+                            u'groups': [u'provenpackager', u'gtk-sig'],
+                            u'people': []
+                        }
+                    }
+                },
+                u'fedocal': {
+                    u'f18': {
+                        u'commit': {
+                            u'groups': [u'provenpackager'],
+                            u'people': []
+                        }
+                    },
+                    u'master': {
+                        u'commit': {
+                            u'groups': [u'provenpackager'],
+                            u'people': []
+                        }
                     }
                 }
             },
             u'title': u'Fedora Package Database -- VCS ACLs'}
+
         self.assertEqual(data, expected)
 
 

@@ -236,7 +236,9 @@ def _vcs_acls_cache(out_format='text'):
 
             if out_format=='json':
                 groups = [group.replace('@', '') for group in groups]
-                output['packageAcls'][
+                if not package.name in output['packageAcls']:
+                    output['packageAcls'][package.name] = {}
+                output['packageAcls'][package.name][
                     branch.collection.git_branch_name] = {
                         'commit': {'groups': groups, 'people': users}
                     }
