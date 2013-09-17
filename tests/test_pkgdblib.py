@@ -1130,10 +1130,10 @@ class PkgdbLibtests(Modeltests):
         logs = pkgdblib.search_logs(self.session)
 
         self.assertEqual(len(logs), 21)
-        self.assertEqual(logs[0].description, "user: admin created "
+        self.assertEqual(logs[20].description, "user: admin created "
                          "package: guake on branch: F-18 for poc: ralph")
-        self.assertEqual(logs[0].user, "admin")
-        self.assertEqual(logs[3].description, "user: admin set acl: "
+        self.assertEqual(logs[20].user, "admin")
+        self.assertEqual(logs[17].description, "user: admin set acl: "
                          "watchcommits of package: guake from: Approved to:"
                          " Approved on branch: F-18")
 
@@ -1141,13 +1141,13 @@ class PkgdbLibtests(Modeltests):
 
         self.assertEqual(len(logs), 3)
         self.assertEqual(logs[0].description, "user: admin set acl: "
-                         "watchcommits of package: guake from: Approved to:"
-                         " Approved on branch: F-18")
+                         "watchcommits of package: fedocal from: Approved "
+                         "to: Approved on branch: devel")
         self.assertEqual(logs[0].user, "admin")
 
         exp = "Log(user=u'admin', description=u'user: admin set acl: " \
-              "watchcommits of package: guake from: Approved to:" \
-              " Approved on branch: F-18"
+              "watchcommits of package: fedocal from: Approved to:" \
+              " Approved on branch: devel"
         self.assertTrue(logs[0].__repr__().startswith(exp))
 
         logs = pkgdblib.search_logs(self.session, count=True)
