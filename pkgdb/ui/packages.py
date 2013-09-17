@@ -313,6 +313,7 @@ def package_orphan(package, collection):
                     % collection)
             except pkgdblib.PkgdbException, err:
                 flask.flash(err.message, 'error')
+                SESSION.rollback()
             break
 
     try:
@@ -359,6 +360,7 @@ def package_retire(package, collection):
                         % collection)
                 except pkgdblib.PkgdbException, err:
                     flask.flash(err.message, 'error')
+                    SESSION.rollback()
                 break
             else:
                 flask.flash(
