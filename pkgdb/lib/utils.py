@@ -36,11 +36,11 @@ _bugzilla = None
 _fas = None
 
 
-def get_fas():
+def get_fas():  # pragma: no cover
     ''' Retrieve a connection to the Fedora Account System.
     '''
     global _fas
-    if _fas is not None:  # pragma: no cover
+    if _fas is not None:
         return _fas
 
     # Get a connection to FAS
