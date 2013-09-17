@@ -249,7 +249,7 @@ def _vcs_acls_cache(out_format='text'):
 
 @API.route('/bugzilla/')
 @API.route('/bugzilla')
-def bugzilla():
+def api_bugzilla():
     '''Return the package attributes used by bugzilla.
 
     :karg collection: Name of the bugzilla collection to gather data on.
@@ -296,7 +296,7 @@ def bugzilla():
 
 @API.route('/notify/')
 @API.route('/notify')
-def notify():
+def api_notify():
     '''List of usernames that should be notified of changes to a package.
 
     For the collections specified we want to retrieve all of the owners,
@@ -331,7 +331,7 @@ def notify():
 
 @API.route('/vcs/')
 @API.route('/vcs')
-def vcs():
+def api_vcs():
     '''Return ACLs for the version control system.
     :kwarg out_format: Specify if the output if text or json.
 
