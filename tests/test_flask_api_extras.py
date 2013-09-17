@@ -54,8 +54,8 @@ class FlaskApiExtrasTest(Modeltests):
         # Let's make sure the cache is empty for the tests
         pkgdb.cache.invalidate()
 
-    def test_api_bugzilla(self):
-        """ Test the api_bugzilla function.  """
+    def test_api_bugzilla_empty(self):
+        """ Test the api_bugzilla function with an empty database. """
 
         # Empty DB
         output = self.app.get('/api/bugzilla/')
@@ -79,7 +79,9 @@ class FlaskApiExtrasTest(Modeltests):
 
         self.assertEqual(data, expected)
 
-        # Filled DB
+    def test_api_bugzilla_filled(self):
+        """ Test the api_bugzilla function with a filled database. """
+        # Fill the DB
         create_package_acl(self.session)
 
         output = self.app.get('/api/bugzilla/')
@@ -138,8 +140,8 @@ Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
 
         self.assertEqual(data, expected)
 
-    def test_api_notify(self):
-        """ Test the api_notify function.  """
+    def test_api_notify_empty(self):
+        """ Test the api_notify function with an empty database. """
 
         # Empty DB
         output = self.app.get('/api/notify/')
@@ -161,6 +163,8 @@ Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
 
         self.assertEqual(data, expected)
 
+    def test_api_notify_filled(self):
+        """ Test the api_notify function with a filled database. """
         # Filled DB
         create_package_acl(self.session)
 
@@ -185,8 +189,8 @@ Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
         }
         self.assertEqual(data, expected)
 
-    def test_api_vcs(self):
-        """ Test the api_vcs function.  """
+    def test_api_vcs_empty(self):
+        """ Test the api_vcs function with an empty database. """
 
         # Empty DB
         output = self.app.get('/api/vcs/')
@@ -208,6 +212,8 @@ Fedora|geany|A fast and lightweight IDE using GTK2|pingou|"""
 
         self.assertEqual(data, expected)
 
+    def test_api_vcs_filled(self):
+        """ Test the api_vcs function with a filled database. """
         # Filled DB
         create_package_acl(self.session)
 
