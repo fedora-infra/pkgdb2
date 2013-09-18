@@ -934,15 +934,16 @@ class Log(BASE):
 
     __tablename__ = 'Log'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    user = sa.Column(sa.String(32), nullable=False)
+    user = sa.Column(sa.String(32), nullable=False, index=True)
     change_time = sa.Column(sa.DateTime, nullable=False,
-                            default=datetime.datetime.utcnow)
+                            default=datetime.datetime.utcnow, index=True)
     package_id = sa.Column(sa.Integer,
                            sa.ForeignKey('Package.id',
                                          ondelete='RESTRICT',
                                          onupdate='CASCADE'
                                          ),
                            nullable=True,
+                           index=True
                            )
     description = sa.Column(sa.Text, nullable=False)
 
