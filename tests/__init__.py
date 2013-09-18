@@ -104,14 +104,16 @@ class Modeltests(unittest.TestCase):
 
         ## Empty the database if it's not a sqlite
         if self.session.bind.driver != 'pysqlite':
-            self.session.execute('DROP TABLE "GroupPackageListingAcl" CASCADE;')
-            self.session.execute('DROP TABLE "GroupPackageListing" CASCADE;')
-            self.session.execute('DROP TABLE "PersonPackageListingAcl" CASCADE;')
-            self.session.execute('DROP TABLE "PersonPackageListing" CASCADE;')
+            self.session.execute('DROP TABLE "PackageListingAcl" CASCADE;')
             self.session.execute('DROP TABLE "PackageListing" CASCADE;')
             self.session.execute('DROP TABLE "Collection" CASCADE;')
             self.session.execute('DROP TABLE "Package" CASCADE;')
             self.session.execute('DROP TABLE "Log" CASCADE;')
+            # Drop the Status/Acls tables
+            self.session.execute('DROP TABLE "AclStatus" CASCADE;')
+            self.session.execute('DROP TABLE "CollecStatus" CASCADE;')
+            self.session.execute('DROP TABLE "PkgStatus" CASCADE;')
+            self.session.execute('DROP TABLE "PkgAcls" CASCADE;')
             self.session.commit()
 
 
