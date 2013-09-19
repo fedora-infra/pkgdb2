@@ -111,6 +111,8 @@ def package_info(package):
     branch_admin = []
     is_poc = False
     for pkg in package_acl:
+        if pkg.collection.status == 'EOL':
+            continue
         tmp = {}
         tmp['collection'] = '%s %s' % (pkg.collection.name,
                                        pkg.collection.version)
@@ -119,6 +121,7 @@ def package_info(package):
         if hasattr(flask.g, 'fas_user') and flask.g.fas_user and \
                 pkg.point_of_contact == flask.g.fas_user.username:
             is_poc = True
+
         acls = {}
         for acl in pkg.acls:
             tmp2 = {'acl': acl.acl, 'status': acl.status}
@@ -126,14 +129,16 @@ def package_info(package):
                 acls[acl.fas_name].append(tmp2)
             else:
                 acls[acl.fas_name] = [tmp2]
-        ## This list is a little hacky, but we would have to save ACLs
-        ## in their own table otherwise.
-        planned_acls = set(['approveacls', 'commit', 'watchbugzilla',
-                            'watchcommits'])
-        seen_acls = set([aclobj['acl'] for aclobj in acls[acl.fas_name]])
-        for aclname in planned_acls - seen_acls:
-            acls[acl.fas_name].append({'acl': aclname, 'status': ''})
-        tmp['acls'] = acls
+
+            ## This list is a little hacky, but we would have to save ACLs
+            ## in their own table otherwise.
+            planned_acls = set(['approveacls', 'commit', 'watchbugzilla',
+                                'watchcommits'])
+            seen_acls = set([aclobj['acl'] for aclobj in acls[acl.fas_name]])
+            for aclname in planned_acls - seen_acls:
+                acls[acl.fas_name].append({'acl': aclname, 'status': ''})
+            tmp['acls'] = acls
+
         package_acls.append(tmp)
         if is_pkg_admin(flask.g.fas_user, package.name,
                         pkg.collection.branchname):
