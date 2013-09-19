@@ -235,7 +235,7 @@ def update_package_owner_acls(pkg2_sess):
     """
     cnt = 0
     for pkg in pkg2_sess.query(model.PackageListing).all():
-        sys.stdout.write(cnt)
+        sys.stdout.write(str(cnt))
         sys.stdout.flush()
         acls = ['watchcommits', 'watchbugzilla', 'commit', 'approveacls']
         if pkg.point_of_contact == 'perl-sig':
