@@ -98,7 +98,7 @@ def _bz_acls_cached(name=None, out_format='text'):
         :cclist: list of FAS userids that are watching the package
     '''
 
-    packages = pkgdblib.search_package(SESSION, '*')
+    packages = pkgdblib.search_package(SESSION, '*', status='Approved')
     output = []
     if out_format == 'json':
         output = {'bugzillaAcls':{},
@@ -130,7 +130,8 @@ def _bz_acls_cached(name=None, out_format='text'):
                         break
                 elif not branch_epel \
                         or branch_epel.point_of_contact == 'orphan' \
-                        or int(branch.version) > int(branch_epel.version):
+                        or int(branch.collection.version) > \
+                            int(branch_epel.collection.version):
                     branch_epel = branch
 
         if out_format == 'json':
