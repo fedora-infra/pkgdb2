@@ -584,15 +584,20 @@ class PackageListing(BASE):
                    self.package_id, self.collection_id)
 
     def to_json(self, _seen=None):
-        """ Return a dictionary representation of this object.
-
-        """
+        """ Return a dictionary representation of this object. """
         _seen = _seen or []
         _seen.append(type(self))
-        return dict(package=self.package.to_json(_seen),
-                    collection=self.collection.to_json(_seen),
-                    point_of_contact=self.point_of_contact,
-                    )
+        result = dict(package=None,
+                      collection=None,
+                      point_of_contact=self.point_of_contact)
+
+        if self.package:
+            result['package'] = self.package.to_json(_seen)
+
+        if self.collection:
+            result['collection'] = self.collection.to_json(_seen)
+
+        return result
 
     def branch(self, session, branch_to):
         """Clone the permissions on this PackageListing to another `Branch`.
