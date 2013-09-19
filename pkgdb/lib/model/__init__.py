@@ -793,8 +793,8 @@ class Package(BASE):
         """
         return session.query(cls).filter(Package.name == pkgname).one()
 
-    def __init__(self, name, summary, status, reviewurl=None,
-                 shouldopen=None, review_url=None, upstream_url=None):
+    def __init__(self, name, summary, status, shouldopen=None,
+                 review_url=None, upstream_url=None):
         self.name = name
         self.summary = summary
         self.status = status
