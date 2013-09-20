@@ -183,6 +183,17 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
         )
         new_pkglist.id = pkg.id
         pkg2_sess.add(new_pkglist)
+        acls = ['watchcommits', 'watchbugzilla', 'commit', 'approveacls']
+        if new_pkglist.point_of_contact == 'perl-sig':
+            acls = ['watchcommits', 'watchbugzilla', 'commit']
+        for acl in acls:
+            new_pkglistacl = model.PackageListingAcl(
+                fas_name=new_pkglist.point_of_contact,
+                packagelisting_id=new_pkglist.id,
+                acl=acl,
+                status='Approved'
+            )
+            pkg2_sess.add(new_pkglistacl)
         cnt += 1
     pkg2_sess.commit()
     print '%s Package listing added' % cnt
@@ -211,7 +222,7 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
             ).one()
             key = (person.username, pkg.acl, person.packagelistingid)
             if key in done:
-                print page, cnt, key
+                #print page, cnt, key
                 continue
             else:
                 done.add(key)
@@ -230,35 +241,6 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
     print '%s Package listing ACLs added' % cnt
 
 
-def update_package_owner_acls(pkg2_sess):
-    """ All ACLs to package owner, now point of contact.
-    """
-    cnt = 0
-    for pkg in pkg2_sess.query(model.PackageListing).all():
-        sys.stdout.write(str(cnt))
-        sys.stdout.flush()
-        acls = ['watchcommits', 'watchbugzilla', 'commit', 'approveacls']
-        if pkg.point_of_contact == 'perl-sig':
-            acls = ['watchcommits', 'watchbugzilla', 'commit']
-        for acl in acls:
-            new_pkglistacl = model.PackageListingAcl(
-                fas_name=pkg.point_of_contact,
-                packagelisting_id=pkg.id,
-                acl=acl,
-                status='Approved'
-            )
-            pkg2_sess.add(new_pkglistacl)
-            try:
-                pkg2_sess.flush()
-            except sqlalchemy.exc.IntegrityError:
-                pkg2_sess.rollback()
-                pass
-            else:
-                cnt += 1
-    pkg2_sess.commit()
-    print '%s Package ACLs added' % cnt
-
-
 def main(db_url_pkgdb1, db_url_pkgdb2):
     ''' The methods connect to the two pkgdb database and converts the data
     from one database model to the other.
@@ -269,7 +251,6 @@ def main(db_url_pkgdb1, db_url_pkgdb2):
     convert_packages(pkg1_sess, pkg2_sess)
     convert_packagelisting(pkg1_sess, pkg2_sess)
     convert_packagelistingacl(pkg1_sess, pkg2_sess)
-    update_package_owner_acls(pkg2_sess)
 
 
 if __name__ == '__main__':
