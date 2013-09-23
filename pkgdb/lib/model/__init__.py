@@ -508,6 +508,8 @@ class Collection(BASE):
         if count:
             return query.count()
 
+        query = query.order_by(Collection.branchname)
+
         if offset:
             query = query.offset(offset)
         if limit:
@@ -689,10 +691,13 @@ class PackageListing(BASE):
         if count:
             return query.count()
 
+        query = query.order_by("anon_1_distinct_1")
+
         if offset:
             query = query.offset(offset)
         if limit:
             query = query.limit(limit)
+
         return query.all()
 
     @classmethod
@@ -867,6 +872,8 @@ class Package(BASE):
 
         if count:
             return query.count()
+
+        query = query.order_by(Package.name)
 
         if offset:
             query = query.offset(offset)
