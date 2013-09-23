@@ -49,15 +49,39 @@
 </table>
 {% endif %}
 
-<ul>
+<table>
+    <tr>
+        <th>
+            Branch name
+        </th>
+        <th>
+            Name
+        </th>
+        <th>
+            Release
+        </th>
+        <th>
+            Status
+        </th>
+    </tr>
 {% for collection in collections %}
-    <li>
-        <a href="{{url_for('.collection_info',
-                           collection=collection.branchname)}}">
-            {{ collection.name }} {{ collection.version }}
-            ({{ collection. branchname }}) </a>
-    </li>
+    <tr>
+        <td>
+            <a href="{{url_for('.collection_info',
+                               collection=collection.branchname)}}">
+                {{ collection. branchname }} </a>
+        </td>
+        <td>
+            {{ collection.name }}
+        </td>
+        <td>
+            {{ collection.version }}
+        </td>
+        <td>
+            {{ collection.status }}
+        </td>
+    </tr>
 {% endfor %}
-</ul>
+</table>
 
 {% endblock %}
