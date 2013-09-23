@@ -28,6 +28,11 @@ file.
 
 '''
 
+## These two lines are needed to run on EL6
+__requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
+import pkg_resources
+
+
 import sys
 import os
 
@@ -195,6 +200,8 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
             )
             pkg2_sess.add(new_pkglistacl)
         cnt += 1
+        if cnt % 10000 == 0:
+            pkg2_sess.commit()
     pkg2_sess.commit()
     print '%s Package listing added' % cnt
 
@@ -220,23 +227,19 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
             person = pkg1_sess.query(P1PersonPackagelisting).filter(
                 P1PersonPackagelisting.id==pkg.personpackagelistingid
             ).one()
-            key = (person.username, pkg.acl, person.packagelistingid)
-            if key in done:
-                #print page, cnt, key
-                continue
-            else:
-                done.add(key)
             new_pkglistacl = model.PackageListingAcl(
                 fas_name=person.username,
                 packagelisting_id=person.packagelistingid,
                 acl=pkg.acl,
                 status=STATUS[pkg.statuscode]
             )
-            pkg2_sess.add(new_pkglistacl)
-            pkg2_sess.flush()
+            try:
+                pkg2_sess.add(new_pkglistacl)
+                pkg2_sess.commit()
+            except sqlalchemy.exc.IntegrityError:
+                pkg2_sess.rollback()
             cnt += 1
         page += 1
-        pkg2_sess.commit()
     pkg2_sess.commit()
     print '%s Package listing ACLs added' % cnt
 
@@ -251,6 +254,8 @@ def main(db_url_pkgdb1, db_url_pkgdb2):
     convert_packages(pkg1_sess, pkg2_sess)
     convert_packagelisting(pkg1_sess, pkg2_sess)
     convert_packagelistingacl(pkg1_sess, pkg2_sess)
+    pkg1_sess.close()
+    pkg2_sess.close()
 
 
 if __name__ == '__main__':
@@ -258,5 +263,7 @@ if __name__ == '__main__':
         print 'You need to set the database(s) URL(s) at the top of this ' \
               'file'
         sys.exit(1)
+
     main(DB_URL_PKGDB1, DB_URL_PKGDB2)
+
 
