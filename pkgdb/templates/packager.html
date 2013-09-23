@@ -29,7 +29,8 @@
         -- {{ package.summary }}
         (
         {% for listing in package.listings %}
-            {% if listing.point_of_contact == packager %}
+            {% if listing.collection.status != 'EOL'
+                and listing.point_of_contact == packager %}
             {{ listing.collection.branchname }}
             {% endif %}
         {% endfor %}
@@ -50,7 +51,11 @@
         (
             {% for listing in package.listings %}
                 {% for acl in listing.acls %}
-                {% if listing.point_of_contact != packager and acl.acl == 'commit' and acl.status == 'Approved' and acl.fas_name == packager %}
+                {% if listing.collection.status != 'EOL'
+                    and listing.point_of_contact != packager
+                    and acl.acl == 'commit'
+                    and acl.status == 'Approved'
+                    and acl.fas_name == packager %}
                 {{ listing.collection.branchname }}
                 {% endif %}
                 {% endfor %}
