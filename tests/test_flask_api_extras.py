@@ -92,39 +92,19 @@ class FlaskApiExtrasTest(Modeltests):
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
 # Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
 
-Fedora|guake|Top down terminal for GNOME|pingou|toshio
-Fedora|fedocal|A web-based calendar for Fedora|orphan|
-Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig|"""
+Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig||
+Fedora|guake|Top down terminal for GNOME|pingou||"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/bugzilla/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
+
         expected = {
             u'bugzillaAcls': {
                 u'Fedora': [
-                    {u'guake': {
-                        u'owner': u'pingou',
-                        u'cclist': {
-                            u'groups': [],
-                            u'people': [u'toshio']
-                        },
-                        u'qacontact': None,
-                        u'summary': u'Top down terminal for GNOME'
-                        }
-                    },
-                    {u'fedocal': {
-                        u'owner': u'orphan',
-                        u'cclist': {
-                            u'groups': [],
-                            u'people': []
-                        },
-                        u'qacontact': None,
-                        u'summary': u'A web-based calendar for Fedora'
-                        }
-                    },
                     {u'geany': {
-                        u'owner': u'group::gtk-sig',
+                        u'owner': u'@gtk-sig',
                         u'cclist': {
                             u'groups': [],
                             u'people': []
@@ -132,7 +112,17 @@ Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig|"""
                         u'qacontact': None,
                         u'summary': u'A fast and lightweight IDE using GTK2'
                         }
-                    }
+                    },
+                    {u'guake': {
+                        u'owner': u'pingou',
+                        u'cclist': {
+                            u'groups': [],
+                            u'people': []
+                        },
+                        u'qacontact': None,
+                        u'summary': u'Top down terminal for GNOME'
+                        }
+                    },
                 ]
             },
             u'title': u'Fedora Package Database -- Bugzilla ACLs'
@@ -183,8 +173,9 @@ Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig|"""
         output = self.app.get('/api/notify/')
         self.assertEqual(output.status_code, 200)
 
-        expected = """guake|pingou,toshio
-geany|group::gtk-sig"""
+        expected = """geany|group::gtk-sig
+guake|pingou
+"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/notify/?format=json')
@@ -194,8 +185,8 @@ geany|group::gtk-sig"""
         expected = {
             u'title': u'Fedora Package Database -- Notification List',
             u'packages': [
-                {u'guake': [u'pingou', u'toshio']},
-                {u'geany': [u'group::gtk-sig']}
+                {u'geany': [u'group::gtk-sig']},
+                {u'guake': [u'pingou']},
             ],
             u'name': None,
             u'version': None,
@@ -233,16 +224,14 @@ geany|group::gtk-sig"""
 
         output = self.app.get('/api/vcs/')
         self.assertEqual(output.status_code, 200)
+        print output.data
 
         expected = """# VCS ACLs
 # avail|@groups,users|rpms/Package/branch
 
+avail | @provenpackager,@gtk-sig, | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
-avail | @provenpackager,pingou,toshio | rpms/guake/master
-avail | @provenpackager, | rpms/fedocal/f18
-avail | @provenpackager, | rpms/fedocal/master
-avail | @provenpackager, | rpms/geany/f18
-avail | @provenpackager,@gtk-sig, | rpms/geany/master"""
+avail | @provenpackager,pingou | rpms/guake/master"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/vcs/?format=json')
@@ -261,17 +250,11 @@ avail | @provenpackager,@gtk-sig, | rpms/geany/master"""
                     u'master': {
                         u'commit': {
                             u'groups': [u'provenpackager'],
-                            u'people': [u'pingou', u'toshio']
+                            u'people': [u'pingou']
                         }
                     }
                 },
                 u'geany': {
-                    u'f18': {
-                        u'commit': {
-                            u'groups': [u'provenpackager'],
-                            u'people': []
-                        }
-                    },
                     u'master': {
                         u'commit': {
                             u'groups': [u'provenpackager', u'gtk-sig'],
@@ -279,20 +262,6 @@ avail | @provenpackager,@gtk-sig, | rpms/geany/master"""
                         }
                     }
                 },
-                u'fedocal': {
-                    u'f18': {
-                        u'commit': {
-                            u'groups': [u'provenpackager'],
-                            u'people': []
-                        }
-                    },
-                    u'master': {
-                        u'commit': {
-                            u'groups': [u'provenpackager'],
-                            u'people': []
-                        }
-                    }
-                }
             },
             u'title': u'Fedora Package Database -- VCS ACLs'}
 
