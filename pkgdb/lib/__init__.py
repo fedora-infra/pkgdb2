@@ -1242,7 +1242,8 @@ def bugzilla(session, name=None):
                 elif pkg[6] > output[pkg[0]][pkg[2]]['version']:
                     output[pkg[0]][pkg[2]]['poc'] = pkg[4]
                 # If #5 is not poc, add it to cc
-                if pkg[5] != output[pkg[0]][pkg[2]]['poc'] \
+                if not pkg[5] == 'orphan' \
+                        and pkg[5] != output[pkg[0]][pkg[2]]['poc'] \
                         and pkg[5] not in output[pkg[0]][pkg[2]]['cc']:
                     output[pkg[0]][pkg[2]]['cc'] += ',' + pkg[5]
             else:
