@@ -564,8 +564,8 @@ class PkgdbLibtests(Modeltests):
                                        status=None,
                                        )
         self.assertEqual(len(pkgs), 2)
-        self.assertEqual(pkgs[0].name, 'guake')
-        self.assertEqual(pkgs[1].name, 'geany')
+        self.assertEqual(pkgs[0].name, 'geany')
+        self.assertEqual(pkgs[1].name, 'guake')
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
@@ -576,7 +576,7 @@ class PkgdbLibtests(Modeltests):
                                        limit=1
                                        )
         self.assertEqual(len(pkgs), 1)
-        self.assertEqual(pkgs[0].name, 'guake')
+        self.assertEqual(pkgs[0].name, 'geany')
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
@@ -588,7 +588,7 @@ class PkgdbLibtests(Modeltests):
                                        page=2
                                        )
         self.assertEqual(len(pkgs), 1)
-        self.assertEqual(pkgs[0].name, 'geany')
+        self.assertEqual(pkgs[0].name, 'guake')
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',

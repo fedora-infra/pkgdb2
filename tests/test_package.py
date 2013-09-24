@@ -73,22 +73,22 @@ class Packagetests(Modeltests):
             session=self.session,
             pkg_name='g%')
         self.assertEqual(len(packages), 2)
-        self.assertEqual(packages[0].name, 'guake')
-        self.assertEqual(packages[1].name, 'geany')
+        self.assertEqual(packages[0].name, 'geany')
+        self.assertEqual(packages[1].name, 'guake')
 
         packages = model.Package.search(
             session=self.session,
             pkg_name='g%',
             limit=1)
         self.assertEqual(len(packages), 1)
-        self.assertEqual(packages[0].name, 'guake')
+        self.assertEqual(packages[0].name, 'geany')
 
         packages = model.Package.search(
             session=self.session,
             pkg_name='g%',
             offset=1)
         self.assertEqual(len(packages), 1)
-        self.assertEqual(packages[0].name, 'geany')
+        self.assertEqual(packages[0].name, 'guake')
 
         packages = model.Package.search(
             session=self.session,
