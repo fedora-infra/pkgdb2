@@ -217,7 +217,7 @@ class PackageListingAcl(BASE):
     __tablename__ = 'PackageListingAcl'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    fas_name = sa.Column(sa.String(32), nullable=False)
+    fas_name = sa.Column(sa.String(32), nullable=False, index=True)
     packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey('PackageListing.id',
@@ -227,9 +227,9 @@ class PackageListingAcl(BASE):
         nullable=False,
     )
     acl = sa.Column(sa.String(50), sa.ForeignKey('PkgAcls.status'),
-                    nullable=False)
+                    nullable=False, index=True)
     status = sa.Column(sa.String(50), sa.ForeignKey('AclStatus.status'),
-                       nullable=False)
+                       nullable=False, index=True)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
@@ -531,7 +531,7 @@ class PackageListing(BASE):
                                          onupdate="CASCADE"
                                          ),
                            nullable=False)
-    point_of_contact = sa.Column(sa.Text, nullable=False)
+    point_of_contact = sa.Column(sa.Text, nullable=False, index=True)
     collection_id = sa.Column(sa.Integer,
                               sa.ForeignKey('Collection.id',
                                             ondelete="CASCADE",
@@ -539,7 +539,7 @@ class PackageListing(BASE):
                                             ),
                               nullable=False)
     status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
-                       nullable=False)
+                       nullable=False, index=True)
     critpath = sa.Column(sa.Boolean, default=False, nullable=False)
     status_change = sa.Column(sa.DateTime, nullable=False,
                               default=datetime.datetime.utcnow)
@@ -723,6 +723,35 @@ class PackageListing(BASE):
         ).limit(limit)
         return query.all()
 
+    @classmethod
+    def get_bugzilla_acls(cls, session, clt_name=None, clt_branchname=None):
+        """ Return the information required to get the bugzilla ACLs list
+        back to the extras API endpoints.
+
+        :arg session: session with which to connect to the database
+        :kwarg clt_name: name of a collection used to restrict
+            the result to a specific subset of collections.
+        :kwarg clt_branchname: branch name of a collection used to restrict
+            the result to a specific collection.
+
+        """
+        query = session.query(
+            cls
+        ).filter(
+            PackageListing.status == 'Approved'
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Collection.status != 'EOL'
+        ).filter(
+            PackageListing.package_id == Package.id
+        ).order_by(
+            Package.name
+        ).order_by(
+            Collection.branchname
+        )
+        return query.all()
+
     def __repr__(self):
         return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r' \
                ')' % (
@@ -776,7 +805,7 @@ class Package(BASE):
 
     __tablename__ = 'Package'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    name = sa.Column(sa.Text, nullable=False, unique=True)
+    name = sa.Column(sa.Text, nullable=False, unique=True, index=True)
     summary = sa.Column(sa.Text, nullable=False)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
@@ -1017,3 +1046,80 @@ class Log(BASE):
             log = Log(user, None, description)
         session.add(log)
         session.flush()
+
+
+def notify(session, eol=False, name=None, version=None):
+    """ Return the user that should be notify for each package.
+
+    :arg session: the session to connect to the database with.
+    :kwarg eol: a boolean to specify wether the output should include End
+        Of Life releases or not.
+    :kwarg name: restricts the output to a specific collection name.
+    :kwarg version: restricts the output to a specific collection version.
+    """
+    query = session.query(
+            Package.name,
+            PackageListingAcl.fas_name
+    ).join(
+        PackageListing,
+        PackageListingAcl
+    ).filter(
+        Package.id == PackageListing.package_id
+    ).filter(
+        PackageListingAcl.packagelisting_id == PackageListing.id
+    ).filter(
+        PackageListing.collection_id == Collection.id
+    ).filter(
+        PackageListing.point_of_contact != 'orphan'
+    ).group_by(
+        Package.name, PackageListingAcl.fas_name
+    ).order_by(
+        Package.name
+    )
+
+    if eol is False:
+        query = query.filter(Collection.status != 'EOL')
+
+    if name:
+        query = query.filter(Collection.name == name)
+
+    if version:
+        query = query.filter(Collection.version == version)
+
+    return query.all()
+
+
+def bugzilla(session, name=None):
+    """ Return information for each package to sync with bugzilla.
+
+    :arg session: the session to connect to the database with.
+    :kwarg name: restricts the output to a specific collection name.
+    """
+    query = session.query(
+            Collection.name,  # 0
+            Collection.version,  # 1
+            Package.name,  # 2
+            Package.summary,  # 3
+            PackageListing.point_of_contact,  # 4
+            PackageListingAcl.fas_name,  # 5
+            Collection.branchname,  # 6
+    ).filter(
+        Package.id == PackageListing.package_id
+    ).filter(
+        PackageListingAcl.packagelisting_id == PackageListing.id
+    ).filter(
+        PackageListing.collection_id == Collection.id
+    ).filter(
+        Collection.status != 'EOL'
+    ).group_by(
+        Collection.name, Package.name, PackageListing.point_of_contact,
+        PackageListingAcl.fas_name, Package.summary, Collection.branchname,
+        Collection.version
+    ).order_by(
+        Package.name
+    )
+
+    if name:
+        query = query.filter(Collection.name == name)
+
+    return query.all()

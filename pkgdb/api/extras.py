@@ -34,47 +34,6 @@ from pkgdb import SESSION
 from pkgdb.api import API
 
 
-def _format_row(branch, package, output='text'):
-    """ Format a row for the bugzilla output. """
-    if output == 'json':
-        groups = []
-        users = []
-
-        for pkg in branch.acls:
-            if pkg.acl == 'commit' \
-                    and pkg.fas_name != branch.point_of_contact:
-                if pkg.fas_name.startswith('group::'):
-                    groups.append(pkg.fas_name.replace('group::', '@'))
-                else:
-                    users.append(pkg.fas_name)
-        out = {
-            package.name: {
-                'qacontact': None,
-                'owner': branch.point_of_contact,
-                'summary': package.summary,
-                'cclist' : {
-                    'groups': groups,
-                    'people': users
-                }
-            }
-        }
-
-    else:
-        cclist = ','.join(
-            [pkg.fas_name
-             for pkg in branch.acls if pkg.acl == 'commit'
-                and pkg.fas_name != branch.point_of_contact]
-        )
-        out = "|".join([
-                branch.collection.name,
-                package.name,
-                package.summary,
-                branch.point_of_contact,
-                cclist,
-            ])
-    return out
-
-
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
 def _bz_acls_cached(name=None, out_format='text'):
     '''Return the package attributes used by bugzilla.
@@ -98,58 +57,23 @@ def _bz_acls_cached(name=None, out_format='text'):
         :cclist: list of FAS userids that are watching the package
     '''
 
-    packages = pkgdblib.search_package(SESSION, '*', status='Approved')
+    packages = pkgdblib.bugzilla(
+        session=SESSION,
+        name=name)
+
     output = []
     if out_format == 'json':
         output = {'bugzillaAcls':{},
                   'title': 'Fedora Package Database -- Bugzilla ACLs'}
-    for package in packages:
-        branch_fed = None
-        branch_epel = None
-        for branch in package.listings:
-            # If a name is provided and the collection hasn't this name
-            # keep moving
-            if name and branch.collection.name != name:
-                continue
 
-            # Consider the devel branch, unless it is orphan then consider
-            # the next one
-            if branch.collection.name == 'Fedora':
-                if branch.collection.branchname == 'devel':
-                    branch_fed = branch
-                    if branch.point_of_contact != 'orphan':
-                        break
-                elif not branch_fed \
-                        or branch_fed.point_of_contact == 'orphan' \
-                        or int(branch.version) > int(branch_fed.version):
-                    branch_fed = branch
-            elif branch.collection.name == 'Fedora EPEL':
-                if branch.collection.branchname == 'EL-6':
-                    branch_epel = branch
-                    if branch.point_of_contact != 'orphan':
-                        break
-                elif not branch_epel \
-                        or branch_epel.point_of_contact == 'orphan' \
-                        or int(branch.collection.version) > \
-                            int(branch_epel.collection.version):
-                    branch_epel = branch
-
-        if out_format == 'json':
-            if branch_fed:
-                if 'Fedora' not in output['bugzillaAcls']:
-                    output['bugzillaAcls']['Fedora'] = []
-                output['bugzillaAcls']['Fedora'].append(
-                    _format_row(branch_fed, package, output=out_format))
-            if branch_epel:
-                if 'Fedora EPEL' not in output['bugzillaAcls']:
-                    output['bugzillaAcls']['Fedora EPEL'] = []
-                output['bugzillaAcls']['Fedora EPEL'].append(
-                    _format_row(branch_epel, package, output=out_format))
-        else:
-            if branch_fed:
-                output.append(_format_row(branch_fed, package, output=out_format))
-            if branch_epel:
-                output.append(_format_row(branch_epel, package, output=out_format))
+    for clt in sorted(packages):
+        for pkg in sorted(packages[clt]):
+            if out_format == 'json':
+                output['packages'].append({clt: packages[package]})
+            else:
+                output.append(
+                    '%(collection)s|%(name)s|%(summary)s|%(poc)s|%(qa)s'
+                    '|%(cc)s' % (packages[clt][pkg]))
     return output
 
 
@@ -167,7 +91,11 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
         distributions
     :kwarg out_format: Specify if the output if text or json.
     '''
-    packages = pkgdblib.search_package(SESSION, '*')
+    packages = pkgdblib.notify(
+        session=SESSION,
+        eol=eol,
+        name=name,
+        version=version)
     output = []
     if out_format == 'json':
         output = {'packages': [],
@@ -175,36 +103,12 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
                   'name': name,
                   'version': version,
                   'title': 'Fedora Package Database -- Notification List'}
-    for package in packages:
-        users = []
-        for branch in package.listings:
-            # If a name is provided and the collection hasn't this name
-            # keep moving
-            if name and branch.collection.name != name:
-                continue
-
-            # If a version is provided and the collection hasn't this version
-            # keep moving
-            if version and branch.collection.version != str(version):
-                continue
-
-            # Skip EOL branch unless asked
-            if not eol and branch.collection.status == 'EOL':
-                continue
-
-            for acl in branch.acls:
-                if acl.fas_name not in users:
-                    if acl.acl in ('commit', 'watchbugzilla',
-                                   'watchcommits'):
-                        users.append(acl.fas_name)
-
-        if users:
-            if out_format == 'json':
-                output['packages'].append({package.name: users})
-            else:
-                output.append('%s|%s' % (package.name, ','.join(users)))
+    for package in sorted(packages):
+        if out_format == 'json':
+            output['packages'].append({package: packages[package]})
+        else:
+            output.append('%s|%s\n' % (package, packages[package]))
     return output
-
 
 @pkgdb.cache.cache_on_arguments(expiration_time=3600)
 def _vcs_acls_cache(out_format='text'):
@@ -320,14 +224,13 @@ def api_notify():
     if out_format not in ('text', 'json'):
         out_format='text'
 
-    notify = _bz_notify_cache(name, version, eol, out_format)
-
+    output = _bz_notify_cache(name, version, eol, out_format)
 
     if out_format == 'json':
-        return flask.jsonify(notify)
+        return flask.jsonify(output)
     else:
         return flask.Response(
-            "\n".join(notify),
+            output,
             content_type="text/plain;charset=UTF-8"
         )
 

@@ -1198,3 +1198,80 @@ def add_branch(session, clt_from, clt_to, user):
     # Go for returning them for the moment, which allows the logs to be
     # inserted
     return messages
+
+
+def notify(session, eol=False, name=None, version=None):
+    """ Return the user that should be notify for each package.
+
+    :arg session: the session to connect to the database with.
+    :kwarg eol: a boolean to specify wether the output should include End
+        Of Life releases or not.
+    :kwarg name: restricts the output to a specific collection name.
+    :kwarg version: restricts the output to a specific collection version.
+    """
+    output = {}
+    pkgs = model.notify(session=session, eol=eol, name=name,
+                        version=version)
+    for pkg in pkgs:
+        if pkg[0] in output:
+            output[pkg[0]] += ',' + pkg[1]
+        else:
+            output[pkg[0]] = pkg[1]
+    return output
+
+
+def bugzilla(session, name=None):
+    """ Return the information to sync ACLs with bugzilla.
+
+    :arg session: the session to connect to the database with.
+    :kwarg name: restricts the output to a specific collection name.
+    """
+    output = {}
+    pkgs = model.bugzilla(session=session, name=name)
+    for pkg in pkgs:
+        if pkg[2] == 'A user-friendly, customizable image viewer':
+            print pkg
+        #print pkg
+        if pkg[0] in output:
+            if pkg[2] in output[pkg[0]]:
+                # Check poc
+                if pkg[4] == 'orphan':
+                    pass
+                elif pkg[6] == 'devel':
+                    output[pkg[0]][pkg[2]]['poc'] = pkg[4]
+                elif pkg[6] > output[pkg[0]][pkg[2]]['version']:
+                    output[pkg[0]][pkg[2]]['poc'] = pkg[4]
+                # If #5 is not poc, add it to cc
+                if pkg[5] != output[pkg[0]][pkg[2]]['poc'] \
+                        and pkg[5] not in output[pkg[0]][pkg[2]]['cc']:
+                    output[pkg[0]][pkg[2]]['cc'] += ',' + pkg[5]
+            else:
+                cc = ''
+                if pkg[5] != pkg[4]:
+                    cc = pkg[5]
+                output[pkg[0]][pkg[2]] = {
+                    'collection': pkg[0],
+                    'name': pkg[2],
+                    'summary': pkg[3],
+                    'poc': pkg[4],
+                    'qa': '',
+                    'cc': cc,
+                    'version': pkg[6],
+                }
+        else:
+            cc = ''
+            if pkg[5] != pkg[4]:
+                cc = pkg[5]
+            output[pkg[0]] = {
+                pkg[2]: {
+                    'collection': pkg[0],
+                    'name': pkg[2],
+                    'summary': pkg[3],
+                    'poc': pkg[4],
+                    'qa': '',
+                    'cc': cc,
+                    'version': pkg[6],
+                }
+            }
+
+    return output
