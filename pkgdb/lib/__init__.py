@@ -1303,6 +1303,8 @@ def vcs_acls(session):
                         output[pkg[0]][pkg[2]]['group'] += ','
                     output[pkg[0]][pkg[2]]['group'] += group
             else:
+                if group:
+                    group = ',' + group
                 output[pkg[0]][pkg[2]] = {
                     'name': pkg[0],
                     'user': user or '',
@@ -1310,6 +1312,8 @@ def vcs_acls(session):
                     'branch': pkg[2],
                 }
         else:
+            if group:
+                group = ',' + group
             output[pkg[0]] = {
                 pkg[2] : {
                     'name': pkg[0],

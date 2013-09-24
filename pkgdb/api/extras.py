@@ -69,11 +69,32 @@ def _bz_acls_cached(name=None, out_format='text'):
     for clt in sorted(packages):
         for pkg in sorted(packages[clt]):
             if out_format == 'json':
-                output['packages'].append({clt: packages[package]})
+                user = []
+                group = []
+                for ppl in packages[clt][pkg]['cc'].split(','):
+                    if ppl.startswith('group::'):
+                        group.append(ppl)
+                    elif ppl:
+                        user.append(ppl)
+                poc = packages[clt][pkg]['poc']
+                if poc.startswith('group::'):
+                    poc = poc.replace('group::', '@')
+                if not clt in output['bugzillaAcls']:
+                    output['bugzillaAcls'][clt] = []
+                output['bugzillaAcls'][clt].append({pkg : {
+                    'owner': poc,
+                    'cclist': {
+                        'groups': group,
+                        'people': user,
+                    },
+                    'qacontact': None,
+                    'summary': packages[clt][pkg]['summary']
+                }})
             else:
                 output.append(
                     '%(collection)s|%(name)s|%(summary)s|%(poc)s|%(qa)s'
-                    '|%(cc)s' % (packages[clt][pkg]))
+                    '|%(cc)s' % (packages[clt][pkg])
+                )
     return output
 
 
@@ -105,7 +126,8 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
                   'title': 'Fedora Package Database -- Notification List'}
     for package in sorted(packages):
         if out_format == 'json':
-            output['packages'].append({package: packages[package]})
+            output['packages'].append(
+                {package: packages[package].split(',')})
         else:
             output.append('%s|%s\n' % (package, packages[package]))
     return output
@@ -125,16 +147,24 @@ def _vcs_acls_cache(out_format='text'):
     for package in sorted(packages):
         for branch in sorted(packages[package]):
             if out_format=='json':
-                if not package.name in output['packageAcls']:
-                    output['packageAcls'][package.name] = {}
+                if not package in output['packageAcls']:
+                    output['packageAcls'][package] = {}
+                groups = []
+                if packages[package][branch]['group']:
+                    groups = packages[package][branch]['group'].replace(
+                        '@', '').split(',')
+                users = []
+                if packages[package][branch]['user']:
+                    users = packages[package][branch]['user'].split(',')
                 output['packageAcls'][package][branch] = {
                     'commit': {
-                        'groups': packages[package][branch]['group'],
-                        'people': packages[package][branch]['user']}
+                        'groups': groups,
+                        'people': users
+                    }
                 }
             else:
                 output.append(
-                    'avail | %(group)s,%(user)s | rpms/%(branch)s/%(name)s'
+                    'avail | %(group)s,%(user)s | rpms/%(name)s/%(branch)s'
                     % (packages[package][branch]))
     return output
 
