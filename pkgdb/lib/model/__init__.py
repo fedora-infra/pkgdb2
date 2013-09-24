@@ -1071,6 +1071,11 @@ def notify(session, eol=False, name=None, version=None):
         PackageListing.collection_id == Collection.id
     ).filter(
         PackageListing.point_of_contact != 'orphan'
+    ).filter(
+        PackageListingAcl.acl.in_(
+            ['watchcommits', 'watchbugzilla', 'commit'])
+    ).filter(
+        PackageListingAcl.status == 'Approved'
     ).group_by(
         Package.name, PackageListingAcl.fas_name
     ).order_by(
@@ -1111,6 +1116,11 @@ def bugzilla(session, name=None):
         PackageListing.collection_id == Collection.id
     ).filter(
         Collection.status != 'EOL'
+    ).filter(
+        PackageListingAcl.acl.in_(
+            ['watchcommits', 'watchbugzilla', 'commit'])
+    ).filter(
+        PackageListingAcl.status == 'Approved'
     ).group_by(
         Collection.name, Package.name, PackageListing.point_of_contact,
         PackageListingAcl.fas_name, Package.summary, Collection.branchname,
