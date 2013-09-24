@@ -110,47 +110,32 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
             output.append('%s|%s\n' % (package, packages[package]))
     return output
 
-@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+
+#@pkgdb.cache.cache_on_arguments(expiration_time=3600)
 def _vcs_acls_cache(out_format='text'):
     '''Return ACLs for the version control system.
     :kwarg out_format: Specify if the output if text or json.
 
     '''
-    packages = pkgdblib.search_package(SESSION, '*')
+    packages = pkgdblib.vcs_acls(session=SESSION)
     output = []
     if out_format=='json':
         output = {'packageAcls': {},
                   'title': 'Fedora Package Database -- VCS ACLs'}
-    for package in packages:
-        for branch in package.listings:
-            users = []
-            groups = ['@provenpackager']
-
-            # Skip EOL branch
-            if branch.collection.status == 'EOL':
-                continue
-
-            for acl in branch.acls:
-                if acl.fas_name not in users:
-                    if acl.acl in ('commit'):
-                        username = acl.fas_name
-                        if username.startswith('group::'):
-                            groups.append(username.replace('group::', '@'))
-                        else:
-                            users.append(username)
-
+    for package in sorted(packages):
+        for branch in sorted(packages[package]):
             if out_format=='json':
-                groups = [group.replace('@', '') for group in groups]
                 if not package.name in output['packageAcls']:
                     output['packageAcls'][package.name] = {}
-                output['packageAcls'][package.name][
-                    branch.collection.git_branch_name] = {
-                        'commit': {'groups': groups, 'people': users}
-                    }
+                output['packageAcls'][package][branch] = {
+                    'commit': {
+                        'groups': packages[package][branch]['group'],
+                        'people': packages[package][branch]['user']}
+                }
             else:
-                output.append('avail | %s,%s | rpms/%s/%s' % (
-                    ','.join(groups), ','.join(users), package.name,
-                    branch.collection.git_branch_name))
+                output.append(
+                    'avail | %(group)s,%(user)s | rpms/%(branch)s/%(name)s'
+                    % (packages[package][branch]))
     return output
 
 

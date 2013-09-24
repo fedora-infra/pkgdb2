@@ -1133,3 +1133,34 @@ def bugzilla(session, name=None):
         query = query.filter(Collection.name == name)
 
     return query.all()
+
+
+def vcs_acls(session):
+    """ Return information for each package to sync with bugzilla.
+
+    :arg session: the session to connect to the database with.
+    """
+    query = session.query(
+            Package.name,  # 0
+            PackageListingAcl.fas_name,  # 1
+            Collection.git_branch_name,  # 2
+    ).filter(
+        Package.id == PackageListing.package_id
+    ).filter(
+        PackageListingAcl.packagelisting_id == PackageListing.id
+    ).filter(
+        PackageListing.collection_id == Collection.id
+    ).filter(
+        Collection.status != 'EOL'
+    ).filter(
+        PackageListingAcl.acl =='commit'
+    ).filter(
+        PackageListingAcl.status == 'Approved'
+    ).group_by(
+        Package.name, PackageListingAcl.fas_name,
+        Collection.git_branch_name,
+    ).order_by(
+        Package.name
+    )
+
+    return query.all()

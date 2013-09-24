@@ -1275,3 +1275,48 @@ def bugzilla(session, name=None):
             }
 
     return output
+
+
+def vcs_acls(session):
+    """ Return the information to sync ACLs with gitolite.
+
+    :arg session: the session to connect to the database with.
+    """
+    output = {}
+    pkgs = model.vcs_acls(session=session)
+    for pkg in pkgs:
+        user = None
+        group = None
+        if pkg[1].startswith('group::'):
+            group = pkg[1].replace('group::', '@')
+        else:
+            user = pkg[1]
+
+        if pkg[0] in output:
+            if pkg[2] in output[pkg[0]]:
+                if user:
+                    if output[pkg[0]][pkg[2]]['user']:
+                        output[pkg[0]][pkg[2]]['user'] += ','
+                    output[pkg[0]][pkg[2]]['user'] += user
+                elif group:
+                    if output[pkg[0]][pkg[2]]['group']:
+                        output[pkg[0]][pkg[2]]['group'] += ','
+                    output[pkg[0]][pkg[2]]['group'] += group
+            else:
+                output[pkg[0]][pkg[2]] = {
+                    'name': pkg[0],
+                    'user': user or '',
+                    'group': '@provenpackager' + (group or ''),
+                    'branch': pkg[2],
+                }
+        else:
+            output[pkg[0]] = {
+                pkg[2] : {
+                    'name': pkg[0],
+                    'user': user or '',
+                    'group': '@provenpackager' + (group or ''),
+                    'branch': pkg[2],
+                }
+            }
+
+    return output
