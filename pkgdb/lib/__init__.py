@@ -1229,9 +1229,6 @@ def bugzilla(session, name=None):
     output = {}
     pkgs = model.bugzilla(session=session, name=name)
     for pkg in pkgs:
-        if pkg[2] == 'A user-friendly, customizable image viewer':
-            print pkg
-        #print pkg
         if pkg[0] in output:
             if pkg[2] in output[pkg[0]]:
                 # Check poc
@@ -1245,7 +1242,9 @@ def bugzilla(session, name=None):
                 if not pkg[5] == 'orphan' \
                         and pkg[5] != output[pkg[0]][pkg[2]]['poc'] \
                         and pkg[5] not in output[pkg[0]][pkg[2]]['cc']:
-                    output[pkg[0]][pkg[2]]['cc'] += ',' + pkg[5]
+                    if output[pkg[0]][pkg[2]]['cc']:
+                        output[pkg[0]][pkg[2]]['cc'] += ','
+                    output[pkg[0]][pkg[2]]['cc'] += pkg[5]
             else:
                 cc = ''
                 if pkg[5] != pkg[4]:
