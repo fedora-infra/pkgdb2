@@ -156,6 +156,8 @@ def convert_packages(pkg1_sess, pkg2_sess):
     '''
     cnt = 0
     for pkg in pkg1_sess.query(P1Package).all():
+        if pkg.statuscode == 17:
+            continue
         new_pkg = model.Package(
             name=pkg.name,
             summary=pkg.summary,
