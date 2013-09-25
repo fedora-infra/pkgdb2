@@ -190,17 +190,18 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
         )
         new_pkglist.id = pkg.id
         pkg2_sess.add(new_pkglist)
-        acls = ['watchcommits', 'watchbugzilla', 'commit', 'approveacls']
-        if new_pkglist.point_of_contact == 'perl-sig':
-            acls = ['watchcommits', 'watchbugzilla', 'commit']
-        for acl in acls:
-            new_pkglistacl = model.PackageListingAcl(
-                fas_name=new_pkglist.point_of_contact,
-                packagelisting_id=new_pkglist.id,
-                acl=acl,
-                status='Approved'
-            )
-            pkg2_sess.add(new_pkglistacl)
+        if new_pkglist.point_of_contact != 'orphan':
+            acls = ['watchcommits', 'watchbugzilla', 'commit', 'approveacls']
+            if new_pkglist.point_of_contact == 'perl-sig':
+                acls = ['watchcommits', 'watchbugzilla', 'commit']
+            for acl in acls:
+                new_pkglistacl = model.PackageListingAcl(
+                    fas_name=new_pkglist.point_of_contact,
+                    packagelisting_id=new_pkglist.id,
+                    acl=acl,
+                    status='Approved'
+                )
+                pkg2_sess.add(new_pkglistacl)
         cnt += 1
         if cnt % 10000 == 0:
             pkg2_sess.commit()
