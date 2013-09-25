@@ -699,7 +699,7 @@ def get_acl_packager(session, packager):
         session, packager=packager)
 
 
-def get_package_maintained(session, packager, poc=False):
+def get_package_maintained(session, packager, poc=True):
     """ Return all the packages and branches where given packager has
     commit acl.
 
