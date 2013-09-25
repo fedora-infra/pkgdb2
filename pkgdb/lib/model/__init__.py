@@ -852,7 +852,6 @@ class Package(BASE):
                                      collection_id=collection.id)
         pkg_listing.package_id = self.id
 
-        #TODO: Create a log message
         return pkg_listing
 
     @classmethod
@@ -882,28 +881,33 @@ class Package(BASE):
             if true, returns the data if false (default).
 
         """
-        query = session.query(Package).filter(
+        query = session.query(
+            Package
+        ).filter(
             Package.name.like(pkg_name)
-        )
+        ).order_by(Package.name)
+
         if pkg_poc:
             query = query.join(
                 PackageListing
             ).filter(
                 PackageListing.point_of_contact == pkg_poc
             )
+
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
+
         if clt_name:
+            if pkg_poc:
+                query = query.join(Collection)
+            else:
+                query = query.join(PackageListing, Collection)
             query = query.filter(
-                PackageListing.collection_id == Collection.id
-            ).filter(
-                Collection.branchname == clt_name
-            )
+                    Collection.branchname == clt_name
+                )
 
         if count:
             return query.count()
-
-        query = query.order_by(Package.name)
 
         if offset:
             query = query.offset(offset)
