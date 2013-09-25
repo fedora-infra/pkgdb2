@@ -537,6 +537,7 @@ def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
 
     return model.Package.search(session, pkg_name=pkg_name,
                                 pkg_poc=pkg_poc, pkg_status=status,
+                                clt_name=clt_name,
                                 offset=page, limit=limit, count=count)
 
 
@@ -1211,6 +1212,14 @@ def add_branch(session, clt_from, clt_to, user):
     # Go for returning them for the moment, which allows the logs to be
     # inserted
     return messages
+
+
+def count_collection(session):
+    """ Return the number of package 'Approved' for each collection.
+
+    :arg session: the session to connect to the database with.
+    """
+    return model.Package.count_collection(session)
 
 
 def notify(session, eol=False, name=None, version=None):

@@ -867,6 +867,7 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
+               clt_name=None,
                offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
@@ -874,6 +875,7 @@ class Package(BASE):
         :arg pkg_name: the name of the package
         :kwarg pkg_poc: name of the new point of contact for the package
         :kwarg pkg_status: status of the package
+        :kwarg clt_name: branchname of the collection to search.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -884,11 +886,19 @@ class Package(BASE):
             Package.name.like(pkg_name)
         )
         if pkg_poc:
-            query = query.join(PackageListing).filter(
+            query = query.join(
+                PackageListing
+            ).filter(
                 PackageListing.point_of_contact == pkg_poc
             )
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
+        if clt_name:
+            query = query.filter(
+                PackageListing.collection_id == Collection.id
+            ).filter(
+                Collection.branchname == clt_name
+            )
 
         if count:
             return query.count()
@@ -899,6 +909,34 @@ class Package(BASE):
             query = query.offset(offset)
         if limit:
             query = query.limit(limit)
+        return query.all()
+
+    @classmethod
+    def count_collection(cls, session):
+        """ Return the number of packages present in each collection.
+
+        :arg session: session with which to connect to the database
+
+        """
+        query = session.query(
+            Collection.branchname,
+            sa.func.count(sa.func.distinct(Package.id))
+        ).filter(
+            PackageListing.package_id == Package.id
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Package.status == 'Approved'
+        ).filter(
+            Collection.status != 'EOL'
+        ).filter(
+            PackageListing.status == 'Approved'
+        ).group_by(
+            Collection.branchname
+        ).order_by(
+            Collection.branchname
+        )
+
         return query.all()
 
     @classmethod
