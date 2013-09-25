@@ -222,6 +222,8 @@ def create_package_listing(session):
     guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
+
+    f17_collec = model.Collection.by_name(session, 'F-17')
     f18_collec = model.Collection.by_name(session, 'F-18')
     devel_collec = model.Collection.by_name(session, 'devel')
 
@@ -237,6 +239,13 @@ def create_package_listing(session):
                                   status='Approved',
                                   package_id=guake_pkg.id,
                                   collection_id=devel_collec.id,
+                                  )
+    session.add(pkgltg)
+    # Pkg: fedocal - Collection: F17 - Orphaned
+    pkgltg = model.PackageListing(point_of_contact='pingou',
+                                  status='Approved',
+                                  package_id=fedocal_pkg.id,
+                                  collection_id=f17_collec.id,
                                   )
     session.add(pkgltg)
     # Pkg: fedocal - Collection: F18 - Orphaned
@@ -334,6 +343,112 @@ def create_package_acl(session):
 
     session.commit()
 
+
+def create_package_acl2(session):
+    """ Add packagers to packages. """
+    create_package_listing(session)
+
+    guake_pkg = model.Package.by_name(session, 'guake')
+    fedocal_pkg = model.Package.by_name(session, 'fedocal')
+    geany_pkg = model.Package.by_name(session, 'geany')
+
+    f17_collec = model.Collection.by_name(session, 'F-17')
+    f18_collec = model.Collection.by_name(session, 'F-18')
+    devel_collec = model.Collection.by_name(session, 'devel')
+
+    pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(
+        session, guake_pkg.id, f18_collec.id)
+    pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
+        session, guake_pkg.id, devel_collec.id)
+
+    pkglist_geany_devel = model.PackageListing.by_pkgid_collectionid(
+        session, geany_pkg.id, devel_collec.id)
+
+    pkglist_fedocal_devel = model.PackageListing.by_pkgid_collectionid(
+        session, fedocal_pkg.id, devel_collec.id)
+    pkglist_fedocal_f18 = model.PackageListing.by_pkgid_collectionid(
+        session, fedocal_pkg.id, f18_collec.id)
+    pkglist_fedocal_f17 = model.PackageListing.by_pkgid_collectionid(
+        session, fedocal_pkg.id, f17_collec.id)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pklist_guake_f18.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pklist_guake_f18.id,
+                                       acl='watchcommits',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pklist_guake_devel.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pklist_guake_devel.id,
+                                       acl='watchcommits',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='toshio',
+                                       packagelisting_id=pklist_guake_devel.id,
+                                       acl='commit',
+                                       status='Awaiting Review',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='spot',
+                                       packagelisting_id=pklist_guake_devel.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='group::gtk-sig',
+                                       packagelisting_id=pkglist_geany_devel.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pkglist_fedocal_devel.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='toshio',
+                                       packagelisting_id=pkglist_fedocal_devel.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pkglist_fedocal_f18.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pkglist_fedocal_f17.id,
+                                       acl='commit',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    session.commit()
 
 
 if __name__ == '__main__':
