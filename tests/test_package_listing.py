@@ -83,7 +83,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual("PackageListing(id:1, u'pingou', "
                          "u'Approved', packageid=1, collectionid=2)",
                          packages[0].__repr__())
-        self.assertEqual("PackageListing(id:5, u'pingou', "
+        self.assertEqual("PackageListing(id:6, u'pingou', "
                          "u'Approved', packageid=3, collectionid=2)",
                          packages[1].__repr__())
 
@@ -96,7 +96,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual("PackageListing(id:1, u'pingou', "
                          "u'Approved', packageid=1, collectionid=2)",
                          packages[0].__repr__())
-        self.assertEqual("PackageListing(id:5, u'pingou', "
+        self.assertEqual("PackageListing(id:6, u'pingou', "
                          "u'Approved', packageid=3, collectionid=2)",
                          packages[1].__repr__())
 
@@ -126,7 +126,7 @@ class PackageListingtests(Modeltests):
                                                critpath=False,
                                                offset=1)
         self.assertEqual(len(packages), 1)
-        self.assertEqual("PackageListing(id:5, u'pingou', "
+        self.assertEqual("PackageListing(id:6, u'pingou', "
                          "u'Approved', packageid=3, collectionid=2)",
                          packages[0].__repr__())
 
