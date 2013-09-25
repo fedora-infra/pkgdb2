@@ -911,9 +911,9 @@ class Package(BASE):
         return query.all()
 
     @classmethod
-    def get_package_of_user(cls, session, user, pkg_status=None, poc=False):
+    def get_package_of_user(cls, session, user, pkg_status=None, poc=True):
         """ Return the list of packages on which a given user has commit
-        rights.
+        rights and is poc (unless specified otherwise).
 
         :arg session: session with which to connect to the database.
         :arg user: the FAS username of the user of interest.
