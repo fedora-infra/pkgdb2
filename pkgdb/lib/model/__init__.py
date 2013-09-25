@@ -902,6 +902,8 @@ class Package(BASE):
         ).filter(
             PackageListing.id == PackageListingAcl.packagelisting_id
         ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
             PackageListingAcl.fas_name == user
         ).filter(
             PackageListingAcl.acl == 'commit'
@@ -916,10 +918,10 @@ class Package(BASE):
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
 
-        if not poc:
-            query = query.filter(PackageListing.point_of_contact != user)
-        else:
+        if poc:
             query = query.filter(PackageListing.point_of_contact == user)
+        else:
+            query = query.filter(PackageListing.point_of_contact != user)
 
         return query.all()
 
