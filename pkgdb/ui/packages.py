@@ -235,7 +235,7 @@ def package_give(package):
                 group = acl.point_of_contact.split('group::')[0]
                 if group not in flask.g.fas_user.groups:
                     pass
-            else:
+            elif acl.collection.status != 'EOL':
                 collect_name.append(acl.collection.branchname)
 
     form = pkgdb.forms.GivePoCForm(collections=collect_name)
