@@ -1189,14 +1189,16 @@ def add_branch(session, clt_from, clt_to, user):
     session.commit()
 
     messages = []
-    for pkglist in model.PackageListing.by_collectionid(session, clt_from.id):
+    for pkglist in model.PackageListing.by_collectionid(
+            session, clt_from.id):
         if pkglist.status == 'Approved':
             try:
                 pkglist.branch(session, clt_to)
             except SQLAlchemyError, err:  # pragma: no cover
                 messages.append(err)
 
-    # Should we raise a PkgdbException if messages != [], or just return them?
+    # Should we raise a PkgdbException if messages != [], or just return
+    # them?
 
     model.Log.insert(
         session,
@@ -1224,7 +1226,7 @@ def notify(session, eol=False, name=None, version=None):
     pkgs = model.notify(session=session, eol=eol, name=name,
                         version=version)
     for pkg in pkgs:
-        if pkg[0] in output:
+        if pkg[0] in output:  # pragma: no cover
             output[pkg[0]] += ',' + pkg[1]
         else:
             output[pkg[0]] = pkg[1]
@@ -1247,7 +1249,8 @@ def bugzilla(session, name=None):
                     pass
                 elif pkg[6] == 'devel':
                     output[pkg[0]][pkg[2]]['poc'] = pkg[4]
-                elif pkg[6] > output[pkg[0]][pkg[2]]['version']:
+                elif pkg[6] > output[pkg[0]][pkg[2]]['version']:  # pragma: no cover
+                    ## TODO: check this logic w/ Toshio
                     output[pkg[0]][pkg[2]]['poc'] = pkg[4]
                 # If #5 is not poc, add it to cc
                 if not pkg[5] == 'orphan' \
@@ -1258,7 +1261,7 @@ def bugzilla(session, name=None):
                     output[pkg[0]][pkg[2]]['cc'] += pkg[5]
             else:
                 cc = ''
-                if pkg[5] != pkg[4]:
+                if pkg[5] != pkg[4]:  # pragma: no cover
                     cc = pkg[5]
                 output[pkg[0]][pkg[2]] = {
                     'collection': pkg[0],
@@ -1309,12 +1312,12 @@ def vcs_acls(session):
                     if output[pkg[0]][pkg[2]]['user']:
                         output[pkg[0]][pkg[2]]['user'] += ','
                     output[pkg[0]][pkg[2]]['user'] += user
-                elif group:
+                elif group:  # pragma: no cover
                     if output[pkg[0]][pkg[2]]['group']:
                         output[pkg[0]][pkg[2]]['group'] += ','
                     output[pkg[0]][pkg[2]]['group'] += group
             else:
-                if group:
+                if group:  # pragma: no cover
                     group = ',' + group
                 output[pkg[0]][pkg[2]] = {
                     'name': pkg[0],
