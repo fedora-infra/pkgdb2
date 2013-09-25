@@ -1118,6 +1118,8 @@ def notify(session, eol=False, name=None, version=None):
     ).filter(
         PackageListing.collection_id == Collection.id
     ).filter(
+        Package.status == 'Approved'
+    ).filter(
         PackageListing.point_of_contact != 'orphan'
     ).filter(
         PackageListingAcl.acl.in_(
@@ -1163,6 +1165,8 @@ def bugzilla(session, name=None):
     ).filter(
         PackageListing.collection_id == Collection.id
     ).filter(
+        Package.status == 'Approved'
+    ).filter(
         Collection.status != 'EOL'
     ).filter(
         PackageListingAcl.acl.in_(
@@ -1198,6 +1202,8 @@ def vcs_acls(session):
         PackageListingAcl.packagelisting_id == PackageListing.id
     ).filter(
         PackageListing.collection_id == Collection.id
+    ).filter(
+        Package.status == 'Approved'
     ).filter(
         Collection.status != 'EOL'
     ).filter(
