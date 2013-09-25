@@ -9,8 +9,8 @@
 <h1>Fedora Package Database</h1>
 
 <p>
-    PkgDB stores currently information about {{ packages | length }}
-    Fedora releases.
+    PkgDB stores currently information about {{ collections | length }}
+    active Fedora releases.
 </p>
 
 
@@ -19,10 +19,10 @@
         <th>Fedora branch / release</th>
         <th>Number of packages</th>
     </tr>
-    {% for collec in packages | sort %}
+    {% for collec in collections | sort %}
     <tr>
-        <td>{{ collec }}</td>
-        <td>{{ packages[collec] }}</td>
+        <td>{{ collec[0] }}</td>
+        <td>{{ collec[1] }}</td>
     </tr>
     {% endfor %}
 </table>

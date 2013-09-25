@@ -56,15 +56,7 @@ def stats():
     collections.extend(pkgdblib.search_collection(
         SESSION, '*', 'Under Development'))
 
-    packages = {}
-    for collection in collections:
-        packages_count = pkgdblib.search_package(
-            SESSION,
-            pkg_name='*',
-            clt_name=collection.branchname,
-            count=True
-        )
-        packages[collection.branchname] = packages_count
+    collections = pkgdblib.count_collection(SESSION)
 
     # Top maintainers
     top_maintainers = pkgdblib.get_top_maintainers(SESSION)
@@ -73,7 +65,7 @@ def stats():
 
     return flask.render_template(
         'stats.html',
-        packages=packages,
+        collections=collections,
         top_maintainers=top_maintainers,
         top_poc=top_poc,
     )
