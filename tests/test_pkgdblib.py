@@ -1040,9 +1040,17 @@ class PkgdbLibtests(Modeltests):
         """ Test the get_package_maintained function. """
         create_package_acl(self.session)
 
-        pkg = pkgdblib.get_package_maintained(self.session, 'pingou')
+        pkg = pkgdblib.get_package_maintained(self.session, 'pingou',
+            poc=True)
         self.assertEqual(len(pkg), 1)
-        self.assertEqual(pkg[0].name, 'guake')
+        self.assertEqual(pkg[0][0].name, 'guake')
+        self.assertEqual(pkg[0][1][0].branchname, 'F-17')
+        self.assertEqual(pkg[0][1][1].branchname, 'F-18')
+        self.assertEqual(len(pkg[0][1]), 4)
+
+        pkg = pkgdblib.get_package_maintained(self.session, 'pingou',
+            poc=False)
+        self.assertEqual(pkg, [])
 
         pkg = pkgdblib.get_package_maintained(self.session, 'ralph')
         self.assertEqual(pkg, [])
