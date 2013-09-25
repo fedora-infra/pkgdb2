@@ -723,35 +723,6 @@ class PackageListing(BASE):
         ).limit(limit)
         return query.all()
 
-    @classmethod
-    def get_bugzilla_acls(cls, session, clt_name=None, clt_branchname=None):
-        """ Return the information required to get the bugzilla ACLs list
-        back to the extras API endpoints.
-
-        :arg session: session with which to connect to the database
-        :kwarg clt_name: name of a collection used to restrict
-            the result to a specific subset of collections.
-        :kwarg clt_branchname: branch name of a collection used to restrict
-            the result to a specific collection.
-
-        """
-        query = session.query(
-            cls
-        ).filter(
-            PackageListing.status == 'Approved'
-        ).filter(
-            PackageListing.collection_id == Collection.id
-        ).filter(
-            Collection.status != 'EOL'
-        ).filter(
-            PackageListing.package_id == Package.id
-        ).order_by(
-            Package.name
-        ).order_by(
-            Collection.branchname
-        )
-        return query.all()
-
     def __repr__(self):
         return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r' \
                ')' % (
