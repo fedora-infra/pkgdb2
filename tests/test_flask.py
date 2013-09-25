@@ -48,7 +48,12 @@ class FlaskTest(Modeltests):
 
         pkgdb.APP.config['TESTING'] = True
         pkgdb.SESSION = self.session
-        pkgdb.api.acls.SESSION = self.session
+        pkgdb.ui.SESSION = self.session
+        pkgdb.ui.acls.SESSION = self.session
+        pkgdb.ui.admin.SESSION = self.session
+        pkgdb.ui.collections.SESSION = self.session
+        pkgdb.ui.packagers.SESSION = self.session
+        pkgdb.ui.packages.SESSION = self.session
         self.app = pkgdb.APP.test_client()
 
     def test_index(self):
@@ -112,8 +117,8 @@ engineers need to create packages and spin them into a distribution."""
         expected = """<h1>Fedora Package Database</h1>
 
 <p>
-    PkgDB stores currently information about 6
-    Fedora releases.
+    PkgDB stores currently information about 0
+    active Fedora releases.
 </p>"""
 
         self.assertTrue(expected in output.data)
