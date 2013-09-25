@@ -260,21 +260,33 @@ class PackageListingAcl(BASE):
 
         """
         query = session.query(
-            sa.func.distinct(cls.fas_name),
+            PackageListingAcl.fas_name,
             sa.func.count(
                 sa.func.distinct(PackageListing.package_id)
             ).label('cnt')
         ).filter(
-            cls.packagelisting_id == PackageListing.id
+            PackageListingAcl.packagelisting_id == PackageListing.id
         ).filter(
-            cls.acl == 'commit'
+            PackageListing.package_id == Package.id
         ).filter(
-            cls.status == 'Approved'
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Package.status == 'Approved'
+        ).filter(
+            PackageListing.status == 'Approved'
+        ).filter(
+            PackageListingAcl.acl == 'commit'
+        ).filter(
+            PackageListingAcl.status == 'Approved'
+        ).filter(
+            Collection.status != 'EOL'
         ).group_by(
-            cls.fas_name
+            PackageListingAcl.fas_name
         ).order_by(
             'cnt DESC'
         ).limit(limit)
+
+
         return query.all()
 
     @classmethod
@@ -710,12 +722,20 @@ class PackageListing(BASE):
 
         """
         query = session.query(
-            sa.func.distinct(PackageListing.point_of_contact),
+            PackageListing.point_of_contact,
             sa.func.count(
                 sa.func.distinct(PackageListing.package_id)
             ).label('cnt')
         ).filter(
             PackageListing.status == 'Approved'
+        ).filter(
+            PackageListing.package_id == Package.id
+        ).filter(
+            Package.status == 'Approved'
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Collection.status != 'EOL'
         ).group_by(
             PackageListing.point_of_contact
         ).order_by(
@@ -904,13 +924,15 @@ class Package(BASE):
         ).filter(
             PackageListing.collection_id == Collection.id
         ).filter(
+            Collection.status != 'EOL'
+        ).filter(
+            PackageListing.status == 'Approved'
+        ).filter(
             PackageListingAcl.fas_name == user
         ).filter(
             PackageListingAcl.acl == 'commit'
         ).filter(
             PackageListingAcl.status == 'Approved'
-        ).filter(
-            Collection.status != 'EOL'
         ).order_by(
             Package.name, Collection.branchname
         )
