@@ -911,16 +911,22 @@ class Package(BASE):
         return query.all()
 
     @classmethod
-    def get_package_of_user(cls, session, user, pkg_status=None):
+    def get_package_of_user(cls, session, user, pkg_status=None, poc=False):
         """ Return the list of packages on which a given user has commit
         rights.
 
         :arg session: session with which to connect to the database.
         :arg user: the FAS username of the user of interest.
         :kwarg pkg_status: the status of the packages considered.
+        :kwarg poc: boolean to specify if the results should be restricted
+            to packages where ``user`` is the point of contact or packages
+            where ``user`` is not the point of contact.
 
         """
-        query = session.query(Package).filter(
+        query = session.query(
+            Package,
+            Collection
+        ).filter(
             Package.id == PackageListing.package_id
         ).filter(
             PackageListing.id == PackageListingAcl.packagelisting_id
@@ -930,10 +936,19 @@ class Package(BASE):
             PackageListingAcl.acl == 'commit'
         ).filter(
             PackageListingAcl.status == 'Approved'
+        ).filter(
+            Collection.status != 'EOL'
+        ).order_by(
+            Package.name, Collection.branchname
         )
 
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
+
+        if not poc:
+            query = query.filter(PackageListing.point_of_contact != user)
+        else:
+            query = query.filter(PackageListing.point_of_contact == user)
 
         return query.all()
 

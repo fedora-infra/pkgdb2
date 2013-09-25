@@ -699,15 +699,26 @@ def get_acl_packager(session, packager):
         session, packager=packager)
 
 
-def get_package_maintained(session, packager):
-    """ Return all the package  maintained by a given packager.
+def get_package_maintained(session, packager, poc=False):
+    """ Return all the packages and branches where given packager has
+    commit acl.
 
     :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
+    :kwarg poc: boolean to specify if the results should be restricted
+            to packages where ``user`` is the point of contact or packages
+            where ``user`` is not the point of contact.
     :returns: a list of ``Package`` associated to the specified user.
-    :rtype: list(Package)
+    :rtype: list(Package, [Collection])
     """
-    return model.Package.get_package_of_user(session, packager)
+    output = {}
+    for pkg, clt in model.Package.get_package_of_user(
+            session, packager, poc=poc):
+        if pkg.name in output:
+            output[pkg.name][1].append(clt)
+        else:
+            output[pkg.name] = [pkg, [clt]]
+    return [output[key] for key in sorted(output)]
 
 
 def add_collection(session, clt_name, clt_version, clt_status,

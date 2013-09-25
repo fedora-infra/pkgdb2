@@ -83,27 +83,25 @@ def list_packagers(motif=None):
 def packager_info(packager):
     ''' Display the information about the specified packager. '''
 
-    packages = []
     packages_co = []
     try:
         packages_co = pkgdblib.get_package_maintained(
             SESSION,
-            packager=packager
+            packager=packager,
+            poc=False,
         )
     except NoResultFound:
         SESSION.rollback()
 
-    # clean co-maintained packages and split out PoC packages
-    cnt = 0
-    while cnt < len(packages_co):
-        maint = []
-        for acls in packages_co[cnt].listings:
-            maint.append(acls.point_of_contact)
-        if packager in maint:
-            packages.append(packages_co[cnt])
-            del(packages_co[cnt])
-            cnt -= 1
-        cnt += 1
+    packages = []
+    try:
+        packages = pkgdblib.get_package_maintained(
+            SESSION,
+            packager=packager,
+            poc=True,
+        )
+    except NoResultFound:
+        SESSION.rollback()
 
     if not packages and not packages_co:
         flask.flash('No packager of this name found.', 'errors')

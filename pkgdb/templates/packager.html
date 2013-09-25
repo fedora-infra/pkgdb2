@@ -22,17 +22,14 @@
 {% if packages %}
 <h3>Point of contact: </h3>
 <ul>
-{% for package in packages %}
+{% for info in packages %}
     <li>
-        <a href="{{url_for('.package_info', package=package.name)}}">
-            {{ package.name }}</a>
-        -- {{ package.summary }}
+        <a href="{{url_for('.package_info', package=info[0].name)}}">
+            {{ info[0].name }}</a>
+        -- {{ info[0].summary }}
         (
-        {% for listing in package.listings %}
-            {% if listing.collection.status != 'EOL'
-                and listing.point_of_contact == packager %}
-            {{ listing.collection.branchname }}
-            {% endif %}
+        {% for clt in info[1] %}
+            {{ clt.branchname }}
         {% endfor %}
         )
     </li>
@@ -43,23 +40,15 @@
 {% if packages_co %}
 <h3>Co-maintainer: </h3>
 <ul>
-{% for package in packages_co %}
+{% for info in packages_co %}
     <li>
-        <a href="{{url_for('.package_info', package=package.name)}}">
-            {{ package.name }}</a>
-        -- {{ package.summary }}
+        <a href="{{url_for('.package_info', package=info[0].name)}}">
+            {{ info[0].name }}</a>
+        -- {{ info[0].summary }}
         (
-            {% for listing in package.listings %}
-                {% for acl in listing.acls %}
-                {% if listing.collection.status != 'EOL'
-                    and listing.point_of_contact != packager
-                    and acl.acl == 'commit'
-                    and acl.status == 'Approved'
-                    and acl.fas_name == packager %}
-                {{ listing.collection.branchname }}
-                {% endif %}
-                {% endfor %}
-            {% endfor %}
+        {% for clt in info[1] %}
+            {{ clt.branchname }}
+        {% endfor %}
         )
     </li>
 {% endfor %}
