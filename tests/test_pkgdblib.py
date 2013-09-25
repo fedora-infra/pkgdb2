@@ -1044,9 +1044,9 @@ class PkgdbLibtests(Modeltests):
             poc=True)
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0].name, 'guake')
-        self.assertEqual(pkg[0][1][0].branchname, 'F-17')
-        self.assertEqual(pkg[0][1][1].branchname, 'F-18')
-        self.assertEqual(len(pkg[0][1]), 4)
+        self.assertEqual(pkg[0][1][0].branchname, 'F-18')
+        self.assertEqual(pkg[0][1][1].branchname, 'devel')
+        self.assertEqual(len(pkg[0][1]), 2)
 
         pkg = pkgdblib.get_package_maintained(self.session, 'pingou',
             poc=False)

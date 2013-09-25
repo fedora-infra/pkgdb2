@@ -103,11 +103,10 @@ class Packagetests(Modeltests):
         packages = model.Package.get_package_of_user(
             self.session, user='pingou', poc=True
         )
-        self.assertEqual(len(packages), 4)
+        self.assertEqual(len(packages), 2)
         self.assertEqual(packages[0][0].name, 'guake')
-        self.assertEqual(packages[0][1].branchname, 'F-17')
-        self.assertEqual(packages[1][1].branchname, 'F-18')
-        self.assertEqual(packages[2][1].branchname, 'devel')
+        self.assertEqual(packages[0][1].branchname, 'F-18')
+        self.assertEqual(packages[1][1].branchname, 'devel')
 
         packages = model.Package.get_package_of_user(
             self.session, user='pingou', poc=False
