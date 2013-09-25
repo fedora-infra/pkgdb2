@@ -33,6 +33,9 @@
     {% for row in top_maintainers %}
     <tr>
         <td>
+            #{{ loop.index }}
+        </td>
+        <td>
             <a href="{{url_for('.packager_info', packager=row[0])}}">
             {{ row[0] }}
             </a>
@@ -49,6 +52,9 @@
 <table>
     {% for row in top_poc %}
     <tr>
+        <td>
+            #{{ loop.index }}
+        </td>
         <td>
             <a href="{{url_for('.packager_info', packager=row[0])}}">
             {{ row[0] }}
