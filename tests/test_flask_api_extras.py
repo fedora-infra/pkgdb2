@@ -36,7 +36,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb
 from pkgdb.lib import model
-from tests import (Modeltests, FakeFasUser, create_package_acl)
+from tests import (Modeltests, FakeFasUser,
+                   create_package_acl, create_package_acl2)
 
 
 class FlaskApiExtrasTest(Modeltests):
@@ -82,7 +83,7 @@ class FlaskApiExtrasTest(Modeltests):
     def test_api_bugzilla_filled(self):
         """ Test the api_bugzilla function with a filled database. """
         # Fill the DB
-        create_package_acl(self.session)
+        create_package_acl2(self.session)
 
         output = self.app.get('/api/bugzilla/')
         self.assertEqual(output.status_code, 200)
@@ -92,8 +93,9 @@ class FlaskApiExtrasTest(Modeltests):
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
 # Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
 
+Fedora|fedocal|A web-based calendar for Fedora|orphan||pingou,toshio
 Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig||
-Fedora|guake|Top down terminal for GNOME|pingou||"""
+Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/bugzilla/?format=json')
@@ -103,6 +105,17 @@ Fedora|guake|Top down terminal for GNOME|pingou||"""
         expected = {
             u'bugzillaAcls': {
                 u'Fedora': [
+                    {
+                    "fedocal": {
+                      "owner": "orphan",
+                      "cclist": {
+                        "groups": [],
+                        "people": ["pingou", 'toshio']
+                      },
+                      "qacontact": None,
+                      "summary": "A web-based calendar for Fedora"
+                    }
+                  },
                     {u'geany': {
                         u'owner': u'@gtk-sig',
                         u'cclist': {
@@ -117,7 +130,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||"""
                         u'owner': u'pingou',
                         u'cclist': {
                             u'groups': [],
-                            u'people': []
+                            u'people': [u'spot']
                         },
                         u'qacontact': None,
                         u'summary': u'Top down terminal for GNOME'
@@ -194,6 +207,21 @@ guake|pingou
         }
         self.assertEqual(data, expected)
 
+        output = self.app.get('/api/notify/?name=Fedora')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """geany|group::gtk-sig
+guake|pingou
+"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/notify/?name=Fedora&version=18')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """guake|pingou
+"""
+        self.assertEqual(output.data, expected)
+
     def test_api_vcs_empty(self):
         """ Test the api_vcs function with an empty database. """
 
@@ -220,18 +248,20 @@ guake|pingou
     def test_api_vcs_filled(self):
         """ Test the api_vcs function with a filled database. """
         # Filled DB
-        create_package_acl(self.session)
+        create_package_acl2(self.session)
 
         output = self.app.get('/api/vcs/')
         self.assertEqual(output.status_code, 200)
-        print output.data
 
         expected = """# VCS ACLs
 # avail|@groups,users|rpms/Package/branch
 
+avail | @provenpackager,pingou | rpms/fedocal/f17
+avail | @provenpackager,pingou | rpms/fedocal/f18
+avail | @provenpackager,pingou,toshio | rpms/fedocal/master
 avail | @provenpackager,@gtk-sig, | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
-avail | @provenpackager,pingou | rpms/guake/master"""
+avail | @provenpackager,pingou,spot | rpms/guake/master"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/vcs/?format=json')
@@ -250,7 +280,7 @@ avail | @provenpackager,pingou | rpms/guake/master"""
                     u'master': {
                         u'commit': {
                             u'groups': [u'provenpackager'],
-                            u'people': [u'pingou']
+                            u'people': [u'pingou', u'spot']
                         }
                     }
                 },
@@ -262,6 +292,26 @@ avail | @provenpackager,pingou | rpms/guake/master"""
                         }
                     }
                 },
+                "fedocal": {
+                    "f18": {
+                        "commit": {
+                            "groups": ["provenpackager"],
+                            "people": ["pingou"]
+                        }
+                    },
+                    "master": {
+                        "commit": {
+                            "groups": ["provenpackager"],
+                            "people": ["pingou","toshio"]
+                        }
+                    },
+                    "f17": {
+                        "commit": {
+                            "groups": ["provenpackager"],
+                            "people": ["pingou"]
+                        }
+                    }
+                }
             },
             u'title': u'Fedora Package Database -- VCS ACLs'}
 
