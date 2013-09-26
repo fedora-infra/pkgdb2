@@ -917,7 +917,7 @@ class PkgdbLibtests(Modeltests):
         pkg = pkgdblib.search_packagers(self.session, 'pin*')
         self.assertEqual(pkg, [])
 
-        create_package_listing(self.session)
+        create_package_acl(self.session)
 
         pkg = pkgdblib.search_packagers(self.session, 'pi*')
         self.assertEqual(len(pkg), 1)
