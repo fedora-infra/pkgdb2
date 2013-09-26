@@ -622,14 +622,15 @@ def search_packagers(session, pattern, page=None, limit=None,
     if page is not None and limit is not None and limit != 0:
         page = (page - 1) * int(limit)
 
-    packages = model.PackageListing.search_point_of_contact(
+
+    packagers = model.PackageListing.search_packagers(
         session,
         pattern=pattern,
         offset=page,
         limit=limit,
         count=count)
 
-    return packages
+    return packagers
 
 
 def search_logs(session, package=None, from_date=None, page=None, limit=None,

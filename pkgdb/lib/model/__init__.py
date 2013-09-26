@@ -673,10 +673,10 @@ class PackageListing(BASE):
         return query.all()
 
     @classmethod
-    def search_point_of_contact(cls, session, pattern, offset=None,
-                                limit=None, count=False):
-        """ Return all the package whose point_of_contact match the
-        pattern.
+    def search_packagers(cls, session, pattern, offset=None,
+                         limit=None, count=False):
+        """ Return all the packagers whose name match the pattern.
+        Are packagers user having at least one commit ACL on one package.
 
         :arg session: session with which to connect to the database
         :arg pattern: pattern the point_of_contact of the package should
@@ -687,23 +687,20 @@ class PackageListing(BASE):
             if true, returns the data if false (default).
 
         """
-        query1 = session.query(
-            sa.func.distinct(cls.point_of_contact)
-        ).filter(
-            PackageListing.point_of_contact.like(pattern)
-        )
-
-        query2 = session.query(
+        query = session.query(
             sa.func.distinct(PackageListingAcl.fas_name)
         ).filter(
             PackageListingAcl.fas_name.like(pattern)
+        ).filter(
+            PackageListingAcl.acl == 'commit'
+        ).filter(
+            PackageListingAcl.status == 'Approved'
+        ).order_by(
+            PackageListingAcl.fas_name
         )
-        query = query1.union(query2)
 
         if count:
             return query.count()
-
-        query = query.order_by("anon_1_distinct_1")
 
         if offset:
             query = query.offset(offset)
@@ -1211,7 +1208,7 @@ def vcs_acls(session):
     ).filter(
         Collection.status != 'EOL'
     ).filter(
-        PackageListingAcl.acl =='commit'
+        PackageListingAcl.acl == 'commit'
     ).filter(
         PackageListingAcl.status == 'Approved'
     ).group_by(
