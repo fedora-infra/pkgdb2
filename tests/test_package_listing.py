@@ -150,28 +150,28 @@ class PackageListingtests(Modeltests):
         self.assertEqual(package.keys(), ['point_of_contact',
                          'collection', 'package'])
 
-    def test_search_point_of_contact(self):
-        """ Test the search_point_of_contact function of PackageListing. """
-        pkg = model.PackageListing.search_point_of_contact(
+    def test_search_packagers(self):
+        """ Test the search_packagers function of PackageListing. """
+        pkg = model.PackageListing.search_packagers(
             self.session, 'pin%')
         self.assertEqual(pkg, [])
 
         create_package_acl(self.session)
 
-        pkg = model.PackageListing.search_point_of_contact(
+        pkg = model.PackageListing.search_packagers(
             self.session, 'pi%')
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0], 'pingou')
 
-        pkg = model.PackageListing.search_point_of_contact(
+        pkg = model.PackageListing.search_packagers(
             self.session, 'pi%', count=True)
         self.assertEqual(pkg, 1)
 
-        pkg = model.PackageListing.search_point_of_contact(
+        pkg = model.PackageListing.search_packagers(
             self.session, 'pi%', offset=1)
         self.assertEqual(pkg, [])
 
-        pkg = model.PackageListing.search_point_of_contact(
+        pkg = model.PackageListing.search_packagers(
             self.session, 'pi%', limit=1)
         self.assertEqual(len(pkg), 1)
 
