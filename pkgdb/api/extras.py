@@ -34,8 +34,8 @@ from pkgdb import SESSION
 from pkgdb.api import API
 
 
-@pkgdb.cache.cache_on_arguments(expiration_time=3600)
-def _bz_acls_cached(name):
+#@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+def _bz_acls_cached(name=None, out_format='text'):
     '''Return the package attributes used by bugzilla.
 
     :kwarg collection: Name of the bugzilla collection to gather data on.
@@ -60,31 +60,6 @@ def _bz_acls_cached(name):
     packages = pkgdblib.bugzilla(
         session=SESSION,
         name=name)
-    return packages
-
-
-def get_bz_acls(name=None, out_format='text'):
-    '''Return the package attributes used by bugzilla.
-
-    :kwarg collection: Name of the bugzilla collection to gather data on.
-    :kwarg out_format: Specify if the output if text or json.
-
-    Note: The data returned by this function is for the way the current
-    Fedora bugzilla is setup as of (2007/6/25).  In the future, bugzilla
-    may change to have separate products for each collection-version.
-    When that happens we'll have to change what this function returns.
-
-    The returned data looks like this:
-
-    bugzillaAcls[collection][package].attribute
-    attribute is one of:
-        :owner: FAS username for the owner
-        :qacontact: if the package has a special qacontact, their userid
-            is listed here
-        :summary: Short description of the package
-        :cclist: list of FAS userids that are watching the package
-    '''
-    packages = _bz_acls_cached(name)
 
     output = []
     if out_format == 'json':
@@ -158,7 +133,7 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
     return output
 
 
-@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+#@pkgdb.cache.cache_on_arguments(expiration_time=3600)
 def _vcs_acls_cache(out_format='text'):
     '''Return ACLs for the version control system.
     :kwarg out_format: Specify if the output if text or json.
@@ -230,7 +205,7 @@ def api_bugzilla():
 
 """
 
-    acls = get_bz_acls(name, out_format)
+    acls = _bz_acls_cached(name, out_format)
 
     if out_format == 'json':
         return flask.jsonify(acls)
