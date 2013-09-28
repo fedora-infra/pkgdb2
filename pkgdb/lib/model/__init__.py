@@ -109,44 +109,6 @@ def create_status(session):
 
     session.commit()
 
-### TODO: this is a view, create it as such...
-#class CollectionPackage(Executable, ClauseElement):
-    #"""Information about how many `Packages` are in a `Collection`
-
-    #View -- CollectionPackage
-    #"""
-
-    #__tablename__ = 'CollectionPackage'
-    #id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    #name = sa.Column(sa.Text, nullable=False)
-    #version = sa.Column(sa.Text, nullable=False)
-    #status = sa.Column(sa.Enum('EOL', 'Active', 'Under Development',
-                               #name='collection_status'),
-                       #nullable=False)
-    #numpkgs = sa.Column(sa.Integer, nullable=False)
-
-    ## pylint: disable-msg=R0902, R0903
-    #def __repr__(self):
-        ## pylint: disable-msg=E1101
-        #return 'CollectionPackage(id=%r, name=%r, version=%r,' \
-            #' status=%r, numpkgs=%r,' \
-            #% (self.id, self.name, self.version, self.status,
-               #self.numpkgs)
-
-#@compiles(CollectionPackage)
-#def collection_package_create_view(*args, **kw):
-    #sql_string = 'CREATE OR REPLACE VIEW'
-    #if 'driver' in kw:
-        #if kw['driver'] == 'pysqlite':
-            #sql_string = 'CREATE VIEW IF NOT EXISTS'
-    #return '%s CollectionPackage AS '\
-           #'SELECT c.id, c.name, c.version, c.status, count(*) as numpkgs '\
-           #'FROM "PackageListing" pl, "Collection" c '\
-           #'WHERE pl.collection_id = c.id '\
-           #'AND pl.status = "Approved" '\
-           #'GROUP BY c.id, c.name, c.version, c.status '\
-           #'ORDER BY c.name, c.version;' % sql_string
-
 
 class PkgAcls(BASE):
     __tablename__ = 'PkgAcls'
@@ -294,9 +256,10 @@ class PackageListingAcl(BASE):
         """ Retrieve the ACLs associated with a packager.
 
         :arg session: the database session used to connect to the
-            database
+            database.
         :arg packager: the username of the packager to retrieve the ACls
-            of
+            of.
+
         """
         acls = session.query(PackageListingAcl).filter(
             PackageListingAcl.fas_name == packager
@@ -308,6 +271,15 @@ class PackageListingAcl(BASE):
                         status="Awaiting Review"):
         """ Return the pending ACLs for the specified package owned by
         user.
+
+        :arg session: the database session used to connect to the
+            database.
+        :arg user: the username of the packager whose ACL are asked for
+            this package.
+        :arg package: name of the package for which are returned the
+            requested ACLs.
+        :kwarg status: status of the ACLs to be returned for the desired
+            package of the specified packager.
 
         """
         # Get all the packages of this person
@@ -343,6 +315,7 @@ class PackageListingAcl(BASE):
             entry.
         :arg acl: the ACL that person has on that package
         :arg status: the status of the ACL
+
         """
         try:
             personpkg = session.query(PackageListingAcl).filter(
@@ -368,8 +341,11 @@ class PackageListingAcl(BASE):
         """ Return for all the packages of which `user` is point of
         contact the ACL which have status 'Awaiting Review'.
 
-        :arg session:
-        :arg user:
+        :arg session: the database session used to connect to the
+            database
+        :arg user: the username of the person for which we are checking the
+            pending ACLs.
+
         """
         stmt = session.query(PackageListing.id).filter(
             PackageListing.point_of_contact == user
@@ -385,19 +361,36 @@ class PackageListingAcl(BASE):
 
     # pylint: disable-msg=R0903
     def __init__(self, fas_name, packagelisting_id, acl, status):
+        """ Constructor.
+
+        :arg fas_name: the fas name of the user
+        :arg packagelisting_id: the identifier of the PackageListing entry
+            to which this ACL is associated
+        :arg acl: the actual ACL to add, should be present in the PkgAcls
+            table.
+        :arg status: the status of the ACL, should be present in the
+            AclStatus table.
+
+        """
         self.fas_name = fas_name
         self.packagelisting_id = packagelisting_id
         self.acl = acl
         self.status = status
 
     def __repr__(self):
+        """ The string representation of this object.
+
+        """
+
         return 'PackageListingAcl(id:%r, %r, PackageListing:%r, Acl:%s, ' \
             '%s)' % (
                 self.id, self.fas_name, self.packagelisting_id, self.acl,
                 self.status)
 
     def to_json(self, _seen=None):
-        """ Return a dictionnary representation of this object. """
+        """ Return a dictionnary representation of this object.
+
+        """
         _seen = _seen or []
         cls = type(self)
         _seen.append(cls)
@@ -455,6 +448,9 @@ class Collection(BASE):
         self.git_branch_name = git_branch_name
 
     def __repr__(self):
+        """ The string representation of this object.
+
+        """
         return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
                ' pendingurltemplate=%r, summary=%r, description=%r)' % (
                    self.name, self.version, self.status, self.owner,
@@ -462,7 +458,9 @@ class Collection(BASE):
                    self.summary, self.description)
 
     def to_json(self, _seen=None):
-        """ Used by fedmsg to serialize Collections in messages. """
+        """ Used by fedmsg to serialize Collections in messages.
+
+        """
         return dict(
             name=self.name,
             version=self.version,
@@ -575,6 +573,52 @@ class PackageListing(BASE):
         self.critpath=critpath
 
     packagename = association_proxy('package', 'name')
+
+    def __repr__(self):
+        """ The string representation of this object.
+
+        """
+        return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r' \
+               ')' % (
+                   self.id, self.point_of_contact, self.status,
+                   self.package_id, self.collection_id)
+
+    def to_json(self, _seen=None):
+        """ Return a dictionary representation of this object.
+
+        """
+        _seen = _seen or []
+        _seen.append(type(self))
+        return dict(package=self.package.to_json(_seen),
+                    collection=self.collection.to_json(_seen),
+                    point_of_contact=self.point_of_contact,
+                    )
+
+    def branch(self, session, branch_to):
+        """Clone the permissions on this PackageListing to another `Branch`.
+
+        :kwarg branch_to: the Collection object to branch to (ie: new
+            Fedora or new EPEL).
+        """
+        # Create new PackageListing
+        pkg_listing = PackageListing(
+            point_of_contact=self.point_of_contact,
+            status=self.status,
+            package_id=self.package.id,
+            collection_id=branch_to.id
+        )
+        session.add(pkg_listing)
+        session.flush()
+
+        # Propagates the ACLs
+        for acl in self.acls:
+            pkg_list_acl = PackageListingAcl(
+                fas_name=acl.fas_name,
+                packagelisting_id=pkg_listing.id,
+                acl=acl.acl,
+                status=acl.status)
+            session.add(pkg_list_acl)
+        session.flush()
 
     @classmethod
     def by_package_id(cls, session, pkgid):
@@ -740,47 +784,6 @@ class PackageListing(BASE):
         ).limit(limit)
         return query.all()
 
-    def __repr__(self):
-        return 'PackageListing(id:%r, %r, %r, packageid=%r, collectionid=%r' \
-               ')' % (
-                   self.id, self.point_of_contact, self.status,
-                   self.package_id, self.collection_id)
-
-    def branch(self, session, branch_to):
-        """Clone the permissions on this PackageListing to another `Branch`.
-
-        :kwarg branch_to: the Collection object to branch to (ie: new
-            Fedora or new EPEL).
-        """
-        # Create new PackageListing
-        pkg_listing = PackageListing(
-            point_of_contact=self.point_of_contact,
-            status=self.status,
-            package_id=self.package.id,
-            collection_id=branch_to.id
-        )
-        session.add(pkg_listing)
-        session.flush()
-
-        # Propagates the ACLs
-        for acl in self.acls:
-            pkg_list_acl = PackageListingAcl(
-                fas_name=acl.fas_name,
-                packagelisting_id=pkg_listing.id,
-                acl=acl.acl,
-                status=acl.status)
-            session.add(pkg_list_acl)
-        session.flush()
-
-    def to_json(self, _seen=None):
-        """ Return a dictionary representation of this object. """
-        _seen = _seen or []
-        _seen.append(type(self))
-        return dict(package=self.package.to_json(_seen),
-                    collection=self.collection.to_json(_seen),
-                    point_of_contact=self.point_of_contact,
-                    )
-
 
 class Package(BASE):
     """Software we are packaging.
@@ -825,6 +828,9 @@ class Package(BASE):
         self.upstream_url = upstream_url
 
     def __repr__(self):
+        """ The string representation of this object.
+
+        """
         return 'Package(%r, %r, %r, ' \
             'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
                 self.name, self.summary, self.status,
@@ -843,6 +849,7 @@ class Package(BASE):
 
         This creates a new PackageListing for this Package.
         The PackageListing has default values set for group acls.
+
         """
         pkg_listing = PackageListing(point_of_contact=point_of_contact,
                                      status=statusname,
@@ -987,8 +994,9 @@ class Package(BASE):
         return query.all()
 
     def to_json(self, _seen=None):
-        ''' Return a dictionnary representation of the object.
-        '''
+        """ Return a dictionnary representation of the object.
+
+        """
         _seen = _seen or []
         cls = type(self)
 
@@ -1038,6 +1046,9 @@ class Log(BASE):
         self.description = description
 
     def __repr__(self):
+        """ The string representation of this object.
+
+        """
         return 'Log(user=%r, description=%r, change_time=%r)' % (
             self.user, self.description,
             self.change_time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -1105,6 +1116,7 @@ def notify(session, eol=False, name=None, version=None):
         Of Life releases or not.
     :kwarg name: restricts the output to a specific collection name.
     :kwarg version: restricts the output to a specific collection version.
+
     """
     query = session.query(
             Package.name,
@@ -1150,6 +1162,7 @@ def bugzilla(session, name=None):
 
     :arg session: the session to connect to the database with.
     :kwarg name: restricts the output to a specific collection name.
+
     """
     query = session.query(
             Collection.name,  # 0
@@ -1192,6 +1205,7 @@ def vcs_acls(session):
     """ Return information for each package to sync with bugzilla.
 
     :arg session: the session to connect to the database with.
+
     """
     query = session.query(
             Package.name,  # 0

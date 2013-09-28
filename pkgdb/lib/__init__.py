@@ -48,6 +48,7 @@ def _validate_poc(pkg_poc):
         - an existing group of type `pkgdb`
 
     :arg pkg_poc: the username of the new Point of contact (POC).
+
     """
     if pkg_poc == 'orphan':
         return
@@ -83,6 +84,7 @@ def create_session(db_url, debug=False, pool_recycle=3600):
     :kwarg debug: a boolean specifying wether we should have the verbose
         output of sqlalchemy or not.
     :return a Session that can be used to query the database.
+
     """
     engine = sqlalchemy.create_engine(db_url,
                                       echo=debug,
@@ -119,6 +121,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
             - Group is incorrect
     :raises sqlalchemy.orm.exc.NoResultFound: when there is no collection
         found in the database with the name ``pkg_collection``.
+
     """
     if user is None or not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException("You're not allowed to add a package")
@@ -203,6 +206,7 @@ def get_acl_package(session, pkg_name, pkg_clt=None):
         found associated with this package.
     :raises sqlalchemy.orm.exc.NoResultFound: when there is no package
         found in the database with the name ``pkg_name``.
+
     """
     package = model.Package.by_name(session, pkg_name)
     pkglisting = model.PackageListing.by_package_id(session, package.id)
@@ -245,6 +249,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
                 - Anyone to set status to 'Awaiting review', 'Removed' and
                     'Obsolete'.
                 .. note:: groups cannot have 'approveacls' rights.
+
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -331,6 +336,7 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
                 - anyone on orphaned packages.
                 - anyone in the group when the point of contact is set to
                     said group.
+
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -414,6 +420,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                     - anyone can orphan, this should not raise any exception.
                 - Remove:
                     - only admin can remove.
+
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -513,6 +520,7 @@ def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
         this exception beeing raised:
             - The provided ``limit`` is not an integer.
             - The provided ``page`` is not an integer.
+
     """
     if '*' in pkg_name:
         pkg_name = pkg_name.replace('*', '%')
@@ -559,6 +567,7 @@ def search_collection(session, pattern, status=None, page=None,
         this exception beeing raised:
             - The provided ``limit`` is not an integer.
             - The provided ``page`` is not an integer.
+
     """
     if '*' in pattern:
         pattern = pattern.replace('*', '%')
@@ -603,6 +612,7 @@ def search_packagers(session, pattern, page=None, limit=None,
         this exception beeing raised:
             - The provided ``limit`` is not an integer.
             - The provided ``page`` is not an integer.
+
     """
     if '*' in pattern:
         pattern = pattern.replace('*', '%')
@@ -652,6 +662,7 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
             - The provided ``page`` is not an integer.
             - The ``package`` name specified does not correspond to any
                 package.
+
     """
     if limit is not None:
         try:
@@ -696,6 +707,7 @@ def get_acl_packager(session, packager):
     :returns: a list of ``PackageListingAcl`` associated to the specified
         user.
     :rtype: list(PackageListingAcl)
+
     """
     return model.PackageListingAcl.get_acl_packager(
         session, packager=packager)
@@ -712,6 +724,7 @@ def get_package_maintained(session, packager, poc=True):
             where ``user`` is not the point of contact.
     :returns: a list of ``Package`` associated to the specified user.
     :rtype: list(Package, [Collection])
+
     """
     output = {}
     for pkg, clt in model.Package.get_package_of_user(
@@ -753,6 +766,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
             - An error occured while updating the collection in the database
                 the message returned is then the error message from the
                 database.
+
     """
 
     if not pkgdb.is_pkgdb_admin(user):
@@ -819,6 +833,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
             - An error occured while updating the collection in the database
                 the message returned is then the error message from the
                 database.
+
     """
 
     if not pkgdb.is_pkgdb_admin(user):
@@ -893,6 +908,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
                 the message returned is then the error message from the
                 database.
             - The specified collection could not be found in the database.
+
     """
     if not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to edit collections')
@@ -941,6 +957,7 @@ def get_pending_acl_user(session, user):
         The dictionnary has for keys: 'package', 'user', 'collection',
         'acl', 'status'.
     :rtype: [{str():str()}]
+
     """
     output = []
     for package in model.PackageListingAcl.get_pending_acl(
@@ -973,6 +990,7 @@ def get_acl_user_package(session, user, package, status=None):
         The dictionnary has for keys: 'package', 'user', 'collection',
         'acl', 'status'.
     :rtype: [{str():str()}]
+
     """
     output = []
     for package in model.PackageListingAcl.get_acl_package(
@@ -1000,6 +1018,7 @@ def has_acls(session, user, package, branch, acl):
     :returns: a boolean specifying whether specified user has this ACL on
         this package and branch.
     :rtype: bool()
+
     """
     acls = get_acl_user_package(session, user=user,
                                 package=package, status='Approved')
@@ -1022,6 +1041,7 @@ def get_status(session, status='all'):
     :returns: a dictionnary with all the status extracted from the database,
         keys are: clt_status, pkg_status, pkg_acl, acl_status.
     :rtype: dict(str():list())
+
     """
     output = {}
 
@@ -1048,6 +1068,7 @@ def get_top_maintainers(session, top=10):
     :arg top: the number of results to return, defaults to 10.
     :returns: a list of tuple of type: (username, number_of_packages).
     :rtype: list(tuple())
+
     """
     return model.PackageListingAcl.get_top_maintainers(session, top)
 
@@ -1059,6 +1080,7 @@ def get_top_poc(session, top=10):
     :arg top: the number of results to return, defaults to 10.
     :returns: a list of tuple of type: (username, number_of_poc).
     :rtype: list(tuple())
+
     """
     return model.PackageListing.get_top_poc(session, top)
 
@@ -1085,6 +1107,7 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
                 while you are not a pkgdb admin
             - You are trying to unorphan the package while you are not a
                 packager.
+
     """
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -1166,6 +1189,7 @@ def add_branch(session, clt_from, clt_to, user):
             - You are not allowed to branch (only pkgdb admin can do it)
             - The specified branch from is invalid (does not exist)
             - The specified branch to is invalid (does not exist).
+
     """
     if not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to branch: %s to %s' % (
@@ -1219,6 +1243,7 @@ def count_collection(session):
     """ Return the number of package 'Approved' for each collection.
 
     :arg session: the session to connect to the database with.
+
     """
     return model.Package.count_collection(session)
 
@@ -1231,6 +1256,7 @@ def notify(session, eol=False, name=None, version=None):
         Of Life releases or not.
     :kwarg name: restricts the output to a specific collection name.
     :kwarg version: restricts the output to a specific collection version.
+
     """
     output = {}
     pkgs = model.notify(session=session, eol=eol, name=name,
@@ -1248,6 +1274,7 @@ def bugzilla(session, name=None):
 
     :arg session: the session to connect to the database with.
     :kwarg name: restricts the output to a specific collection name.
+
     """
     output = {}
     pkgs = model.bugzilla(session=session, name=name)
@@ -1305,6 +1332,7 @@ def vcs_acls(session):
     """ Return the information to sync ACLs with gitolite.
 
     :arg session: the session to connect to the database with.
+
     """
     output = {}
     pkgs = model.vcs_acls(session=session)
