@@ -154,18 +154,16 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
                                             collection=collection,
                                             statusname=pkg_status)
         session.add(pkglisting)
-    try:
-        session.flush()
-    except SQLAlchemyError, err:  # pragma: no cover
-        raise PkgdbException('Could not add packages to collections')
-
-    model.Log.insert(
-        session,
-        user.username,
-        package,
-        'user: %s created package: %s on branch: %s for poc: %s' % (
-            user.username, package.name, collection.branchname, pkg_poc)
-        )
+        try:
+            session.flush()
+        except SQLAlchemyError, err:  # pragma: no cover
+            raise PkgdbException('Could not add packages to collections')
+        else:
+            pkgdb.lib.utils.log(session, package, 'package.new', dict(
+                agent=user.username,
+                package_name=package.name,
+                package_listing=pkglisting.to_json(),
+            ))
 
     # Add all new ACLs to the owner
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
@@ -302,15 +300,15 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     prev_status = personpkg.status
     personpkg.status = status
     session.flush()
-    model.Log.insert(
-        session,
-        user.username,
-        package,
-        'user: %s set acl: %s of package: %s from: %s to: %s on '
-        'branch: %s' % (
-            user.username, acl, package.name, prev_status, status,
-            collection.branchname)
-    )
+    pkgdb.lib.utils.log(session, package, 'acl.update', dict(
+        agent=user.username,
+        username=pkg_user,
+        acl=acl,
+        previous_status=prev_status,
+        status=status,
+        package_name=pkglisting.package.name,
+        package_listing=pkglisting.to_json(),
+    ))
 
 
 def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
@@ -379,13 +377,13 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
 
     session.add(pkglisting)
     session.flush()
-    model.Log.insert(
-        session,
-        user.username,
-        package,
-        'user: %s change PoC of package: %s from: %s to: %s on: %s' % (
-            user.username, package.name, prev_poc, pkg_poc, clt_name)
-    )
+    pkgdb.lib.utils.log(session, pkglisting.package, 'owner.update', dict(
+        agent=user.username,
+        username=pkg_poc,
+        previous_owner=prev_poc,
+        package_name=pkglisting.package.name,
+        package_listing=pkglisting.to_json(),
+    ))
     # Update Bugzilla about new owner
     pkgdb.lib.utils._set_bugzilla_owner(
         pkg_poc, package.name, collection.name, collection.version)
@@ -488,13 +486,13 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
                 package.name, collection.branchname, status)
         )
 
-    model.Log.insert(
-        session,
-        user.username,
-        package,
-        'user: %s updated Package: %s status from %s to %s' % (
-            user.username, package.name, prev_status, status)
-    )
+    pkgdb.lib.utils.log(session, package, 'package.update', dict(
+        agent=user.username,
+        status=status,
+        prev_status=prev_status,
+        package_name=package.name,
+        package_listing=pkglisting.to_json(),
+    ))
 
 
 def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
@@ -788,13 +786,10 @@ def add_collection(session, clt_name, clt_version, clt_status,
     try:
         session.add(collection)
         session.flush()
-        model.Log.insert(
-            session,
-            user.username,
-            None,
-            'user: %s created collection: %s' % (
-                user.username, collection.name)
-        )
+        pkgdb.lib.utils.log(session, None, 'collection.new', dict(
+            agent=user.username,
+            collection=collection.to_json(),
+        ))
         return 'Collection "%s" created' % collection.branchname
     except SQLAlchemyError, err:  # pragma: no cover
         print err.message
@@ -839,50 +834,48 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if not pkgdb.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to edit collections')
 
-    edited = False
+    edited = []
 
     if clt_name and clt_name != collection.name:
         collection.name = clt_name
-        edited = True
+        edited.append('name')
     if clt_version and clt_version != collection.version:
         collection.version = clt_version
-        edited = True
+        edited.append('version')
     if clt_status and clt_status != collection.status:
         collection.status = clt_status
-        edited = True
+        edited.append('status')
     if clt_publishurl and clt_publishurl != collection.publishURLTemplate:
         collection.publishURLTemplate = clt_publishurl
-        edited = True
+        edited.append('publishURLTemplate')
     if clt_pendingurl and clt_pendingurl != collection.pendingURLTemplate:
         collection.pendingURLTemplate = clt_pendingurl
-        edited = True
+        edited.append('pendingURLTemplate')
     if clt_summary and clt_summary != collection.summary:
         collection.summary = clt_summary
-        edited = True
+        edited.append('pendingURLsummary')
     if clt_description and clt_description != collection.description:
         collection.description = clt_description
-        edited = True
+        edited.append('description')
     if clt_branchname and clt_branchname != collection.branchname:
         collection.branchname = clt_branchname
-        edited = True
+        edited.append('branchname')
     if clt_disttag and clt_disttag != collection.distTag:
         collection.distTag = clt_disttag
-        edited = True
+        edited.append('distTag')
     if clt_gitbranch and clt_gitbranch != collection.git_branch_name:
         collection.git_branch_name = clt_gitbranch
-        edited = True
+        edited.append('git_branch_name')
 
     if edited:
         try:
             session.add(collection)
             session.flush()
-            model.Log.insert(
-                session,
-                user.username,
-                None,
-                'user: %s edited collection: %s' % (
-                    user.username, collection.name)
-            )
+            pkgdb.lib.utils.log(session, None, 'collection.update', dict(
+                agent=user.username,
+                fields=edited,
+                collection=collection.to_json(),
+            ))
             return 'Collection "%s" edited' % collection.branchname
         except SQLAlchemyError, err:  # pragma: no cover
             print err.message
@@ -922,13 +915,11 @@ def update_collection_status(session, clt_branchname, clt_status, user):
             message = 'Collection updated to "%s"' % clt_status
             session.add(collection)
             session.flush()
-            model.Log.insert(
-                session,
-                user.username,
-                None,
-                'user: %s changed Collection: %s status from %s to %s' % (
-                    user.username, collection.name, prev_status, clt_status)
-            )
+            pkgdb.lib.utils.log(session, None, 'collection.update', dict(
+                agent=user.username,
+                fields=['status'],
+                collection=collection.to_json(),
+            ))
         else:
             message = 'Collection "%s" already had this status' % \
                 clt_branchname
@@ -1137,13 +1128,14 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
     session.add(pkg_listing)
     session.flush()
 
-    model.Log.insert(
-        session,
-        user.username,
-        package,
-        'user: %s un-orphaned package: %s on branch: %s' % (
-            user.username, package.name, clt_name)
-    )
+    pkgdb.lib.utils.log(session, pkg_listing.package, 'owner.update', dict(
+        agent=user.username,
+        username=pkg_user,
+        previous_owner="orphan",
+        status=status,
+        package_name=pkg_listing.package.name,
+        package_listing=pkg_listing.to_json(),
+    ))
     pkgdb.lib.utils._set_bugzilla_owner(
         user.username, package.name, collection.name, collection.version)
 
@@ -1158,15 +1150,17 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
         prev_status = personpkg.status
         personpkg.status = status
         session.add(personpkg)
-        model.Log.insert(
-            session,
-            user.username,
-            package,
-            'user: %s set acl: %s of package: %s from: %s to: %s on '
-            'branch: %s' % (
-                user.username, acl, package.name, prev_status, status,
-                clt_name)
-        )
+
+        pkgdb.lib.utils.log(session, pkg_listing.package, 'acl.update', dict(
+            agent=user.username,
+            username=pkg_user,
+            acl=acl,
+            previous_status=prev_status,
+            status=status,
+            package_name=pkg_listing.package.name,
+            package_listing=pkg_listing.to_json(),
+        ))
+
     session.flush()
 
 
@@ -1205,13 +1199,11 @@ def add_branch(session, clt_from, clt_to, user):
     except NoResultFound:
         raise PkgdbException('Branch %s not found' % clt_to)
 
-    model.Log.insert(
-        session,
-        user.username,
-        None,
-        'user: %s started branching from %s to %s' % (
-            user.username, clt_from.branchname, clt_to.branchname)
-    )
+    pkgdb.lib.utils.log(session, None, 'branch.start', dict(
+        agent=user.username,
+        collection_from=clt_from.to_json(),
+        collection_to=clt_to.to_json(),
+    ))
     session.commit()
 
     messages = []
@@ -1226,13 +1218,11 @@ def add_branch(session, clt_from, clt_to, user):
     # Should we raise a PkgdbException if messages != [], or just return
     # them?
 
-    model.Log.insert(
-        session,
-        user.username,
-        None,
-        'user: %s finished branching from %s to %s' % (
-            user.username, clt_from.branchname, clt_to.branchname)
-    )
+    pkgdb.lib.utils.log(session, None, 'branch.complete', dict(
+        agent=user.username,
+        collection_from=clt_from.to_json(),
+        collection_to=clt_to.to_json(),
+    ))
 
     # Go for returning them for the moment, which allows the logs to be
     # inserted
