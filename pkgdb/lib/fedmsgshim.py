@@ -10,8 +10,9 @@ import warnings
 
 
 def publish(*args, **kwargs):
+    ''' Try to publish a message on the fedmsg bus. '''
     try:
         import fedmsg
         fedmsg.publish(*args, **kwargs)
-    except Exception, e:
-        warnings.warn(str(e))
+    except Exception, err:
+        warnings.warn(str(err))
