@@ -189,7 +189,7 @@ class SetAclPackageForm(wtf.Form):
         'Packager name',
         [wtforms.validators.Required()]
     )
-    pkg_status = wtforms.SelectField(
+    acl_status = wtforms.SelectField(
         'Status',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
@@ -201,15 +201,15 @@ class SetAclPackageForm(wtf.Form):
         drop-down list.
         """
         super(SetAclPackageForm, self).__init__(*args, **kwargs)
-        if 'pkg_status' in kwargs:
-            self.pkg_status.choices = [
-                (status, status)
-                for status in kwargs['pkg_status']
-            ]
         if 'acl_status' in kwargs:
-            self.pkg_acl.choices = [
+            self.acl_status.choices = [
                 (status, status)
                 for status in kwargs['acl_status']
+            ]
+        if 'pkg_acl' in kwargs:
+            self.pkg_acl.choices = [
+                (status, status)
+                for status in kwargs['pkg_acl']
             ]
 
 

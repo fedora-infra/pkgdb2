@@ -87,7 +87,7 @@ def api_acl_update():
     :arg pkg_acl: List of strings of the ACL to change/update. Possible acl
         are: 'commit', 'build', 'watchbugzilla', 'watchcommits',
         'approveacls', 'checkout'.
-    :arg pkg_status: String of the type of action required. Possible status
+    :arg acl_status: String of the type of action required. Possible status
         are: 'Approved', 'Awaiting Review', 'Denied', 'Obsolete', 'Removed'.
     :kwarg pkg_user: the name of the user that is the target of this ACL
         change/update. This will only work if: 1) you are an admin,
@@ -108,7 +108,7 @@ def api_acl_update():
         pkg_name = form.pkg_name.data
         pkg_branch = form.pkg_branch.data.split(',')
         pkg_acl = form.pkg_acl.data
-        pkg_status = form.pkg_status.data
+        acl_status = form.acl_status.data
         pkg_user = form.pkg_user.data
 
         try:
@@ -118,7 +118,7 @@ def api_acl_update():
                     pkg_name=pkg_name,
                     pkg_branch=branch,
                     acl=pkg_acl,
-                    status=pkg_status,
+                    status=acl_status,
                     pkg_user=pkg_user,
                     user=flask.g.fas_user.username,
                 )
@@ -162,9 +162,9 @@ def api_acl_reassign():
     httpcode = 200
     output = {}
 
-    packages = flask.request.args.get('packages', None)
+    packages = flask.request.args.get('packages', '').split(',')
     branches = flask.request.args.get('branches', '').split(',')
-    user_target = flask.request.args.get('user_target', '').split(',')
+    user_target = flask.request.args.get('user_target', None)
 
     if not packages or not branches or not user_target:
         output['output'] = 'notok'
