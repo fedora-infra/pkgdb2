@@ -23,12 +23,12 @@
 WTF Forms of the pkgdb Flask application.
 '''
 
-import flask
 from flask.ext import wtf
 import wtforms
 
 
 class AddCollectionForm(wtf.Form):
+    """ Form to add or edit collections. """
     collection_name = wtforms.TextField(
         'Collection name',
         [wtforms.validators.Required()]
@@ -90,6 +90,7 @@ class AddCollectionForm(wtf.Form):
 
 
 class CollectionStatusForm(wtf.Form):
+    """ Form to update the status of a collection. """
     collection_branchname = wtforms.TextField(
         'Branch name',
         [wtforms.validators.Required()]
@@ -114,6 +115,7 @@ class CollectionStatusForm(wtf.Form):
 
 
 class AddPackageForm(wtf.Form):
+    """ Form to add or edit packages. """
     pkg_name = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
@@ -169,6 +171,7 @@ class AddPackageForm(wtf.Form):
 
 
 class SetAclPackageForm(wtf.Form):
+    """ Form to set ACLs to someone on a package. """
     pkg_name = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
@@ -211,6 +214,7 @@ class SetAclPackageForm(wtf.Form):
 
 
 class RequestAclPackageForm(wtf.Form):
+    """ Form to request ACLs on a package. """
     pkg_branch = wtforms.SelectMultipleField(
         'Branch',
         [wtforms.validators.Required()],
@@ -241,6 +245,7 @@ class RequestAclPackageForm(wtf.Form):
 
 
 class UpdateAclPackageForm(wtf.Form):
+    """ Form to update ACLs on a package. """
     pkg_branch = wtforms.SelectMultipleField(
         'Branch',
         [wtforms.validators.Required()],
@@ -279,6 +284,7 @@ class UpdateAclPackageForm(wtf.Form):
 
 
 class PackageStatusForm(wtf.Form):
+    """ Form to update the status of a package in a collection. """
     pkg_name = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
@@ -307,6 +313,7 @@ class PackageStatusForm(wtf.Form):
 
 
 class PackageOwnerForm(wtf.Form):
+    """ Form to change the point of contact of a package. """
     pkg_name = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
@@ -322,6 +329,7 @@ class PackageOwnerForm(wtf.Form):
 
 
 class DeprecatePackageForm(wtf.Form):
+    """ Form to deprecate a package. """
     pkg_name = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
@@ -333,6 +341,7 @@ class DeprecatePackageForm(wtf.Form):
 
 
 class GivePoCForm(wtf.Form):
+    """ Form to change the Point of Contact of a package. """
     pkg_branch = wtforms.SelectMultipleField(
         'Branch',
         [wtforms.validators.Required()],
