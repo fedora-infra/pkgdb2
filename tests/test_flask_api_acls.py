@@ -95,18 +95,35 @@ class FlaskApiAclsTest(Modeltests):
         output = self.app.post('/api/package/acl/')
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error_detail": [
-                "pkg_acl: Not a valid choice",
-                "pkg_status: Not a valid choice",
-                "pkg_name: This field is required.",
-                "pkg_user: This field is required.",
-                "pkg_branch: This field is required."
-            ],
-            "error": "Invalid input submitted",
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error_detail": [
+                    "pkg_acl: Not a valid choice",
+                    "pkg_name: This field is required.",
+                    "acl_status: Not a valid choice",
+                    "pkg_user: This field is required.",
+                    "pkg_branch: This field is required."
+                ],
+                "error": "Invalid input submitted",
+            }
+        )
+
         create_package_acl(self.session)
+
+        data = {
+            'pkg_name': 'guake',
+            'pkg_branch': 'devel',
+            'pkg_acl': 'commit',
+            'acl_status': 'Approved',
+            'pkg_user': 'toshio',
+        }
+
+        #output = self.app.post('/api/package/acl/', data=data)
+        #print output.data
+        #self.assertEqual(output.status_code, 200)
+
 
     def test_acl_reassign(self):
         """ Test the api_acl_reassign function. """
@@ -120,6 +137,18 @@ class FlaskApiAclsTest(Modeltests):
             "output": "notok",
             "error": "Invalid input submitted",
         })
+
+        create_package_acl(self.session)
+
+        data = {
+            'packages': 'guake,geany',
+            'branches': 'devel',
+            'user_target': 'toshio',
+        }
+
+        #output = self.app.post('/api/package/acl/reassign/', data=data)
+        #print output.data
+        #self.assertEqual(output.status_code, 200)
 
 
 if __name__ == '__main__':
