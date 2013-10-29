@@ -77,7 +77,6 @@ def list_collections(motif=None, page=1):
 def collection_info(collection):
     ''' Display the information about the specified collection. '''
 
-    collections = []
     try:
         collection = pkgdblib.search_collection(SESSION, collection)[0]
     except NoResultFound:
@@ -97,7 +96,6 @@ def collection_info(collection):
 def collection_edit(collection):
     ''' Allows to edit the information about the specified collection. '''
 
-    collections = []
     try:
         collection = pkgdblib.search_collection(SESSION, collection)[0]
     except NoResultFound:

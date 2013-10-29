@@ -25,12 +25,11 @@ ACLs management for the Flask application.
 
 import flask
 import itertools
-from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
 from pkgdb import (SESSION, APP, fas_login_required,
-                   is_pkg_admin, packager_login_required)
+                   packager_login_required)
 from pkgdb.ui import UI
 
 
@@ -91,6 +90,9 @@ def request_acl(package):
 @UI.route('/acl/<package>/watch/', methods=('GET', 'POST'))
 @fas_login_required
 def watch_package(package):
+    ''' Request watch* ACLs on a package.
+    Anyone can request these ACLs, no need to be a packager.
+    '''
     pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
     pkg_acls = ['watchcommits', 'watchbugzilla']
     pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
@@ -118,6 +120,9 @@ def watch_package(package):
 @UI.route('/acl/<package>/comaintain/', methods=('GET', 'POST'))
 @packager_login_required
 def comaintain_package(package):
+    ''' Asks for ACLs to co-maintain a package.
+    You need to be a packager to request co-maintainership.
+    '''
     if not 'packager' in flask.g.fas_user.groups:
         flask.flash(
             'You must be a packager to apply to be a comaintainer',

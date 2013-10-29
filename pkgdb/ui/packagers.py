@@ -27,7 +27,6 @@ import flask
 from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
-import pkgdb.forms
 import pkgdb.lib as pkgdblib
 from pkgdb import SESSION, APP
 from pkgdb.ui import UI
