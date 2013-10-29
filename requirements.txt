@@ -9,3 +9,4 @@ docutils
 python-dateutil
 dogpile.cache
 mock
+python-bugzilla
