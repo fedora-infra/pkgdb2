@@ -189,33 +189,33 @@ def log(session, package, topic, message):
     # A big lookup of fedmsg topics to model.Log template strings.
     templates = {
         'acl.update': 'user: %(agent)s set acl: %(acl)s of package: '
-            '%(package_name)s from: '
-            '%(previous_status)s to: '
-            '%(status)s on branch: '
-            '%(package_listing.collection.branchname)s',
+                      '%(package_name)s from: '
+                      '%(previous_status)s to: '
+                      '%(status)s on branch: '
+                      '%(package_listing.collection.branchname)s',
         'owner.update': 'user: %(agent)s changed owner of package: '
-            '%(package_name)s from: '
-            '%(previous_owner)s to: '
-            '%(username)s on branch: '
-            '%(package_listing.collection.branchname)s',
+                        '%(package_name)s from: '
+                        '%(previous_owner)s to: '
+                        '%(username)s on branch: '
+                        '%(package_listing.collection.branchname)s',
         'branch.start': 'user: %(agent)s started branching from '
-            '%(collection_from.branchname)s to '
-            '%(collection_to.branchname)s',
+                        '%(collection_from.branchname)s to '
+                        '%(collection_to.branchname)s',
         'branch.complete': 'user: %(agent)s finished branching from '
-            '%(collection_from.branchname)s to '
-            '%(collection_to.branchname)s',
+                           '%(collection_from.branchname)s to '
+                           '%(collection_to.branchname)s',
         'package.new': 'user: %(agent)s created package: '
-            '%(package_name)s on branch: '
-            '%(package_listing.collection.branchname)s for poc: '
-            '%(package_listing.point_of_contact)s',
+                       '%(package_name)s on branch: '
+                       '%(package_listing.collection.branchname)s for poc: '
+                       '%(package_listing.point_of_contact)s',
         'package.update': 'user: %(agent)s updated package: '
-            '%(package_name)s status from: '
-            '%(prev_status)s to '
-            '%(status)s',
+                          '%(package_name)s status from: '
+                          '%(prev_status)s to '
+                          '%(status)s',
         'collection.new': 'user: %(agent)s created collection: '
-            '%(collection.name)s',
+                          '%(collection.name)s',
         'collection.update': 'user: %(agent)s edited collection: '
-            '%(collection.name)s',
+                             '%(collection.name)s',
     }
     substitutions = _construct_substitutions(message)
     s = templates[topic] % substitutions
