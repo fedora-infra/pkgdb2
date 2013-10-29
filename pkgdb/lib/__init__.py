@@ -305,7 +305,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     prev_status = personpkg.status
     personpkg.status = status
     session.flush()
-    pkgdb.lib.utils.log(session, package, 'acl.update', dict(
+    return pkgdb.lib.utils.log(session, package, 'acl.update', dict(
         agent=user.username,
         username=pkg_user,
         acl=acl,
@@ -314,6 +314,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         package_name=pkglisting.package.name,
         package_listing=pkglisting.to_json(),
     ))
+
 
 
 def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
@@ -383,7 +384,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
 
     session.add(pkglisting)
     session.flush()
-    pkgdb.lib.utils.log(session, pkglisting.package, 'owner.update', dict(
+    output = pkgdb.lib.utils.log(session, pkglisting.package,
+                                 'owner.update', dict(
         agent=user.username,
         username=pkg_poc,
         previous_owner=prev_poc,
@@ -394,8 +396,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     pkgdb.lib.utils._set_bugzilla_owner(
         pkg_poc, package.name, collection.name, collection.version)
 
-    return 'Point of contact of branch: %s of package: %s has been changed ' \
-        'to %s' % (pkg_branch, pkg_name, pkg_poc)
+    return output
 
 
 def update_pkg_status(session, pkg_name, pkg_branch, status, user,
@@ -492,16 +493,13 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 package.name, collection.branchname, status)
         )
 
-    pkgdb.lib.utils.log(session, package, 'package.update', dict(
+    return pkgdb.lib.utils.log(session, package, 'package.update', dict(
         agent=user.username,
         status=status,
         prev_status=prev_status,
         package_name=package.name,
         package_listing=pkglisting.to_json(),
     ))
-    return 'Package %s has been updated to %s on %s' % (
-        pkg_name, pkg_branch, status
-    )
 
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
