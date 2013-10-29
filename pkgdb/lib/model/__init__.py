@@ -248,7 +248,6 @@ class PackageListingAcl(BASE):
             'cnt DESC'
         ).limit(limit)
 
-
         return query.all()
 
     @classmethod
@@ -570,7 +569,7 @@ class PackageListing(BASE):
         self.collection_id = collection_id
         self.point_of_contact = point_of_contact
         self.status = status
-        self.critpath=critpath
+        self.critpath = critpath
 
     packagename = association_proxy('package', 'name')
 
@@ -912,8 +911,8 @@ class Package(BASE):
             else:
                 query = query.join(PackageListing, Collection)
             query = query.filter(
-                    Collection.branchname == clt_name
-                )
+                Collection.branchname == clt_name
+            )
 
         if count:
             return query.count()
@@ -1124,8 +1123,8 @@ def notify(session, eol=False, name=None, version=None):
 
     """
     query = session.query(
-            Package.name,
-            PackageListingAcl.fas_name
+        Package.name,
+        PackageListingAcl.fas_name
     ).join(
         PackageListing,
         PackageListingAcl
@@ -1170,13 +1169,13 @@ def bugzilla(session, name=None):
 
     """
     query = session.query(
-            Collection.name,  # 0
-            Collection.version,  # 1
-            Package.name,  # 2
-            Package.summary,  # 3
-            PackageListing.point_of_contact,  # 4
-            PackageListingAcl.fas_name,  # 5
-            Collection.branchname,  # 6
+        Collection.name,  # 0
+        Collection.version,  # 1
+        Package.name,  # 2
+        Package.summary,  # 3
+        PackageListing.point_of_contact,  # 4
+        PackageListingAcl.fas_name,  # 5
+        Collection.branchname,  # 6
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(
@@ -1213,9 +1212,9 @@ def vcs_acls(session):
 
     """
     query = session.query(
-            Package.name,  # 0
-            PackageListingAcl.fas_name,  # 1
-            Collection.git_branch_name,  # 2
+        Package.name,  # 0
+        PackageListingAcl.fas_name,  # 1
+        Collection.git_branch_name,  # 2
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(

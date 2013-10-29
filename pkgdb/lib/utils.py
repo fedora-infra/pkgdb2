@@ -58,8 +58,8 @@ def get_fas():  # pragma: no cover
         raise pkgdb.lib.PkgdbException(
             'No PKGDB_FAS_PASSWORD configured')
 
-    _fas = AccountSystem(fas_url, username=fas_user, password=fas_pass,
-            cache_session=False)
+    _fas = AccountSystem(
+        fas_url, username=fas_user, password=fas_pass, cache_session=False)
     return _fas
 
 
@@ -142,22 +142,24 @@ def _set_bugzilla_owner(
     bzQuery = {}
     bzQuery['product'] = collectn
     bzQuery['component'] = pkg_name
-    bzQuery['bug_status'] = ['NEW', 'ASSIGNED', 'ON_DEV', 'ON_QA',
-            'MODIFIED', 'POST', 'FAILS_QA', 'PASSES_QA',
-            'RELEASE_PENDING']
+    bzQuery['bug_status'] = [
+        'NEW', 'ASSIGNED', 'ON_DEV', 'ON_QA', 'MODIFIED', 'POST',
+        'FAILS_QA', 'PASSES_QA', 'RELEASE_PENDING']
     bzQuery['version'] = collectn_version
     if bzQuery['version'] == 'devel':
         bzQuery['version'] = 'rawhide'
-    queryResults = get_bz().query(bzQuery) #pylint:disable-msg=E1101
+    queryResults = get_bz().query(bzQuery)  # pylint:disable-msg=E1101
 
     for bug in queryResults:
         if pkgdb.APP.config['PKGDB_BUGZILLA_NOTIFICATION']:  # pragma: no cover
             bug.setassignee(assigned_to=bzMail, comment=bzComment)
         else:
-            print('Would have reassigned bug #%(bug_num)s'
-            ' from %(former)s to %(current)s' % {
-                'bug_num': bug.bug_id, 'former': bug.assigned_to,
-                'current': bzMail})
+            print(
+                'Would have reassigned bug #%(bug_num)s '
+                'from %(former)s to %(current)s' % {
+                    'bug_num': bug.bug_id, 'former': bug.assigned_to,
+                    'current': bzMail})
+
 
 def _construct_substitutions(msg):
     """ Convert a fedmsg message into a dict of substitutions. """

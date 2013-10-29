@@ -216,7 +216,7 @@ def get_acl_package(session, pkg_name, pkg_clt=None):
                 break
         if tmp is None:
             raise PkgdbException(
-                'Collection %s is not associated with package %s' %(
+                'Collection %s is not associated with package %s' % (
                     pkg_clt, pkg_name)
             )
         else:
@@ -629,7 +629,6 @@ def search_packagers(session, pattern, page=None, limit=None,
 
     if page is not None and limit is not None and limit != 0:
         page = (page - 1) * int(limit)
-
 
     packagers = model.PackageListing.search_packagers(
         session,
@@ -1357,7 +1356,7 @@ def vcs_acls(session):
             if group:
                 group = ',' + group
             output[pkg[0]] = {
-                pkg[2] : {
+                pkg[2]: {
                     'name': pkg[0],
                     'user': user or '',
                     'group': '@provenpackager' + (group or ''),

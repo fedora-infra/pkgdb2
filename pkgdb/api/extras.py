@@ -63,7 +63,7 @@ def _bz_acls_cached(name=None, out_format='text'):
 
     output = []
     if out_format == 'json':
-        output = {'bugzillaAcls':{},
+        output = {'bugzillaAcls': {},
                   'title': 'Fedora Package Database -- Bugzilla ACLs'}
 
     for clt in sorted(packages):
@@ -81,7 +81,7 @@ def _bz_acls_cached(name=None, out_format='text'):
                     poc = poc.replace('group::', '@')
                 if not clt in output['bugzillaAcls']:
                     output['bugzillaAcls'][clt] = []
-                output['bugzillaAcls'][clt].append({pkg : {
+                output['bugzillaAcls'][clt].append({pkg: {
                     'owner': poc,
                     'cclist': {
                         'groups': group,
@@ -141,12 +141,12 @@ def _vcs_acls_cache(out_format='text'):
     '''
     packages = pkgdblib.vcs_acls(session=SESSION)
     output = []
-    if out_format=='json':
+    if out_format == 'json':
         output = {'packageAcls': {},
                   'title': 'Fedora Package Database -- VCS ACLs'}
     for package in sorted(packages):
         for branch in sorted(packages[package]):
-            if out_format=='json':
+            if out_format == 'json':
                 if not package in output['packageAcls']:
                     output['packageAcls'][package] = {}
                 groups = []
@@ -196,7 +196,7 @@ def api_bugzilla():
     name = flask.request.args.get('collection', None)
     out_format = flask.request.args.get('format', 'text')
     if out_format not in ('text', 'json'):
-        out_format='text'
+        out_format = 'text'
 
     intro = """# Package Database VCS Acls
 # Text Format
@@ -237,7 +237,7 @@ def api_notify():
     eol = flask.request.args.get('eol', False)
     out_format = flask.request.args.get('format', 'text')
     if out_format not in ('text', 'json'):
-        out_format='text'
+        out_format = 'text'
 
     output = _bz_notify_cache(name, version, eol, out_format)
 
@@ -264,7 +264,7 @@ def api_vcs():
 
     out_format = flask.request.args.get('format', 'text')
     if out_format not in ('text', 'json'):
-        out_format='text'
+        out_format = 'text'
 
     acls = _vcs_acls_cache(out_format)
 

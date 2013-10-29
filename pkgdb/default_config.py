@@ -42,11 +42,16 @@ ADMIN_GROUP = ('sysadmin-main', 'sysadmin-cvs')
 # The default backend for dogpile
 # Options are listed at:
 # http://dogpilecache.readthedocs.org/en/latest/api.html  (backend section)
-PKGDB_CACHE_BACKEND = 'dogpile.cache.memory'
-
+#PKGDB_CACHE_BACKEND = 'dogpile.cache.memory'
+PKGDB_CACHE_BACKEND = 'dogpile.cache.memcached'
+PKGDB_CACHE_KWARGS = {
+    'arguments': {
+        'url': "127.0.0.1:11211",
+    }
+}
 
 # Bugzilla information
-PKGDB_BUGZILLA_IN_TESTS = True
+PKGDB_BUGZILLA_IN_TESTS = False
 PKGDB_BUGZILLA_NOTIFICATION = False
 PKGDB_BUGZILLA_URL = 'https://bugzilla.redhat.com'
 PKGDB_BUGZILLA_USER = None

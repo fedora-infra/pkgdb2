@@ -208,7 +208,6 @@ def package_new():
 def package_give(package):
     ''' Gives the PoC of a package to someone else. '''
 
-
     packagename = package
     package = None
     try:
@@ -284,6 +283,7 @@ def package_give(package):
         form=form,
         packagename=packagename,
     )
+
 
 @UI.route('/package/<package>/<collection>/orphan', methods=('GET', 'POST'))
 @packager_login_required
