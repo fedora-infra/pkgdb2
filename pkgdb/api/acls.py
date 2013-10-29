@@ -33,7 +33,6 @@ import pkgdb.forms as forms
 import pkgdb.lib as pkgdblib
 from pkgdb import SESSION
 from pkgdb.api import API
-from pkgdb.lib import model
 
 
 ## ACL
@@ -118,8 +117,8 @@ def api_acl_update():
                     SESSION,
                     pkg_name=pkg_name,
                     pkg_branch=branch,
-                    pkg_acl=pkg_acl,
-                    pkg_status=pkg_status,
+                    acl=pkg_acl,
+                    status=pkg_status,
                     pkg_user=pkg_user,
                     user=flask.g.fas_user.username,
                 )
@@ -180,7 +179,7 @@ def api_acl_reassign():
                     pkgdblib.update_pkg_poc(
                         session=SESSION,
                         pkg_name=package,
-                        clt_name=branch,
+                        pkg_branch=branch,
                         pkg_poc=user_target,
                         user=flask.g.fas_user
                     )

@@ -75,7 +75,7 @@ def api_package_new():
                                            pkg_status=pkg_status,
                                            pkg_shouldopen=pkg_shouldopen,
                                            pkg_collection=pkg_collection,
-                                           pkg_owner=pkg_owner,
+                                           pkg_poc=pkg_owner,
                                            pkg_upstreamURL=pkg_upstreamURL,
                                            user=flask.g.fas_user)
             SESSION.commit()
@@ -133,8 +133,8 @@ def api_package_orphan():
                 message = pkgdblib.update_pkg_poc(
                     SESSION,
                     pkg_name=pkg_name,
-                    clt_name=pkg_branch,
-                    pkg_owner='orphan',
+                    pkg_branch=pkg_branch,
+                    pkg_poc='orphan',
                     user=flask.g.fas_user,
                 )
             SESSION.commit()
@@ -192,7 +192,7 @@ def api_package_unorphan():
                 message = pkgdblib.unorphan_package(
                     session=SESSION,
                     pkg_name=pkg_name,
-                    clt_name=pkg_branch,
+                    pkg_branch=pkg_branch,
                     pkg_user=pkg_owner,
                     user=flask.g.fas_user
                 )
@@ -246,7 +246,7 @@ def api_package_retire():
                 message = pkgdblib.update_pkg_status(
                     SESSION,
                     pkg_name=pkg_name,
-                    clt_name=clt_name,
+                    pkg_branch=pkg_branch,
                     status='Retired',
                     user=flask.g.fas_user,
                 )
@@ -300,7 +300,7 @@ def api_package_unretire():
                 message = pkgdblib.update_pkg_status(
                     SESSION,
                     pkg_name=pkg_name,
-                    clt_name=pkg_branch,
+                    pkg_branch=pkg_branch,
                     status='Approved',
                     user=flask.g.fas_user,
                 )
@@ -493,7 +493,7 @@ def api_package_list(pattern=None):
         packages = pkgdblib.search_package(
             SESSION,
             pkg_name=pattern,
-            clt_name=branches,
+            pkg_branch=branches,
             pkg_poc=owner,
             orphaned=orphaned,
             status=status,
