@@ -63,7 +63,7 @@ def get_fas():  # pragma: no cover
     return _fas
 
 
-@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def __get_fas_grp_member(group='packager'):  # pragma: no cover
     ''' Retrieve from FAS the list of users in the packager group.
     '''
@@ -81,7 +81,7 @@ def get_packagers():
     return output
 
 
-@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def get_fas_group(group):
     """ Return group information from FAS based on the specified group name.
     """
@@ -90,7 +90,7 @@ def get_fas_group(group):
     return fas.group_by_name(group)
 
 
-@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def get_bz_email_user(username):  # pragma: no cover
     ''' Retrieve the bugzilla email associated to the provided username.
     '''

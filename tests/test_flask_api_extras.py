@@ -53,7 +53,7 @@ class FlaskApiExtrasTest(Modeltests):
         self.app = pkgdb.APP.test_client()
 
         # Let's make sure the cache is empty for the tests
-        pkgdb.cache.invalidate()
+        pkgdb.CACHE.invalidate()
 
     def test_api_bugzilla_empty(self):
         """ Test the api_bugzilla function with an empty database. """

@@ -43,7 +43,7 @@ if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
 FAS = FAS(APP)
 
 # Initialize the cache.
-cache = dogpile.cache.make_region().configure(
+CACHE = dogpile.cache.make_region().configure(
     APP.config.get('PKGDB_CACHE_BACKEND', 'dogpile.cache.memory'),
     **APP.config.get('PKGDB_CACHE_KWARGS', {})
 )
@@ -142,21 +142,21 @@ def is_admin(function):
 
 
 # Import the API namespace
-from api import API
-from api import acls
-from api import collections
-from api import packages
-from api import packagers
-from api import extras
+from .api import API
+from .api import acls
+from .api import collections
+from .api import packages
+from .api import packagers
+from .api import extras
 APP.register_blueprint(API)
 
 # Import the UI namespace
-from ui import UI
-from ui import acls
-from ui import admin
-from ui import collections
-from ui import packages
-from ui import packagers
+from .ui import UI
+from .ui import acls
+from .ui import admin
+from .ui import collections
+from .ui import packages
+from .ui import packagers
 APP.register_blueprint(UI)
 
 

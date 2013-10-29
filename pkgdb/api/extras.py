@@ -34,7 +34,7 @@ from pkgdb import SESSION
 from pkgdb.api import API
 
 
-#@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+#@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def _bz_acls_cached(name=None, out_format='text'):
     '''Return the package attributes used by bugzilla.
 
@@ -98,7 +98,7 @@ def _bz_acls_cached(name=None, out_format='text'):
     return output
 
 
-#@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+#@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
     '''List of usernames that should be notified of changes to a package.
 
@@ -133,7 +133,7 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
     return output
 
 
-#@pkgdb.cache.cache_on_arguments(expiration_time=3600)
+#@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def _vcs_acls_cache(out_format='text'):
     '''Return ACLs for the version control system.
     :kwarg out_format: Specify if the output if text or json.
