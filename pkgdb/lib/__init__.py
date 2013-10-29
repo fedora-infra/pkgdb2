@@ -262,8 +262,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     try:
         collection = model.Collection.by_name(session, pkg_branch)
     except NoResultFound:
-        raise PkgdbException('No collection found by the name of %s' %
-            pkg_branch)
+        raise PkgdbException('No collection found by the name of %s'
+                             % pkg_branch)
 
     if not pkgdb.is_pkg_admin(user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
@@ -316,7 +316,6 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     ))
 
 
-
 def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     """ Change the point of contact of a package.
 
@@ -350,8 +349,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     try:
         collection = model.Collection.by_name(session, pkg_branch)
     except NoResultFound:
-        raise PkgdbException('No collection found by the name of %s' %
-            pkg_branch)
+        raise PkgdbException('No collection found by the name of %s'
+                             % pkg_branch)
 
     pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
@@ -384,14 +383,15 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
 
     session.add(pkglisting)
     session.flush()
-    output = pkgdb.lib.utils.log(session, pkglisting.package,
-                                 'owner.update', dict(
-        agent=user.username,
-        username=pkg_poc,
-        previous_owner=prev_poc,
-        package_name=pkglisting.package.name,
-        package_listing=pkglisting.to_json(),
-    ))
+    output = pkgdb.lib.utils.log(
+        session, pkglisting.package, 'owner.update', dict(
+            agent=user.username,
+            username=pkg_poc,
+            previous_owner=prev_poc,
+            package_name=pkglisting.package.name,
+            package_listing=pkglisting.to_json(),
+        )
+    )
     # Update Bugzilla about new owner
     pkgdb.lib.utils._set_bugzilla_owner(
         pkg_poc, package.name, collection.name, collection.version)
