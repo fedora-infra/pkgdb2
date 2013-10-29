@@ -57,34 +57,43 @@ class FlaskApiCollectionTest(Modeltests):
         output = self.app.post('/api/collection/F-18/status/')
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error_detail": [
-                "collection_status: Not a valid choice",
-                "collection_branchname: This field is required.",
-            ],
-            "error": "Invalid input submitted",
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error_detail": [
+                    "collection_status: Not a valid choice",
+                    "collection_branchname: This field is required.",
+                ],
+                "error": "Invalid input submitted",
+            }
+        )
 
         data = {'collection_branchname': 'F-18',
                 'collection_status' : 'EOL'}
         output = self.app.post('/api/collection/F-19/status/', data=data)
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error": "You're trying to update the wrong collection",
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error": "You're trying to update the wrong collection",
+            }
+        )
 
         data = {'collection_branchname': 'F-18',
                 'collection_status' : 'EOL'}
         output = self.app.post('/api/collection/F-18/status', data=data)
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error": "You are not allowed to edit collections",
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error": "You are not allowed to edit collections",
+            }
+        )
 
         create_collection(self.session)
 
@@ -125,7 +134,7 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(len(output['collections']), 4)
         self.assertEqual(set(output['collections'][0].keys()),
                          set(['pendingurltemplate', 'publishurltemplate',
-                          'branchname', 'version', 'name']))
+                              'branchname', 'version', 'name']))
 
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
@@ -134,7 +143,7 @@ class FlaskApiCollectionTest(Modeltests):
                          ['collections'])
         self.assertEqual(set(output['collections'][0].keys()),
                          set(['pendingurltemplate', 'publishurltemplate',
-                          'branchname', 'version', 'name']))
+                              'branchname', 'version', 'name']))
         self.assertEqual(len(output['collections']), 2)
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
         self.assertEqual(output['collections'][0]['version'], '17')
@@ -145,17 +154,20 @@ class FlaskApiCollectionTest(Modeltests):
         output = self.app.post('/api/collection/new/')
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error_detail": [
-                "collection_status: Not a valid choice",
-                "collection_name: This field is required.",
-                "collection_branchname: This field is required.",
-                "collection_distTag: This field is required.",
-                "collection_version: This field is required.",
-            ],
-            "error": "Invalid input submitted",
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error_detail": [
+                    "collection_status: Not a valid choice",
+                    "collection_name: This field is required.",
+                    "collection_branchname: This field is required.",
+                    "collection_distTag: This field is required.",
+                    "collection_version: This field is required.",
+                ],
+                "error": "Invalid input submitted",
+            }
+        )
 
         data = {
             'collection_name':'EPEL',
@@ -164,6 +176,7 @@ class FlaskApiCollectionTest(Modeltests):
             'collection_status':'ACTIVE',
             'collection_distTag':'.el6',
         }
+
         output = self.app.post('/api/collection/new/', data=data)
         self.assertEqual(output.status_code, 500)
         output = json.loads(output.data)

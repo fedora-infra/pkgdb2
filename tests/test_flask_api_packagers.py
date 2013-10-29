@@ -57,17 +57,23 @@ class FlaskApiPackagersTest(Modeltests):
         output = self.app.get('/api/packager/acl/')
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error": "Invalid request",
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error": "Invalid request",
+            }
+        )
         output = self.app.get('/api/packager/acl/pingou/')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "ok",
-            "acls": [],
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "ok",
+                "acls": [],
+            }
+        )
 
         create_package_acl(self.session)
 
@@ -101,18 +107,24 @@ class FlaskApiPackagersTest(Modeltests):
         output = self.app.get('/api/packagers/')
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error": "Invalid request",
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error": "Invalid request",
+            }
+        )
 
         output = self.app.get('/api/packagers/pin*/')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "ok",
-            "packagers": [],
-        })
+        self.assertEqual(
+            data,
+            {
+                "output": "ok",
+                "packagers": [],
+            }
+        )
 
         create_package_acl(self.session)
 
