@@ -122,7 +122,10 @@ class PkgAcls(BASE):
     @classmethod
     def all_txt(cls, session):
         """ Return all the Acls in plain text for packages. """
-        return [item.status for item in session.query(cls).all()]
+        return [
+            item.status
+            for item in
+            session.query(cls).order_by(cls.status).all()]
 
 
 class PkgStatus(BASE):
@@ -137,7 +140,10 @@ class PkgStatus(BASE):
     @classmethod
     def all_txt(cls, session):
         """ Return all the status in plain text for packages. """
-        return [item.status for item in session.query(cls).all()]
+        return [
+            item.status
+            for item in
+            session.query(cls).order_by(cls.status).all()]
 
 
 class AclStatus(BASE):
@@ -152,7 +158,10 @@ class AclStatus(BASE):
     @classmethod
     def all_txt(cls, session):
         """ Return all the status in plain text for packages. """
-        return [item.status for item in session.query(cls).all()]
+        return [
+            item.status
+            for item in
+            session.query(cls).order_by(cls.status).all()]
 
 
 class CollecStatus(BASE):
@@ -167,7 +176,10 @@ class CollecStatus(BASE):
     @classmethod
     def all_txt(cls, session):
         """ Return all the status in plain text for a collection. """
-        return [item.status for item in session.query(cls).all()]
+        return [
+            item.status
+            for item in
+            session.query(cls).order_by(cls.status).all()]
 
 
 class PackageListingAcl(BASE):
