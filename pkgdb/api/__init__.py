@@ -31,10 +31,10 @@ API = flask.Blueprint('api_ns', __name__, url_prefix='/api')
 from pkgdb import __version__
 from pkgdb.doc_utils import load_doc
 
-import acls
-import collections
-import packagers
-import packages
+from pkgdb.api import acls
+from pkgdb.api import collections
+from pkgdb.api import packagers
+from pkgdb.api import packages
 
 
 @API.context_processor

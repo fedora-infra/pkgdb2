@@ -23,12 +23,8 @@
 Extras API endpoints for the Flask application.
 '''
 
-import itertools
 import flask
 
-from sqlalchemy.orm.exc import NoResultFound
-
-import pkgdb
 import pkgdb.lib as pkgdblib
 from pkgdb import SESSION
 from pkgdb.api import API
