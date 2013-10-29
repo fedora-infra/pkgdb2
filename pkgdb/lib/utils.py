@@ -25,7 +25,7 @@ Utilities for all classes to use
 
 import pkgdb
 
-from bugzilla import Bugzilla, RHBugzilla3
+from bugzilla import RHBugzilla3
 
 # The Fedora Account System Module
 from fedora.client.fas2 import AccountSystem
@@ -222,3 +222,4 @@ def log(session, package, topic, message):
 
     model.Log.insert(session, message['agent'], package, final_msg)
     fedmsg.publish(topic, message)
+    return final_msg
