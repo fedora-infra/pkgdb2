@@ -32,17 +32,17 @@ from fedora.client.fas2 import AccountSystem
 
 
 # Have a global connection to bugzilla open.
-_bugzilla = None
+_BUGZILLA = None
 # Have a global connection to FAS open.
-_fas = None
+_FAS = None
 
 
 def get_fas():  # pragma: no cover
     ''' Retrieve a connection to the Fedora Account System.
     '''
-    global _fas
-    if _fas is not None:
-        return _fas
+    global _FAS
+    if _FAS is not None:
+        return _FAS
 
     # Get a connection to FAS
     fas_url = pkgdb.APP.config['PKGDB_FAS_URL']
@@ -58,9 +58,9 @@ def get_fas():  # pragma: no cover
         raise pkgdb.lib.PkgdbException(
             'No PKGDB_FAS_PASSWORD configured')
 
-    _fas = AccountSystem(
+    _FAS = AccountSystem(
         fas_url, username=fas_user, password=fas_pass, cache_session=False)
-    return _fas
+    return _FAS
 
 
 @pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
@@ -104,9 +104,9 @@ def get_bz():
 
     :raises xmlrpclib.ProtocolError: If we're unable to contact bugzilla
     '''
-    global _bugzilla
-    if _bugzilla:  # pragma: no cover
-        return _bugzilla
+    global _BUGZILLA
+    if _BUGZILLA:  # pragma: no cover
+        return _BUGZILLA
 
     # Get a connection to bugzilla
     bz_server = pkgdb.APP.config['PKGDB_BUGZILLA_URL']
@@ -116,9 +116,9 @@ def get_bz():
     bz_user = pkgdb.APP.config['PKGDB_BUGZILLA_USER']
     bz_pass = pkgdb.APP.config['PKGDB_BUGZILLA_PASSWORD']
 
-    _bugzilla = RHBugzilla3(url=bz_url, user=bz_user, password=bz_pass,
+    _BUGZILLA = RHBugzilla3(url=bz_url, user=bz_user, password=bz_pass,
                             cookiefile=None)
-    return _bugzilla
+    return _BUGZILLA
 
 
 def _set_bugzilla_owner(
@@ -218,7 +218,7 @@ def log(session, package, topic, message):
                              '%(collection.name)s',
     }
     substitutions = _construct_substitutions(message)
-    s = templates[topic] % substitutions
+    final_msg = templates[topic] % substitutions
 
-    model.Log.insert(session, message['agent'], package, s)
+    model.Log.insert(session, message['agent'], package, final_msg)
     fedmsg.publish(topic, message)
