@@ -72,6 +72,7 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     #engine.execute(collection_package_create_view(driver=engine.driver))
     if db_url.startswith('sqlite:'):
         def _fk_pragma_on_connect(dbapi_con, con_record):
+            ''' Tries to enforce referential constraints on sqlite. '''
             dbapi_con.execute('pragma foreign_keys=ON')
         sa.event.listen(engine, 'connect', _fk_pragma_on_connect)
 
