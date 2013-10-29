@@ -49,7 +49,7 @@ CACHE = dogpile.cache.make_region().configure(
 )
 
 
-import lib as pkgdblib
+import pkgdb.lib as pkgdblib
 
 
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
