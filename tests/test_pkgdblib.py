@@ -233,7 +233,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='test',
-                          clt_name='F-17',
+                          pkg_branch='F-17',
                           pkg_user='pingou',
                           acl='nothing',
                           status='Appr',
@@ -246,7 +246,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-16',
+                          pkg_branch='F-16',
                           pkg_user='pingou',
                           acl='nothing',
                           status='Appr',
@@ -259,7 +259,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           acl='commit',
                           pkg_user='pingou',
                           status='Appro',
@@ -272,7 +272,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           pkg_user='pingou',
                           acl='nothing',
                           status='Approved',
@@ -285,7 +285,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           pkg_user='pingou',
                           acl='approveacls',
                           status='Approved',
@@ -298,7 +298,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           pkg_user='ralph',
                           acl='commit',
                           status='Approved',
@@ -311,7 +311,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           pkg_user='group::perl',
                           acl='approveacls',
                           status='Approved',
@@ -324,7 +324,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.set_acl_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           pkg_user='group::perl',
                           acl='commit',
                           status='Approved',
@@ -335,7 +335,7 @@ class PkgdbLibtests(Modeltests):
         # You can ask for new ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  pkg_user='pingou',
                                  acl='approveacls',
                                  status='Awaiting Review',
@@ -345,7 +345,7 @@ class PkgdbLibtests(Modeltests):
         # You can obsolete your own ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  pkg_user='pingou',
                                  acl='approveacls',
                                  status='Obsolete',
@@ -355,7 +355,7 @@ class PkgdbLibtests(Modeltests):
         # You can remove your own ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  pkg_user='pingou',
                                  acl='approveacls',
                                  status='Removed',
@@ -365,7 +365,7 @@ class PkgdbLibtests(Modeltests):
         # An admin can approve you ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  pkg_user='pingou',
                                  acl='commit',
                                  status='Approved',
@@ -386,7 +386,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='test',
-                          clt_name='F-17',
+                          pkg_branch='F-17',
                           user=FakeFasUser(),
                           pkg_poc='toshio',
                           )
@@ -397,7 +397,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-16',
+                          pkg_branch='F-16',
                           user=FakeFasUser(),
                           pkg_poc='toshio',
                           )
@@ -413,7 +413,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           user=FakeFasUser(),
                           pkg_poc='toshio',
                           )
@@ -426,7 +426,7 @@ class PkgdbLibtests(Modeltests):
         pkgdblib.update_pkg_poc(
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           user=user,
                           pkg_poc='group::perl-sig',
                           )
@@ -441,7 +441,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           user=user,
                           pkg_poc='ralph',
                           )
@@ -451,7 +451,7 @@ class PkgdbLibtests(Modeltests):
         pkgdblib.update_pkg_poc(
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           user=user,
                           pkg_poc='ralph',
                           )
@@ -469,7 +469,7 @@ class PkgdbLibtests(Modeltests):
         user.username = 'ralph'
         pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  user=user,
                                  pkg_poc='toshio',
                                  )
@@ -484,7 +484,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_poc,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           user=FakeFasUserAdmin,
                           pkg_poc='kevin',
                           )
@@ -496,7 +496,7 @@ class PkgdbLibtests(Modeltests):
         # Admin can change PoC
         pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  user=FakeFasUserAdmin(),
                                  pkg_poc='kevin',
                                  )
@@ -511,7 +511,7 @@ class PkgdbLibtests(Modeltests):
         user.username = 'kevin'
         pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  user=user,
                                  pkg_poc='orphan',
                                  )
@@ -525,7 +525,7 @@ class PkgdbLibtests(Modeltests):
         # Take orphaned package -> status changed to Approved
         pkgdblib.update_pkg_poc(self.session,
                                  pkg_name='guake',
-                                 clt_name='F-18',
+                                 pkg_branch='F-18',
                                  user=FakeFasUser(),
                                  pkg_poc=FakeFasUser().username,
                                  )
@@ -547,7 +547,7 @@ class PkgdbLibtests(Modeltests):
         self.test_add_package()
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',
-                                       clt_name='F-18',
+                                       pkg_branch='F-18',
                                        pkg_poc=None,
                                        orphaned=None,
                                        status=None,
@@ -558,7 +558,7 @@ class PkgdbLibtests(Modeltests):
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
-                                       clt_name='F-18',
+                                       pkg_branch='F-18',
                                        pkg_poc=None,
                                        orphaned=None,
                                        status=None,
@@ -569,7 +569,7 @@ class PkgdbLibtests(Modeltests):
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
-                                       clt_name='F-18',
+                                       pkg_branch='F-18',
                                        pkg_poc=None,
                                        orphaned=None,
                                        status=None,
@@ -580,7 +580,7 @@ class PkgdbLibtests(Modeltests):
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
-                                       clt_name='F-18',
+                                       pkg_branch='F-18',
                                        pkg_poc=None,
                                        orphaned=None,
                                        status=None,
@@ -592,7 +592,7 @@ class PkgdbLibtests(Modeltests):
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
-                                       clt_name='F-18',
+                                       pkg_branch='F-18',
                                        pkg_poc=None,
                                        orphaned=None,
                                        status=None,
@@ -602,7 +602,7 @@ class PkgdbLibtests(Modeltests):
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',
-                                       clt_name='F-18',
+                                       pkg_branch='F-18',
                                        pkg_poc=None,
                                        orphaned=True,
                                        status=None,
@@ -611,7 +611,7 @@ class PkgdbLibtests(Modeltests):
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='gu*',
-                                       clt_name='F-18',
+                                       pkg_branch='F-18',
                                        pkg_poc=None,
                                        orphaned=None,
                                        status='Retired',
@@ -622,7 +622,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.search_package,
                           self.session,
                           pkg_name='g*',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           pkg_poc=None,
                           orphaned=None,
                           status=None,
@@ -633,7 +633,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.search_package,
                           self.session,
                           pkg_name='g*',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           pkg_poc=None,
                           orphaned=None,
                           status=None,
@@ -649,7 +649,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='test',
-                          clt_name='F-17',
+                          pkg_branch='F-17',
                           status='Retired',
                           user=FakeFasUser(),
                           )
@@ -660,7 +660,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-16',
+                          pkg_branch='F-16',
                           status='Orphaned',
                           user=FakeFasUser(),
                           )
@@ -671,7 +671,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           status='Retired',
                           user=FakeFasUser(),
                           )
@@ -682,7 +682,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           status='Depreasdcated',
                           user=FakeFasUser(),
                           )
@@ -693,7 +693,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
-                          clt_name='F-18',
+                          pkg_branch='F-18',
                           status='Allowed',
                           user=FakeFasUser(),
                           )
@@ -702,7 +702,7 @@ class PkgdbLibtests(Modeltests):
         # Admin can retire package
         pkgdblib.update_pkg_status(self.session,
                                    pkg_name='guake',
-                                   clt_name='F-18',
+                                   pkg_branch='F-18',
                                    status='Retired',
                                    user=FakeFasUserAdmin()
                                    )
@@ -716,7 +716,7 @@ class PkgdbLibtests(Modeltests):
         # User can orphan package
         pkgdblib.update_pkg_status(self.session,
                                    pkg_name='guake',
-                                   clt_name='devel',
+                                   pkg_branch='devel',
                                    status='Orphaned',
                                    user=FakeFasUser()
                                    )
@@ -736,7 +736,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           status='Approved',
                           user=FakeFasUserAdmin()
                           )
@@ -755,7 +755,7 @@ class PkgdbLibtests(Modeltests):
         # Admin can un-orphan package
         pkgdblib.update_pkg_status(self.session,
                                    pkg_name='guake',
-                                   clt_name='devel',
+                                   pkg_branch='devel',
                                    status='Approved',
                                    poc="pingou",
                                    user=FakeFasUserAdmin()
@@ -774,7 +774,7 @@ class PkgdbLibtests(Modeltests):
         # Admin can un-retire package
         pkgdblib.update_pkg_status(self.session,
                                    pkg_name='guake',
-                                   clt_name='F-18',
+                                   pkg_branch='F-18',
                                    status='Approved',
                                    poc="pingou",
                                    user=FakeFasUserAdmin()
@@ -795,7 +795,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.update_pkg_status,
                           self.session,
                           pkg_name='guake',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           status='Removed',
                           user=FakeFasUser()
                           )
@@ -1177,7 +1177,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.unorphan_package,
                           self.session,
                           pkg_name='asd',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
@@ -1187,7 +1187,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.unorphan_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='asd',
+                          pkg_branch='asd',
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
@@ -1197,7 +1197,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.unorphan_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
@@ -1207,7 +1207,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.unorphan_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
@@ -1221,7 +1221,7 @@ class PkgdbLibtests(Modeltests):
         # Orphan package
         pkgdblib.update_pkg_poc(self.session,
                                 pkg_name='guake',
-                                clt_name='devel',
+                                pkg_branch='devel',
                                 user=FakeFasUserAdmin(),
                                 pkg_poc='orphan',
                                 )
@@ -1231,7 +1231,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.unorphan_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           pkg_user='ralph',
                           user=FakeFasUser()
                           )
@@ -1243,7 +1243,7 @@ class PkgdbLibtests(Modeltests):
                           pkgdblib.unorphan_package,
                           self.session,
                           pkg_name='guake',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           pkg_user='pingou',
                           user=user
                           )
@@ -1257,7 +1257,7 @@ class PkgdbLibtests(Modeltests):
         pkgdblib.unorphan_package(
                           self.session,
                           pkg_name='guake',
-                          clt_name='devel',
+                          pkg_branch='devel',
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )

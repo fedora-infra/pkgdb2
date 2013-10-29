@@ -47,7 +47,7 @@ from sqlalchemy.sql.expression import Executable, ClauseElement
 
 BASE = declarative_base()
 
-error_log = logging.getLogger('pkgdb.lib.model.packages')
+ERROR_LOG = logging.getLogger('pkgdb.lib.model.packages')
 
 DEFAULT_GROUPS = {'provenpackager': {'commit': True}}
 
@@ -111,6 +111,7 @@ def create_status(session):
 
 
 class PkgAcls(BASE):
+    ''' Table storing the ACLs a package can have. '''
     __tablename__ = 'PkgAcls'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -129,6 +130,7 @@ class PkgAcls(BASE):
 
 
 class PkgStatus(BASE):
+    ''' Table storing the statuses a package can have. '''
     __tablename__ = 'PkgStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -147,6 +149,7 @@ class PkgStatus(BASE):
 
 
 class AclStatus(BASE):
+    ''' Table storing the statuses ACLs a package can have. '''
     __tablename__ = 'AclStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -165,6 +168,7 @@ class AclStatus(BASE):
 
 
 class CollecStatus(BASE):
+    ''' Table storing the statuses a collection can have. '''
     __tablename__ = 'CollecStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -886,7 +890,7 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               clt_name=None,
+               pkg_branch=None,
                offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
@@ -894,7 +898,7 @@ class Package(BASE):
         :arg pkg_name: the name of the package
         :kwarg pkg_poc: name of the new point of contact for the package
         :kwarg pkg_status: status of the package
-        :kwarg clt_name: branchname of the collection to search.
+        :kwarg pkg_branch: branchname of the collection to search.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -917,13 +921,13 @@ class Package(BASE):
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
 
-        if clt_name:
+        if pkg_branch:
             if pkg_poc:
                 query = query.join(Collection)
             else:
                 query = query.join(PackageListing, Collection)
             query = query.filter(
-                Collection.branchname == clt_name
+                Collection.branchname == pkg_branch
             )
 
         if count:

@@ -19,6 +19,10 @@
 # of Red Hat, Inc.
 #
 
+'''
+PkgDB internal API to interact with the database.
+'''
+
 import sqlalchemy
 
 from datetime import timedelta
@@ -30,8 +34,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from fedora.client.fas2 import FASError
 
 import pkgdb
-import pkgdb.lib.model
-import pkgdb.lib.utils
+from pkgdb.lib import model
+from pkgdb.lib import utils
 
 
 class PkgdbException(Exception):
@@ -178,7 +182,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         for acl in acls:
             set_acl_package(session=session,
                             pkg_name=pkg_name,
-                            clt_name=collec,
+                            pkg_branch=collec,
                             pkg_user=pkg_poc,
                             acl=acl,
                             status='Approved',
@@ -224,13 +228,13 @@ def get_acl_package(session, pkg_name, pkg_clt=None):
     return pkglisting
 
 
-def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
+def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                     user):
     """ Set the specified ACLs for the specified package.
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package.
-    :arg colt_name: the name of the collection.
+    :arg pkg_branch: the name of the collection.
     :arg pkg_user: the FAS user for which the ACL should be set/change.
     :arg status: the status of the ACLs.
     :arg user: the user making the action.
@@ -238,8 +242,8 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         this exception beeing raised:
             - The ``pkg_name`` does not correspond to any package in the
                 database.
-            - The ``clt_name`` does not correspond to any collection in the
-                database.
+            - The ``pkg_branch`` does not correspond to any collection in
+                the database.
             - You are not allowed to perform the action, are allowed:
                 - pkgdb admins.
                 - People with 'approveacls' rights.
@@ -256,20 +260,21 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
         raise PkgdbException('No package found by this name')
 
     try:
-        collection = model.Collection.by_name(session, clt_name)
+        collection = model.Collection.by_name(session, pkg_branch)
     except NoResultFound:
-        raise PkgdbException('No collection found by this name')
+        raise PkgdbException('No collection found by the name of %s' %
+            pkg_branch)
 
-    if not pkgdb.is_pkg_admin(user, package.name, clt_name):
+    if not pkgdb.is_pkg_admin(user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
         elif user.username == pkg_user and status not in \
                 ('Awaiting Review', 'Removed', 'Obsolete') \
                 and acl not in pkgdb.APP.config['AUTO_APPROVE']:
-                raise PkgdbException(
-                    'You are not allowed to approve or deny '
-                    'ACLs for yourself.')
+            raise PkgdbException(
+                'You are not allowed to approve or deny '
+                'ACLs for yourself.')
 
     if pkg_user.startswith('group::') and acl == 'approveacls':
         raise PkgdbException(
@@ -286,7 +291,7 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
             package.id,
             collection.id)
     except NoResultFound:  # pragma: no cover  TODO: can we test this?
-        pkglisting = package.create_listing(owner=pkg_user,
+        pkglisting = package.create_listing(point_of_contact=pkg_user,
                                             collection=collection,
                                             statusname='Approved')
         session.add(pkglisting)
@@ -311,12 +316,12 @@ def set_acl_package(session, pkg_name, clt_name, pkg_user, acl, status,
     ))
 
 
-def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
+def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     """ Change the point of contact of a package.
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package.
-    :arg clt_name: the branchname of the collection.
+    :arg pkg_branch: the branchname of the collection.
     :arg pkg_poc: name of the new point of contact for the package.
     :arg user: the user making the action.
     :returns: a message informing that the point of contact has been
@@ -326,8 +331,8 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
         this exception beeing raised:
             - The ``pkg_name`` does not correspond to any package in the
                 database.
-            - The ``clt_name`` does not correspond to any collection in the
-                database.
+            - The ``pkg_branch`` does not correspond to any collection in
+                the database.
             - You are not allowed to perform the action, are allowed:
                 - pkgdb admins.
                 - current point of contact.
@@ -342,9 +347,10 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
         raise PkgdbException('No package found by this name')
 
     try:
-        collection = model.Collection.by_name(session, clt_name)
+        collection = model.Collection.by_name(session, pkg_branch)
     except NoResultFound:
-        raise PkgdbException('No collection found by this name')
+        raise PkgdbException('No collection found by the name of %s' %
+            pkg_branch)
 
     pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
@@ -389,22 +395,22 @@ def update_pkg_poc(session, pkg_name, clt_name, pkg_poc, user):
         pkg_poc, package.name, collection.name, collection.version)
 
     return 'Point of contact of branch: %s of package: %s has been changed ' \
-        'to %s' % (clt_name, pkg_name, pkg_poc)
+        'to %s' % (pkg_branch, pkg_name, pkg_poc)
 
 
-def update_pkg_status(session, pkg_name, clt_name, status, user,
+def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                       poc='orphan'):
     """ Update the status of a package.
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package.
-    :arg clt_name: the name of the collection.
+    :arg pkg_branch: the name of the collection.
     :arg user: the user making the action.
     :raises pkgdb.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The provided ``pkg_name`` does not correspond to any package
                 in the database.
-            - The provided ``clt_name`` does not correspond to any collection
+            - The provided ``pkg_branch`` does not correspond to any collection
                 in the database.
             - The provided ``status`` is not allowed for a package.
             - You are not allowed to perform the action:
@@ -426,7 +432,7 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
         raise PkgdbException('No package found by this name')
 
     try:
-        collection = model.Collection.by_name(session, clt_name)
+        collection = model.Collection.by_name(session, pkg_branch)
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
@@ -493,16 +499,19 @@ def update_pkg_status(session, pkg_name, clt_name, status, user,
         package_name=package.name,
         package_listing=pkglisting.to_json(),
     ))
+    return 'Package %s has been updated to %s on %s' % (
+        pkg_name, pkg_branch, status
+    )
 
 
-def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
+def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
                    orphaned=False, status='Approved', page=None,
                    limit=None, count=False):
     """ Return the list of packages matching the given criteria.
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package.
-    :kwarg clt_name: branchname of the collection to search.
+    :kwarg pkg_branch: branchname of the collection to search.
     :kwarg pkg_poc: point of contact of the packages searched.
     :kwarg orphaned: boolean to restrict search to orphaned packages.
     :kwarg status: allows filtering the packages by their status:
@@ -543,7 +552,7 @@ def search_package(session, pkg_name, clt_name=None, pkg_poc=None,
 
     return model.Package.search(session, pkg_name=pkg_name,
                                 pkg_poc=pkg_poc, pkg_status=status,
-                                clt_name=clt_name,
+                                pkg_branch=pkg_branch,
                                 offset=page, limit=limit, count=count)
 
 
@@ -1075,7 +1084,7 @@ def get_top_poc(session, top=10):
     return model.PackageListing.get_top_poc(session, top)
 
 
-def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
+def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     """ Unorphan a specific package in favor of someone and give him the
     appropriate ACLs.
 
@@ -1084,7 +1093,7 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package.
-    :arg clt_name: the name of the collection.
+    :arg pkg_branch: the name of the collection.
     :arg pkg_user: the FAS user requesting the package.
     :arg user: the user making the action.
     :raises pkgdb.lib.PkgdbException: There are few conditions leading to
@@ -1105,16 +1114,16 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
         raise PkgdbException('No package found by this name')
 
     try:
-        collection = model.Collection.by_name(session, clt_name)
+        collection = model.Collection.by_name(session, pkg_branch)
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
-    pkg_listing = get_acl_package(session, pkg_name, clt_name)
+    pkg_listing = get_acl_package(session, pkg_name, pkg_branch)
 
     if not pkg_listing.status in ('Orphaned', 'Retired'):
-            raise PkgdbException('Package is not orphaned on %s' % clt_name)
+        raise PkgdbException('Package is not orphaned on %s' % pkg_branch)
 
-    if not pkgdb.is_pkg_admin(user, package.name, clt_name):
+    if not pkgdb.is_pkg_admin(user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
@@ -1161,6 +1170,9 @@ def unorphan_package(session, pkg_name, clt_name, pkg_user, user):
         ))
 
     session.flush()
+    return 'Package %s has been unorphaned for %s on %s' % (
+        pkg_name, pkg_branch, pkg_user
+    )
 
 
 def add_branch(session, clt_from, clt_to, user):

@@ -26,8 +26,8 @@ API for package management.
 import flask
 import itertools
 
-import pkgdb.forms
 import pkgdb.lib as pkgdblib
+from pkgdb import forms
 from pkgdb import SESSION
 from pkgdb.api import API
 
@@ -47,10 +47,10 @@ def api_package_new():
     httpcode = 200
     output = {}
 
-    collections = pkgdb.lib.search_collection(
+    collections = pkgdblib.search_collection(
         SESSION, '*', 'Under Development')
-    collections.extend(pkgdb.lib.search_collection(SESSION, '*', 'Active'))
-    pkg_status = pkgdb.lib.get_status(SESSION, 'pkg_status')['pkg_status']
+    collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
+    pkg_status = pkgdblib.get_status(SESSION, 'pkg_status')['pkg_status']
 
     form = forms.AddPackageForm(
         csrf_enabled=False,
@@ -126,7 +126,6 @@ def api_package_orphan():
     if form.validate_on_submit():
         pkg_names = form.pkg_name.data.split(',')
         pkg_branchs = form.clt_name.data.split(',')
-        pkg_owner = form.pkg_owner.data
 
         try:
             for pkg_name, pkg_branch in itertools.product(
@@ -134,7 +133,7 @@ def api_package_orphan():
                 message = pkgdblib.update_pkg_poc(
                     SESSION,
                     pkg_name=pkg_name,
-                    clt_name=clt_name,
+                    clt_name=pkg_branch,
                     pkg_owner='orphan',
                     user=flask.g.fas_user,
                 )
@@ -301,7 +300,7 @@ def api_package_unretire():
                 message = pkgdblib.update_pkg_status(
                     SESSION,
                     pkg_name=pkg_name,
-                    clt_name=clt_name,
+                    clt_name=pkg_branch,
                     status='Approved',
                     user=flask.g.fas_user,
                 )

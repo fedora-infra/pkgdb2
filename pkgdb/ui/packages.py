@@ -30,7 +30,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
 from pkgdb import SESSION, APP, is_admin, is_pkgdb_admin, \
-    is_pkg_admin, fas_login_required, packager_login_required
+    is_pkg_admin, packager_login_required
 from pkgdb.ui import UI
 
 
@@ -61,7 +61,7 @@ def list_packages(motif=None):
     packages = pkgdblib.search_package(
         SESSION,
         pkg_name=pattern,
-        clt_name=branches,
+        pkg_branch=branches,
         pkg_poc=owner,
         orphaned=orphaned,
         status=status,
@@ -71,7 +71,7 @@ def list_packages(motif=None):
     packages_count = pkgdblib.search_package(
         SESSION,
         pkg_name=pattern,
-        clt_name=branches,
+        pkg_branch=branches,
         pkg_poc=owner,
         orphaned=orphaned,
         status=status,
@@ -170,24 +170,24 @@ def package_new():
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_summary = form.pkg_summary.data
-        pkg_reviewURL = form.pkg_reviewURL.data
+        pkg_review_url = form.pkg_reviewURL.data
         pkg_status = form.pkg_status.data
         pkg_shouldopen = form.pkg_shouldopen.data
         pkg_collection = form.pkg_collection.data
         pkg_poc = form.pkg_poc.data
-        pkg_upstreamURL = form.pkg_upstreamURL.data
+        pkg_upstream_url = form.pkg_upstreamURL.data
 
         try:
             message = pkgdblib.add_package(
                 SESSION,
                 pkg_name=pkg_name,
                 pkg_summary=pkg_summary,
-                pkg_reviewURL=pkg_reviewURL,
+                pkg_reviewURL=pkg_review_url,
                 pkg_status=pkg_status,
                 pkg_shouldopen=pkg_shouldopen,
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
-                pkg_upstreamURL=pkg_upstreamURL,
+                pkg_upstreamURL=pkg_upstream_url,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
