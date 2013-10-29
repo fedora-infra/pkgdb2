@@ -81,7 +81,7 @@ def admin_log():
             from_date=from_date,
             page=page,
             limit=limit,
-            )
+        )
     except pkgdblib.PkgdbException, err:
         flask.flash(err, 'errors')
 

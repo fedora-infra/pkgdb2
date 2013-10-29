@@ -47,7 +47,7 @@ def request_acl(package):
     form = pkgdb.forms.RequestAclPackageForm(
         collections=collections,
         pkg_acl_list=pkg_acl
-        )
+    )
     if form.validate_on_submit():
         pkg_branchs = form.pkg_branch.data
         pkg_acls = form.pkg_acl.data
