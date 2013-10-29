@@ -23,6 +23,10 @@ import docutils
 import docutils.examples
 import markupsafe
 
+'''
+Provide utility function to convert rst in docstring of functions into html
+'''
+
 
 def modify_rst(rst):
     """ Downgrade some of our rst directives if docutils is too old. """
