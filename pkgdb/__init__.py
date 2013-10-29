@@ -55,13 +55,6 @@ import lib as pkgdblib
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
 
-class FakeFasUser(object):
-    """ Fake FAS user used for the tests. """
-    id = 100
-    username = 'pingou'
-    groups = ['packager', 'cla_done']
-
-
 def is_pkgdb_admin(user):
     """ Is the user a pkgdb admin.
     """

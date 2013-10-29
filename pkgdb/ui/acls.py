@@ -29,7 +29,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
-from pkgdb import (SESSION, FakeFasUser, APP, fas_login_required,
+from pkgdb import (SESSION, APP, fas_login_required,
                    is_pkg_admin, packager_login_required)
 from pkgdb.ui import UI
 
