@@ -31,12 +31,17 @@ import unittest
 import sys
 import os
 
+from mock import patch
+
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 import pkgdb
+from pkgdb import APP
 from pkgdb.lib import model
-from tests import (Modeltests, FakeFasUser, create_package_acl)
+from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
+                   create_package_acl, user_set)
+
 
 
 class FlaskApiAclsTest(Modeltests):
@@ -120,12 +125,54 @@ class FlaskApiAclsTest(Modeltests):
             'pkg_user': 'toshio',
         }
 
-        #output = self.app.post('/api/package/acl/', data=data)
-        #print output.data
-        #self.assertEqual(output.status_code, 200)
+        # Check if it works authenticated
+        user = FakeFasUser()
+
+        with user_set(APP, user):
+            exp = {
+                "messages": [
+                    "user: pingou set acl: commit of package: guake from: "
+                    "Awaiting Review to: Approved on branch: devel"
+                ],
+                "output": "ok"
+            }
+            output = self.app.post('/api/package/acl/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(json_out, exp)
+
+        # Check if it fails normally
+        user.username = 'Ralph'
+
+        with user_set(APP, user):
+            exp = {
+                "error": "You are not allowed to update ACLs of someone else.",
+                "output": "notok"
+            }
+            output = self.app.post('/api/package/acl/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 500)
+            self.assertEqual(json_out, exp)
+
+        # Check if it works for admins
+        user = FakeFasUserAdmin()
+
+        with user_set(APP, user):
+            exp = {
+                "messages": [
+                    "user: admin set acl: commit of package: guake from: "
+                    "Approved to: Approved on branch: devel"
+                ],
+                "output": "ok"
+            }
+            output = self.app.post('/api/package/acl/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(json_out, exp)
 
 
-    def test_acl_reassign(self):
+    @patch('pkgdb.lib.utils')
+    def test_acl_reassign(self, mock_func):
         """ Test the api_acl_reassign function. """
         output = self.app.post('/api/package/acl/reassign')
         self.assertEqual(output.status_code, 301)
@@ -146,9 +193,57 @@ class FlaskApiAclsTest(Modeltests):
             'user_target': 'toshio',
         }
 
-        #output = self.app.post('/api/package/acl/reassign/', data=data)
-        #print output.data
-        #self.assertEqual(output.status_code, 200)
+        # Fails is user is not a packager.
+        user = FakeFasUser()
+        with user_set(APP, user):
+            exp = {
+                "error": "The point of contact of this package is not in "
+                         "the packager group",
+                "output": "notok"
+            }
+            output = self.app.post('/api/package/acl/reassign/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 500)
+            self.assertEqual(json_out, exp)
+
+        mock_func.get_packagers.return_value=['pingou', 'ralph', 'toshio']
+        mock_func.log = pkgdb.lib.utils.log
+
+        # Fails is user is a packager but not in the group that is the
+        # current poc
+        with user_set(APP, user):
+            exp = {
+                "error": "You are not part of the group \"gtk-sig\", you "
+                         "are not allowed to change the point of contact.",
+                "output": "notok"
+            }
+            output = self.app.post('/api/package/acl/reassign/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 500)
+            self.assertEqual(json_out, exp)
+
+        # Works
+        user.groups.append('gtk-sig')
+
+        with user_set(APP, user):
+            exp = { "messages": [{},{}], "output": "ok"}
+            output = self.app.post('/api/package/acl/reassign/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(json_out, exp)
+
+        # Check if it fails normally
+        user.username = 'Ralph'
+
+        with user_set(APP, user):
+            exp = {
+                "error": "You are not allowed to change the point of contact.",
+                "output": "notok"
+            }
+            output = self.app.post('/api/package/acl/reassign/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 500)
+            self.assertEqual(json_out, exp)
 
 
 if __name__ == '__main__':
