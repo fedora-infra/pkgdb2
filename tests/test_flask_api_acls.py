@@ -217,7 +217,6 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(json_out, exp)
 
         mock_func.get_packagers.return_value=['pingou', 'ralph', 'toshio']
-        mock_func.log = pkgdb.lib.utils.log
 
         # Fails is user is a packager but not in the group that is the
         # current poc
