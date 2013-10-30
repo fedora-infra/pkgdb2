@@ -120,7 +120,7 @@ def api_acl_update():
                     acl=pkg_acl,
                     status=acl_status,
                     pkg_user=pkg_user,
-                    user=flask.g.fas_user.username,
+                    user=flask.g.fas_user,
                 )
             SESSION.commit()
             output['output'] = 'ok'
@@ -128,7 +128,7 @@ def api_acl_update():
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -162,9 +162,9 @@ def api_acl_reassign():
     httpcode = 200
     output = {}
 
-    packages = flask.request.args.get('packages', '').split(',')
-    branches = flask.request.args.get('branches', '').split(',')
-    user_target = flask.request.args.get('user_target', None)
+    packages = flask.request.form.get('packages', '').split(',')
+    branches = flask.request.form.get('branches', '').split(',')
+    user_target = flask.request.form.get('user_target', None)
 
     if not packages or not branches or not user_target:
         output['output'] = 'notok'
@@ -190,7 +190,7 @@ def api_acl_reassign():
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
 
     jsonout = flask.jsonify(output)
