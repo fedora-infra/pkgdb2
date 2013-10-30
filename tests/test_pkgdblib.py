@@ -953,7 +953,7 @@ class PkgdbLibtests(Modeltests):
         create_package_acl(self.session)
 
         acls = pkgdblib.get_acl_packager(self.session, 'pingou')
-        self.assertEqual(len(acls), 4)
+        self.assertEqual(len(acls), 5)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
@@ -990,7 +990,7 @@ class PkgdbLibtests(Modeltests):
 
         pending_acls = pkgdblib.get_acl_user_package(
             self.session, 'pingou', 'guake')
-        self.assertEqual(len(pending_acls), 4)
+        self.assertEqual(len(pending_acls), 5)
 
         pending_acls = pkgdblib.get_acl_user_package(
             self.session, 'toshio', 'guake', status='Awaiting Review')
@@ -1337,9 +1337,9 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
         self.assertEqual(len(pkg_acl[0].acls), 2)
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
-        self.assertEqual(len(pkg_acl[1].acls), 3)
+        self.assertEqual(len(pkg_acl[1].acls), 4)
         self.assertEqual(pkg_acl[2].collection.branchname, 'F-19')
-        self.assertEqual(len(pkg_acl[2].acls), 3)
+        self.assertEqual(len(pkg_acl[2].acls), 4)
 
 
 if __name__ == '__main__':

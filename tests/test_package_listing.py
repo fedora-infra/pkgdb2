@@ -204,7 +204,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
         self.assertEqual(len(pkg_list[0].acls), 2)
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
-        self.assertEqual(len(pkg_list[1].acls), 3)
+        self.assertEqual(len(pkg_list[1].acls), 4)
 
         # Create a new collection
         new_collection = model.Collection(
@@ -231,9 +231,9 @@ class PackageListingtests(Modeltests):
         self.assertEqual(len(pkg_list), 3)
         self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
-        self.assertEqual(len(pkg_list[1].acls), 3)
+        self.assertEqual(len(pkg_list[1].acls), 4)
         self.assertEqual(pkg_list[2].collection.branchname, 'F-19')
-        self.assertEqual(len(pkg_list[2].acls), 3)
+        self.assertEqual(len(pkg_list[2].acls), 4)
 
 
 if __name__ == '__main__':

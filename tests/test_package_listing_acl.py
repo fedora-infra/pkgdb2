@@ -43,7 +43,7 @@ class PackageListingAcltests(Modeltests):
     def test_init_package(self):
         """ Test the __init__ function of PackageListingAcl. """
         create_package_acl(self.session)
-        self.assertEqual(6,
+        self.assertEqual(7,
                          len(model.PackageListingAcl.all(self.session))
                          )
 
@@ -57,7 +57,7 @@ class PackageListingAcltests(Modeltests):
 
         packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
-        self.assertEqual(4, len(packager))
+        self.assertEqual(5, len(packager))
         output = packager[0].to_json()
 
         # Because matching times in tests is hard.
@@ -93,7 +93,7 @@ class PackageListingAcltests(Modeltests):
 
         packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
-        self.assertEqual(4, len(packager))
+        self.assertEqual(5, len(packager))
         output = packager[0].__repr__()
         self.assertEqual(
             output,
@@ -112,7 +112,7 @@ class PackageListingAcltests(Modeltests):
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
-        self.assertEqual(4, len(acls))
+        self.assertEqual(5, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')

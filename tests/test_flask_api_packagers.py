@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb
 from pkgdb.lib import model
-from tests import Modeltests, FakeFasUser, create_package_acl
+from tests import Modeltests, FakeFasUser, create_package_acl, user_set
 
 
 class FlaskApiPackagersTest(Modeltests):
@@ -83,7 +83,7 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['output', 'acls'])
         self.assertEqual(output['output'], 'ok')
-        self.assertEqual(len(output['acls']), 4)
+        self.assertEqual(len(output['acls']), 5)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
