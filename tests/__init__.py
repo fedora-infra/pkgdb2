@@ -322,6 +322,13 @@ def create_package_acl(session):
 
     packager = model.PackageListingAcl(fas_name='pingou',
                                        packagelisting_id=pklist_guake_devel.id,
+                                       acl='approveacls',
+                                       status='Approved',
+                                       )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(fas_name='pingou',
+                                       packagelisting_id=pklist_guake_devel.id,
                                        acl='watchcommits',
                                        status='Approved',
                                        )
