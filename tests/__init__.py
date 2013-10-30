@@ -33,6 +33,9 @@ import os
 from datetime import date
 from datetime import timedelta
 
+from contextlib import contextmanager
+from flask import appcontext_pushed, g
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
@@ -40,6 +43,7 @@ from sqlalchemy.orm import scoped_session
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
+from pkgdb import APP, FAS
 from pkgdb.lib import model
 
 #DB_PATH = 'sqlite:///:memory:'
@@ -77,6 +81,22 @@ class FakeFasGroupInvalid(object):
     group_type = 'tracking'
 
 
+@contextmanager
+def user_set(APP, user):
+    """ Set the provided user as fas_user in the provided application."""
+
+    # Hack used to remove the before_request function set by
+    # flask.ext.fas_openid.FAS which otherwise kills our effort to set a
+    # flask.g.fas_user.
+    APP.before_request_funcs[None] = []
+
+    def handler(sender, **kwargs):
+        g.fas_user = user
+
+    with appcontext_pushed.connected_to(handler, APP):
+        yield
+
+
 class Modeltests(unittest.TestCase):
     """ Model tests. """
 
@@ -92,6 +112,7 @@ class Modeltests(unittest.TestCase):
         if os.path.exists(dbfile):
             os.unlink(dbfile)
         self.session = model.create_tables(DB_PATH, debug=False)
+        APP.before_request(FAS._check_session)
 
     # pylint: disable=C0103
     def tearDown(self):
