@@ -75,6 +75,7 @@ def api_acl_get(packagename=None):
 
 
 @API.route('/package/acl/', methods=['POST'])
+@pkgdb.packager_login_required
 def api_acl_update():
     ''' ``/api/package/acl/``
     Update the ACL for a given package.
@@ -147,6 +148,7 @@ def api_acl_update():
 
 
 @API.route('/package/acl/reassign/', methods=['POST'])
+@pkgdb.packager_login_required
 def api_acl_reassign():
     ''' ``/api/package/acl/reassign/``
     Reassign the specified packages from one user to another.
