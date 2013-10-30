@@ -92,28 +92,33 @@ class FlaskApiAclsTest(Modeltests):
         self.assertEqual(output['acls'][1]['point_of_contact'],
                          'pingou')
 
-    def test_acl_update(self):
+    @patch('pkgdb.packager_login_required')
+    def test_acl_update(self, login_func):
         """ Test the api_acl_update function.  """
+        login_func.return_value=None
+
         output = self.app.post('/api/package/acl')
         self.assertEqual(output.status_code, 301)
 
-        output = self.app.post('/api/package/acl/')
-        self.assertEqual(output.status_code, 500)
-        data = json.loads(output.data)
-        self.assertEqual(
-            data,
-            {
-                "output": "notok",
-                "error_detail": [
-                    "pkg_acl: Not a valid choice",
-                    "pkg_name: This field is required.",
-                    "acl_status: Not a valid choice",
-                    "pkg_user: This field is required.",
-                    "pkg_branch: This field is required."
-                ],
-                "error": "Invalid input submitted",
-            }
-        )
+        user = FakeFasUser()
+        with user_set(APP, user):
+            output = self.app.post('/api/package/acl/')
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "output": "notok",
+                    "error_detail": [
+                        "pkg_acl: Not a valid choice",
+                        "pkg_name: This field is required.",
+                        "acl_status: Not a valid choice",
+                        "pkg_user: This field is required.",
+                        "pkg_branch: This field is required."
+                    ],
+                    "error": "Invalid input submitted",
+                }
+            )
 
         create_package_acl(self.session)
 
@@ -172,18 +177,23 @@ class FlaskApiAclsTest(Modeltests):
 
 
     @patch('pkgdb.lib.utils')
-    def test_acl_reassign(self, mock_func):
+    @patch('pkgdb.packager_login_required')
+    def test_acl_reassign(self, login_func, mock_func):
         """ Test the api_acl_reassign function. """
+        login_func.return_value=None
+
         output = self.app.post('/api/package/acl/reassign')
         self.assertEqual(output.status_code, 301)
 
-        output = self.app.post('/api/package/acl/reassign/')
-        self.assertEqual(output.status_code, 500)
-        data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error": "Invalid input submitted",
-        })
+        user = FakeFasUser()
+        with user_set(APP, user):
+            output = self.app.post('/api/package/acl/reassign/')
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(data, {
+                "output": "notok",
+                "error": "Invalid input submitted",
+            })
 
         create_package_acl(self.session)
 
