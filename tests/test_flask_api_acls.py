@@ -217,6 +217,7 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(json_out, exp)
 
         mock_func.get_packagers.return_value=['pingou', 'ralph', 'toshio']
+        mock_func.log.return_value = ''
 
         # Fails is user is a packager but not in the group that is the
         # current poc
@@ -235,7 +236,7 @@ class FlaskApiAclsTest(Modeltests):
         user.groups.append('gtk-sig')
 
         with user_set(APP, user):
-            exp = { "messages": [{},{}], "output": "ok"}
+            exp = { "messages": ['', ''], "output": "ok"}
             output = self.app.post('/api/package/acl/reassign/', data=data)
             json_out = json.loads(output.data)
             self.assertEqual(output.status_code, 200)
