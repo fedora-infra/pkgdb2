@@ -109,7 +109,7 @@ def packager_login_required(function):
         """ Do the actual work of the decorator. """
         if flask.g.fas_user is None:
             return flask.redirect(flask.url_for(
-                '.login', next=flask.request.url))
+                'ui_ns.login', next=flask.request.url))
         elif 'packager' not in flask.g.fas_user.groups:
             flask.flash('You must be a packager', 'errors')
             return flask.redirect(flask.url_for('ui_ns.msg'))
