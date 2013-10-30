@@ -11,3 +11,4 @@ dogpile.cache
 mock
 python-bugzilla
 python-memcached
+blinker
