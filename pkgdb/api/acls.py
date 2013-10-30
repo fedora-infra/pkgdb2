@@ -195,6 +195,8 @@ def api_acl_reassign():
             output['error'] = err.message
             httpcode = 500
 
+    print output
+
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
     return jsonout
