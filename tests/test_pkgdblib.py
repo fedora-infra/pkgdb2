@@ -204,7 +204,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'devel')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'devel')[0]
         self.assertEqual(pkg_acl.collection.branchname, 'devel')
         self.assertEqual(pkg_acl.package.name, 'guake')
         self.assertEqual(pkg_acl.acls[0].fas_name, 'pingou')
