@@ -26,8 +26,10 @@ API for package management.
 import flask
 import itertools
 
+from sqlalchemy.orm.exc import NoResultFound
+
 import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, forms, is_admin
+from pkgdb import SESSION, forms, is_admin, packager_login_required
 from pkgdb.api import API
 
 
@@ -105,6 +107,7 @@ def api_package_new():
 
 
 @API.route('/package/orphan/', methods=['POST'])
+@packager_login_required
 def api_package_orphan():
     '''``/api/package/orphan/``
     Orphan a list of packages.
@@ -164,6 +167,7 @@ def api_package_orphan():
 
 
 @API.route('/package/unorphan/', methods=['POST'])
+@packager_login_required
 def api_package_unorphan():
     '''``/api/package/unorphan/``
     Unorphan a list of packages.
@@ -185,8 +189,8 @@ def api_package_unorphan():
     )
     if form.validate_on_submit():
         pkg_names = form.pkg_name.data.split(',')
-        pkg_branchs = form.pkg_branch.data.split(',')
-        pkg_owner = form.pkg_owner.data
+        pkg_branchs = form.clt_name.data.split(',')
+        pkg_poc = form.pkg_poc.data
 
         try:
             for pkg_name, pkg_branch in itertools.product(
@@ -195,7 +199,7 @@ def api_package_unorphan():
                     session=SESSION,
                     pkg_name=pkg_name,
                     pkg_branch=pkg_branch,
-                    pkg_user=pkg_owner,
+                    pkg_user=pkg_poc,
                     user=flask.g.fas_user
                 )
             SESSION.commit()
@@ -223,6 +227,7 @@ def api_package_unorphan():
 
 
 @API.route('/package/retire/', methods=['POST'])
+@packager_login_required
 def api_package_retire():
     '''``/api/package/retire/``
     Retire a list of packages.
@@ -277,6 +282,7 @@ def api_package_retire():
 
 
 @API.route('/package/unretire/', methods=['POST'])
+@packager_login_required
 def api_package_unretire():
     '''``/api/package/unretire/``
     Un-deprecate a list of packages.
@@ -332,17 +338,19 @@ def api_package_unretire():
 
 @API.route('/package/')
 @API.route('/package')
-@API.route('/package/<name>/')
-@API.route('/package/<name>')
-def api_package_info(name=None):
-    '''``/api/package/<name>/`` \
-        or ``/api/package/?pattern=<name>``
+@API.route('/package/<pkg_name>/')
+@API.route('/package/<pkg_name>')
+def api_package_info(pkg_name=None):
+    '''``/api/package/<pkg_name>/`` \
+        or ``/api/package/?pattern=<pkg_name>``
 
     Return information about a specific package.
 
     Accept GET queries only
 
-    :arg name: The name of the package to retrieve the information of.
+    :arg pkg_name: The name of the package to retrieve the information of.
+    :kwarg pkg_clt: Restricts the package information to a specific
+        collection (branch).
 
     Sample response:
 
@@ -390,15 +398,21 @@ def api_package_info(name=None):
     httpcode = 200
     output = {}
 
-    name = flask.request.args.get('name', name)
+    pkg_name = flask.request.args.get('pkg_name', pkg_name)
+    pkg_clt = flask.request.args.get('pkg_clt', None)
 
     try:
         packages = pkgdblib.get_acl_package(
             SESSION,
-            pkg_name=name,
+            pkg_name=pkg_name,
+            pkg_clt=pkg_clt,
         )
         output['output'] = 'ok'
         output['packages'] = [pkg.to_json() for pkg in packages]
+    except NoResultFound:
+        output['output'] = 'notok'
+        output['error'] = 'Package: %s not found' % pkg_name
+        httpcode = 404
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
@@ -429,6 +443,11 @@ def api_package_list(pattern=None):
     :arg orphaned: Boolean to retrict the search to orphaned packages.
     :arg status: Allows to filter packages based on their status: Approved,
         Orphaned, Retired, Removed.
+    :kwarg limit: An integer to limit the number of results, defaults to
+        100, maybe be None.
+    :kwarg page: The page number to return (useful in combination to limit).
+    :kwarg count: A boolean to return the number of packages instead of the
+        list. Defaults to False.
 
     Sample response:
 
@@ -490,6 +509,9 @@ def api_package_list(pattern=None):
     owner = flask.request.args.get('owner', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
     status = flask.request.args.get('status', False)
+    page = flask.request.args.get('page', None)
+    limit = flask.request.args.get('limit', 100)
+    count = flask.request.args.get('count', False)
 
     try:
         packages = pkgdblib.search_package(
@@ -499,10 +521,21 @@ def api_package_list(pattern=None):
             pkg_poc=owner,
             orphaned=orphaned,
             status=status,
+            page=page,
+            limit=limit,
+            count=count,
         )
-        SESSION.commit()
-        output['output'] = 'ok'
-        output['packages'] = [pkg.to_json() for pkg in packages]
+        if not packages:
+            output['output'] = 'notok'
+            output['packages'] = []
+            output['error'] = 'No packages found for these parameters'
+            httpcode = 404
+        else:
+            output['output'] = 'ok'
+            if isinstance(packages, (int, float)):
+                output['packages'] = packages
+            else:
+                output['packages'] = [pkg.to_json() for pkg in packages]
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
