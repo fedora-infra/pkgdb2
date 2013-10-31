@@ -123,6 +123,29 @@ engineers need to create packages and spin them into a distribution."""
 
         self.assertTrue(expected in output.data)
 
+    def test_search(self):
+        """ Test the search function. """
+        output = self.app.get('/search')
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/search/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<h1>Search packages</h1>' in output.data)
+
+        create_package_acl(self.session)
+
+        output = self.app.get('/search/?term=g*', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<a href="/package/geany/">' in output.data)
+        self.assertTrue('<a href="/package/guake/">' in output.data)
+
+        output = self.app.get('/search/?term=p&type=packager',
+                              follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<h1>Search packagers</h1>' in output.data)
+        self.assertTrue('<a href="/packager/pingou/">' in output.data)
+
     def test_api(self):
         """ Test the api function. """
 
