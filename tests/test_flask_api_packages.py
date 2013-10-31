@@ -105,6 +105,7 @@ class FlaskApiPackagesTest(Modeltests):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
+            print output.data
             self.assertEqual(
                 data,
                 {
