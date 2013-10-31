@@ -156,6 +156,28 @@ engineers need to create packages and spin them into a distribution."""
         self.assertTrue('<a href="javascript:history.back()"><button>'
                         'Back</button></a>' in output.data)
 
+    def test_login(self):
+        """ Test the login function. """
+        output = self.app.get('/login')
+        self.assertEqual(output.status_code, 301)
+
+        #output = self.app.get('/login/')
+        #self.assertEqual(output.status_code, 200)
+        #print output.data
+
+    def test_logout(self):
+        """ Test the logout function. """
+        output = self.app.get('/logout')
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/logout/')
+        self.assertEqual(output.status_code, 302)
+
+        output = self.app.get('/logout/', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<h1>Fedora Package Database -- Version 1.0.0</h1>'
+                        in output.data)
+
     def test_api(self):
         """ Test the api function. """
 
