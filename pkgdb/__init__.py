@@ -95,7 +95,7 @@ def fas_login_required(function):
         """ Do the actual work of the decorator. """
         if flask.g.fas_user is None:
             return flask.redirect(flask.url_for(
-                '.login', next=flask.request.url))
+                'ui_ns.login', next=flask.request.url))
         return function(*args, **kwargs)
     return decorated_function
 
@@ -127,8 +127,8 @@ def is_admin(function):
         if flask.g.fas_user is None or \
                 not flask.g.fas_user.cla_done or \
                 len(flask.g.fas_user.groups) < 1:
-            return flask.redirect(flask.url_for('.login',
-                                                next=flask.request.url))
+            return flask.redirect(flask.url_for(
+                'ui_ns.login', next=flask.request.url))
         elif not is_pkgdb_admin(flask.g.fas_user):
             flask.flash('You are not an administrator of pkgdb', 'errors')
             return flask.redirect(flask.url_for('ui_ns.msg'))
