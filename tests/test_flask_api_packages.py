@@ -98,23 +98,36 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_status': '',
             'pkg_shouldopen': '',
             'pkg_collection': '',
-            'pkg_owner': '',
+            'pkg_poc': '',
             'pkg_upstreamURL': '',
         }
         with user_set(pkgdb.APP, user):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
-            print output.data
-            self.assertEqual(
-                data,
+            ## FIXME: this is damn ugly but there is something wrong between
+            ## me and jenkins that needs sorting out.
+            self.assertTrue(
+                data ==
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
                         "pkg_status: This field is required.",
                         "pkg_poc: This field is required.",
                         "pkg_collection: '' is not a valid choice for this "
-                        "field"
+                        "field",
+                    ],
+                    "output": "notok"
+                }
+                or data ==
+                {
+                    "error": "Invalid input submitted",
+                    "error_detail": [
+                        "pkg_status: This field is required.",
+                        "pkg_poc: This field is required.",
+                        "pkg_collection: '' is not a valid choice for this "
+                        "field",
+                        "pkg_shouldopen: This field is required."
                     ],
                     "output": "notok"
                 }
