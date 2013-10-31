@@ -27,13 +27,13 @@ import flask
 import itertools
 
 import pkgdb.lib as pkgdblib
-from pkgdb import forms
-from pkgdb import SESSION
+from pkgdb import SESSION, forms, is_admin
 from pkgdb.api import API
 
 
 ## Package
 @API.route('/package/new/', methods=['POST'])
+@is_admin
 def api_package_new():
     '''``/api/package/new/``
     Create a new package.
@@ -60,31 +60,33 @@ def api_package_new():
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_summary = form.pkg_summary.data
-        pkg_reviewURL = form.pkg_reviewURL.data
+        pkg_review_url = form.pkg_reviewURL.data
         pkg_status = form.pkg_status.data
         pkg_shouldopen = form.pkg_shouldopen.data
         pkg_collection = form.pkg_collection.data
-        pkg_owner = form.pkg_owner.data
-        pkg_upstreamURL = form.pkg_upstreamURL.data
+        pkg_poc = form.pkg_poc.data
+        pkg_upstream_url = form.pkg_upstreamURL.data
 
         try:
-            message = pkgdblib.add_package(SESSION,
-                                           pkg_name=pkg_name,
-                                           pkg_summary=pkg_summary,
-                                           pkg_reviewURL=pkg_reviewURL,
-                                           pkg_status=pkg_status,
-                                           pkg_shouldopen=pkg_shouldopen,
-                                           pkg_collection=pkg_collection,
-                                           pkg_poc=pkg_owner,
-                                           pkg_upstreamURL=pkg_upstreamURL,
-                                           user=flask.g.fas_user)
+            message = pkgdblib.add_package(
+                SESSION,
+                pkg_name=pkg_name,
+                pkg_summary=pkg_summary,
+                pkg_reviewURL=pkg_review_url,
+                pkg_status=pkg_status,
+                pkg_shouldopen=pkg_shouldopen,
+                pkg_collection=pkg_collection,
+                pkg_poc=pkg_poc,
+                pkg_upstreamURL=pkg_upstream_url,
+                user=flask.g.fas_user
+            )
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -143,7 +145,7 @@ def api_package_orphan():
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -202,7 +204,7 @@ def api_package_unorphan():
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -256,7 +258,7 @@ def api_package_retire():
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -310,7 +312,7 @@ def api_package_unretire():
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err
+            output['error'] = err.message
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -400,7 +402,7 @@ def api_package_info(name=None):
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
-        output['error'] = err
+        output['error'] = err.message
         httpcode = 500
 
     jsonout = flask.jsonify(output)
@@ -504,7 +506,7 @@ def api_package_list(pattern=None):
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
-        output['error'] = err
+        output['error'] = err.message
         httpcode = 500
 
     jsonout = flask.jsonify(output)
