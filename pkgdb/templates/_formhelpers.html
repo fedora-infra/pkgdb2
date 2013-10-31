@@ -35,8 +35,8 @@
 {% for error in field.errors %}
 <td class="errors">{{ error }}</td>
 {% endfor %}
-</tr>
 {% endif %}
+</tr>
 {% endmacro %}
 
 {% macro render_field_in_cell(field, after="") %}
