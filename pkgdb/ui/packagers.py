@@ -82,25 +82,17 @@ def list_packagers(motif=None):
 def packager_info(packager):
     ''' Display the information about the specified packager. '''
 
-    packages_co = []
-    try:
-        packages_co = pkgdblib.get_package_maintained(
-            SESSION,
-            packager=packager,
-            poc=False,
-        )
-    except NoResultFound:
-        SESSION.rollback()
+    packages_co = pkgdblib.get_package_maintained(
+        SESSION,
+        packager=packager,
+        poc=False,
+    )
 
-    packages = []
-    try:
-        packages = pkgdblib.get_package_maintained(
-            SESSION,
-            packager=packager,
-            poc=True,
-        )
-    except NoResultFound:
-        SESSION.rollback()
+    packages = pkgdblib.get_package_maintained(
+        SESSION,
+        packager=packager,
+        poc=True,
+    )
 
     if not packages and not packages_co:
         flask.flash('No packager of this name found.', 'errors')
