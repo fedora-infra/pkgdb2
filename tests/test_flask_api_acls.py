@@ -175,7 +175,6 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertEqual(json_out, exp)
 
-
     @patch('pkgdb.lib.utils')
     @patch('pkgdb.packager_login_required')
     def test_acl_reassign(self, login_func, mock_func):
