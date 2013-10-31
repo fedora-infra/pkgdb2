@@ -65,7 +65,7 @@ def request_acl(package):
                 pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
-                    clt_name=collec,
+                    pkg_branch=collec,
                     pkg_user=flask.g.fas_user.username,
                     acl=acl,
                     status=acl_status,
@@ -93,7 +93,13 @@ def watch_package(package):
     ''' Request watch* ACLs on a package.
     Anyone can request these ACLs, no need to be a packager.
     '''
-    pkg = pkgdblib.search_package(SESSION, pkg_name=package)[0]
+    try:
+        pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+    except IndexError:
+        flask.flash('No package found by this name', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package))
+
     pkg_acls = ['watchcommits', 'watchbugzilla']
     pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
     try:
@@ -101,7 +107,7 @@ def watch_package(package):
             pkgdblib.set_acl_package(
                 SESSION,
                 pkg_name=package,
-                clt_name=collec,
+                pkg_branch=collec,
                 pkg_user=flask.g.fas_user.username,
                 acl=acl,
                 status='Approved',
@@ -109,12 +115,11 @@ def watch_package(package):
             )
         SESSION.commit()
         flask.flash('ACLs updated')
-        return flask.redirect(
-            flask.url_for('.package_info',
-                          package=package))
-    except pkgdblib.PkgdbException, err:
+    # Let's keep this in although we should never see it
+    except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
         flask.flash(err.message, 'error')
+    return flask.redirect(flask.url_for('.package_info', package=package))
 
 
 @UI.route('/acl/<package>/comaintain/', methods=('GET', 'POST'))
@@ -123,14 +128,22 @@ def comaintain_package(package):
     ''' Asks for ACLs to co-maintain a package.
     You need to be a packager to request co-maintainership.
     '''
-    if not 'packager' in flask.g.fas_user.groups:
+    # This is really wearing belt and suspenders, the decorator above
+    # should take care of this
+    if not 'packager' in flask.g.fas_user.groups:  # pragma: no cover
         flask.flash(
             'You must be a packager to apply to be a comaintainer',
             'errors')
         return flask.redirect(flask.url_for(
             '.package_info', package=package))
 
-    pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+    try:
+        pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+    except IndexError:
+        flask.flash('No package found by this name', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package))
+
     pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
     pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
 
@@ -142,7 +155,7 @@ def comaintain_package(package):
             pkgdblib.set_acl_package(
                 SESSION,
                 pkg_name=package,
-                clt_name=collec,
+                pkg_branch=collec,
                 pkg_user=flask.g.fas_user.username,
                 acl=acl,
                 status=acl_status,
@@ -150,12 +163,11 @@ def comaintain_package(package):
             )
         SESSION.commit()
         flask.flash('ACLs updated')
-        return flask.redirect(
-            flask.url_for('.package_info',
-                          package=package))
-    except pkgdblib.PkgdbException, err:
+    # Let's keep this in although we should never see it
+    except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
         flask.flash(err.message, 'error')
+    return flask.redirect(flask.url_for('.package_info', package=package))
 
 
 @UI.route('/acl/<package>/update/<user>/', methods=('GET', 'POST'))
@@ -188,10 +200,7 @@ def update_acl(package, user, branch=None):
         acl_status = form.acl_status.data
 
         try:
-            branch_out = []
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
-                if collec in branch_out:
-                    continue
 
                 if acl_status == 'Awaiting Review' and \
                         acl in APP.config['AUTO_APPROVE']:
@@ -200,7 +209,7 @@ def update_acl(package, user, branch=None):
                 pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
-                    clt_name=collec,
+                    pkg_branch=collec,
                     pkg_user=user,
                     acl=acl,
                     status=acl_status,
@@ -211,7 +220,8 @@ def update_acl(package, user, branch=None):
             return flask.redirect(
                 flask.url_for('.package_info',
                               package=package))
-        except pkgdblib.PkgdbException, err:
+        # Let's keep this in although we should never see it
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(err.message, 'errors')
 
