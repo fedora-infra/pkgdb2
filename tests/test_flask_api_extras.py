@@ -70,6 +70,10 @@ class FlaskApiExtrasTest(Modeltests):
 """
         self.assertEqual(output.data, expected)
 
+        output = self.app.get('/api/bugzilla/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
         output = self.app.get('/api/bugzilla/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
@@ -96,6 +100,10 @@ class FlaskApiExtrasTest(Modeltests):
 Fedora|fedocal|A web-based calendar for Fedora|orphan||pingou,toshio
 Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig||
 Fedora|guake|Top down terminal for GNOME|pingou||spot"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/bugzilla/?format=random')
+        self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/bugzilla/?format=json')
@@ -165,6 +173,10 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         expected = ""
         self.assertEqual(output.data, expected)
 
+        output = self.app.get('/api/notify/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
         output = self.app.get('/api/notify/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
@@ -189,6 +201,10 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         expected = """geany|group::gtk-sig
 guake|pingou
 """
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/notify/?format=random')
+        self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/notify/?format=json')
@@ -235,6 +251,10 @@ guake|pingou
 """
         self.assertEqual(output.data, expected)
 
+        output = self.app.get('/api/vcs/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
         output = self.app.get('/api/vcs/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
@@ -262,6 +282,10 @@ avail | @provenpackager,pingou,toshio | rpms/fedocal/master
 avail | @provenpackager,@gtk-sig, | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/vcs/?format=random')
+        self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/vcs/?format=json')
