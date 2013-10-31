@@ -25,7 +25,6 @@ UI namespace for the Flask application.
 
 import flask
 from math import ceil
-from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb.forms
 import pkgdb.lib as pkgdblib
@@ -79,8 +78,6 @@ def collection_info(collection):
 
     try:
         collection = pkgdblib.search_collection(SESSION, collection)[0]
-    except NoResultFound:
-        SESSION.rollback()
     except IndexError:
         flask.flash('No collection of this name found.', 'errors')
         return flask.render_template('msg.html')
@@ -98,8 +95,6 @@ def collection_edit(collection):
 
     try:
         collection = pkgdblib.search_collection(SESSION, collection)[0]
-    except NoResultFound:
-        SESSION.rollback()
     except IndexError:
         flask.flash('No collection of this name found.', 'errors')
         return flask.render_template('msg.html')
@@ -138,10 +133,11 @@ def collection_edit(collection):
                 user=flask.g.fas_user,
             )
             SESSION.commit()
-            flask.flash('Collection "%s" edited' % clt_name)
+            flask.flash('Collection "%s" edited' % clt_branchname)
             return flask.redirect(flask.url_for(
                 '.collection_info', collection=collection.branchname))
-        except pkgdblib.PkgdbException, err:
+        # In theory we should never hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(err.message, 'errors')
     else:
@@ -194,7 +190,8 @@ def collection_new():
             SESSION.commit()
             flask.flash(message)
             return flask.redirect(flask.url_for('.list_collections'))
-        except pkgdblib.PkgdbException, err:
+        # In theory we should never hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(err.message, 'errors')
 
