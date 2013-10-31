@@ -150,6 +150,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     try:
         session.flush()
     except SQLAlchemyError, err:  # pragma: no cover
+        session.rollback()
         raise PkgdbException('Could not create package')
 
     for collec in pkg_collection:
@@ -161,6 +162,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         try:
             session.flush()
         except SQLAlchemyError, err:  # pragma: no cover
+            session.rollback()
             raise PkgdbException('Could not add packages to collections')
         else:
             pkgdb.lib.utils.log(session, package, 'package.new', dict(
@@ -174,6 +176,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     if pkg_poc.startswith('group::'):
         acls = ['commit', 'watchbugzilla', 'watchcommits']
     if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
+        session.rollback()
         raise PkgdbException(
             'Invalid group "%s" all groups in pkgdb should end with '
             '"-sig".' % pkg_poc)
