@@ -146,6 +146,16 @@ engineers need to create packages and spin them into a distribution."""
         self.assertTrue('<h1>Search packagers</h1>' in output.data)
         self.assertTrue('<a href="/packager/pingou/">' in output.data)
 
+    def test_msg(self):
+        """ Test the msg function. """
+        output = self.app.get('/msg')
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/msg/')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<a href="javascript:history.back()"><button>'
+                        'Back</button></a>' in output.data)
+
     def test_api(self):
         """ Test the api function. """
 
