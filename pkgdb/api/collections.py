@@ -26,8 +26,7 @@ API for collection management.
 import flask
 
 import pkgdb.lib as pkgdblib
-from pkgdb import forms
-from pkgdb import SESSION
+from pkgdb import SESSION, forms, is_admin
 from pkgdb.api import API
 from pkgdb.lib import model
 
@@ -35,6 +34,7 @@ from pkgdb.lib import model
 ## Collection
 @API.route('/collection/new/', methods=['POST'])
 @API.route('/collection/new', methods=['POST'])
+@is_admin
 def api_collection_new():
     ''' ``/api/collection/new/``
     Create a new collection.
@@ -95,7 +95,9 @@ def api_collection_new():
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
-        except pkgdblib.PkgdbException, err:
+        # Apparently we're pretty tight on checks and looks like we cannot
+        # raise this exception in a normal situation
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = err
@@ -118,6 +120,7 @@ def api_collection_new():
 
 @API.route('/collection/<collection>/status/', methods=['POST'])
 @API.route('/collection/<collection>/status', methods=['POST'])
+@is_admin
 def api_collection_status(collection):
     ''' ``/api/collection/<collection branchname>/status/``
     Update the status of collection.
