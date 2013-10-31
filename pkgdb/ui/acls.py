@@ -192,7 +192,7 @@ def update_acl(package, user, branch=None):
         collections=collections,
         pkg_acl_list=status['pkg_acl'],
         pkg_status=status['pkg_status'],
-        )
+    )
 
     if form.validate_on_submit():
         pkg_branchs = form.pkg_branch.data
