@@ -103,6 +103,8 @@ def login():
     next_url = None
     if 'next' in flask.request.args:
         next_url = flask.request.args['next']
+    elif 'next' in flask.request.form:
+        next_url = flask.request.form['next']
 
     if not next_url or next_url == flask.url_for('.login'):
         next_url = flask.url_for('.index')
