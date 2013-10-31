@@ -108,8 +108,13 @@ def packager_login_required(function):
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
         if flask.g.fas_user is None:
-            return flask.redirect(flask.url_for(
-                'ui_ns.login', next=flask.request.url))
+            flask.flash('Login required', 'errors')
+            return flask.redirect(flask.url_for('ui_ns.login',
+                                                next=flask.request.url))
+        elif not flask.g.fas_user.cla_done:
+            flask.flash('You must sign the CLA (Contributor License '
+                        'Agreement to use pkgdb', 'errors')
+            return flask.redirect(flask.url_for('ui_ns.index'))
         elif 'packager' not in flask.g.fas_user.groups:
             flask.flash('You must be a packager', 'errors')
             return flask.redirect(flask.url_for('ui_ns.msg'))
@@ -124,11 +129,14 @@ def is_admin(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
-        if flask.g.fas_user is None or \
-                not flask.g.fas_user.cla_done or \
-                len(flask.g.fas_user.groups) < 1:
-            return flask.redirect(flask.url_for(
-                'ui_ns.login', next=flask.request.url))
+        if flask.g.fas_user is None:
+            flask.flash('Login required', 'errors')
+            return flask.redirect(flask.url_for('ui_ns.login',
+                                                next=flask.request.url))
+        elif not flask.g.fas_user.cla_done:
+            flask.flash('You must sign the CLA (Contributor License '
+                        'Agreement to use pkgdb', 'errors')
+            return flask.redirect(flask.url_for('ui_ns.index'))
         elif not is_pkgdb_admin(flask.g.fas_user):
             flask.flash('You are not an administrator of pkgdb', 'errors')
             return flask.redirect(flask.url_for('ui_ns.msg'))
