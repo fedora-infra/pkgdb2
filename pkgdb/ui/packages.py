@@ -103,15 +103,12 @@ def package_info(package):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
-    except IndexError:
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
 
     package_acls = []
     branch_admin = []
     is_poc = False
     for pkg in package_acl:
-        if pkg.collection.status == 'EOL':
+        if pkg.collection.status == 'EOL':  # pragma: no cover
             continue
         tmp = {}
         tmp['collection'] = '%s %s' % (pkg.collection.name,
@@ -193,7 +190,8 @@ def package_new():
             SESSION.commit()
             flask.flash(message)
             return flask.redirect(flask.url_for('.list_packages'))
-        except pkgdblib.PkgdbException, err:
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(err.message, 'error')
 
@@ -215,9 +213,6 @@ def package_give(package):
         package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
     except NoResultFound:
         SESSION.rollback()
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
-    except IndexError:
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
@@ -252,7 +247,7 @@ def package_give(package):
                 message = pkgdblib.update_pkg_poc(
                     SESSION,
                     pkg_name=packagename,
-                    clt_name=pkg_collection,
+                    pkg_branch=pkg_collection,
                     pkg_poc=pkg_poc,
                     user=flask.g.fas_user,
                 )
@@ -262,7 +257,7 @@ def package_give(package):
                     pkgdblib.set_acl_package(
                         SESSION,
                         pkg_name=packagename,
-                        clt_name=pkg_collection,
+                        pkg_branch=pkg_collection,
                         pkg_user=pkg_poc,
                         acl=acl,
                         status='Approved',
@@ -299,9 +294,6 @@ def package_orphan(package, collection):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
-    except IndexError:
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
 
     for acl in package_acl:
         if acl.collection.branchname == collection:
@@ -309,7 +301,7 @@ def package_orphan(package, collection):
                 pkgdblib.update_pkg_poc(
                     session=SESSION,
                     pkg_name=package.name,
-                    clt_name=acl.collection.branchname,
+                    pkg_branch=acl.collection.branchname,
                     pkg_poc='orphan',
                     user=flask.g.fas_user
                 )
@@ -323,7 +315,8 @@ def package_orphan(package, collection):
 
     try:
         SESSION.commit()
-    except pkgdblib.PkgdbException, err:
+    # Keep it in, but normally we shouldn't hit this
+    except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
         flask.flash(err.message, 'error')
 
@@ -345,9 +338,6 @@ def package_retire(package, collection):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
-    except IndexError:
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
 
     for acl in package_acl:
         if acl.collection.branchname == collection:
@@ -356,7 +346,7 @@ def package_retire(package, collection):
                     pkgdblib.update_pkg_status(
                         session=SESSION,
                         pkg_name=package.name,
-                        clt_name=acl.collection.branchname,
+                        pkg_branch=acl.collection.branchname,
                         status='Retired',
                         user=flask.g.fas_user
                     )
@@ -374,7 +364,8 @@ def package_retire(package, collection):
 
     try:
         SESSION.commit()
-    except pkgdblib.PkgdbException, err:
+    # Keep it in, but normally we shouldn't hit this
+    except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
         flask.flash(err.message, 'error')
 
@@ -391,11 +382,13 @@ def package_take(package, collection):
         pkgdblib.unorphan_package(
             session=SESSION,
             pkg_name=package,
-            clt_name=collection,
+            pkg_branch=collection,
             pkg_user=flask.g.fas_user.username,
             user=flask.g.fas_user
         )
         SESSION.commit()
+        flask.flash('You have taken the package %s on branch %s' % (
+            package, collection))
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         flask.flash(err.message, 'error')
