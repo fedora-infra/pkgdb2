@@ -64,7 +64,19 @@ class FlaskApiPackagersTest(Modeltests):
                 "error": "Invalid request",
             }
         )
+
         output = self.app.get('/api/packager/acl/pingou/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data,
+            {
+                "output": "ok",
+                "acls": [],
+            }
+        )
+
+        output = self.app.get('/api/packager/acl/?packagername=pingou')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         self.assertEqual(
@@ -94,6 +106,23 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(set(output['acls'][0]['packagelist']['collection'].keys()),
                          set([u'pendingurltemplate', u'publishurltemplate',
                               u'branchname', u'version', u'name']))
+        self.assertEqual(
+            output['acls'][0]['packagelist']['package']['name'], 'guake')
+        self.assertEqual(
+            output['acls'][0]['packagelist']['collection']['branchname'],
+            'F-18')
+
+        output = self.app.get('/api/packager/acl/?packagername=pingou')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(output.keys(),
+                         ['output', 'acls'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(len(output['acls']), 5)
+        self.assertEqual(set(output['acls'][0].keys()),
+                         set(['status', 'fas_name', 'packagelist', 'acl']))
+        self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
+                         set(['package', 'collection', 'point_of_contact']))
         self.assertEqual(
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
