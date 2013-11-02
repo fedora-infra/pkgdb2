@@ -50,6 +50,16 @@ from pkgdb.lib import model
 ## A file database is required to check the integrity, don't ask
 DB_PATH = 'sqlite:////tmp/test.sqlite'
 
+try:
+    import requests
+    req = requests.get('http://209.132.184.152/faitout/new')
+    if req.status_code == 200:
+        DB_PATH = req.text
+        print 'Using faitout at: %s' % DB_PATH
+except:
+    pass
+
+
 class FakeFasUser(object):
     """ Fake FAS user used for the tests. """
     id = 100
@@ -123,19 +133,13 @@ class Modeltests(unittest.TestCase):
 
         self.session.rollback()
 
-        ## Empty the database if it's not a sqlite
-        if self.session.bind.driver != 'pysqlite':
-            self.session.execute('DROP TABLE "PackageListingAcl" CASCADE;')
-            self.session.execute('DROP TABLE "PackageListing" CASCADE;')
-            self.session.execute('DROP TABLE "Collection" CASCADE;')
-            self.session.execute('DROP TABLE "Package" CASCADE;')
-            self.session.execute('DROP TABLE "Log" CASCADE;')
-            # Drop the Status/Acls tables
-            self.session.execute('DROP TABLE "AclStatus" CASCADE;')
-            self.session.execute('DROP TABLE "CollecStatus" CASCADE;')
-            self.session.execute('DROP TABLE "PkgStatus" CASCADE;')
-            self.session.execute('DROP TABLE "PkgAcls" CASCADE;')
-            self.session.commit()
+        if DB_PATH.startswith('postgres'):
+            if 'localhost' in DB_PATH:
+                model.drop_tables(DB_PATH, self.session.bind)
+            else:
+                db_name = DB_PATH.rsplit('/', 1)[1]
+                requests.get(
+                    'http://209.132.184.152/faitout/clean/%s' % db_name)
 
 
 def create_collection(session):
