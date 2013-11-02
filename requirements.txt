@@ -1,3 +1,5 @@
+# Used for when working from a virtualenv.
+# Use this file by running "$ pip install -r requirements.txt"
 flask>=0.10
 flask-wtf
 kitchen
