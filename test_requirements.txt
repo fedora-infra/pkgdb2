@@ -1,0 +1,6 @@
+# This file lists the libraries needed to run the unit-tests
+# Used for when working from a virtualenv.
+# Use this file by running "$ pip install -r test_requirements.txt"
+
+# Requests is used to make the tests running on faitout
+requests
