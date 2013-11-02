@@ -118,7 +118,7 @@ class Modeltests(unittest.TestCase):
     # pylint: disable=C0103
     def setUp(self):
         """ Set up the environnment, ran before every tests. """
-        dbfile = DB_PATH.split('///')[1]
+        dbfile = DB_PATH.split('//')[1]
         if os.path.exists(dbfile):
             os.unlink(dbfile)
         self.session = model.create_tables(DB_PATH, debug=False)
