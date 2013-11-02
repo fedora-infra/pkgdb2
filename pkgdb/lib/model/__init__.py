@@ -89,6 +89,19 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     return scopedsession
 
 
+def drop_tables(db_url, engine):  # pragma: no cover
+    """ Drops the tables in the database using the information from the
+    url obtained.
+
+    :arg db_url, URL used to connect to the database. The URL contains
+    information with regards to the database engine, the host to connect
+    to, the user and password and the database name.
+      ie: <engine>://<user>:<password>@<host>/<dbname>
+    """
+    engine = create_engine(db_url)
+    BASE.metadata.drop_all(engine)
+
+
 def create_status(session):
     """ Fill in the status tables. """
     for acl in ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']:
