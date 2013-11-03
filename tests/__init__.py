@@ -127,7 +127,7 @@ class Modeltests(unittest.TestCase):
     # pylint: disable=C0103
     def tearDown(self):
         """ Remove the test.db database if there is one. """
-        dbfile = DB_PATH.split('///')[1]
+        dbfile = DB_PATH.split('//')[1]
         if os.path.exists(dbfile):
             os.unlink(dbfile)
 
