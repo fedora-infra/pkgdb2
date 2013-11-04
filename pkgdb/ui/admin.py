@@ -64,7 +64,8 @@ def admin_log():
 
     if from_date:
         try:
-            from_date = parser.parse(from_date).date()
+            from_date = parser.parse(from_date)
+            from_date = from_date.date()
         except ValueError:
             flask.flash(
                 'Incorrect from_date provided, using default', 'errors')
