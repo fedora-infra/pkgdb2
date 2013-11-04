@@ -532,7 +532,7 @@ def api_package_list(pattern=None):
             httpcode = 404
         else:
             output['output'] = 'ok'
-            if isinstance(packages, (int, float)):
+            if isinstance(packages, (int, float, long)):
                 output['packages'] = packages
             else:
                 output['packages'] = [pkg.to_json() for pkg in packages]
