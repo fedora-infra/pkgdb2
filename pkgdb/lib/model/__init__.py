@@ -292,7 +292,7 @@ class PackageListingAcl(BASE):
         """
         acls = session.query(PackageListingAcl).filter(
             PackageListingAcl.fas_name == packager
-        ).all()
+        ).order_by(PackageListingAcl.id).all()
         return acls
 
     @classmethod
