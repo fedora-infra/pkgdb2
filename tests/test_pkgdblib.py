@@ -341,6 +341,7 @@ class PkgdbLibtests(Modeltests):
                                  status='Awaiting Review',
                                  user=FakeFasUser(),
                                  )
+        self.session.commit()
 
         # You can obsolete your own ACLs
         pkgdblib.set_acl_package(self.session,
@@ -351,6 +352,7 @@ class PkgdbLibtests(Modeltests):
                                  status='Obsolete',
                                  user=FakeFasUser(),
                                  )
+        self.session.commit()
 
         # You can remove your own ACLs
         pkgdblib.set_acl_package(self.session,
@@ -361,6 +363,7 @@ class PkgdbLibtests(Modeltests):
                                  status='Removed',
                                  user=FakeFasUser(),
                                  )
+        self.session.commit()
 
         # An admin can approve you ACLs
         pkgdblib.set_acl_package(self.session,
@@ -371,6 +374,7 @@ class PkgdbLibtests(Modeltests):
                                  status='Approved',
                                  user=FakeFasUserAdmin(),
                                  )
+        self.session.commit()
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
