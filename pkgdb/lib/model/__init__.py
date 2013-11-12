@@ -520,7 +520,7 @@ class Collection(BASE):
         :arg session: the database session used to query the information.
 
         """
-        return session.query(cls).all()
+        return session.query(cls).order_by(cls.name).all()
 
     @classmethod
     def search(cls, session, clt_name, clt_status=None, offset=None,
