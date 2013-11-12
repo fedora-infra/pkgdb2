@@ -63,11 +63,10 @@ def admin_log():
         flask.flash('Incorrect limit provided, using default', 'errors')
 
     if from_date:
-        print from_date
         try:
             from_date = parser.parse(from_date)
             from_date = from_date.date()
-        except ValueError:
+        except (ValueError, TypeError):
             flask.flash(
                 'Incorrect from_date provided, using default', 'errors')
             from_date = None
