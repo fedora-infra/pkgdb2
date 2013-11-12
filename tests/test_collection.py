@@ -49,12 +49,12 @@ class Collectiontests(Modeltests):
         """ Test the __repr__ function of Collection. """
         create_collection(self.session)
         collections = model.Collection.all(self.session)
+        self.assertEqual(collections[0].branchname, 'el6')
         self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
                          "publishurltemplate=None, pendingurltemplate=None,"
                          " summary=u'Fedora 17 release', description=None)",
-                         collections[0].__repr__())
-        self.assertEqual(collections[0].branchname, 'F-17')
-        self.assertEqual(collections[1].branchname, 'F-18')
+                         collections[1].__repr__())
+        self.assertEqual(collections[2].branchname, 'F-18')
 
     def test_search(self):
         """ Test the search function of Collection. """
