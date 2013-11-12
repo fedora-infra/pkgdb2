@@ -201,13 +201,13 @@ class FlaskUiCollectionsTest(Modeltests):
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
-            collections = model.Collection.all(self.session)
+            collections = model.Collection.by_name(self.session, 'F-17')
             self.assertEqual(
                 "Collection(u'Fedora', u'17', u'Active', u'toshio', "
                 "publishurltemplate=None, pendingurltemplate=None,"
                 " summary=u'Fedora 17 release', description=None)",
-                collections[0].__repr__())
-            self.assertEqual(collections[0].branchname, 'F-17')
+                collections.__repr__())
+            self.assertEqual(collections.branchname, 'F-17')
 
             data = {
                 'collection_name': 'Fedora',
@@ -230,13 +230,13 @@ class FlaskUiCollectionsTest(Modeltests):
                 '<li class="message">Collection &#34;F-17&#34; edited</li>'
                 in output.data)
 
-            collections = model.Collection.all(self.session)
+            collections = model.Collection.by_name(self.session, 'F-17')
             self.assertEqual(
                 "Collection(u'Fedora', u'17', u'Active', u'toshio', "
                 "publishurltemplate=None, pendingurltemplate=None,"
                 " summary=u'Fedora release 17', description=None)",
-                collections[0].__repr__())
-            self.assertEqual(collections[0].branchname, 'F-17')
+                collections.__repr__())
+            self.assertEqual(collections.branchname, 'F-17')
 
 
 if __name__ == '__main__':
