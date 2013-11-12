@@ -1181,6 +1181,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
+        self.session.rollback()
 
         # Wrong collection
         self.assertRaises(pkgdblib.PkgdbException,
@@ -1191,6 +1192,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
+        self.session.rollback()
 
         # Package is not orphaned
         self.assertRaises(pkgdblib.PkgdbException,
@@ -1201,6 +1203,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
+        self.session.rollback()
 
         # PKGDB_BUGZILLA_* configuration not set
         self.assertRaises(pkgdblib.PkgdbException,
@@ -1211,6 +1214,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
+        self.session.rollback()
 
         if pkgdb.APP.config['PKGDB_BUGZILLA_IN_TESTS']:
             pkgdb.lib.utils.get_bz_email_user = mock.MagicMock()
@@ -1235,6 +1239,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='ralph',
                           user=FakeFasUser()
                           )
+        self.session.rollback()
 
         # User must be a packager
         user = FakeFasUser()
@@ -1247,6 +1252,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='pingou',
                           user=user
                           )
+        self.session.rollback()
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
