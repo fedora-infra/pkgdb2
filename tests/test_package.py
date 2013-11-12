@@ -104,6 +104,7 @@ class Packagetests(Modeltests):
             self.session, user='pingou', poc=True
         )
         self.assertEqual(len(packages), 2)
+        print packages
         self.assertEqual(packages[0][0].name, 'guake')
         self.assertEqual(packages[0][1].branchname, 'F-18')
         self.assertEqual(packages[1][1].branchname, 'devel')

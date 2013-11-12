@@ -1027,6 +1027,8 @@ class Package(BASE):
         else:
             query = query.filter(PackageListing.point_of_contact != user)
 
+        print query
+
         return query.all()
 
     def to_json(self, _seen=None):
