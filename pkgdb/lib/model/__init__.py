@@ -665,6 +665,8 @@ class PackageListing(BASE):
 
         return session.query(cls).filter(
             PackageListing.package_id == pkgid
+        ).order_by(
+            PackageListing.collection_id
         ).all()
 
     @classmethod
