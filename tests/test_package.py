@@ -104,10 +104,12 @@ class Packagetests(Modeltests):
             self.session, user='pingou', poc=True
         )
         self.assertEqual(len(packages), 2)
-        print packages
         self.assertEqual(packages[0][0].name, 'guake')
-        self.assertEqual(packages[0][1].branchname, 'F-18')
-        self.assertEqual(packages[1][1].branchname, 'devel')
+
+        expected = set(['devel', 'F-18'])
+        branches = set([packages[0][1].branchname,
+                        packages[1][1].branchname])
+        self.assertEqual(branches.symmetric_difference(expected), set())
 
         packages = model.Package.get_package_of_user(
             self.session, user='pingou', poc=False
