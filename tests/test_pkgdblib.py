@@ -1221,6 +1221,7 @@ class PkgdbLibtests(Modeltests):
             pkgdb.lib.utils.get_bz_email_user.return_value = FakeFasUser
         else:
             pkgdb.lib.utils._set_bugzilla_owner = mock.MagicMock()
+        self.session.commit()
 
         # Orphan package
         pkgdblib.update_pkg_poc(self.session,
@@ -1229,6 +1230,7 @@ class PkgdbLibtests(Modeltests):
                                 user=FakeFasUserAdmin(),
                                 pkg_poc='orphan',
                                 )
+        self.session.commit()
 
         # User cannot unorphan for someone else
         self.assertRaises(pkgdblib.PkgdbException,
@@ -1267,6 +1269,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_user='pingou',
                           user=FakeFasUser()
                           )
+        self.session.commit()
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
