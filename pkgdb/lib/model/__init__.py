@@ -820,6 +820,31 @@ class PackageListing(BASE):
         ).limit(limit)
         return query.all()
 
+    @classmethod
+    def get_critpath_packages(cls, session, branch=None):
+        """ Return the list of packages marked as being critpath.
+
+        :arg session: session with which to connect to the database
+        :kwarg branch: the branchname to restrict the critpath package to.
+
+        """
+        query = session.query(
+            cls
+        ).filter(
+            cls.critpath == True
+        ).order_by(
+            cls.package_id,
+            cls.collection_id
+        )
+        if branch is not None:
+            query = query.join(
+                Collection
+            ).filter(
+                Collection.branchname == branch
+            )
+
+        return query.all()
+
 
 class Package(BASE):
     """Software we are packaging.
