@@ -288,35 +288,6 @@ class UpdateAclPackageForm(wtf.Form):
             ]
 
 
-class PackageStatusForm(wtf.Form):
-    """ Form to update the status of a package in a collection. """
-    pkg_name = wtforms.TextField(
-        'Package name',
-        [wtforms.validators.Required()]
-    )
-    collection_name = wtforms.TextField(
-        'Collection name',
-        [wtforms.validators.Required()]
-    )
-    pkg_status = wtforms.SelectField(
-        'Status',
-        [wtforms.validators.Required()],
-        choices=[(item, item) for item in []]
-    )
-
-    def __init__(self, *args, **kwargs):
-        """ Calls the default constructor with the normal argument but
-        uses the list of collection provided to fill the choices of the
-        drop-down list.
-        """
-        super(PackageStatusForm, self).__init__(*args, **kwargs)
-        if 'pkg_status' in kwargs:
-            self.pkg_status.choices = [
-                (status, status)
-                for status in kwargs['pkg_status']
-            ]
-
-
 class PackageOwnerForm(wtf.Form):
     """ Form to change the point of contact of a package. """
     pkg_name = wtforms.TextField(
