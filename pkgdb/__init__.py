@@ -71,7 +71,7 @@ def is_pkgdb_admin(user):
     return len(admins.intersection(set(user.groups))) > 0
 
 
-def is_pkg_admin(user, package, branch):
+def is_pkg_admin(session, user, package, branch):
     """ Is the user an admin for this package.
     Admin =
         - user has approveacls rights
@@ -83,7 +83,7 @@ def is_pkg_admin(user, package, branch):
         return True
     else:
         return pkgdblib.has_acls(
-            SESSION, user=user.username,
+            session, user=user.username,
             package=package, branch=branch, acl='approveacls')
 
 
