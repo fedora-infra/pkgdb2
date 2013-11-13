@@ -109,6 +109,7 @@ class FlaskApiPackagesTest(Modeltests):
             data = json.loads(output.data)
             ## FIXME: this is damn ugly but there is something wrong between
             ## me and jenkins that needs sorting out.
+            print output.data
             self.assertTrue(
                 data ==
                 {
