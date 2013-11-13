@@ -44,7 +44,8 @@ import pkgdb.lib as pkgdblib
 from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
                    FakeFasGroupValid, FakeFasGroupInvalid,
                    create_collection, create_package,
-                   create_package_listing, create_package_acl)
+                   create_package_listing, create_package_acl,
+                   create_package_critpath)
 
 
 class PkgdbLibtests(Modeltests):
@@ -1354,6 +1355,38 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(pkg_acl[1].acls), 4)
         self.assertEqual(pkg_acl[2].collection.branchname, 'F-19')
         self.assertEqual(len(pkg_acl[2].acls), 4)
+
+    def test_get_critpath_packages(self):
+        """ Test the get_critpath_packages method of pkgdblib. """
+        create_package_acl(self.session)
+
+        pkg_list = pkgdblib.get_critpath_packages(self.session)
+        self.assertEqual(pkg_list, [])
+
+        pkg_list = pkgdblib.get_critpath_packages(
+            self.session, branch='devel')
+        self.assertEqual(pkg_list, [])
+
+        create_package_critpath(self.session)
+
+        pkg_list = pkgdblib.get_critpath_packages(self.session)
+        self.assertEqual(len(pkg_list), 2)
+        self.assertEqual(
+            pkg_list[0].point_of_contact, "kernel-maint")
+        self.assertEqual(
+            pkg_list[0].collection.branchname, "F-18")
+        self.assertEqual(
+            pkg_list[1].point_of_contact, "group::kernel-maint")
+        self.assertEqual(
+            pkg_list[1].collection.branchname, "devel")
+
+        pkg_list = pkgdblib.get_critpath_packages(
+            self.session, branch='devel')
+        self.assertEqual(len(pkg_list), 1)
+        self.assertEqual(
+            pkg_list[0].point_of_contact, "group::kernel-maint")
+        self.assertEqual(
+            pkg_list[0].collection.branchname, "devel")
 
 
 if __name__ == '__main__':

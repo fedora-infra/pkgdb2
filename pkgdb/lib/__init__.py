@@ -724,6 +724,19 @@ def get_acl_packager(session, packager):
         session, packager=packager)
 
 
+def get_critpath_packages(session, branch=None):
+    """ Return the list of ACL associated with a packager.
+
+    :arg session: session with which to connect to the database.
+    :kwarg branch: the name of the branch to retrieve the critpaths of.
+    :returns: a list of ``PackageListing`` marked as being part of critpath.
+    :rtype: list(PackageListing)
+
+    """
+    return model.PackageListing.get_critpath_packages(
+        session, branch=branch)
+
+
 def get_package_maintained(session, packager, poc=True):
     """ Return all the packages and branches where given packager has
     commit acl.
