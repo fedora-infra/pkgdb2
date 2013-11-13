@@ -23,6 +23,8 @@
 Extras API endpoints for the Flask application.
 '''
 
+import operator
+
 import flask
 
 import pkgdb.lib as pkgdblib
@@ -269,5 +271,52 @@ def api_vcs():
     else:
         return flask.Response(
             intro + "\n".join(acls),
+            content_type="text/plain;charset=UTF-8"
+        )
+
+
+@API.route('/critpath/')
+@API.route('/critpath')
+def api_critpath():
+    '''Return the list of package marked as critpath for all active release
+    of fedora.
+
+    :kwarg out_format: Specify if the output if text or json.
+
+    '''
+
+    out_format = flask.request.args.get('format', 'text')
+    if out_format not in ('text', 'json'):
+        out_format = 'text'
+
+    output = {}
+
+    active_collections = pkgdblib.search_collection(
+        SESSION, '*', status='Under Development')
+    active_collections.extend(pkgdblib.search_collection(
+        SESSION, '*', status='Active'))
+
+    for collection in active_collections:
+        if collection.name != 'Fedora':
+            continue
+        pkgs = pkgdblib.get_critpath_packages(
+                SESSION, branch=collection.branchname)
+        if not pkgs:
+            continue
+        output[collection.branchname] = [pkg.package.name for pkg in pkgs]
+
+    if out_format == 'json':
+        output = {"pkgs": output}
+        return flask.jsonify(output)
+    else:
+        output_str = ""
+        keys = output.keys()
+        keys.reverse()
+        for key in keys:
+            output_str += "== %s ==\n" % key
+            for pkg in output[key]:
+                output_str += "* %s\n" % pkg
+        return flask.Response(
+            output_str,
             content_type="text/plain;charset=UTF-8"
         )

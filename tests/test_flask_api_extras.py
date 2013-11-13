@@ -37,7 +37,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb
 from pkgdb.lib import model
 from tests import (Modeltests, FakeFasUser,
-                   create_package_acl, create_package_acl2)
+                   create_package_acl, create_package_acl2,
+                   create_package_critpath)
 
 
 class FlaskApiExtrasTest(Modeltests):
@@ -338,6 +339,64 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
                 }
             },
             u'title': u'Fedora Package Database -- VCS ACLs'}
+
+        self.assertEqual(data, expected)
+
+    def test_api_critpath_empty(self):
+        """ Test the api_critpath function with an empty database. """
+
+        # Empty DB
+        output = self.app.get('/api/critpath/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = ""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/critpath/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/critpath/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        expected = {"pkgs":{}}
+
+        self.assertEqual(data, expected)
+
+    def test_api_critpath_filled(self):
+        """ Test the api_critpath function with a filled database. """
+        # Fill the DB
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        output = self.app.get('/api/critpath/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """== devel ==
+* kernel
+== F-18 ==
+* kernel
+"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/critpath/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/critpath/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            u'pkgs': {
+                u'F-18': [
+                    u"kernel"
+                ],
+                u'devel': [
+                    u"kernel"
+                ]
+            },
+        }
 
         self.assertEqual(data, expected)
 
