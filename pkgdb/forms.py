@@ -138,6 +138,11 @@ class AddPackageForm(wtf.Form):
         [wtforms.validators.Required()],
         default=True
     )
+    pkg_critpath = wtforms.BooleanField(
+        'Package in critpath',
+        [wtforms.validators.Required()],
+        default=False
+    )
     pkg_collection = wtforms.SelectMultipleField(
         'Collection',
         [wtforms.validators.Required()],

@@ -898,14 +898,14 @@ class Package(BASE):
                 self.upstream_url, self.review_url, self.shouldopen)
 
     def create_listing(self, collection, point_of_contact, statusname,
-                       author_name=None):
+                       critpath=False):
         """Create a new PackageListing branch on this Package.
 
         :arg collection: Collection that the new PackageListing lives on
         :arg owner: The owner of the PackageListing
         :arg statusname: Status to set the PackageListing to
-        :kwarg author_name: Author of the change.  Note: will remove when
-            logging is made generic
+        :kwarg critpath: a boolean specifying if the package is marked as
+            being in critpath.
         :returns: The new PackageListing object.
 
         This creates a new PackageListing for this Package.
@@ -914,7 +914,8 @@ class Package(BASE):
         """
         pkg_listing = PackageListing(point_of_contact=point_of_contact,
                                      status=statusname,
-                                     collection_id=collection.id)
+                                     collection_id=collection.id,
+                                     critpath=critpath)
         pkg_listing.package_id = self.id
 
         return pkg_listing

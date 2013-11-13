@@ -172,6 +172,7 @@ def package_new():
         pkg_review_url = form.pkg_reviewURL.data
         pkg_status = form.pkg_status.data
         pkg_shouldopen = form.pkg_shouldopen.data
+        pkg_critpath = form.pkg_critpath.data
         pkg_collection = form.pkg_collection.data
         pkg_poc = form.pkg_poc.data
         pkg_upstream_url = form.pkg_upstreamURL.data
@@ -184,6 +185,7 @@ def package_new():
                 pkg_reviewURL=pkg_review_url,
                 pkg_status=pkg_status,
                 pkg_shouldopen=pkg_shouldopen,
+                pkg_critpath=pkg_critpath,
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
                 pkg_upstreamURL=pkg_upstream_url,

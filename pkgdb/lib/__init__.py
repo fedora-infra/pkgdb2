@@ -99,7 +99,8 @@ def create_session(db_url, debug=False, pool_recycle=3600):
 
 def add_package(session, pkg_name, pkg_summary, pkg_status,
                 pkg_collection, pkg_poc, user, pkg_reviewURL=None,
-                pkg_shouldopen=None, pkg_upstreamURL=None):
+                pkg_shouldopen=None, pkg_upstreamURL=None,
+                pkg_critpath=False):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
 
@@ -113,6 +114,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     :kwarg pkg_reviewURL: the url of the review-request on the bugzilla
     :kwarg pkg_shouldopen: a boolean
     :kwarg pkg_upstreamURL: the url of the upstream project.
+    :kwarg pkg_critpath: a boolean specifying if the package is marked as
+        being in critpath.
     :returns: a message informating that the package has been successfully
         created.
     :rtype: str()
@@ -157,7 +160,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         collection = model.Collection.by_name(session, collec)
         pkglisting = package.create_listing(point_of_contact=pkg_poc,
                                             collection=collection,
-                                            statusname=pkg_status)
+                                            statusname=pkg_status,
+                                            critpath=pkg_critpath)
         session.add(pkglisting)
         try:
             session.flush()

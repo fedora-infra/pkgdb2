@@ -68,6 +68,7 @@ def api_package_new():
         pkg_collection = form.pkg_collection.data
         pkg_poc = form.pkg_poc.data
         pkg_upstream_url = form.pkg_upstreamURL.data
+        pkg_critpath = form.pkg_critpath.data
 
         try:
             message = pkgdblib.add_package(
@@ -80,6 +81,7 @@ def api_package_new():
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
                 pkg_upstreamURL=pkg_upstream_url,
+                pkg_critpath=pkg_critpath,
                 user=flask.g.fas_user
             )
             SESSION.commit()
