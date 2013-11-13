@@ -131,9 +131,11 @@ def package_info(package):
         ## in their own table otherwise.
         planned_acls = set(['approveacls', 'commit', 'watchbugzilla',
                             'watchcommits'])
-        seen_acls = set([aclobj['acl'] for aclobj in acls[acl.fas_name]])
-        for aclname in planned_acls - seen_acls:
-            acls[acl.fas_name].append({'acl': aclname, 'status': ''})
+
+        for fas_name in acls:
+            seen_acls = set([acl['acl'] for acl in acls[fas_name]])
+            for aclname in planned_acls - seen_acls:
+                acls[fas_name].append({'acl': aclname, 'status': ''})
         tmp['acls'] = acls
 
         package_acls.append(tmp)
