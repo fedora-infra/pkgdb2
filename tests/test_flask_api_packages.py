@@ -109,30 +109,28 @@ class FlaskApiPackagesTest(Modeltests):
             data = json.loads(output.data)
             ## FIXME: this is damn ugly but there is something wrong between
             ## me and jenkins that needs sorting out.
-            print output.data
             self.assertTrue(
                 data ==
                 {
-                    "error": "Invalid input submitted",
-                    "error_detail": [
-                        "pkg_status: This field is required.",
-                        "pkg_poc: This field is required.",
-                        "pkg_collection: '' is not a valid choice for this "
-                        "field",
-                    ],
-                    "output": "notok"
+                  "error": "Invalid input submitted",
+                  "error_detail": [
+                    "pkg_status: This field is required.",
+                    "pkg_poc: This field is required.",
+                    "pkg_collection: '' is not a valid choice for this field",
+                    "pkg_critpath: This field is required.",
+                    "pkg_shouldopen: This field is required."
+                  ],
+                  "output": "notok"
                 }
                 or data ==
                 {
-                    "error": "Invalid input submitted",
-                    "error_detail": [
-                        "pkg_status: This field is required.",
-                        "pkg_poc: This field is required.",
-                        "pkg_collection: '' is not a valid choice for this "
-                        "field",
-                        "pkg_shouldopen: This field is required."
-                    ],
-                    "output": "notok"
+                  "error": "Invalid input submitted",
+                  "error_detail": [
+                    "pkg_status: This field is required.",
+                    "pkg_poc: This field is required.",
+                    "pkg_collection: '' is not a valid choice for this field"
+                  ],
+                  "output": "notok"
                 }
             )
 
