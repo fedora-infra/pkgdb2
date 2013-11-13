@@ -127,14 +127,14 @@ def package_info(package):
             else:
                 acls[acl.fas_name] = [tmp2]
 
-            ## This list is a little hacky, but we would have to save ACLs
-            ## in their own table otherwise.
-            planned_acls = set(['approveacls', 'commit', 'watchbugzilla',
-                                'watchcommits'])
-            seen_acls = set([aclobj['acl'] for aclobj in acls[acl.fas_name]])
-            for aclname in planned_acls - seen_acls:
-                acls[acl.fas_name].append({'acl': aclname, 'status': ''})
-            tmp['acls'] = acls
+        ## This list is a little hacky, but we would have to save ACLs
+        ## in their own table otherwise.
+        planned_acls = set(['approveacls', 'commit', 'watchbugzilla',
+                            'watchcommits'])
+        seen_acls = set([aclobj['acl'] for aclobj in acls[acl.fas_name]])
+        for aclname in planned_acls - seen_acls:
+            acls[acl.fas_name].append({'acl': aclname, 'status': ''})
+        tmp['acls'] = acls
 
         package_acls.append(tmp)
         if is_pkg_admin(flask.g.fas_user, package.name,
