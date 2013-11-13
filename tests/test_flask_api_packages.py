@@ -85,7 +85,8 @@ class FlaskApiPackagesTest(Modeltests):
                         "pkg_reviewURL: This field is required.",
                         "pkg_poc: This field is required.",
                         "pkg_status: Not a valid choice",
-                        "pkg_name: This field is required."
+                        "pkg_name: This field is required.",
+                        "pkg_critpath: This field is required."
                     ],
                     "output": "notok"
                 }
@@ -97,6 +98,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
             'pkg_status': '',
             'pkg_shouldopen': '',
+            'pkg_critpath': '',
             'pkg_collection': '',
             'pkg_poc': '',
             'pkg_upstreamURL': '',
@@ -142,6 +144,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_collection': 'devel',
             'pkg_poc': 'mclasen',
             'pkg_upstreamURL': 'http://www.gnome.org/',
+            'pkg_critpath': False,
         }
         with user_set(pkgdb.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -170,6 +173,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_collection': 'devel',
             'pkg_poc': 'mclasen',
             'pkg_upstreamURL': 'http://www.gnome.org/',
+            'pkg_critpath': False,
         }
         with user_set(pkgdb.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -196,6 +200,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_collection': 'devel',
             'pkg_poc': 'mclasen',
             'pkg_upstreamURL': 'http://www.gnome.org/',
+            'pkg_critpath': False,
         }
         with user_set(pkgdb.APP, user):
             output = self.app.post('/api/package/new/', data=data)

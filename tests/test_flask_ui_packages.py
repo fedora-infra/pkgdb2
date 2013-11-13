@@ -120,6 +120,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'pkg_collection': '',
                 'pkg_poc': '',
                 'pkg_upstreamURL': '',
+                'pkg_critpath': '',
                 'csrf_token': csrf_token,
             }
 
@@ -144,6 +145,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'pkg_collection': 'devel',
                 'pkg_poc': 'mclasen',
                 'pkg_upstreamURL': '',
+                'pkg_critpath': False,
                 'csrf_token': csrf_token,
             }
 
