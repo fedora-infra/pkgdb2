@@ -49,10 +49,11 @@ from pkgdb.lib import model
 #DB_PATH = 'sqlite:///:memory:'
 ## A file database is required to check the integrity, don't ask
 DB_PATH = 'sqlite:////tmp/test.sqlite'
+FAITOUT_URL = 'http://209.132.184.152/faitout/'
 
 try:
     import requests
-    req = requests.get('http://209.132.184.152/faitout/new')
+    req = requests.get('%s/new' % FAITOUT_URL)
     if req.status_code == 200:
         DB_PATH = req.text
         print 'Using faitout at: %s' % DB_PATH
@@ -134,14 +135,16 @@ class Modeltests(unittest.TestCase):
                 os.unlink(dbfile)
 
         self.session.rollback()
+        self.session.close()
 
         if DB_PATH.startswith('postgres'):
             if 'localhost' in DB_PATH:
                 model.drop_tables(DB_PATH, self.session.bind)
             else:
                 db_name = DB_PATH.rsplit('/', 1)[1]
-                requests.get(
-                    'http://209.132.184.152/faitout/clean/%s' % db_name)
+                req = requests.get(
+                    '%s/clean/%s' % (FAITOUT_URL, db_name))
+                print req.text
 
 
 def create_collection(session):
