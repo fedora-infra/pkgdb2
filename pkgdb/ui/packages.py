@@ -139,7 +139,7 @@ def package_info(package):
         tmp['acls'] = acls
 
         package_acls.append(tmp)
-        if is_pkg_admin(flask.g.fas_user, package.name,
+        if is_pkg_admin(SESSION, flask.g.fas_user, package.name,
                         pkg.collection.branchname):
             branch_admin.append(pkg.collection.branchname)
 

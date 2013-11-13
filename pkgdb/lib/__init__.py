@@ -268,7 +268,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         raise PkgdbException('No collection found by the name of %s'
                              % pkg_branch)
 
-    if not pkgdb.is_pkg_admin(user, package.name, pkg_branch):
+    if not pkgdb.is_pkg_admin(session, user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
@@ -1124,7 +1124,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     if not pkg_listing.status in ('Orphaned', 'Retired'):
         raise PkgdbException('Package is not orphaned on %s' % pkg_branch)
 
-    if not pkgdb.is_pkg_admin(user, package.name, pkg_branch):
+    if not pkgdb.is_pkg_admin(session, user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
