@@ -34,7 +34,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb.lib import model
-from tests import Modeltests, create_package_listing, create_package_acl
+from tests import (Modeltests, create_package_listing, create_package_acl,
+                   create_package_critpath)
 
 
 class PackageListingtests(Modeltests):
@@ -234,6 +235,39 @@ class PackageListingtests(Modeltests):
         self.assertEqual(len(pkg_list[1].acls), 4)
         self.assertEqual(pkg_list[2].collection.branchname, 'F-19')
         self.assertEqual(len(pkg_list[2].acls), 4)
+
+    def test_get_critpath_packages(self):
+        """ Test the get_critpath_packages method of PackageListing. """
+        create_package_acl(self.session)
+
+        pkg_list = model.PackageListing.get_critpath_packages(self.session)
+        self.assertEqual(pkg_list, [])
+
+        pkg_list = model.PackageListing.get_critpath_packages(
+            self.session, branch='devel')
+        self.assertEqual(pkg_list, [])
+
+        create_package_critpath(self.session)
+
+        pkg_list = model.PackageListing.get_critpath_packages(self.session)
+        self.assertEqual(len(pkg_list), 2)
+        self.assertEqual(
+            pkg_list[0].point_of_contact, "kernel-maint")
+        self.assertEqual(
+            pkg_list[0].collection.branchname, "F-18")
+        self.assertEqual(
+            pkg_list[1].point_of_contact, "group::kernel-maint")
+        self.assertEqual(
+            pkg_list[1].collection.branchname, "devel")
+
+        pkg_list = model.PackageListing.get_critpath_packages(
+            self.session, branch='devel')
+        self.assertEqual(len(pkg_list), 1)
+        self.assertEqual(
+            pkg_list[0].point_of_contact, "group::kernel-maint")
+        self.assertEqual(
+            pkg_list[0].collection.branchname, "devel")
+
 
 
 if __name__ == '__main__':
