@@ -186,7 +186,7 @@ def api_collection_status(collection):
 @API.route('/collections/<pattern>/')
 @API.route('/collections/<pattern>')
 def api_collection_list(pattern=None):
-    '''``/api/collection/<pattern>/`` or ``/api/collections/?pattern=<pattern>``
+    '''``/api/collections/<pattern>/`` or ``/api/collections/?pattern=<pattern>``
     List the collections based on a pattern. If no pattern is provided, it
     will return all the collection.
 
