@@ -312,6 +312,41 @@ def create_package_listing(session):
     session.commit()
 
 
+def create_package_critpath(session):
+    """ Create package in critpath. """
+    package = model.Package(name = 'kernel',
+                            summary = 'The Linux kernel',
+                            status = 'Approved',
+                            review_url='https://bugzilla.redhat.com/123',
+                            shouldopen=None,
+                            upstream_url='http://www.kernel.org/',
+                            )
+    session.add(package)
+
+    f18_collec = model.Collection.by_name(session, 'F-18')
+    devel_collec = model.Collection.by_name(session, 'devel')
+
+    # Pkg: geany - Collection: F18 - Approved
+    pkgltg = model.PackageListing(point_of_contact='kernel-maint',
+                                  status='Approved',
+                                  package_id=package.id,
+                                  collection_id=f18_collec.id,
+                                  critpath=True,
+                                  )
+    session.add(pkgltg)
+
+    # Pkg: geany - Collection: devel - Approved
+    pkgltg = model.PackageListing(point_of_contact='group::kernel-maint',
+                                  status='Approved',
+                                  package_id=package.id,
+                                  collection_id=devel_collec.id,
+                                  critpath=True,
+                                  )
+    session.add(pkgltg)
+
+    session.commit()
+
+
 def create_package_acl(session):
     """ Add packagers to packages. """
     create_package_listing(session)
