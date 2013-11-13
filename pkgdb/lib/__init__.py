@@ -1124,7 +1124,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     if not pkg_listing.status in ('Orphaned', 'Retired'):
         raise PkgdbException('Package is not orphaned on %s' % pkg_branch)
 
-    if not pkgdb.is_pkg_admin(session, user, package.name, pkg_branch):
+    if not pkgdb.is_pkgdb_admin(user):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
