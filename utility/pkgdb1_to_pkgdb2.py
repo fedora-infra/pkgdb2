@@ -177,6 +177,7 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
     ''' Convert the PackageListing from pkgdb1 to pkgdb2.
     '''
     cnt = 0
+    failed_pkg = set()
     for pkg in pkg1_sess.query(P1Packagelisting).all():
         poc = pkg.owner
         if poc == 'perl-sig':
@@ -202,11 +203,16 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
                     status='Approved'
                 )
                 pkg2_sess.add(new_pkglistacl)
+        try:
+            pkg2_sess.flush()
+        except Exception, err:
+            pkg2_sess.rollback()
+            failed_pkg.add(str(pkg.packageid))
         cnt += 1
-        if cnt % 10000 == 0:
-            pkg2_sess.commit()
     pkg2_sess.commit()
     print '%s Package listing added' % cnt
+    print '%s packages failed' % len(failed_pkg)
+    print ', '.join(failed_pkg)
 
 
 def convert_packagelistingacl(pkg1_sess, pkg2_sess):
@@ -238,7 +244,7 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
             )
             try:
                 pkg2_sess.add(new_pkglistacl)
-                pkg2_sess.commit()
+                pkg2_sess.flush()
             except sqlalchemy.exc.IntegrityError:
                 pkg2_sess.rollback()
             cnt += 1
