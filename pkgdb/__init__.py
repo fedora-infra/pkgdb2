@@ -23,6 +23,7 @@
 Top level of the pkgdb Flask application.
 '''
 
+import logging
 import os
 
 import flask
@@ -36,9 +37,15 @@ __version__ = '0.1.0'
 __api_version__ = '0.1.0'
 
 APP = flask.Flask(__name__)
+LOG = logging.getLogger(__name__)
+
 APP.config.from_object('pkgdb.default_config')
 if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
     APP.config.from_envvar('PKGDB_CONFIG')
+
+if APP.config.get('LOGGER_CONFIG_FILE') \
+        and os.path.exists(APP.config['LOGGER_CONFIG_FILE']):
+    logging.config.fileConfig(APP.config['LOGGER_CONFIG_FILE'])
 
 # Set up FAS extension
 FAS = FAS(APP)
