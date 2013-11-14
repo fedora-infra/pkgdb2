@@ -86,7 +86,6 @@ class FlaskApiPackagesTest(Modeltests):
                         "pkg_poc: This field is required.",
                         "pkg_status: Not a valid choice",
                         "pkg_name: This field is required.",
-                        "pkg_critpath: This field is required."
                     ],
                     "output": "notok"
                 }
