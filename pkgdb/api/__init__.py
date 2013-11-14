@@ -91,6 +91,6 @@ def api():
 def api_version():
     ''' Display the api version information. '''
     return flask.Response(
-            __api_version__,
-            content_type="text/plain;charset=UTF-8"
-        )
+        __api_version__,
+        content_type="text/plain;charset=UTF-8"
+    )
