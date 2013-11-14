@@ -175,7 +175,7 @@ engineers need to create packages and spin them into a distribution."""
 
         output = self.app.get('/logout/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Fedora Package Database -- Version 1.0.0</h1>'
+        self.assertTrue('<h1>Fedora Package Database -- Version'
                         in output.data)
 
     def test_api(self):
