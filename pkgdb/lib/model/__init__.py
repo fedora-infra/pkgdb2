@@ -347,7 +347,9 @@ class PackageListingAcl(BASE):
 
         """
         try:
-            personpkg = session.query(PackageListingAcl).filter(
+            personpkg = session.query(
+                PackageListingAcl
+            ).filter(
                 PackageListingAcl.fas_name == user
             ).filter(
                 PackageListingAcl.packagelisting_id == packagelisting_id
