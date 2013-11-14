@@ -293,14 +293,14 @@ def api_critpath():
 
     active_collections = pkgdblib.search_collection(
         SESSION, '*', status='Under Development')
-    active_collections.extend(pkgdblib.search_collection(
-        SESSION, '*', status='Active'))
+    active_collections.extend(
+        pkgdblib.search_collection(SESSION, '*', status='Active'))
 
     for collection in active_collections:
         if collection.name != 'Fedora':
             continue
         pkgs = pkgdblib.get_critpath_packages(
-                SESSION, branch=collection.branchname)
+            SESSION, branch=collection.branchname)
         if not pkgs:
             continue
         output[collection.branchname] = [pkg.package.name for pkg in pkgs]
