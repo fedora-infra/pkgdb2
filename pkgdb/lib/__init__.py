@@ -62,7 +62,8 @@ def _validate_poc(pkg_poc):
         # is pkg_poc a valid group (of type pkgdb)
         try:
             group_obj = pkgdb.lib.utils.get_fas_group(group)
-        except FASError:  # pragma: no cover
+        except FASError as err:  # pragma: no cover
+            pkgdb.LOG.exception(err)
             raise PkgdbException('Could not find group "%s" ' % group)
         if group_obj.group_type != 'pkgdb':
             raise PkgdbException(
@@ -153,6 +154,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     try:
         session.flush()
     except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb.LOG.exception(err)
         session.rollback()
         raise PkgdbException('Could not create package')
 
@@ -166,6 +168,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         try:
             session.flush()
         except SQLAlchemyError, err:  # pragma: no cover
+            pkgdb.LOG.exception(err)
             session.rollback()
             raise PkgdbException('Could not add packages to collections')
         else:
@@ -198,6 +201,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
         session.flush()
         return 'Package created'
     except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb.LOG.exception(err)
         raise PkgdbException('Could not add ACLs')
 
 
@@ -818,7 +822,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
         ))
         return 'Collection "%s" created' % collection.branchname
     except SQLAlchemyError, err:  # pragma: no cover
-        print err.message
+        pkgdb.LOG.exception(err)
         raise PkgdbException('Could not add Collection to the database.')
 
 
@@ -904,7 +908,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
             ))
             return 'Collection "%s" edited' % collection.branchname
         except SQLAlchemyError, err:  # pragma: no cover
-            print err.message
+            pkgdb.LOG.exception(err)
             raise PkgdbException('Could not edit Collection.')
 
 
@@ -955,6 +959,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
         raise PkgdbException('Could not find collection "%s"' %
                              clt_branchname)
     except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb.LOG.exception(err)
         raise PkgdbException('Could not update the status of collection'
                              '"%s".' % clt_branchname)
 
@@ -1242,6 +1247,7 @@ def add_branch(session, clt_from, clt_to, user):
             try:
                 pkglist.branch(session, clt_to)
             except SQLAlchemyError, err:  # pragma: no cover
+                pkgdb.LOG.exception(err)
                 messages.append(err)
 
     # Should we raise a PkgdbException if messages != [], or just return
