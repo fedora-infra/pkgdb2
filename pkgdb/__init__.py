@@ -33,6 +33,7 @@ from flask.ext.fas_openid import FAS
 
 
 __version__ = '0.1.0'
+__api_version__ = '0.1.0'
 
 APP = flask.Flask(__name__)
 APP.config.from_object('pkgdb.default_config')

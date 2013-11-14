@@ -28,7 +28,7 @@ import flask
 
 API = flask.Blueprint('api_ns', __name__, url_prefix='/api')
 
-from pkgdb import __version__
+from pkgdb import __version__, __api_version__
 from pkgdb.doc_utils import load_doc
 
 from pkgdb.api import acls
@@ -84,3 +84,13 @@ def api():
             api_acl_get, api_acl_update, api_acl_reassign,
         ]
     )
+
+
+@API.route('/version/')
+@API.route('/version')
+def api_version():
+    ''' Display the api version information. '''
+    return flask.Response(
+            __api_version__,
+            content_type="text/plain;charset=UTF-8"
+        )
