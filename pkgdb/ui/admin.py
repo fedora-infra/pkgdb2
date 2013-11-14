@@ -48,6 +48,7 @@ def admin_log():
 
     from_date = flask.request.args.get('from_date', None)
     package = flask.request.args.get('package', None)
+    refresh = flask.request.args.get('refresh', False)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
     page = flask.request.args.get('page', 1)
 
@@ -87,6 +88,7 @@ def admin_log():
 
     return flask.render_template(
         'list_logs.html',
+        refresh=refresh,
         logs=logs,
         cnt_logs=cnt_logs,
         total_page=total_page,

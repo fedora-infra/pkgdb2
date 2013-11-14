@@ -2,6 +2,12 @@
 
 {% block title %} {{ super() }} {% endblock %}
 
+{%block header %}
+{% if refresh %}
+<meta http-equiv="refresh" content="5" >
+{% endif %}
+{% endblock %}
+
 {%block tag %}admin{% endblock %}
 
 
@@ -10,6 +16,7 @@
 <form action="{{ url_for('.admin_log') }}" method="get">
     Restrict to package: <input type="text" name="package" />
     From date: <input id="from_date" type="text" name="from_date" />
+    Auto-refresh: <input id="refresh" type="checkbox" name="refresh" />
     <input type="submit" class="submit positive button" value="filter">
 </form>
 {% endblock %}
@@ -17,6 +24,10 @@
 {% block content %}
 
 <h1>Logs</h1>
+
+{% if refresh %}
+This page should refresh automatically every 5 seconds
+{% endif %}
 
 {% if total_page %}
 <table>
