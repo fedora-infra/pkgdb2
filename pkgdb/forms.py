@@ -42,10 +42,6 @@ class AddCollectionForm(wtf.Form):
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    collection_publishURLTemplate = wtforms.TextField('Publish URL template')
-    collection_pendingURLTemplate = wtforms.TextField('Pending URL template')
-    collection_summary = wtforms.TextField('Summary')
-    collection_description = wtforms.TextField('Description')
     collection_branchname = wtforms.TextField(
         'Branch name',
         [wtforms.validators.Required()]
@@ -71,12 +67,6 @@ class AddCollectionForm(wtf.Form):
             collection = kwargs['collection']
             self.collection_name.data = collection.name
             self.collection_version.data = collection.version
-            self.collection_publishURLTemplate.data = \
-                collection.publishURLTemplate
-            self.collection_pendingURLTemplate.data = \
-                collection.pendingURLTemplate
-            self.collection_summary.data = collection.summary
-            self.collection_description.data = collection.description
             self.collection_branchname.data = collection.branchname
             self.collection_distTag.data = collection.distTag
             self.collection_git_branch_name.data = collection.git_branch_name

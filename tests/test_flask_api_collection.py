@@ -152,8 +152,7 @@ class FlaskApiCollectionTest(Modeltests):
                          ['collections'])
         self.assertEqual(len(output['collections']), 4)
         self.assertEqual(set(output['collections'][0].keys()),
-                         set(['pendingurltemplate', 'publishurltemplate',
-                              'branchname', 'version', 'name']))
+                         set(['branchname', 'version', 'name']))
 
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
@@ -161,8 +160,7 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['collections'])
         self.assertEqual(set(output['collections'][0].keys()),
-                         set(['pendingurltemplate', 'publishurltemplate',
-                              'branchname', 'version', 'name']))
+                         set(['branchname', 'version', 'name']))
         self.assertEqual(len(output['collections']), 2)
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
         self.assertEqual(output['collections'][0]['version'], '17')
@@ -184,18 +182,19 @@ class FlaskApiCollectionTest(Modeltests):
             output = self.app.post('/api/collection/new/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
+            print output.data
             self.assertEqual(
                 data,
                 {
-                    "output": "notok",
+                    "error": "Invalid input submitted",
                     "error_detail": [
                         "collection_status: Not a valid choice",
                         "collection_name: This field is required.",
                         "collection_branchname: This field is required.",
-                        "collection_distTag: This field is required.",
                         "collection_version: This field is required.",
+                        "collection_distTag: This field is required.",
                     ],
-                    "error": "Invalid input submitted",
+                    "output": "notok",
                 }
             )
 

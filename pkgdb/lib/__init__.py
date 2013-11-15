@@ -765,9 +765,7 @@ def get_package_maintained(session, packager, poc=True):
 
 
 def add_collection(session, clt_name, clt_version, clt_status,
-                   clt_publishurl, clt_pendingurl, clt_summary,
-                   clt_description, clt_branchname, clt_disttag,
-                   clt_gitbranch, user):
+                   clt_branchname, clt_disttag, clt_gitbranch, user):
     """ Add a new collection to the database.
 
     This method only flushes the new object, nothing is committed to the
@@ -777,10 +775,6 @@ def add_collection(session, clt_name, clt_version, clt_status,
     :kwarg clt_name: the name of the collection.
     :kwarg clt_version: the version of the collection.
     :kwarg clt_status: the status of the collection.
-    :kwarg clt_publishurl: the publish url of the collection.
-    :kwarg clt_pendingurl: the pending url of the collection.
-    :kwarg clt_summary: the summary of the collection.
-    :kwarg clt_description: the description of the collection.
     :kwarg clt_branchname: the branchname of the collection.
     :kwarg clt_disttag: the dist tag of the collection.
     :kwarg clt_gitbranch: the git branch name of the collection.
@@ -805,10 +799,6 @@ def add_collection(session, clt_name, clt_version, clt_status,
         version=clt_version,
         status=clt_status,
         owner=user.username,
-        publishURLTemplate=clt_publishurl,
-        pendingURLTemplate=clt_pendingurl,
-        summary=clt_summary,
-        description=clt_description,
         branchname=clt_branchname,
         distTag=clt_disttag,
         git_branch_name=clt_gitbranch,
@@ -827,9 +817,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
 
 def edit_collection(session, collection, clt_name=None, clt_version=None,
-                    clt_status=None, clt_publishurl=None, clt_pendingurl=None,
-                    clt_summary=None, clt_description=None,
-                    clt_branchname=None, clt_disttag=None,
+                    clt_status=None, clt_branchname=None, clt_disttag=None,
                     clt_gitbranch=None, user=None):
     """ Edit a specified collection
 
@@ -841,10 +829,6 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     :kwarg clt_name: the new name of the collection.
     :kwarg clt_version: the new version of the collection.
     :kwarg clt_status: the new status of the collection.
-    :kwarg clt_publishurl: the new publish url of the collection.
-    :kwarg clt_pendingurl: the new pending url of the collection.
-    :kwarg clt_summary: the new summary of the collection.
-    :kwarg clt_description: the new description of the collection.
     :kwarg clt_branchname: the new branchname of the collection.
     :kwarg clt_disttag: the new dist tag of the collection.
     :kwarg clt_gitbranch: the new git branch name of the collection.
@@ -875,18 +859,6 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if clt_status and clt_status != collection.status:
         collection.status = clt_status
         edited.append('status')
-    if clt_publishurl and clt_publishurl != collection.publishURLTemplate:
-        collection.publishURLTemplate = clt_publishurl
-        edited.append('publishURLTemplate')
-    if clt_pendingurl and clt_pendingurl != collection.pendingURLTemplate:
-        collection.pendingURLTemplate = clt_pendingurl
-        edited.append('pendingURLTemplate')
-    if clt_summary and clt_summary != collection.summary:
-        collection.summary = clt_summary
-        edited.append('pendingURLsummary')
-    if clt_description and clt_description != collection.description:
-        collection.description = clt_description
-        edited.append('description')
     if clt_branchname and clt_branchname != collection.branchname:
         collection.branchname = clt_branchname
         edited.append('branchname')

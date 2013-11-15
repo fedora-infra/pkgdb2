@@ -50,9 +50,8 @@ class Collectiontests(Modeltests):
         create_collection(self.session)
         collections = model.Collection.all(self.session)
         self.assertEqual(collections[0].branchname, 'el6')
-        self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
-                         "publishurltemplate=None, pendingurltemplate=None,"
-                         " summary=u'Fedora 17 release', description=None)",
+        self.assertEqual("Collection(u'Fedora', u'17', u'Active', "
+                         "owner:u'toshio')",
                          collections[1].__repr__())
         self.assertEqual(collections[2].branchname, 'F-18')
 
@@ -64,9 +63,8 @@ class Collectiontests(Modeltests):
         self.assertEqual(len(collections), 0)
 
         collections = model.Collection.search(self.session, 'F-%', 'Active')
-        self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
-                         "publishurltemplate=None, pendingurltemplate=None,"
-                         " summary=u'Fedora 17 release', description=None)",
+        self.assertEqual("Collection(u'Fedora', u'17', u'Active', "
+                         "owner:u'toshio')",
                          collections[0].__repr__())
 
         collections = model.Collection.search(self.session, 'F-%')
@@ -93,9 +91,8 @@ class Collectiontests(Modeltests):
         create_collection(self.session)
         collection = model.Collection.by_name(self.session, 'F-18')
         collection = collection.to_json()
-        self.assertEqual(set(collection.keys()), set([
-            'pendingurltemplate', 'publishurltemplate', 'branchname',
-            'version', 'name']))
+        self.assertEqual(
+            set(collection.keys()), set(['branchname', 'version', 'name']))
 
 
 if __name__ == '__main__':

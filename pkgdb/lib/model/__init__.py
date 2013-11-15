@@ -446,10 +446,6 @@ class Collection(BASE):
     status = sa.Column(sa.String(50), sa.ForeignKey('CollecStatus.status'),
                        nullable=False)
     owner = sa.Column(sa.String(32), nullable=False)
-    publishURLTemplate = sa.Column(sa.Text)
-    pendingURLTemplate = sa.Column(sa.Text)
-    summary = sa.Column(sa.Text)
-    description = sa.Column(sa.Text)
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
     distTag = sa.Column(sa.String(32), unique=True, nullable=False)
     git_branch_name = sa.Column(sa.Text)
@@ -463,17 +459,11 @@ class Collection(BASE):
 
     # pylint: disable-msg=R0902, R0903
     def __init__(self, name, version, status, owner,
-                 publishURLTemplate=None, pendingURLTemplate=None,
-                 summary=None, description=None, branchname=None,
-                 distTag=None, git_branch_name=None):
+                 branchname=None, distTag=None, git_branch_name=None):
         self.name = name
         self.version = version
         self.status = status
         self.owner = owner
-        self.publishURLTemplate = publishURLTemplate
-        self.pendingURLTemplate = pendingURLTemplate
-        self.summary = summary
-        self.description = description
         self.branchname = branchname
         self.distTag = distTag
         self.git_branch_name = git_branch_name
@@ -482,11 +472,8 @@ class Collection(BASE):
         """ The string representation of this object.
 
         """
-        return 'Collection(%r, %r, %r, %r, publishurltemplate=%r,' \
-               ' pendingurltemplate=%r, summary=%r, description=%r)' % (
-                   self.name, self.version, self.status, self.owner,
-                   self.publishURLTemplate, self.pendingURLTemplate,
-                   self.summary, self.description)
+        return 'Collection(%r, %r, %r, owner:%r)' % (
+                   self.name, self.version, self.status, self.owner)
 
     def to_json(self, _seen=None):
         """ Used by fedmsg to serialize Collections in messages.
@@ -496,8 +483,6 @@ class Collection(BASE):
             name=self.name,
             version=self.version,
             branchname=self.branchname,
-            publishurltemplate=self.publishURLTemplate,
-            pendingurltemplate=self.pendingURLTemplate,
         )
 
     @classmethod

@@ -108,10 +108,6 @@ def collection_edit(collection):
         clt_name = form.collection_name.data
         clt_version = form.collection_version.data
         clt_status = form.collection_status.data
-        clt_publishurl = form.collection_publishURLTemplate.data
-        clt_pendingurl = form.collection_pendingURLTemplate.data
-        clt_summary = form.collection_summary.data
-        clt_description = form.collection_description.data
         clt_branchname = form.collection_branchname.data
         clt_disttag = form.collection_distTag.data
         clt_gitbranch = form.collection_git_branch_name.data
@@ -123,10 +119,6 @@ def collection_edit(collection):
                 clt_name=clt_name,
                 clt_version=clt_version,
                 clt_status=clt_status,
-                clt_publishurl=clt_publishurl,
-                clt_pendingurl=clt_pendingurl,
-                clt_summary=clt_summary,
-                clt_description=clt_description,
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_gitbranch=clt_gitbranch,
@@ -164,10 +156,6 @@ def collection_new():
         clt_name = form.collection_name.data
         clt_version = form.collection_version.data
         clt_status = form.collection_status.data
-        clt_publishurl = form.collection_publishURLTemplate.data
-        clt_pendingurl = form.collection_pendingURLTemplate.data
-        clt_summary = form.collection_summary.data
-        clt_description = form.collection_description.data
         clt_branchname = form.collection_branchname.data
         clt_disttag = form.collection_distTag.data
         clt_gitbranch = form.collection_git_branch_name.data
@@ -178,10 +166,6 @@ def collection_new():
                 clt_name=clt_name,
                 clt_version=clt_version,
                 clt_status=clt_status,
-                clt_publishurl=clt_publishurl,
-                clt_pendingurl=clt_pendingurl,
-                clt_summary=clt_summary,
-                clt_description=clt_description,
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_gitbranch=clt_gitbranch,

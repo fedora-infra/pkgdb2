@@ -70,8 +70,6 @@ class PackageListingAcltests(Modeltests):
             'packagelist': {
                 'point_of_contact': u'pingou',
                 'collection': {
-                    'pendingurltemplate': None,
-                    'publishurltemplate': None,
                     'branchname': u'F-18',
                     'version': u'18',
                     'name': u'Fedora'

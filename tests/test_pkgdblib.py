@@ -818,10 +818,9 @@ class PkgdbLibtests(Modeltests):
 
         collections = pkgdblib.search_collection(self.session, 'F-*')
         self.assertEqual(len(collections), 2)
-        self.assertEqual("Collection(u'Fedora', u'17', u'Active', u'toshio', "
-                         "publishurltemplate=None, pendingurltemplate=None,"
-                         " summary=u'Fedora 17 release', description=None)",
-                         collections[0].__repr__())
+        self.assertEqual(
+            "Collection(u'Fedora', u'17', u'Active', owner:u'toshio')",
+            collections[0].__repr__())
 
         collections = pkgdblib.search_collection(
             self.session,
@@ -859,10 +858,6 @@ class PkgdbLibtests(Modeltests):
                           clt_name='Fedora',
                           clt_version='19',
                           clt_status='Active',
-                          clt_publishurl=None,
-                          clt_pendingurl=None,
-                          clt_summary='Fedora 19 release',
-                          clt_description='Fedora 19 collection',
                           clt_branchname='F-19',
                           clt_disttag='.fc19',
                           clt_gitbranch='f19',
@@ -874,10 +869,6 @@ class PkgdbLibtests(Modeltests):
                                 clt_name='Fedora',
                                 clt_version='19',
                                 clt_status='Active',
-                                clt_publishurl=None,
-                                clt_pendingurl=None,
-                                clt_summary='Fedora 19 release',
-                                clt_description='Fedora 19 collection',
                                 clt_branchname='F-19',
                                 clt_disttag='.fc19',
                                 clt_gitbranch='f19',
@@ -885,11 +876,9 @@ class PkgdbLibtests(Modeltests):
                                 )
         self.session.commit()
         collection = pkgdblib.model.Collection.by_name(self.session, 'F-19')
-        self.assertEqual("Collection(u'Fedora', u'19', u'Active', u'admin', "
-                         "publishurltemplate=None, pendingurltemplate=None, "
-                         "summary=u'Fedora 19 release', "
-                         "description=u'Fedora 19 collection')",
-                         collection.__repr__())
+        self.assertEqual(
+            "Collection(u'Fedora', u'19', u'Active', owner:u'admin')",
+            collection.__repr__())
 
     def test_update_collection_status(self):
         """ Test the update_collection_status function. """
@@ -1082,10 +1071,6 @@ class PkgdbLibtests(Modeltests):
             clt_name='Fedora youhou!',
             clt_version='Awesome 18',
             clt_status='EOL',
-            clt_publishurl='http://.....',
-            clt_pendingurl='http://.....',
-            clt_summary='Fedora awesome release 18',
-            clt_description='This is a description of how cool Fedora is',
             clt_branchname='f18_b',
             clt_disttag='fc18',
             clt_gitbranch='F-18',
@@ -1300,10 +1285,6 @@ class PkgdbLibtests(Modeltests):
                                   version='19',
                                   status='Active',
                                   owner='toshio',
-                                  publishURLTemplate=None,
-                                  pendingURLTemplate=None,
-                                  summary='Fedora 19 release',
-                                  description=None,
                                   branchname='F-19',
                                   distTag='.fc19',
                                   git_branch_name='f19',

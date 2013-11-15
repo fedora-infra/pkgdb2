@@ -110,10 +110,6 @@ class FlaskUiCollectionsTest(Modeltests):
                 'collection_name': '',
                 'collection_version': '',
                 'collection_status': '',
-                'collection_publishURLTemplate': '',
-                'collection_pendingURLTemplate': '',
-                'collection_summary': '',
-                'collection_description': '',
                 'collection_branchname': '',
                 'collection_distTag': '',
                 'collection_git_branch_name': '',
@@ -143,10 +139,6 @@ class FlaskUiCollectionsTest(Modeltests):
                 'collection_name': 'Fedora',
                 'collection_version': '19',
                 'collection_status': 'Active',
-                'collection_publishURLTemplate': '',
-                'collection_pendingURLTemplate': '',
-                'collection_summary': 'Fedora 19 release',
-                'collection_description': 'Fedora 19 release',
                 'collection_branchname': 'f19',
                 'collection_distTag': '.fc19',
                 'collection_git_branch_name': 'f19',
@@ -203,9 +195,7 @@ class FlaskUiCollectionsTest(Modeltests):
 
             collections = model.Collection.by_name(self.session, 'F-17')
             self.assertEqual(
-                "Collection(u'Fedora', u'17', u'Active', u'toshio', "
-                "publishurltemplate=None, pendingurltemplate=None,"
-                " summary=u'Fedora 17 release', description=None)",
+                "Collection(u'Fedora', u'17', u'Active', owner:u'toshio')",
                 collections.__repr__())
             self.assertEqual(collections.branchname, 'F-17')
 
@@ -213,10 +203,6 @@ class FlaskUiCollectionsTest(Modeltests):
                 'collection_name': 'Fedora',
                 'collection_version': '17',
                 'collection_status': 'Active',
-                'collection_publishURLTemplate': '',
-                'collection_pendingURLTemplate': '',
-                'collection_summary': 'Fedora release 17',
-                'collection_description': '',
                 'collection_branchname': 'F-17',
                 'collection_distTag': '.fc17',
                 'collection_git_branch_name': 'f17',
@@ -232,9 +218,7 @@ class FlaskUiCollectionsTest(Modeltests):
 
             collections = model.Collection.by_name(self.session, 'F-17')
             self.assertEqual(
-                "Collection(u'Fedora', u'17', u'Active', u'toshio', "
-                "publishurltemplate=None, pendingurltemplate=None,"
-                " summary=u'Fedora release 17', description=None)",
+                "Collection(u'Fedora', u'17', u'Active', owner:u'toshio')",
                 collections.__repr__())
             self.assertEqual(collections.branchname, 'F-17')
 
