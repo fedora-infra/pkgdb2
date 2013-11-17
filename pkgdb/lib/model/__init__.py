@@ -483,6 +483,7 @@ class Collection(BASE):
             name=self.name,
             version=self.version,
             branchname=self.branchname,
+            status=self.status
         )
 
     @classmethod
