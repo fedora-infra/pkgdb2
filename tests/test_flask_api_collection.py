@@ -152,7 +152,7 @@ class FlaskApiCollectionTest(Modeltests):
                          ['collections'])
         self.assertEqual(len(output['collections']), 4)
         self.assertEqual(set(output['collections'][0].keys()),
-                         set(['branchname', 'version', 'name']))
+                         set(['branchname', 'version', 'name', 'status']))
 
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
@@ -160,7 +160,7 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['collections'])
         self.assertEqual(set(output['collections'][0].keys()),
-                         set(['branchname', 'version', 'name']))
+                         set(['branchname', 'version', 'name', 'status']))
         self.assertEqual(len(output['collections']), 2)
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
         self.assertEqual(output['collections'][0]['version'], '17')
