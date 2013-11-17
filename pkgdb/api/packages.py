@@ -410,8 +410,7 @@ def api_package_info(pkg_name=None):
             pkg_clt=pkg_clt,
         )
         output['output'] = 'ok'
-        output['packages'] = [pkg.to_json() for pkg in packages
-                              if pkg.collection.status != 'EOL']
+        output['packages'] = [pkg.to_json() for pkg in packages]
     except NoResultFound:
         output['output'] = 'notok'
         output['error'] = 'Package: %s not found' % pkg_name
