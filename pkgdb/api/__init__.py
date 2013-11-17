@@ -90,6 +90,4 @@ def api():
 @API.route('/version')
 def api_version():
     ''' Display the api version information. '''
-    return flask.Response(
-        jsonout = flask.jsonify({'version': __api_version__})
-    )
+    return flask.jsonify({'version': __api_version__})
