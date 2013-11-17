@@ -211,7 +211,8 @@ def log(session, package, topic, message):
         'package.update': 'user: %(agent)s updated package: '
                           '%(package_name)s status from: '
                           '%(prev_status)s to '
-                          '%(status)s',
+                          '%(status)s on branch: '
+                          '%(package_listing.collection.branchname)s',
         'collection.new': 'user: %(agent)s created collection: '
                           '%(collection.name)s',
         'collection.update': 'user: %(agent)s edited collection: '
