@@ -32,6 +32,14 @@ from pkgdb import SESSION
 from pkgdb.api import API
 
 
+def request_wants_json():
+    best = flask.request.accept_mimetypes \
+        .best_match(['application/json', 'text/html'])
+    return best == 'application/json' and \
+        flask.request.accept_mimetypes[best] > \
+        flask.request.accept_mimetypes['text/html']
+
+
 #@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def _bz_acls_cached(name=None, out_format='text'):
     '''Return the package attributes used by bugzilla.
@@ -196,6 +204,9 @@ def api_bugzilla():
     if out_format not in ('text', 'json'):
         out_format = 'text'
 
+    if request_wants_json():
+        out_format = 'json'
+
     intro = """# Package Database VCS Acls
 # Text Format
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
@@ -237,6 +248,9 @@ def api_notify():
     if out_format not in ('text', 'json'):
         out_format = 'text'
 
+    if request_wants_json():
+        out_format = 'json'
+
     output = _bz_notify_cache(name, version, eol, out_format)
 
     if out_format == 'json':
@@ -264,6 +278,9 @@ def api_vcs():
     if out_format not in ('text', 'json'):
         out_format = 'text'
 
+    if request_wants_json():
+        out_format = 'json'
+
     acls = _vcs_acls_cache(out_format)
 
     if out_format == 'json':
@@ -288,6 +305,9 @@ def api_critpath():
     out_format = flask.request.args.get('format', 'text')
     if out_format not in ('text', 'json'):
         out_format = 'text'
+
+    if request_wants_json():
+        out_format = 'json'
 
     output = {}
 
