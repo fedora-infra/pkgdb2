@@ -115,7 +115,7 @@ def package_info(package):
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, packagename)
         package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
-    except NoResultFound:
+    except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
@@ -234,7 +234,7 @@ def package_give(package):
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, packagename)
         package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
-    except NoResultFound:
+    except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
@@ -313,7 +313,7 @@ def package_orphan(package, collection):
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, packagename)
         package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
-    except NoResultFound:
+    except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
@@ -357,7 +357,7 @@ def package_retire(package, collection):
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, packagename)
         package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
-    except NoResultFound:
+    except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
