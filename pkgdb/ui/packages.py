@@ -36,14 +36,15 @@ from pkgdb.ui import UI
 
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
-def list_packages(motif=None):
+def list_packages(motif=None, orphaned=False, status=None,
+                  origin='list_packages'):
     ''' Display the list of packages corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
-    orphaned = bool(flask.request.args.get('orphaned', False))
-    status = flask.request.args.get('status', None)
+    orphaned = bool(flask.request.args.get('orphaned', orphaned))
+    status = flask.request.args.get('status', status)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
     page = flask.request.args.get('page', 1)
 
@@ -83,11 +84,26 @@ def list_packages(motif=None):
 
     return flask.render_template(
         'list_packages.html',
+        origin=origin,
         packages=packages,
         motif=motif,
         total_page=total_page,
         page=page
     )
+
+@UI.route('/orphaned/')
+@UI.route('/orphaned/<motif>/')
+def list_orphaned(motif=None):
+    ''' Display the list of orphaned packages corresponding to the motif.'''
+    return list_packages(orphaned=True, status='Orphaned',
+                         origin='list_orphaned')
+
+
+@UI.route('/retired/')
+@UI.route('/retired/<motif>/')
+def list_retired(motif=None):
+    ''' Display the list of retired packages corresponding to the motif.'''
+    return list_packages(status='Retired', origin='list_retired')
 
 
 @UI.route('/package/<package>/')
