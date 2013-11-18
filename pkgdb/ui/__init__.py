@@ -84,6 +84,12 @@ def search():
     if search_type == 'packager':
         return flask.redirect(flask.url_for('.list_packagers',
                                             motif=search_term))
+    if search_type == 'orphaned':
+        return flask.redirect(flask.url_for('.list_orphaned',
+                                            motif=search_term))
+    if search_type == 'retired':
+        return flask.redirect(flask.url_for('.list_retired',
+                                            motif=search_term))
     else:
         return flask.redirect(flask.url_for('.list_packages',
                                             motif=search_term))
