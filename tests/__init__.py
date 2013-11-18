@@ -200,6 +200,7 @@ def create_package(session):
     """ Create some basic package for testing. """
     package = model.Package(name = 'guake',
                             summary = 'Top down terminal for GNOME',
+                            description = 'Top down terminal...',
                             status = 'Approved',
                             review_url='https://bugzilla.redhat.com/450189',
                             shouldopen=None,
@@ -209,6 +210,7 @@ def create_package(session):
 
     package = model.Package(name = 'fedocal',
                             summary = 'A web-based calendar for Fedora',
+                            description = 'Web calendar ...',
                             status = 'Approved',
                             review_url='https://bugzilla.redhat.com/915074',
                             shouldopen=None,
@@ -218,6 +220,7 @@ def create_package(session):
 
     package = model.Package(name = 'geany',
                             summary = 'A fast and lightweight IDE using GTK2',
+                            description = 'Lightweight GNOME IDE...',
                             status = 'Approved',
                             review_url=None,
                             shouldopen=None,
@@ -300,6 +303,7 @@ def create_package_critpath(session):
     """ Create package in critpath. """
     package = model.Package(name = 'kernel',
                             summary = 'The Linux kernel',
+                            description = 'The kernel',
                             status = 'Approved',
                             review_url='https://bugzilla.redhat.com/123',
                             shouldopen=None,

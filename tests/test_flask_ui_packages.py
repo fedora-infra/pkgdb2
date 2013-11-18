@@ -114,6 +114,7 @@ class FlaskUiPackagesTest(Modeltests):
             data = {
                 'pkg_name': '',
                 'pkg_summary': '',
+                'pkg_description': '',
                 'pkg_reviewURL': '',
                 'pkg_status': '',
                 'pkg_shouldopen': '',
@@ -139,6 +140,7 @@ class FlaskUiPackagesTest(Modeltests):
             data = {
                 'pkg_name': 'gnome-terminal',
                 'pkg_summary': 'Terminal emulator for GNOME',
+                'pkg_description': 'Terminal for GNOME...',
                 'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
                 'pkg_status': 'Approved',
                 'pkg_shouldopen': True,

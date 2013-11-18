@@ -85,7 +85,7 @@ class FlaskApiPackagesTest(Modeltests):
                         "pkg_reviewURL: This field is required.",
                         "pkg_poc: This field is required.",
                         "pkg_status: Not a valid choice",
-                        "pkg_name: This field is required.",
+                        "pkg_name: This field is required."
                     ],
                     "output": "notok"
                 }
@@ -94,6 +94,7 @@ class FlaskApiPackagesTest(Modeltests):
         data = {
             'pkg_name': 'gnome-terminal',
             'pkg_summary': 'Terminal emulator for GNOME',
+            'pkg_description': 'Terminal for GNOME...',
             'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
             'pkg_status': '',
             'pkg_shouldopen': '',
@@ -136,6 +137,7 @@ class FlaskApiPackagesTest(Modeltests):
         data = {
             'pkg_name': 'gnome-terminal',
             'pkg_summary': 'Terminal emulator for GNOME',
+            'pkg_description': 'Terminal for GNOME...',
             'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
             'pkg_status': 'Approved',
             'pkg_shouldopen': True,
@@ -165,6 +167,7 @@ class FlaskApiPackagesTest(Modeltests):
         data = {
             'pkg_name': 'gnome-terminal',
             'pkg_summary': 'Terminal emulator for GNOME',
+            'pkg_description': 'Terminal for GNOME...',
             'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
             'pkg_status': 'Approved',
             'pkg_shouldopen': True,
@@ -192,6 +195,7 @@ class FlaskApiPackagesTest(Modeltests):
         data = {
             'pkg_name': 'gnome-terminal',
             'pkg_summary': 'Terminal emulator for GNOME',
+            'pkg_description': 'Terminal for GNOME...',
             'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
             'pkg_status': 'Approved',
             'pkg_shouldopen': True,
