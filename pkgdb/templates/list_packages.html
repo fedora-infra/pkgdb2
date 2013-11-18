@@ -66,9 +66,9 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
             {{ pkg.name }}</a>
     -- {{ pkg.summary }}
     (
-    {% for listing in pkg.listings %}
+    {% for listing in pkg.listings %} {% if listing.collection.status != 'EOL' %}
         {{ listing.collection.branchname }}
-    {% endfor %}
+    {% endif %}{% endfor %}
     )
     </li>
 {% endfor %}
