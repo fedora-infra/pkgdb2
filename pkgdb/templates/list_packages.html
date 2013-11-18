@@ -22,23 +22,34 @@
 
 <h1>Search packages</h1>
 
+{% if origin == 'list_packages' %}
+<p>See the list of <a href="{{ url_for('.list_orphaned') }}">orphaned</a>
+or <a href="{{ url_for('.list_retired') }}">retired</a> packages</p>
+{% elif origin == 'list_orphaned' %}
+<p>See the list of <a href="{{ url_for('.list_packages') }}">active</a>
+or <a href="{{ url_for('.list_retired') }}">retired</a> packages</p>
+{% elif origin == 'list_retired' %}
+<p>See the list of <a href="{{ url_for('.list_packages') }}">active</a>
+or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
+{% endif %}
+
 {% if total_page %}
 <table>
     <tr>
         <td>
         {% if page > 1%}
-            <a href="{{ url_for('.list_packages', motif=motif) }}?page={{page - 1}}">
-                < Previous
+            <a href="{{ url_for('.%s' % origin, motif=motif) }}?page={{page - 1}}">
+                &lt; Previous
             </a>
         {% else %}
-            < Previous
+            &lt; Previous
         {% endif %}
         </td>
         <td>{{ page }} / {{ total_page }}</td>
         <td>
             {% if page < total_page %}
-            <a href="{{ url_for('.list_packages', motif=motif) }}?page={{page + 1}}">
-                Next >
+            <a href="{{ url_for('.%s' % origin, motif=motif) }}?page={{page + 1}}">
+                Next &gt;
             </a>
             {% else %}
             Next >
