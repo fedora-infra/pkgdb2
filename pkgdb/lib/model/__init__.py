@@ -940,26 +940,23 @@ class Package(BASE):
             Package
         ).filter(
             Package.name.like(pkg_name)
-        ).order_by(Package.name)
+        ).order_by(
+            Package.name
+        )
 
         if pkg_poc:
             query = query.join(
                 PackageListing
             ).filter(
                 PackageListing.point_of_contact == pkg_poc
-            )
+            ).distinct()
 
         if pkg_status:
-            if pkg_poc:
-                query = query.filter(
-                    PackageListing.status == pkg_status
-                )
-            else:
-                query = query.join(
-                    PackageListing
-                ).filter(
-                    PackageListing.status == pkg_status
-                )
+            if not pkg_poc:
+                query = query.join(PackageListing).distinct()
+            query = query.filter(
+                PackageListing.status == pkg_status
+            )
 
         if pkg_branch:
             if pkg_poc:
@@ -977,6 +974,7 @@ class Package(BASE):
             query = query.offset(offset)
         if limit:
             query = query.limit(limit)
+
         return query.all()
 
     @classmethod
