@@ -951,7 +951,16 @@ class Package(BASE):
             )
 
         if pkg_status:
-            query = query.filter(Package.status == pkg_status)
+            if pkg_poc:
+                query = query.filter(
+                    PackageListing.status == pkg_status
+                )
+            else:
+                query = query.join(
+                    PackageListing
+                ).filter(
+                    PackageListing.status == pkg_status
+                )
 
         if pkg_branch:
             if pkg_poc:
