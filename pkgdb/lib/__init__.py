@@ -544,7 +544,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
         pkg_name = pkg_name.replace('*', '%')
     if orphaned:
         pkg_poc = 'orphan'
-        pkg_status = 'Orphaned'
+        status = 'Orphaned'
 
     if limit is not None:
         try:
