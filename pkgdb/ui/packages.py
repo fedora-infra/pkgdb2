@@ -36,7 +36,7 @@ from pkgdb.ui import UI
 
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
-def list_packages(motif=None, orphaned=False, status=None,
+def list_packages(motif=None, orphaned=False, status='Approved',
                   origin='list_packages'):
     ''' Display the list of packages corresponding to the motif. '''
 
