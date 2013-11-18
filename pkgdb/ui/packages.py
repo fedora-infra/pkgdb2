@@ -95,7 +95,7 @@ def list_packages(motif=None, orphaned=False, status=None,
 @UI.route('/orphaned/<motif>/')
 def list_orphaned(motif=None):
     ''' Display the list of orphaned packages corresponding to the motif.'''
-    return list_packages(orphaned=True, status='Orphaned',
+    return list_packages(motif=motif, orphaned=True, status='Orphaned',
                          origin='list_orphaned')
 
 
@@ -103,7 +103,7 @@ def list_orphaned(motif=None):
 @UI.route('/retired/<motif>/')
 def list_retired(motif=None):
     ''' Display the list of retired packages corresponding to the motif.'''
-    return list_packages(status='Retired', origin='list_retired')
+    return list_packages(motif=motif, status='Retired', origin='list_retired')
 
 
 @UI.route('/package/<package>/')
