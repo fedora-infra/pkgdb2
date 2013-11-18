@@ -548,18 +548,18 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
 
     if limit is not None:
         try:
-            int(limit)
+            limit = int(limit)
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            int(page)
+            page = int(page)
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
     if page is not None and limit is not None and limit != 0:
-        page = (page - 1) * int(limit)
+        page = (page - 1) * limit
 
     return model.Package.search(session, pkg_name=pkg_name,
                                 pkg_poc=pkg_poc, pkg_status=status,
