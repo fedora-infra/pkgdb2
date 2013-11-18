@@ -160,6 +160,10 @@ def package_info(package):
                         pkg.collection.branchname):
             branch_admin.append(pkg.collection.branchname)
 
+    package_acls.reverse()
+    if package_acls:
+        package_acls.insert(0, package_acls.pop())
+
     return flask.render_template(
         'package.html',
         package=package,
