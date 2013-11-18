@@ -115,6 +115,7 @@ def package_info(package):
                                        pkg.collection.version)
         tmp['branchname'] = pkg.collection.branchname
         tmp['point_of_contact'] = pkg.point_of_contact
+        tmp['status'] = pkg.status
         if hasattr(flask.g, 'fas_user') and flask.g.fas_user and \
                 pkg.point_of_contact == flask.g.fas_user.username:
             is_poc = True
