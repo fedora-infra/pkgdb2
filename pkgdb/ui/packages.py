@@ -169,6 +169,7 @@ def package_new():
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_summary = form.pkg_summary.data
+        pkg_description = form.pkg_description.data
         pkg_review_url = form.pkg_reviewURL.data
         pkg_status = form.pkg_status.data
         pkg_shouldopen = form.pkg_shouldopen.data
@@ -182,6 +183,7 @@ def package_new():
                 SESSION,
                 pkg_name=pkg_name,
                 pkg_summary=pkg_summary,
+                pkg_description=pkg_description,
                 pkg_reviewURL=pkg_review_url,
                 pkg_status=pkg_status,
                 pkg_shouldopen=pkg_shouldopen,

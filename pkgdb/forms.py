@@ -114,6 +114,9 @@ class AddPackageForm(wtf.Form):
         'Summary',
         [wtforms.validators.Required()]
     )
+    pkg_description = wtforms.TextField(
+        'Description',
+    )
     pkg_reviewURL = wtforms.TextField(
         'Review URL',
         [wtforms.validators.Required()]
