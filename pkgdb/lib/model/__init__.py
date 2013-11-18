@@ -922,8 +922,7 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               pkg_branch=None,
-               offset=None, limit=None, count=False):
+               pkg_branch=None, offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database
