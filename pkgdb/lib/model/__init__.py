@@ -847,6 +847,7 @@ class Package(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False, unique=True, index=True)
     summary = sa.Column(sa.Text, nullable=False)
+    description = sa.Column(sa.Text, nullable=True)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
     status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
@@ -867,10 +868,11 @@ class Package(BASE):
         """
         return session.query(cls).filter(Package.name == pkgname).one()
 
-    def __init__(self, name, summary, status, shouldopen=None,
+    def __init__(self, name, summary, description, status, shouldopen=None,
                  review_url=None, upstream_url=None):
         self.name = name
         self.summary = summary
+        self.description = description
         self.status = status
         self.review_url = review_url
         self.shouldopen = shouldopen

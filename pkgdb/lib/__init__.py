@@ -98,7 +98,7 @@ def create_session(db_url, debug=False, pool_recycle=3600):
     return scopedsession
 
 
-def add_package(session, pkg_name, pkg_summary, pkg_status,
+def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
                 pkg_collection, pkg_poc, user, pkg_reviewURL=None,
                 pkg_shouldopen=None, pkg_upstreamURL=None,
                 pkg_critpath=False):
@@ -108,6 +108,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package.
     :arg pkg_summary: a summary description of the package.
+    :arg pkg_description: the description of the package.
     :arg pkg_status: the status of the package.
     :arg pkg_collection: the collection in which had the package.
     :arg pkg_poc: the point of contact for this package in this collection
@@ -145,6 +146,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_status,
 
     package = model.Package(name=pkg_name,
                             summary=pkg_summary,
+                            description=pkg_description,
                             status=pkg_status,
                             review_url=pkg_reviewURL,
                             shouldopen=pkg_shouldopen,
