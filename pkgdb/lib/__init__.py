@@ -592,18 +592,18 @@ def search_collection(session, pattern, status=None, page=None,
 
     if limit is not None:
         try:
-            int(limit)
+            limit = int(limit)
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            int(page)
+            page = int(page)
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
     if page is not None and limit is not None and limit != 0:
-        page = (page - 1) * int(limit)
+        page = (page - 1) * limit
 
     return model.Collection.search(session,
                                    clt_name=pattern,
@@ -637,18 +637,18 @@ def search_packagers(session, pattern, page=None, limit=None,
 
     if limit is not None:
         try:
-            int(limit)
+            limit = int(limit)
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            int(page)
+            page = int(page)
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
     if page is not None and limit is not None and limit != 0:
-        page = (page - 1) * int(limit)
+        page = (page - 1) * limit
 
     packagers = model.PackageListing.search_packagers(
         session,
@@ -683,13 +683,13 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
     """
     if limit is not None:
         try:
-            int(limit)
+            limit = int(limit)
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            int(page)
+            page = int(page)
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
@@ -702,7 +702,7 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
             package_id = package[0].id
 
     if page is not None and limit is not None and limit != 0:
-        page = (page - 1) * int(limit)
+        page = (page - 1) * limit
 
     if from_date:
         # Make sure we get all the events of the day asked
