@@ -92,9 +92,12 @@
                             packager=pkg['point_of_contact']) }}">
             {{ pkg['point_of_contact'] }}
         </a>
-        {% if is_admin or pkg['point_of_contact'] == 'orphan' or pkg['point_of_contact'] == g.fas_user.username  %}
+        {% if pkg['status'] == 'Retired' %}
+            -- Package retired
+        {% endif %}
+        {% if is_admin or pkg['status'] == 'orphan' or pkg['point_of_contact'] == g.fas_user.username  %}
         --
-        {% if pkg['point_of_contact'] == 'orphan' %}
+        {% if pkg['status'] == 'Orphaned' %}
         <a href="{{ url_for('.package_take',
                             package=package.name,
                             collection=pkg['branchname']) }}">
