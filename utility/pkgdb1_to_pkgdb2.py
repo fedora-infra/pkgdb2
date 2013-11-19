@@ -157,6 +157,7 @@ def convert_packages(pkg1_sess, pkg2_sess):
         new_pkg = model.Package(
             name=pkg.name,
             summary=pkg.summary,
+            description=pkg.description,
             status=STATUS[pkg.statuscode],
             shouldopen=pkg.shouldopen,
             review_url=pkg.reviewurl,
@@ -200,7 +201,7 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
                 )
                 pkg2_sess.add(new_pkglistacl)
         try:
-            pkg2_sess.flush()
+            pkg2_sess.commit()
         except Exception, err:
             pkg2_sess.rollback()
             failed_pkg.add(str(pkg.packageid))
@@ -240,8 +241,9 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
             )
             try:
                 pkg2_sess.add(new_pkglistacl)
-                pkg2_sess.flush()
-            except sqlalchemy.exc.IntegrityError:
+                pkg2_sess.commit()
+            except sqlalchemy.exc.IntegrityError, err:
+                #print err
                 pkg2_sess.rollback()
             cnt += 1
         page += 1
