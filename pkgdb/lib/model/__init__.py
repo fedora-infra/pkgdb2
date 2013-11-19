@@ -947,17 +947,24 @@ class Package(BASE):
 
         if pkg_poc:
             query = query.join(
-                PackageListing
+                PackageListing, Collection
             ).filter(
                 PackageListing.point_of_contact == pkg_poc
+            ).filter(
+                Collection.status != 'EOL'
             ).distinct()
 
         if pkg_status:
             subquery = session.query(
                 PackageListing.package_id
+            ).join(
+                Collection
             ).filter(
                 PackageListing.status == pkg_status
+            ).filter(
+                Collection.status != 'EOL'
             ).subquery()
+
             query = query.filter(
                 Package.id.in_(subquery)
             )
@@ -965,8 +972,6 @@ class Package(BASE):
         if pkg_branch:
             if not pkg_poc:
                 query = query.join(PackageListing, Collection)
-            else:
-                query = query.join(Collection)
             query = query.filter(
                 Collection.branchname == pkg_branch
             )
