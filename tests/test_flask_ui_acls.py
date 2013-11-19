@@ -284,7 +284,7 @@ class FlaskUiAclsTest(Modeltests):
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'User pingou has for the following ACLs:' in output.data)
+                '<li class="message">ACLs updated</li>' in output.data)
 
     @patch('pkgdb.packager_login_required')
     def test_pending_acl(self, login_func):
