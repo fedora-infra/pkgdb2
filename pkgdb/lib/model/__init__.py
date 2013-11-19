@@ -936,6 +936,7 @@ class Package(BASE):
             if true, returns the data if false (default).
 
         """
+
         query = session.query(
             Package
         ).filter(
@@ -949,20 +950,20 @@ class Package(BASE):
                 PackageListing
             ).filter(
                 PackageListing.point_of_contact == pkg_poc
-            ).distinct()
+            )
 
         if pkg_status:
             if not pkg_poc:
-                query = query.join(PackageListing).distinct()
+                query = query.join(PackageListing)
             query = query.filter(
                 PackageListing.status == pkg_status
             )
 
         if pkg_branch:
-            if pkg_poc:
-                query = query.join(Collection)
-            else:
+            if not pkg_poc and not pkg_status:
                 query = query.join(PackageListing, Collection)
+            else:
+                query = query.join(Collection)
             query = query.filter(
                 Collection.branchname == pkg_branch
             )
@@ -974,6 +975,9 @@ class Package(BASE):
             query = query.offset(offset)
         if limit:
             query = query.limit(limit)
+
+        if pkg_poc or pkg_status:
+            query = query.distinct()
 
         return query.all()
 
