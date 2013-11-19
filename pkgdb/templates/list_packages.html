@@ -5,9 +5,16 @@
 {%block tag %}packages{% endblock %}
 
 
-{% if is_admin %}
+
 {% set options = True %}
 {%block options %}
+<form action="{{ url_for('.%s' % origin) }}" method="get">
+    Restrict to branch: <input type="text" name="branches" />
+    Restrict to status: <input type="text" name="status" />
+    Restrict to owner: <input type="text" name="owner" />
+    <input type="submit" class="submit positive button" value="filter">
+</form>
+{% if is_admin %}
 <ul>
     <li>
         <a href="{{ url_for('.package_new') }}">
@@ -15,8 +22,8 @@
         </a>
     </li>
 </ul>
-{% endblock %}
 {% endif %}
+{% endblock %}
 
 {% block content %}
 
@@ -32,6 +39,8 @@ or <a href="{{ url_for('.list_retired') }}">retired</a> packages</p>
 <p>See the list of <a href="{{ url_for('.list_packages') }}">active</a>
 or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
 {% endif %}
+
+<p>{{ packages_count }} packages found</p>
 
 {% if total_page %}
 <table>
@@ -67,7 +76,13 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
     -- {{ pkg.summary }}
     (
     {% for listing in pkg.listings %} {% if listing.collection.status != 'EOL' %}
-        {{ listing.collection.branchname }}
+        {% if origin == 'list_packages' and listing.status == 'Approved' %}
+            {{ listing.collection.branchname }}
+        {% elif origin == 'list_retired' and listing.status == 'Retired' %}
+            {{ listing.collection.branchname }}
+        {% elif origin == 'list_orphaned' and listing.status == 'Orphaned' %}
+            {{ listing.collection.branchname }}
+        {% endif %}
     {% endif %}{% endfor %}
     )
     </li>
