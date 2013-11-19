@@ -1069,6 +1069,7 @@ class Package(BASE):
 
         result = {'name': self.name,
                   'summary': self.summary,
+                  'description': self.description,
                   'status': self.status,
                   'review_url': self.review_url,
                   'upstream_url': self.upstream_url,
