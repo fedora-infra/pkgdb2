@@ -63,7 +63,7 @@ class Packagetests(Modeltests):
         package = package.to_json()
         self.assertEqual(set(package.keys()), set(['status', 'upstream_url',
                          'name', 'summary', 'acls', 'creation_date',
-                         'review_url']))
+                         'review_url', 'description']))
 
     def test_search(self):
         """ Test the search function of Package. """

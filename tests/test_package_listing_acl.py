@@ -80,7 +80,8 @@ class PackageListingAcltests(Modeltests):
                     'name': u'guake',
                     'status': u'Approved',
                     'review_url': u'https://bugzilla.redhat.com/450189',
-                    'summary': u'Top down terminal for GNOME'
+                    'summary': u'Top down terminal for GNOME',
+                    'description': u'Top down terminal...',
                 }
             }
         }
