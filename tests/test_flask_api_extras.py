@@ -85,6 +85,14 @@ class FlaskApiExtrasTest(Modeltests):
 
         self.assertEqual(data, expected)
 
+        output = self.app.get(
+            '/api/bugzilla/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
     def test_api_bugzilla_filled(self):
         """ Test the api_bugzilla function with a filled database. """
         # Fill the DB
@@ -191,6 +199,14 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
 
         self.assertEqual(data, expected)
 
+        output = self.app.get(
+            '/api/notify/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
     def test_api_notify_filled(self):
         """ Test the api_notify function with a filled database. """
         # Filled DB
@@ -263,6 +279,14 @@ guake|pingou
             u'packageAcls': {},
             u'title': u'Fedora Package Database -- VCS ACLs'
         }
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/vcs/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
 
         self.assertEqual(data, expected)
 
@@ -360,6 +384,14 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         expected = {"pkgs":{}}
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/critpath/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
 
         self.assertEqual(data, expected)
 
