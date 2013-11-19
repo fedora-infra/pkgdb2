@@ -128,4 +128,5 @@ def logout():
     """
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         FAS.logout()
+        flask.flash("You are no longer logged-in")
     return flask.redirect(flask.url_for('.index'))
