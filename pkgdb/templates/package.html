@@ -105,8 +105,7 @@
         </a>
         {% if pkg['status'] == 'Retired' %}
             -- Package retired
-        {% endif %}
-        {% if is_admin or pkg['status'] == 'orphan' or pkg['point_of_contact'] == g.fas_user.username  %}
+        {% elif is_admin or pkg['status'] == 'orphan' or pkg['point_of_contact'] == g.fas_user.username  %}
         --
         {% if pkg['status'] == 'Orphaned' %}
         <a href="{{ url_for('.package_take',
