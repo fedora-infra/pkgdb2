@@ -66,11 +66,13 @@ def admin_log():
     if from_date:
         try:
             from_date = parser.parse(from_date)
-            from_date = from_date.date()
         except (ValueError, TypeError):
             flask.flash(
                 'Incorrect from_date provided, using default', 'errors')
             from_date = None
+
+    if from_date:
+        from_date = from_date.date()
 
     logs = []
     try:

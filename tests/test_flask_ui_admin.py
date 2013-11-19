@@ -100,6 +100,14 @@ class FlaskUiAdminTest(Modeltests):
             self.assertTrue(
                 '<li class="errors">No package exists</li>' in output.data)
 
+            output = self.app.get('/admin/log/?from_date=2013-10-19')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Logs</h1>' in output.data)
+            self.assertTrue(
+                'Restrict to package: <input type="text" name="package" />'
+                in output.data)
+            self.assertTrue('<table>\n\n</table>' in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiAdminTest)
