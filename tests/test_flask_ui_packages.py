@@ -208,7 +208,7 @@ class FlaskUiPackagesTest(Modeltests):
 
             data = {
                 'pkg_branch': 'devel',
-                'pkg_poc': 'spot',
+                'pkg_poc': 'limb',
                 'csrf_token': csrf_token,
             }
 
