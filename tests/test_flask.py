@@ -82,6 +82,45 @@ engineers need to create packages and spin them into a distribution."""
 
         self.assertTrue(expected in output.data)
 
+        expected = '<p>See the list of <a href="/orphaned/">orphaned</a>\n' \
+                   'or <a href="/retired/">retired</a> packages</p>'
+
+        self.assertTrue(expected in output.data)
+
+    def test_list_orphaned(self):
+        """ Test the list_orphaned function. """
+        output = self.app.get('/orphaned')
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/orphaned/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "<h1>Search packages</h1>"
+
+        self.assertTrue(expected in output.data)
+
+        expected = '<p>See the list of <a href="/packages/">active</a>\n' \
+                   'or <a href="/retired/">retired</a> packages</p>'
+
+        self.assertTrue(expected in output.data)
+
+    def test_list_retired(self):
+        """ Test the list_retired function. """
+        output = self.app.get('/retired')
+        self.assertEqual(output.status_code, 301)
+
+        output = self.app.get('/retired/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "<h1>Search packages</h1>"
+
+        self.assertTrue(expected in output.data)
+
+        expected = '<p>See the list of <a href="/packages/">active</a>\n' \
+                   'or <a href="/orphaned/">orphaned</a> packages</p>'
+
+        self.assertTrue(expected in output.data)
+
     def test_list_packagers(self):
         """ Test the list_packagers function. """
         output = self.app.get('/packagers')
