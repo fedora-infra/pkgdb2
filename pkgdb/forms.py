@@ -267,10 +267,10 @@ class UpdateAclPackageForm(wtf.Form):
                 (collec, collec)
                 for collec in kwargs['collections']
             ]
-        if 'pkg_status' in kwargs:
+        if 'acl_status' in kwargs:
             self.acl_status.choices = [
                 (status, status)
-                for status in kwargs['pkg_status']
+                for status in kwargs['acl_status']
             ]
         if 'pkg_acl_list' in kwargs:
             self.pkg_acl.choices = [

@@ -186,12 +186,12 @@ def update_acl(package, user, branch=None):
         pending_acls = pending_acls2
 
     collections = set([item['collection'] for item in pending_acls])
-    status = pkgdb.lib.get_status(SESSION, ['pkg_acl', 'pkg_status'])
+    status = pkgdb.lib.get_status(SESSION, ['pkg_acl', 'acl_status'])
 
     form = pkgdb.forms.UpdateAclPackageForm(
         collections=collections,
         pkg_acl_list=status['pkg_acl'],
-        pkg_status=status['pkg_status'],
+        acl_status=status['acl_status'],
     )
 
     if form.validate_on_submit():
