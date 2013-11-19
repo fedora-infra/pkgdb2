@@ -950,17 +950,20 @@ class Package(BASE):
                 PackageListing
             ).filter(
                 PackageListing.point_of_contact == pkg_poc
-            )
+            ).distinct()
 
         if pkg_status:
-            if not pkg_poc:
-                query = query.join(PackageListing)
-            query = query.filter(
+            subquery = session.query(
+                PackageListing.package_id
+            ).filter(
                 PackageListing.status == pkg_status
+            ).subquery()
+            query = query.filter(
+                Package.id.in_(subquery)
             )
 
         if pkg_branch:
-            if not pkg_poc and not pkg_status:
+            if not pkg_poc:
                 query = query.join(PackageListing, Collection)
             else:
                 query = query.join(Collection)
@@ -975,9 +978,6 @@ class Package(BASE):
             query = query.offset(offset)
         if limit:
             query = query.limit(limit)
-
-        if pkg_poc or pkg_status:
-            query = query.distinct()
 
         return query.all()
 
