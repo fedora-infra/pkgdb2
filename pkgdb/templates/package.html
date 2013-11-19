@@ -73,6 +73,15 @@
         class="bugz">
         Bugs reports</a>
     </li>
+    <li>
+    {% if package.review_url %}
+        <a href="{{ package.review_url }}" class="bugz">
+        Package review</a>
+    {% else %}
+        Package review unknown
+    {% endif %}
+    </li>
+
 </ul>
 
 <table id="metainfo">
