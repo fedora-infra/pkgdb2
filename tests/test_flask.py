@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb
 from pkgdb.lib import model
-from tests import (Modeltests, FakeFasUser, create_package_acl)
+from tests import (Modeltests, FakeFasUser, create_package_acl, user_set)
 
 
 class FlaskTest(Modeltests):
@@ -240,6 +240,16 @@ engineers need to create packages and spin them into a distribution."""
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Fedora Package Database -- Version'
                         in output.data)
+
+        user = FakeFasUser()
+        with user_set(pkgdb.APP, user):
+            output = self.app.get('/logout/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">You are no longer logged-in</li>'
+                in output.data)
+            self.assertTrue('<h1>Fedora Package Database -- Version'
+                            in output.data)
 
     def test_api(self):
         """ Test the api function. """
