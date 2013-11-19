@@ -88,6 +88,7 @@ def list_packages(motif=None, orphaned=False, status='Approved',
         packages=packages,
         motif=motif,
         total_page=total_page,
+        packages_count=packages_count,
         page=page
     )
 
