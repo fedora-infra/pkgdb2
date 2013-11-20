@@ -162,3 +162,7 @@ a.cvs {
 .field th {
     text-align: left;
 }
+
+#description {
+    width: 75%;
+}
