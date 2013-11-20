@@ -14,4 +14,3 @@ mock
 python-bugzilla
 python-memcached
 blinker
-urllib3
