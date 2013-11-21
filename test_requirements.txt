@@ -4,3 +4,7 @@
 
 # Requests is used to make the tests running on faitout
 requests
+nose
+coverage
+psycopg2
+pygments
