@@ -552,10 +552,10 @@ Package information
     pkg_clt = flask.request.args.get('pkg_clt', None)
 
     try:
-        packages = pkgdblib.search_package(
+        packages = pkgdblib.get_acl_package(
             SESSION,
             pkg_name=pkg_name,
-            pkg_branch=pkg_clt
+            pkg_clt=pkg_clt
         )
         output['output'] = 'ok'
         output['packages'] = [pkg.to_json() for pkg in packages]
