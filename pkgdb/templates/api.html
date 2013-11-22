@@ -8,22 +8,42 @@
 
 <h2>Collections</h2>
 {% for html in collections %}
-{{ html }}
+{% autoescape false %}
+{{ html | InsertDiv}}
+{% endautoescape %}
 {% endfor %}
 
 <h2>Packagers</h2>
 {% for html in packagers %}
-{{ html }}
+{% autoescape false %}
+{{ html | InsertDiv}}
+{% endautoescape %}
 {% endfor %}
 
 <h2>Packages</h2>
 {% for html in packages %}
-{{ html }}
+{% autoescape false %}
+{{ html | InsertDiv}}
+{% endautoescape %}
 {% endfor %}
 
 <h2>ACLs</h2>
 {% for html in acls %}
-{{ html }}
+{% autoescape false %}
+{{ html | InsertDiv}}
+{% endautoescape %}
 {% endfor %}
 
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript">
+    $(function(){
+        $('.accordion').accordion({
+            collapsible: true,
+            active: false
+        });
+    });
+</script>
 {% endblock %}
