@@ -193,7 +193,7 @@ def log(session, package, topic, message):
                       '%(previous_status)s to: '
                       '%(status)s on branch: '
                       '%(package_listing.collection.branchname)s',
-        'owner.update': 'user: %(agent)s changed owner of package: '
+        'owner.update': 'user: %(agent)s changed poc of package: '
                         '%(package_name)s from: '
                         '%(previous_owner)s to: '
                         '%(username)s on branch: '
