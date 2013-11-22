@@ -36,8 +36,14 @@ from pkgdb.lib import model
 @API.route('/collection/new', methods=['POST'])
 @is_admin
 def api_collection_new():
-    ''' ``/api/collection/new/``
+    '''
+New collection
+--------------
     Create a new collection.
+
+    ::
+
+        /api/collection/new/
 
     Accept POST queries only.
 
@@ -54,6 +60,20 @@ def api_collection_new():
         (ie: .fc18).
     :arg collection_git_branch_name: The git branch name for this collection
         (ie: f18).
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["Collection F-20 created"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not allowed to create collections"]
+        }
 
     '''
     httpcode = 200
@@ -114,13 +134,33 @@ def api_collection_new():
 @API.route('/collection/<collection>/status', methods=['POST'])
 @is_admin
 def api_collection_status(collection):
-    ''' ``/api/collection/<collection branchname>/status/``
+    '''
+Update collection status
+------------------------
     Update the status of collection.
+
+    ::
+
+        /api/collection/<collection branchname>/status/
 
     Accept POST query only.
 
     :arg collection_branchname: String of the collection branch name to change.
     :arg collection_status: String of the status to change the collection to
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["Collection updated to \"EOL\""]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not allowed to edit collections"]
+        }
 
     '''
     httpcode = 200
@@ -178,15 +218,78 @@ def api_collection_status(collection):
 @API.route('/collections/<pattern>/')
 @API.route('/collections/<pattern>')
 def api_collection_list(pattern=None):
-    '''``/api/collections/<pattern>/`` or ``/api/collections/?pattern=<pattern>``
+    '''
+List collections
+----------------
     List the collections based on a pattern. If no pattern is provided, it
     will return all the collection.
+
+    ::
+
+        /api/collections/<pattern>/
+
+        /api/collections/?pattern=<pattern>
 
     Accept GET queries only.
 
     :arg pattern: a pattern to which the collection searched should match.
     :arg status: restrict the search to certain status.
 
+    Sample response:
+
+    ::
+
+        /api/collections
+
+        {
+          "collections": [
+            {
+              "status": "Active",
+              "branchname": "f20",
+              "version": "20",
+              "name": "Fedora"
+            },
+            {
+              "status": "EOL",
+              "branchname": "F-17",
+              "version": "17",
+              "name": "Fedora"
+            },
+                {
+              "status": "Active",
+              "branchname": "EL-6",
+              "version": "6",
+              "name": "Fedora EPEL"
+            }
+          ]
+        }
+
+    ::
+
+        /api/collections?pattern=EL*
+
+        {
+          "collections": [
+            {
+              "status": "EOL",
+              "branchname": "EL-4",
+              "version": "4",
+              "name": "Fedora EPEL"
+            },
+            {
+              "status": "Active",
+              "branchname": "EL-5",
+              "version": "5",
+              "name": "Fedora EPEL"
+            },
+            {
+              "status": "Active",
+              "branchname": "EL-6",
+              "version": "6",
+              "name": "Fedora EPEL"
+            }
+          ]
+        }
     '''
     httpcode = 200
     output = {}
