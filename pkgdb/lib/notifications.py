@@ -60,7 +60,8 @@ def email_publish(user, package, message):
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP(pkgdb.APP.config.get('SMTP_SERVER', 'localhost'))
+    s = smtplib.SMTP(pkgdb.APP.config.get(
+        'PKGDB_EMAIL_SMTP_SERVER', 'localhost'))
     s.sendmail(from_email,
                [to_email],
                msg.as_string())
