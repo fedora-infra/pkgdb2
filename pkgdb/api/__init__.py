@@ -28,13 +28,33 @@ import flask
 
 API = flask.Blueprint('api_ns', __name__, url_prefix='/api')
 
-from pkgdb import __version__, __api_version__
+from pkgdb import __version__, __api_version__, APP
 from pkgdb.doc_utils import load_doc
 
 from pkgdb.api import acls
 from pkgdb.api import collections
 from pkgdb.api import packagers
 from pkgdb.api import packages
+
+@APP.template_filter('InsertDiv')
+def insert_div(content):
+    """ Template filter inserting an opening <div> and closing </div>
+    after the first title and then at the end of the content.
+    """
+    # This is quite a hack but simpler solution using .replace() didn't work
+    # for some reasons...
+    content = content.split('\n')
+    output = []
+    for row in content:
+        if row.startswith('<div class="document" id='):
+            output.append('<div class="accordion">')
+            continue
+        output.append(row)
+    output = "\n".join(output)
+    output = output.replace('blockquote', 'div')
+    output = output.replace('h1', 'h3')
+
+    return output
 
 
 @API.context_processor
