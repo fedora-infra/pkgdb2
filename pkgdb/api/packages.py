@@ -487,7 +487,10 @@ Package information
             {
               "status": "Approved",
               "upstream_url": null,
-              "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+              "description": "Guake is a drop-down terminal for Gnome "
+                             "Desktop Environment, so you just need to "
+                             "press a key to invoke him,and press again"
+                             " to hide."
               "summary": "Drop-down terminal for GNOME",
               "acls": [
                 {
@@ -501,7 +504,10 @@ Package information
                   "package": {
                     "status": "Approved",
                     "upstream_url": null,
-                    "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+                    "description": "Guake is a drop-down terminal for Gnome "
+                                   "Desktop Environment, so you just need to "
+                                   "press a key to invoke him,and press again"
+                                   " to hide."
                     "summary": "Drop-down terminal for GNOME",
                     "creation_date": 1384775354.0,
                     "review_url": null,
@@ -519,7 +525,10 @@ Package information
                   "package": {
                     "status": "Approved",
                     "upstream_url": null,
-                    "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+                    "description": "Guake is a drop-down terminal for Gnome "
+                                   "Desktop Environment, so you just need to "
+                                   "press a key to invoke him,and press again"
+                                   " to hide."
                     "summary": "Drop-down terminal for GNOME",
                     "creation_date": 1384775354.0,
                     "review_url": null,
