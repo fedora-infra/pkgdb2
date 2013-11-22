@@ -485,46 +485,51 @@ Package information
           "output": "ok",
           "packages": [
             {
-              "point_of_contact": "pingou",
-              "collection": {
-                "status": "Under Development",
-                "branchname": "devel",
-                "version": "devel",
-                "name": "Fedora"
-              },
-              "package": {
-                "status": "Approved",
-                "upstream_url": null,
-                "description": "Guake is a drop-down terminal for Gnome "
-                               "Desktop Environment, so you just need to "
-                               "press a key to invoke him,and press again"
-                               " to hide.",
-                "summary": "Drop-down terminal for GNOME",
-                "creation_date": 1384775354.0,
-                "review_url": null,
-                "name": "guake"
-              }
-            },
-            {
-              "point_of_contact": "pingou",
-              "collection": {
-                "status": "EOL",
-                "branchname": "F-8",
-                "version": "8",
-                "name": "Fedora"
-              },
-              "package": {
-                "status": "Approved",
-                "upstream_url": null,
-                "description": "Guake is a drop-down terminal for Gnome "
-                               "Desktop Environment, so you just need to "
-                               "press a key to invoke him,and press again"
-                               " to hide."
-                "summary": "Drop-down terminal for GNOME",
-                "creation_date": 1384775354.0,
-                "review_url": null,
-                "name": "guake"
-              }
+              "status": "Approved",
+              "upstream_url": null,
+              "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+              "summary": "Drop-down terminal for GNOME",
+              "acls": [
+                {
+                  "point_of_contact": "pingou",
+                  "collection": {
+                    "status": "EOL",
+                    "branchname": "f16",
+                    "version": "16",
+                    "name": "Fedora"
+                  },
+                  "package": {
+                    "status": "Approved",
+                    "upstream_url": null,
+                    "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+                    "summary": "Drop-down terminal for GNOME",
+                    "creation_date": 1384775354.0,
+                    "review_url": null,
+                    "name": "guake"
+                  }
+                },
+                {
+                  "point_of_contact": "pingou",
+                  "collection": {
+                    "status": "Active",
+                    "branchname": "EL-6",
+                    "version": "6",
+                    "name": "Fedora EPEL"
+                  },
+                  "package": {
+                    "status": "Approved",
+                    "upstream_url": null,
+                    "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+                    "summary": "Drop-down terminal for GNOME",
+                    "creation_date": 1384775354.0,
+                    "review_url": null,
+                    "name": "guake"
+                  }
+                }
+              ],
+              "creation_date": 1384775354.0,
+              "review_url": null,
+              "name": "guake"
             }
           ]
         }
@@ -537,10 +542,10 @@ Package information
     pkg_clt = flask.request.args.get('pkg_clt', None)
 
     try:
-        packages = pkgdblib.get_acl_package(
+        packages = pkgdblib.search_package(
             SESSION,
             pkg_name=pkg_name,
-            pkg_clt=pkg_clt,
+            pkg_branch=pkg_clt
         )
         output['output'] = 'ok'
         output['packages'] = [pkg.to_json() for pkg in packages]
