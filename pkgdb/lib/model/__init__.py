@@ -425,11 +425,14 @@ class PackageListingAcl(BASE):
         _seen = _seen or []
         cls = type(self)
         _seen.append(cls)
-        return dict(
+        infos = dict(
             fas_name=self.fas_name,
             acl=self.acl,
             status=self.status,
         )
+        if type(self.packagelist) not in _seen:
+            infos['packagelist'] = self.packagelist.to_json(_seen)
+        return infos
 
 
 class Collection(BASE):
@@ -614,7 +617,12 @@ class PackageListing(BASE):
             result['collection'] = self.collection.to_json(_seen)
 
         if self.acls:
-            result['acls'] = [acl.to_json(_seen) for acl in self.acls]
+            tmp = []
+            for acl in self.acls:
+                if type(acl) in _seen:
+                    break
+                tmp.append(acl.to_json(_seen))
+            result['acls'] = tmp
 
         return result
 
