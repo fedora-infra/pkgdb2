@@ -66,24 +66,24 @@ class FlaskApiPackagersTest(Modeltests):
         )
 
         output = self.app.get('/api/packager/acl/pingou/')
-        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.status_code, 404)
         data = json.loads(output.data)
         self.assertEqual(
             data,
             {
-                "output": "ok",
-                "acls": [],
+                "output": "notok",
+                "error": 'No ACL found for this user',
             }
         )
 
         output = self.app.get('/api/packager/acl/?packagername=pingou')
-        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.status_code, 404)
         data = json.loads(output.data)
         self.assertEqual(
             data,
             {
-                "output": "ok",
-                "acls": [],
+                "output": "notok",
+                "error": 'No ACL found for this user',
             }
         )
 
