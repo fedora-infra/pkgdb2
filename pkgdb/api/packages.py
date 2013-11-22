@@ -467,6 +467,7 @@ Package information
     Return information about a specific package.
 
     ::
+
         /api/package/<pkg_name>/
 
         /api/package/?pattern=<pkg_name>
