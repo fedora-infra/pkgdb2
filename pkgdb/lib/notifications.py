@@ -27,13 +27,41 @@ messages.  If it is not installed, it will return silently.
 
 """
 
+import smtplib
 import warnings
 
+from email.mime.text import MIMEText
 
-def publish(*args, **kwargs):  # pragma: no cover
+import pkgdb
+
+
+def fedmsg_publish(*args, **kwargs):  # pragma: no cover
     ''' Try to publish a message on the fedmsg bus. '''
     try:
         import fedmsg
         fedmsg.publish(*args, **kwargs)
     except Exception, err:
         warnings.warn(str(err))
+
+
+def email_publish(user, package, message):
+    ''' Send notification by email. '''
+
+    if not package:
+        return
+
+    msg = MIMEText(message)
+    msg['Subject'] = '[PkgDB] {0} updated {1}'.format(user, package.name)
+    from_email = pkgdb.APP.config.get(
+        'PKGDB_EMAIL_FROM', 'nobody@fedoraproject.org')
+    to_email = '%s-owner@fedoraproject.org' % package
+    msg['From'] = from_email
+    msg['To'] = to_email
+
+    # Send the message via our own SMTP server, but don't include the
+    # envelope header.
+    s = smtplib.SMTP(pkgdb.APP.config.get('SMTP_SERVER', 'localhost'))
+    s.sendmail(from_email,
+               [to_email],
+               msg.as_string())
+    s.quit()
