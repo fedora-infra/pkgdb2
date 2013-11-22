@@ -1167,7 +1167,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         ))
 
     session.flush()
-    return 'Package %s has been unorphaned for %s by %s' % (
+    return 'Package %s has been unorphaned on %s by %s' % (
         pkg_name, pkg_branch, pkg_user
     )
 
