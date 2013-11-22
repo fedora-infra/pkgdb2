@@ -260,22 +260,22 @@ engineers need to create packages and spin them into a distribution."""
         expected = """
 <h2>Collections</h2>
 
-<div class="document">
+<div class="document" id="new-collection">
+<h1 class="title">New collection</h1>
 <blockquote>
-<dl class="docutils">
-<dt><code>/api/collection/new/</code></dt>
-<dd><p class="first">Create a new collection.</p>
+<p>Create a new collection.</p>
+<pre class="literal-block">
+/api/collection/new/
+</pre>
 <p>Accept POST queries only.</p>
-<table class="last docutils field-list" frame="void" rules="none">
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name" colspan="2">arg collection_name:</th></tr>
 <tr class="field"><td>&nbsp;</td><td class="field-body">String of the collection name to be created.</td>
 </tr>
-<tr class="field"><th class="field-name" colspan="2">arg collection_version:</th></tr>
-<tr class="field"><td>&nbsp;</td><td class="field-body">String of the version of the collection.</td>
-</tr>"""
+"""
         self.assertTrue(expected in output.data)
 
 

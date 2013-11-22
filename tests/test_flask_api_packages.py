@@ -282,7 +282,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "messages": [""],
+                    "messages": ["", ""],
                     "output": "ok"
                 }
             )
@@ -380,7 +380,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "messages": [""],
+                    "messages": ["", ""],
                     "output": "ok"
                 }
             )
@@ -427,7 +427,8 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "messages": [
-                        "Package guake has been unorphaned for devel on pingou"
+                        "Package guake has been unorphaned on F-18 by pingou",
+                        "Package guake has been unorphaned on devel by pingou"
                     ],
                     "output": "ok"
                 }
@@ -507,7 +508,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "You are not allowed to deprecate the package: "
+                    "error": "You are not allowed to retire the package: "
                              "guake on branch F-18.",
                     "output": "notok"
                 }
@@ -527,7 +528,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "messages": [""],
+                    "messages": ["", ""],
                     "output": "ok"
                 }
             )
@@ -615,7 +616,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "messages": [""],
+                    "messages": ["", ""],
                     "output": "ok"
                 }
             )

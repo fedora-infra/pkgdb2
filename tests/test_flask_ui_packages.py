@@ -370,7 +370,7 @@ class FlaskUiPackagesTest(Modeltests):
                 '/package/guake/F-18/retire', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">You are not allowed to deprecate the '
+                '<li class="error">You are not allowed to retire the '
                 'package: guake on branch F-18.</li>' in output.data)
 
         user = FakeFasUserAdmin()
