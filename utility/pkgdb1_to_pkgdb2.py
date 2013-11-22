@@ -218,9 +218,13 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
     cnt = 0
     total = pkg1_sess.query(P1PersonPackagelistingAcl).count()
     page = 0
-    page_cnt = total / 10
+    if total % 10:
+        total_pages = 11
+    else:
+        total_pages = 10
+    page_cnt = total // 10
     done = set()
-    while page < 10:
+    while page < total_pages:
         print page, cnt, page * page_cnt, (page + 1) * page_cnt, total
         for pkg in pkg1_sess.query(P1PersonPackagelistingAcl
                 ).offset(
