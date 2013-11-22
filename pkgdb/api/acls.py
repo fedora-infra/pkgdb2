@@ -41,16 +41,82 @@ from pkgdb.api import API
 @API.route('/package/acl/get/<packagename>/')
 @API.route('/package/acl/get/<packagename>')
 def api_acl_get(packagename=None):
-    ''' ``/api/package/acl/get/<packagename>/`` \
-        or ``/api/package/acl/get/?packagename=<packagename>``
+    '''
+ACL of a package
+----------------
     Returns the ACL for a given package.
+
+    ::
+
+        /api/package/acl/get/<packagename>/
+
+        /api/package/acl/get/?packagename=<packagename>
 
     Accept GET queries only.
 
-    :arg packagename: String of the package name that one wants the ACL
-        of.
+    :arg packagename: String of the package name that one wants the ACL of.
     :return: a JSON string containing the ACL information for that
         package.
+
+    Sample response:
+
+    ::
+
+        /api/package/acl/get/guake
+
+        {
+          "acls": [
+            {
+              "point_of_contact": "pingou",
+              "collection": {
+                "status": "Under Development",
+                "branchname": "devel",
+                "version": "devel",
+                "name": "Fedora"
+              },
+              "package": {
+                "status": "Approved",
+                "upstream_url": null,
+                "description": "Guake is a drop-down terminal for Gnome "
+                               "Desktop Environment, so you just need to "
+                               "press a key to invoke him,and press again"
+                               " to hide."
+                "summary": "Drop-down terminal for GNOME",
+                "creation_date": 1384775354.0,
+                "review_url": null,
+                "name": "guake"
+              }
+            },
+            {
+              "point_of_contact": "pingou",
+              "collection": {
+                "status": "EOL",
+                "branchname": "F-8",
+                "version": "8",
+                "name": "Fedora"
+              },
+              "package": {
+                "status": "Approved",
+                "upstream_url": null,
+                "description": "Guake is a drop-down terminal for Gnome "
+                               "Desktop Environment, so you just need to "
+                               "press a key to invoke him,and press again"
+                               " to hide."
+                "summary": "Drop-down terminal for GNOME",
+                "creation_date": 1384775354.0,
+                "review_url": null,
+                "name": "guake"
+              }
+            }
+          ]
+        }
+
+        /api/package/acl/get/?packagename=guakeas
+
+        {
+          "output": "notok",
+          "error": "No package found with name \"guakeas\""
+        }
 
     '''
     packagename = flask.request.args.get('packagename', None) or packagename
@@ -77,8 +143,14 @@ def api_acl_get(packagename=None):
 @API.route('/package/acl/', methods=['POST'])
 @pkgdb.packager_login_required
 def api_acl_update():
-    ''' ``/api/package/acl/``
+    '''
+Update package ACL
+------------------
     Update the ACL for a given package.
+
+    ::
+
+        /api/package/acl/
 
     Accept POST queries only.
 
@@ -93,6 +165,22 @@ def api_acl_update():
     :kwarg pkg_user: the name of the user that is the target of this ACL
         change/update. This will only work if: 1) you are an admin,
         2) you are changing one of your package.
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["user: $USER set acl: $ACL of package: $PACKAGE "
+                       "from: $PREVIOUS_STATUS to $NEW_STATUS on branch: "
+                       "$BRANCH"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not allowed to update ACLs of someone else."]
+        }
 
      '''
     httpcode = 200
@@ -113,6 +201,7 @@ def api_acl_update():
         pkg_user = form.pkg_user.data
 
         try:
+            messages = []
             for branch in pkg_branch:
                 message = pkgdblib.set_acl_package(
                     SESSION,
@@ -123,9 +212,10 @@ def api_acl_update():
                     pkg_user=pkg_user,
                     user=flask.g.fas_user,
                 )
+                messages.append(message)
             SESSION.commit()
             output['output'] = 'ok'
-            output['messages'] = [message]
+            output['messages'] = messages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
@@ -150,8 +240,14 @@ def api_acl_update():
 @API.route('/package/acl/reassign/', methods=['POST'])
 @pkgdb.packager_login_required
 def api_acl_reassign():
-    ''' ``/api/package/acl/reassign/``
+    '''
+Reassign packages
+-----------------
     Reassign the specified packages from one user to another.
+
+    ::
+
+        /api/package/acl/reassign/
 
     Accept POST queries only.
 
@@ -159,6 +255,21 @@ def api_acl_reassign():
     :arg branches: List of strings of the branchname of the Collection on
         which to reassign the point of contact.
     :arg user_target: User name of the new point of contact.
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["User: $USER changed poc of package: $PACKAGE from "
+                       "$PREVIOUS_POC to $NEW_POC on branch: $BRANCH"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not allowed to change the point of contact."]
+        }
 
     '''
     httpcode = 200
