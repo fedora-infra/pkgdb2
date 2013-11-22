@@ -426,7 +426,6 @@ class PackageListingAcl(BASE):
         cls = type(self)
         _seen.append(cls)
         return dict(
-            packagelist=self.packagelist.to_json(_seen),
             fas_name=self.fas_name,
             acl=self.acl,
             status=self.status,
@@ -613,6 +612,9 @@ class PackageListing(BASE):
 
         if self.collection:
             result['collection'] = self.collection.to_json(_seen)
+
+        if self.acls:
+            result['acls'] = [acl.to_json(_seen) for acl in self.acls]
 
         return result
 
