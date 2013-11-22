@@ -36,13 +36,85 @@ from pkgdb.api import API
 @API.route('/packager/acl/<packagername>/')
 @API.route('/packager/acl/<packagername>')
 def api_packager_acl(packagername=None):
-    '''``/api/packager/acl/<fas_username>/`` \
-        or ``/api/packager/acl/?packagername=<username>``
+    '''
+User's ACL
+----------
     List the ACLs of the user.
+
+    ::
+
+        /api/packager/acl/<fas_username>/
+
+        /api/packager/acl/?packagername=<username>
 
     Accept GET queries only.
 
     :arg username: String of the packager name.
+
+    Sample response:
+
+    ::
+
+        /api/packager/acl/pingou
+
+        {
+          "output": "ok",
+          "acls": [
+            {
+              "status": "Approved",
+              "fas_name": "pingou",
+              "packagelist": {
+                "point_of_contact": "pingou",
+                "collection": {
+                  "status": "EOL",
+                  "branchname": "f16",
+                  "version": "16",
+                  "name": "Fedora"
+                },
+                "package": {
+                  "status": "Approved",
+                  "upstream_url": null,
+                  "description": null,
+                  "summary": "Data of T- and B-cell Acute Lymphocytic Leukemia",
+                  "creation_date": 1384775354.0,
+                  "review_url": null,
+                  "name": "R-ALL"
+                }
+              },
+              "acl": "watchcommits"
+            },
+            {
+              "status": "Approved",
+              "fas_name": "pingou",
+              "packagelist": {
+                "point_of_contact": "pingou",
+                "collection": {
+                  "status": "EOL",
+                  "branchname": "f16",
+                  "version": "16",
+                  "name": "Fedora"
+                },
+                "package": {
+                  "status": "Approved",
+                  "upstream_url": null,
+                  "description": null,
+                  "summary": "Data of T- and B-cell Acute Lymphocytic Leukemia",
+                  "creation_date": 1384775354.0,
+                  "review_url": null,
+                  "name": "R-ALL"
+                }
+              },
+              "acl": "watchbugzilla"
+            }
+          ]
+        }
+
+        /api/packager/acl/?packagername=random
+
+        {
+          "output": "notok",
+          "error": "No ACL found for this user"
+        }
 
     '''
     httpcode = 200
@@ -53,9 +125,13 @@ def api_packager_acl(packagername=None):
         packagers = pkgdblib.get_acl_packager(SESSION,
                                               packager=packagername,
                                               )
-        SESSION.commit()
-        output['output'] = 'ok'
-        output['acls'] = [pkg.to_json() for pkg in packagers]
+        if packagers:
+
+            output['output'] = 'ok'
+            output['acls'] = [pkg.to_json() for pkg in packagers]
+        else:
+            output = {'output': 'notok', 'error': 'No ACL found for this user'}
+            httpcode = 404
     else:
         output = {'output': 'notok', 'error': 'Invalid request'}
         httpcode = 500
@@ -70,13 +146,44 @@ def api_packager_acl(packagername=None):
 @API.route('/packagers/<pattern>/')
 @API.route('/packagers/<pattern>')
 def api_packager_list(pattern=None):
-    '''``/api/packagers/<pattern>/`` or ``/api/packagers/?pattern=<pattern>``
+    '''
+List packagers
+--------------
     List packagers based on a pattern. If no pattern is provided, return
     all the packagers.
+
+    ::
+
+        /api/packagers/<pattern>/
+
+        /api/packagers/?pattern=<pattern>
 
     :kwarg pattern: String of the pattern to use to list find packagers.
         If no pattern is provided, it returns the list of all packagers.
 
+
+    Sample response:
+
+    ::
+
+        /api/packagers/rem*
+
+        {
+          "output": "ok",
+          "packagers": [
+            "remi"
+          ]
+        }
+
+        /api/packagers/?pattern=pi*
+
+        {
+          "output": "ok",
+          "packagers": [
+            "pilcher",
+            "pingou"
+          ]
+        }
     '''
     httpcode = 200
     output = {}
