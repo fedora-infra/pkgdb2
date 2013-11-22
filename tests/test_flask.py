@@ -260,9 +260,10 @@ engineers need to create packages and spin them into a distribution."""
         expected = """
 <h2>Collections</h2>
 
-<div class="document" id="new-collection">
-<h1 class="title">New collection</h1>
-<blockquote>
+
+<div class="accordion">
+<h3 class="title">New collection</h3>
+<div>
 <p>Create a new collection.</p>
 <pre class="literal-block">
 /api/collection/new/
@@ -274,7 +275,6 @@ engineers need to create packages and spin them into a distribution."""
 <tbody valign="top">
 <tr class="field"><th class="field-name" colspan="2">arg collection_name:</th></tr>
 <tr class="field"><td>&nbsp;</td><td class="field-body">String of the collection name to be created.</td>
-</tr>
 """
         self.assertTrue(expected in output.data)
 
