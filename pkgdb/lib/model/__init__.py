@@ -963,7 +963,12 @@ class Package(BASE):
                 PackageListing.status == pkg_status
             ).filter(
                 Collection.status != 'EOL'
-            ).subquery()
+            )
+            if pkg_branch:
+                subquery = subquery.filter(
+                    Collection.branchname == pkg_branch
+                )
+            subquery = subquery.subquery()
 
             query = query.filter(
                 Package.id.in_(subquery)
