@@ -63,14 +63,15 @@ def api():
     api_package_unretire = load_doc(packages.api_package_unretire)
     api_package_list = load_doc(packages.api_package_list)
 
-    api_acl_get = load_doc(acls.api_acl_get)
     api_acl_update = load_doc(acls.api_acl_update)
     api_acl_reassign = load_doc(acls.api_acl_reassign)
 
     return flask.render_template(
         'api.html',
         collections=[
-            api_collection_new, api_collection_status, api_collection_list,
+            api_collection_new,
+            api_collection_status,
+            api_collection_list,
         ],
         packagers=[
             api_packager_acl, api_packager_list,
@@ -81,7 +82,7 @@ def api():
             api_package_retire, api_package_unretire,
         ],
         acls=[
-            api_acl_get, api_acl_update, api_acl_reassign,
+            api_acl_update, api_acl_reassign,
         ]
     )
 
