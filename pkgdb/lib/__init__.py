@@ -473,7 +473,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
             session.flush()
         else:
             raise PkgdbException(
-                'You are not allowed to deprecate the '
+                'You are not allowed to retire the '
                 'package: %s on branch %s.' % (
                     package.name, collection.branchname))
     elif status == 'Orphaned':
@@ -1167,7 +1167,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         ))
 
     session.flush()
-    return 'Package %s has been unorphaned for %s on %s' % (
+    return 'Package %s has been unorphaned for %s by %s' % (
         pkg_name, pkg_branch, pkg_user
     )
 
