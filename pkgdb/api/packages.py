@@ -158,7 +158,7 @@ Orphan package
 
         {
           "output": "ok",
-          "messages": ["User: $USER changed owner of package: $PACKAGE from "
+          "messages": ["User: $USER changed poc of package: $PACKAGE from "
                        "$PREVIOUS_POC to $NEW_POC on branch: $BRANCH"]
         }
 
