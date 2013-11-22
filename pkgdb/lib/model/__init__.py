@@ -616,13 +616,12 @@ class PackageListing(BASE):
         if self.collection:
             result['collection'] = self.collection.to_json(_seen)
 
-        if self.acls:
+        if self.acls and not type(self.acls[0]) in _seen:
             tmp = []
             for acl in self.acls:
-                if type(acl) in _seen:
-                    break
                 tmp.append(acl.to_json(_seen))
-            result['acls'] = tmp
+            if tmp:
+                result['acls'] = tmp
 
         return result
 
