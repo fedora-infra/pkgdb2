@@ -37,13 +37,33 @@ from pkgdb.api import API
 @API.route('/package/new/', methods=['POST'])
 @is_admin
 def api_package_new():
-    '''``/api/package/new/``
+    '''
+New package
+-----------
     Create a new package.
+
+    ::
+
+        /api/package/new/
 
     Accept POST queries only.
 
     :arg packagename: String of the package name to be created.
     :arg summary: String of the summary description of the package.
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["Package created"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You're not allowed to add a package"]
+        }
 
     '''
     httpcode = 200
@@ -113,8 +133,14 @@ def api_package_new():
 @API.route('/package/orphan/', methods=['POST'])
 @packager_login_required
 def api_package_orphan():
-    '''``/api/package/orphan/``
-    Orphan a list of packages.
+    '''
+Orphan package
+--------------
+    Orphan one or more packages.
+
+    ::
+
+        /api/package/orphan/
 
     Accept POST queries only.
 
@@ -124,6 +150,22 @@ def api_package_orphan():
     :arg all_pkgs: boolean (defaults to False) stipulating if all the
         packages of the user (you or someon else if you are admin) are
         getting orphaned.
+
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["User: $USER changed owner of package: $PACKAGE from "
+                       "$PREVIOUS_POC to $NEW_POC on branch: $BRANCH"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not allowed to change the point of contact."]
+        }
 
      '''
     httpcode = 200
@@ -137,6 +179,7 @@ def api_package_orphan():
         pkg_branchs = form.clt_name.data.split(',')
 
         try:
+            messages = []
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
                 message = pkgdblib.update_pkg_poc(
@@ -146,9 +189,10 @@ def api_package_orphan():
                     pkg_poc='orphan',
                     user=flask.g.fas_user,
                 )
+                messages.append(message)
             SESSION.commit()
             output['output'] = 'ok'
-            output['messages'] = [message]
+            output['messages'] = messages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
@@ -173,8 +217,14 @@ def api_package_orphan():
 @API.route('/package/unorphan/', methods=['POST'])
 @packager_login_required
 def api_package_unorphan():
-    '''``/api/package/unorphan/``
-    Unorphan a list of packages.
+    '''
+Unorphan packages
+-----------------
+    Unorphan one or more packages.
+
+    ::
+
+        /api/package/unorphan/
 
     Accept POST queries only.
 
@@ -183,6 +233,21 @@ def api_package_unorphan():
         packages will be unorphaned.
     :arg username: String of the name of the user taking ownership of
         this package. If you are not an admin, this name must be None.
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["Package $PACKAGE has been unorphaned for $BRANCH "
+                       "by $USER"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You must be a packager to take a package."]
+        }
 
     '''
     httpcode = 200
@@ -197,6 +262,7 @@ def api_package_unorphan():
         pkg_poc = form.pkg_poc.data
 
         try:
+            messages = []
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
                 message = pkgdblib.unorphan_package(
@@ -206,9 +272,10 @@ def api_package_unorphan():
                     pkg_user=pkg_poc,
                     user=flask.g.fas_user
                 )
+                messages.append(message)
             SESSION.commit()
             output['output'] = 'ok'
-            output['messages'] = [message]
+            output['messages'] = messages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
@@ -233,14 +300,36 @@ def api_package_unorphan():
 @API.route('/package/retire/', methods=['POST'])
 @packager_login_required
 def api_package_retire():
-    '''``/api/package/retire/``
-    Retire a list of packages.
+    '''
+Retire packages
+---------------
+    Retire one or more packages.
+
+    ::
+
+        /api/package/retire/
 
     Accept POST queries only.
 
     :arg packagenames: List of string of the packages name.
     :arg branches: List of string of the branches name in which these
         packages will be retire.
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["user: $USER updated package: $PACKAGE status from: "
+                       "$PREVIOUS_STATUS to $NEW_STATUS on branch $BRANCH"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not allowed to retire the package: $PACKAGE "
+                    "on branch $BRANCH."]
+        }
 
     '''
     httpcode = 200
@@ -252,6 +341,7 @@ def api_package_retire():
         pkg_branchs = form.clt_name.data.split(',')
 
         try:
+            messages = []
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
                 message = pkgdblib.update_pkg_status(
@@ -261,9 +351,10 @@ def api_package_retire():
                     status='Retired',
                     user=flask.g.fas_user,
                 )
+                messages.append(message)
             SESSION.commit()
             output['output'] = 'ok'
-            output['messages'] = [message]
+            output['messages'] = messages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
@@ -288,14 +379,37 @@ def api_package_retire():
 @API.route('/package/unretire/', methods=['POST'])
 @packager_login_required
 def api_package_unretire():
-    '''``/api/package/unretire/``
-    Un-deprecate a list of packages.
+    '''
+Unretire packages
+-----------------
+    Un-retire one or more packages.
+
+    ::
+
+        /api/package/unretire/
 
     Accept POST queries only.
 
     :arg packagenames: List of string of the packages name.
     :arg branches: List of string of the branches name in which these
         packages will be un-deprecated.
+
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["user: $USER updated package: $PACKAGE status from: "
+                       "$PREVIOUS_STATUS to $NEW_STATUS on branch $BRANCH"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not allowed to update the status of "
+                    "the package: $PACKAGE on branch $BRANCH to $STATUS."]
+        }
 
     '''
     httpcode = 200
@@ -307,6 +421,7 @@ def api_package_unretire():
         pkg_branchs = form.clt_name.data.split(',')
 
         try:
+            messages = []
             for pkg_name, pkg_branch in itertools.product(
                     pkg_names, pkg_branchs):
                 message = pkgdblib.update_pkg_status(
@@ -316,9 +431,10 @@ def api_package_unretire():
                     status='Approved',
                     user=flask.g.fas_user,
                 )
+                messages.append(message)
             SESSION.commit()
             output['output'] = 'ok'
-            output['messages'] = [message]
+            output['messages'] = messages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
@@ -345,10 +461,15 @@ def api_package_unretire():
 @API.route('/package/<pkg_name>/')
 @API.route('/package/<pkg_name>')
 def api_package_info(pkg_name=None):
-    '''``/api/package/<pkg_name>/`` \
-        or ``/api/package/?pattern=<pkg_name>``
-
+    '''
+Package information
+-------------------
     Return information about a specific package.
+
+    ::
+        /api/package/<pkg_name>/
+
+        /api/package/?pattern=<pkg_name>
 
     Accept GET queries only
 
@@ -358,45 +479,55 @@ def api_package_info(pkg_name=None):
 
     Sample response:
 
-.. code-block:: javascript
+    ::
 
-    {
-      "output": "ok",
-      "packages": [
         {
-          "point_of_contact": "spot",
-          "collection": {
-            "pendingurltemplate": "http://...",
-            "publishurltemplate": "http://...",
-            "branchname": "devel",
-            "version": "devel",
-            "name": "Fedora"
-          },
-          "package": {
-            "upstreamurl": "http://guake.org",
-            "name": "guake",
-            "reviewurl": "http://bugzilla.redhat.com/450189",
-            "summary": "Drop down terminal"
-          }
-        },
-        {
-          "point_of_contact": "pingou",
-          "collection": {
-            "pendingurltemplate": "http://...",
-            "publishurltemplate": "http://...",
-            "branchname": "F-19",
-            "version": "19",
-            "name": "Fedora"
-          },
-          "package": {
-            "upstreamurl": "http://guake.org",
-            "name": "guake",
-            "reviewurl": "http://bugzilla.redhat.com/450189",
-            "summary": "Drop down terminal"
-          }
+          "output": "ok",
+          "packages": [
+            {
+              "point_of_contact": "pingou",
+              "collection": {
+                "status": "Under Development",
+                "branchname": "devel",
+                "version": "devel",
+                "name": "Fedora"
+              },
+              "package": {
+                "status": "Approved",
+                "upstream_url": null,
+                "description": "Guake is a drop-down terminal for Gnome "
+                               "Desktop Environment, so you just need to "
+                               "press a key to invoke him,and press again"
+                               " to hide.",
+                "summary": "Drop-down terminal for GNOME",
+                "creation_date": 1384775354.0,
+                "review_url": null,
+                "name": "guake"
+              }
+            },
+            {
+              "point_of_contact": "pingou",
+              "collection": {
+                "status": "EOL",
+                "branchname": "F-8",
+                "version": "8",
+                "name": "Fedora"
+              },
+              "package": {
+                "status": "Approved",
+                "upstream_url": null,
+                "description": "Guake is a drop-down terminal for Gnome "
+                               "Desktop Environment, so you just need to "
+                               "press a key to invoke him,and press again"
+                               " to hide."
+                "summary": "Drop-down terminal for GNOME",
+                "creation_date": 1384775354.0,
+                "review_url": null,
+                "name": "guake"
+              }
+            }
+          ]
         }
-      ]
-    }
 
     '''
     httpcode = 200
@@ -433,10 +564,17 @@ def api_package_info(pkg_name=None):
 @API.route('/packages/<pattern>/')
 @API.route('/packages/<pattern>')
 def api_package_list(pattern=None):
-    '''``/api/packages/<pattern>/`` \
-        or ``/api/packages/?pattern=<pattern>``
+    '''
+List packages
+-------------
     List packages based on a pattern. If no pattern is provided, return all
     the package.
+
+    ::
+
+        /api/packages/<pattern>/
+
+        /api/packages/?pattern=<pattern>
 
     Accept GET queries only
 
@@ -455,55 +593,51 @@ def api_package_list(pattern=None):
 
     Sample response:
 
-.. code-block:: javascript
+    ::
 
-    {
-      "output": "ok",
-      "packages": [
+        /api/packages/guak*
+
         {
-          "status": "Approved",
-          "upstreamurl": "http://guake.org",
-          "name": "guake",
-          "summary": "Drop down terminal",
-          "acls": [
+          "output": "ok",
+          "packages": [
             {
-              "point_of_contact": "spot",
-              "collection": {
-                "pendingurltemplate": "http://...",
-                "publishurltemplate": "http://...",
-                "branchname": "devel",
-                "version": "devel",
-                "name": "Fedora"
-              },
-              "package": {
-                "upstreamurl": "http://guake.org",
-                "name": "guake",
-                "reviewurl": "http://bugzilla.redhat.com/450189",
-                "summary": "Drop down terminal"
-              }
-            },
-            {
-              "point_of_contact": "pingou",
-              "collection": {
-                "pendingurltemplate": "http://...",
-                "publishurltemplate": "http://...",
-                "branchname": "F-19",
-                "version": "19",
-                "name": "Fedora"
-              },
-              "package": {
-                "upstreamurl": "http://guake.org",
-                "name": "guake",
-                "reviewurl": "http://bugzilla.redhat.com/450189",
-                "summary": "Drop down terminal"
-              }
+              "status": "Approved",
+              "upstream_url": null,
+              "description": "Guake is a drop-down terminal for Gnome "
+                             "Desktop Environment, so you just need to "
+                             "press a key to invoke him,and press again"
+                             " to hide."
+              "summary": "Drop-down terminal for GNOME",
+              "acls": [
+                {
+                  "point_of_contact": "pingou",
+                  "collection": {
+                    "status": "EOL",
+                    "branchname": "f16",
+                    "version": "16",
+                    "name": "Fedora"
+                  },
+                  "package": {
+                    "status": "Approved",
+                    "upstream_url": null,
+                    "description": "Guake is a drop-down terminal for Gnome "
+                                   "Desktop Environment, so you just need to "
+                                   "press a key to invoke him,and press again"
+                                   " to hide."
+                    "summary": "Drop-down terminal for GNOME",
+                    "creation_date": 1384775354.0,
+                    "review_url": null,
+                    "name": "guake"
+                  }
+                }
+              ],
+               "creation_date": 1384775354.0,
+                "review_url": null,
+                "name": "guake"
             }
-          ],
-          "creation_date": "2013-09-09 14:43:21.578370",
-          "reviewurl": "http://bugzilla.redhat.com/450189",
+          ]
         }
-      ]
-    }
+
     '''
     httpcode = 200
     output = {}
