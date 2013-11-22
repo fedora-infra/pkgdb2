@@ -106,14 +106,14 @@ def msg():
 def login():
     """ Login mechanism for this application.
     """
-    next_url = None
+    next_url = flask.url_for('ui_ns.index')
     if 'next' in flask.request.args:
         next_url = flask.request.args['next']
     elif 'next' in flask.request.form:
         next_url = flask.request.form['next']
 
-    if not next_url or next_url == flask.url_for('.login'):
-        next_url = flask.url_for('.index')
+    if next_url == flask.url_for('ui_ns.login'):
+        next_url = flask.url_for('ui_ns.index')
 
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         return flask.redirect(next_url)
@@ -126,7 +126,15 @@ def logout():
     """ Log out if the user is logged in other do nothing.
     Return to the index page at the end.
     """
+    next_url = flask.url_for('ui_ns.index')
+    if 'next' in flask.request.args:
+        next_url = flask.request.args['next']
+    elif 'next' in flask.request.form:
+        next_url = flask.request.form['next']
+
+    if next_url == flask.url_for('ui_ns.login'):
+        next_url = flask.url_for('ui_ns.index')
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         FAS.logout()
         flask.flash("You are no longer logged-in")
-    return flask.redirect(flask.url_for('.index'))
+    return flask.redirect(next_url)
