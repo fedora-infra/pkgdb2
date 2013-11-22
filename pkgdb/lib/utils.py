@@ -184,7 +184,7 @@ def log(session, package, topic, message):
 
     # To avoid a circular import.
     import pkgdb.lib.model as model
-    import pkgdb.lib.fedmsgshim as fedmsg
+    from pkgdb.lib.notifications import fedmsg_publish, email_publish
 
     # A big lookup of fedmsg topics to model.Log template strings.
     templates = {
@@ -222,5 +222,9 @@ def log(session, package, topic, message):
     final_msg = templates[topic] % substitutions
 
     model.Log.insert(session, message['agent'], package, final_msg)
-    fedmsg.publish(topic, message)
+
+    if pkgdb.APP.config.get('PKGDB_FEDMSG_NOTIFICATION', True):
+        fedmsg_publish(topic, message)
+    if pkgdb.APP.config.get('PKGDB_EMAIL_NOTIFICATION', False):
+        email_publish(message['agent'], package, final_msg)
     return final_msg
