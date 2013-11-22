@@ -56,42 +56,6 @@ class FlaskApiAclsTest(Modeltests):
         pkgdb.api.acls.SESSION = self.session
         self.app = pkgdb.APP.test_client()
 
-    def test_acl_get(self):
-        """ Test the api_acl_get function.  """
-
-        output = self.app.get('/api/package/acl/get/guake/')
-        self.assertEqual(output.status_code, 500)
-        data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error": "No package found with name \"guake\""
-        })
-
-        output = self.app.get('/api/package/acl/get/')
-        self.assertEqual(output.status_code, 500)
-        data = json.loads(output.data)
-        self.assertEqual(data, {
-            "output": "notok",
-            "error": "No package provided",
-        })
-
-        create_package_acl(self.session)
-
-        output = self.app.get('/api/package/acl/get/guake/')
-        self.assertEqual(output.status_code, 200)
-        output = json.loads(output.data)
-        self.assertEqual(output.keys(),
-                         ['acls'])
-        self.assertEqual(len(output['acls']), 2)
-        self.assertEqual(output['acls'][0]['collection']['branchname'],
-                         'F-18')
-        self.assertEqual(output['acls'][0]['point_of_contact'],
-                         'pingou')
-        self.assertEqual(output['acls'][1]['collection']['branchname'],
-                         'devel')
-        self.assertEqual(output['acls'][1]['point_of_contact'],
-                         'pingou')
-
     @patch('pkgdb.packager_login_required')
     def test_acl_update(self, login_func):
         """ Test the api_acl_update function.  """
