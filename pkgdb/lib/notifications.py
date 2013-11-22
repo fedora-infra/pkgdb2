@@ -54,7 +54,9 @@ def email_publish(user, package, message):
     msg['Subject'] = '[PkgDB] {0} updated {1}'.format(user, package.name)
     from_email = pkgdb.APP.config.get(
         'PKGDB_EMAIL_FROM', 'nobody@fedoraproject.org')
-    to_email = '%s-owner@fedoraproject.org' % package
+    email_to_template = pkgdb.APP.config.get(
+        'PKGDB_EMAIL_TO', '{pkg_name}-owner@fedoraproject.org')
+    to_email = email_to_template.format({'pkg_name': package.name})
     msg['From'] = from_email
     msg['To'] = to_email
 
