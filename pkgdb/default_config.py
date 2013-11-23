@@ -64,7 +64,7 @@ PKGDB_FAS_PASSWORD = None
 
 # pkgdb notifications
 PKGDB_FEDMSG_NOTIFICATION = True
-PKGDB_EMAIL_NOTIFICATION = True
+PKGDB_EMAIL_NOTIFICATION = False
 PKGDB_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'
 PKGDB_EMAIL_FROM = 'nobody@fedoraproject.org'
 PKGDB_EMAIL_SMTP_SERVER = 'localhost'
