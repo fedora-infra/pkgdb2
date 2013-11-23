@@ -36,6 +36,7 @@ from pkgdb.api import collections
 from pkgdb.api import packagers
 from pkgdb.api import packages
 
+
 @APP.template_filter('InsertDiv')
 def insert_div(content):
     """ Template filter inserting an opening <div> and closing </div>
