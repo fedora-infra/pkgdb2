@@ -516,7 +516,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
-                   orphaned=False, status=None, page=None,
+                   orphaned=None, status=None, page=None,
                    limit=None, count=False):
     """ Return the list of packages matching the given criteria.
 
@@ -563,7 +563,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
 
     return model.Package.search(session, pkg_name=pkg_name,
                                 pkg_poc=pkg_poc, pkg_status=status,
-                                pkg_branch=pkg_branch,
+                                pkg_branch=pkg_branch, orphaned=orphaned,
                                 offset=page, limit=limit, count=count)
 
 
