@@ -40,6 +40,9 @@ import sqlalchemy as sa
 import sqlalchemy.orm as orm
 import sqlalchemy.exc
 
+from progressbar import Bar, ETA, Percentage, ProgressBar, RotatingMarker
+
+
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
@@ -175,6 +178,7 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
     '''
     cnt = 0
     failed_pkg = set()
+    failed_pkglist = set()
     for pkg in pkg1_sess.query(P1Packagelisting).all():
         poc = pkg.owner
         if poc == 'perl-sig':
@@ -190,7 +194,7 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
         pkg2_sess.add(new_pkglist)
         if new_pkglist.point_of_contact != 'orphan':
             acls = ['watchcommits', 'watchbugzilla', 'commit', 'approveacls']
-            if new_pkglist.point_of_contact == 'perl-sig':
+            if new_pkglist.point_of_contact == 'group::perl-sig':
                 acls = ['watchcommits', 'watchbugzilla', 'commit']
             for acl in acls:
                 new_pkglistacl = model.PackageListingAcl(
@@ -205,11 +209,14 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
         except Exception, err:
             pkg2_sess.rollback()
             failed_pkg.add(str(pkg.packageid))
+            failed_pkglist.add(str(new_pkglist.id))
         cnt += 1
     pkg2_sess.commit()
     print '%s Package listing added' % cnt
     print '%s packages failed' % len(failed_pkg)
     print ', '.join(failed_pkg)
+    print '%s package listing failed' % len(failed_pkglist)
+    print ', '.join(sorted(failed_pkglist))
 
 
 def convert_packagelistingacl(pkg1_sess, pkg2_sess):
@@ -217,40 +224,31 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
     '''
     cnt = 0
     total = pkg1_sess.query(P1PersonPackagelistingAcl).count()
-    page = 0
-    if total % 10:
-        total_pages = 11
-    else:
-        total_pages = 10
-    page_cnt = total // 10
     done = set()
-    while page < total_pages:
-        print page, cnt, page * page_cnt, (page + 1) * page_cnt, total
-        for pkg in pkg1_sess.query(P1PersonPackagelistingAcl
-                ).offset(
-                    page * page_cnt
-                ).limit(
-                    (page + 1) * page_cnt
-                ).all():
-            if pkg.acl in ('build', 'checkout'):
-                continue
-            person = pkg1_sess.query(P1PersonPackagelisting).filter(
-                P1PersonPackagelisting.id==pkg.personpackagelistingid
-            ).one()
-            new_pkglistacl = model.PackageListingAcl(
-                fas_name=person.username,
-                packagelisting_id=person.packagelistingid,
-                acl=pkg.acl,
-                status=STATUS[pkg.statuscode]
-            )
-            try:
-                pkg2_sess.add(new_pkglistacl)
-                pkg2_sess.commit()
-            except sqlalchemy.exc.IntegrityError, err:
-                #print err
-                pkg2_sess.rollback()
-            cnt += 1
-        page += 1
+    widgets = ['ACLs: ', Percentage(), ' ', Bar(marker=RotatingMarker()),
+               ' ', ETA()]
+    pbar = ProgressBar(widgets=widgets, maxval=total).start()
+    for pkg in pkg1_sess.query(P1PersonPackagelistingAcl).all():
+        if pkg.acl in ('build', 'checkout'):
+            continue
+        person = pkg1_sess.query(P1PersonPackagelisting).filter(
+            P1PersonPackagelisting.id==pkg.personpackagelistingid
+        ).one()
+        new_pkglistacl = model.PackageListingAcl(
+            fas_name=person.username,
+            packagelisting_id=person.packagelistingid,
+            acl=pkg.acl,
+            status=STATUS[pkg.statuscode]
+        )
+        try:
+            pkg2_sess.add(new_pkglistacl)
+            pkg2_sess.commit()
+        except sqlalchemy.exc.IntegrityError, err:
+            #print err
+            pkg2_sess.rollback()
+        cnt += 1
+        pbar.update(cnt)
+    pbar.finish()
     pkg2_sess.commit()
     print '%s Package listing ACLs added' % cnt
 
