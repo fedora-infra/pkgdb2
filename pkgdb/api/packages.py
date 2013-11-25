@@ -144,12 +144,9 @@ Orphan package
 
     Accept POST queries only.
 
-    :arg packagenames: List of string of the packages name.
-    :arg branches: List of string of the branches name in which these
+    :arg pkg_name: List of string of the packages name.
+    :arg clt_name: List of string of the branches name in which these
         packages will be orphaned.
-    :arg all_pkgs: boolean (defaults to False) stipulating if all the
-        packages of the user (you or someon else if you are admin) are
-        getting orphaned.
 
 
     Sample response:
@@ -657,7 +654,7 @@ List packages
     httpcode = 200
     output = {}
 
-    pattern = flask.request.args.get('pattern', pattern)
+    pattern = flask.request.args.get('pattern', pattern) or '*'
     branches = flask.request.args.get('branches', None)
     poc = flask.request.args.get('poc', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
