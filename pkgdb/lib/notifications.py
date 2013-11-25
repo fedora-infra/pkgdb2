@@ -44,7 +44,7 @@ def fedmsg_publish(*args, **kwargs):  # pragma: no cover
         warnings.warn(str(err))
 
 
-def email_publish(user, package, message):
+def email_publish(user, package, message):  # pragma: no cover
     ''' Send notification by email. '''
 
     if not package:
