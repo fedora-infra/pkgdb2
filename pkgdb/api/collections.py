@@ -297,10 +297,19 @@ List collections
     pattern = flask.request.args.get('pattern', None) or pattern
     status = flask.request.args.get('status', None)
     if pattern:
-        collections = pkgdblib.search_collection(SESSION,
-                                                 pattern=pattern,
-                                                 status=status
-                                                 )
+        if status:
+            if ',' in status:
+                status = status.split(',')
+            else:
+                status = [status]
+            collections = []
+            for stat in status:
+                collections.extend(pkgdblib.search_collection(
+                    SESSION, pattern=pattern, status=stat)
+                )
+        else:
+            collections = pkgdblib.search_collection(
+                SESSION, pattern=pattern)
     else:
         collections = model.Collection.all(SESSION)
     output = {'collections':
