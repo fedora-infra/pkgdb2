@@ -593,10 +593,10 @@ List packages
 
     Accept GET queries only
 
-    :arg packagename: Pattern to list packages from their name.
+    :arg pattern: Pattern to list packages from their name.
     :arg branches: List of string of the branches name in which these
         packages will be searched.
-    :arg owner: String of the user name to to which restrict the search.
+    :arg poc: String of the user name to to which restrict the search.
     :arg orphaned: Boolean to retrict the search to orphaned packages.
     :arg status: Allows to filter packages based on their status: Approved,
         Orphaned, Retired, Removed.
@@ -659,7 +659,7 @@ List packages
 
     pattern = flask.request.args.get('pattern', pattern)
     branches = flask.request.args.get('branches', None)
-    owner = flask.request.args.get('owner', None)
+    poc = flask.request.args.get('poc', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
     status = flask.request.args.get('status', False)
     page = flask.request.args.get('page', None)
@@ -671,7 +671,7 @@ List packages
             SESSION,
             pkg_name=pattern,
             pkg_branch=branches,
-            pkg_poc=owner,
+            pkg_poc=poc,
             orphaned=orphaned,
             status=status,
             page=page,
