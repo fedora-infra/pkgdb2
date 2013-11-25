@@ -704,25 +704,6 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(len(data['packages']), 1)
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(
-            data['packages'][0]['acls'][0]['collection']['branchname'],
-            'F-18')
-        self.assertEqual(
-            data['packages'][0]['acls'][0]['point_of_contact'],
-            'pingou')
-        self.assertEqual(
-            data['packages'][0]['acls'][0]['package']['name'],
-            'guake')
-
-        self.assertEqual(
-            data['packages'][0]['acls'][1]['collection']['branchname'],
-            'devel')
-        self.assertEqual(
-            data['packages'][0]['acls'][1]['point_of_contact'],
-            'pingou')
-        self.assertEqual(
-            data['packages'][0]['acls'][1]['package']['name'],
-            'guake')
-        self.assertEqual(
             data['packages'][0]['name'], 'guake')
         self.assertEqual(
             data['packages'][0]['status'], 'Approved')
