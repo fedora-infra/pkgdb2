@@ -931,7 +931,8 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               pkg_branch=None, offset=None, limit=None, count=False):
+               pkg_branch=None, orphaned=None,
+               offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database
@@ -939,6 +940,8 @@ class Package(BASE):
         :kwarg pkg_poc: name of the new point of contact for the package
         :kwarg pkg_status: status of the package
         :kwarg pkg_branch: branchname of the collection to search.
+        :kwarg orphaned: a boolean specifying if the search should be
+            restricted to only orphaned or not-orphaned packages.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -952,7 +955,7 @@ class Package(BASE):
             Package.name.like(pkg_name)
         ).order_by(
             Package.name
-        )
+        ).distinct()
 
         if pkg_poc:
             query = query.join(
@@ -989,6 +992,18 @@ class Package(BASE):
             query = query.filter(
                 Collection.branchname == pkg_branch
             )
+
+        if orphaned is not None:
+            if not pkg_poc and not pkg_branch:
+                query = query.join(PackageListing)
+            if orphaned is True:
+                query = query.filter(
+                    PackageListing.status == 'Orphaned'
+                )
+            elif orphaned is False:
+                query = query.filter(
+                    PackageListing.status != 'Orphaned'
+                )
 
         if count:
             return query.count()
@@ -1074,7 +1089,7 @@ class Package(BASE):
 
         return query.all()
 
-    def to_json(self, _seen=None):
+    def to_json(self, _seen=None, acls=True):
         """ Return a dictionnary representation of the object.
 
         """
@@ -1093,7 +1108,7 @@ class Package(BASE):
         _seen.append(cls)
 
         # Protect against infinite recursion
-        if not PackageListing in _seen:
+        if acls and not PackageListing in _seen:
             result['acls'] = [pkg.to_json(_seen) for pkg in self.listings]
 
         return result
