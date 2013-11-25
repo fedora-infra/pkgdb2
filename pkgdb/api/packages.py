@@ -48,8 +48,19 @@ New package
 
     Accept POST queries only.
 
-    :arg packagename: String of the package name to be created.
-    :arg summary: String of the summary description of the package.
+    :arg pkg_name: String of the package name to be created.
+    :arg pkg_summary: String of the summary description of the package.
+    :arg pkg_description: String describing the package (same as in the
+        spec file).
+    :arg pkg_review_url: the URL of the package review on the bugzilla.
+    :arg pkg_status: status of the package can be one of: 'Approved',
+        'Awaiting Review', 'Denied', 'Obsolete', 'Removed'
+    :arg pkg_shouldopen: boolean specifying if this package should open
+    :arg pkg_collection: branch name of the collection in which this package
+        is added
+    :arg pkg_poc: FAS username of the point of contact
+    :arg pkg_upstream_url: the URL of the upstream project
+    :arg pkg_critpath: boolean specifying if the package is in the critpath
 
     Sample response:
 
@@ -225,10 +236,10 @@ Unorphan packages
 
     Accept POST queries only.
 
-    :arg packagenames: List of string of the packages name.
-    :arg branches: List of string of the branches name in which these
+    :arg pkg_name: List of string of the packages name.
+    :arg clt_name: List of string of the branches name in which these
         packages will be unorphaned.
-    :arg username: String of the name of the user taking ownership of
+    :arg pkg_poc: String of the name of the user taking ownership of
         this package. If you are not an admin, this name must be None.
 
     Sample response:
@@ -308,8 +319,8 @@ Retire packages
 
     Accept POST queries only.
 
-    :arg packagenames: List of string of the packages name.
-    :arg branches: List of string of the branches name in which these
+    :arg pkg_name: List of string of the packages name.
+    :arg clt_name: List of string of the branches name in which these
         packages will be retire.
 
     Sample response:
@@ -387,8 +398,8 @@ Unretire packages
 
     Accept POST queries only.
 
-    :arg packagenames: List of string of the packages name.
-    :arg branches: List of string of the branches name in which these
+    :arg pkg_name: List of string of the packages name.
+    :arg clt_name: List of string of the branches name in which these
         packages will be un-deprecated.
 
 
