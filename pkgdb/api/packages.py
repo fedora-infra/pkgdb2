@@ -661,7 +661,7 @@ List packages
     branches = flask.request.args.get('branches', None)
     poc = flask.request.args.get('poc', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
-    status = flask.request.args.get('status', False)
+    status = flask.request.args.get('status', None)
     page = flask.request.args.get('page', None)
     limit = flask.request.args.get('limit', 100)
     count = flask.request.args.get('count', False)
@@ -688,7 +688,8 @@ List packages
             if isinstance(packages, (int, float, long)):
                 output['packages'] = packages
             else:
-                output['packages'] = [pkg.to_json() for pkg in packages]
+                output['packages'] = [pkg.to_json(acls=False)
+                                      for pkg in packages]
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
