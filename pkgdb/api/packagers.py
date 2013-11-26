@@ -20,6 +20,9 @@
 #
 
 '''
+Packagers
+=========
+
 API for collection management.
 '''
 

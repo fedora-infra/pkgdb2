@@ -20,6 +20,9 @@
 #
 
 '''
+Collections
+===========
+
 API for collection management.
 '''
 
