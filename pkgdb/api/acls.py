@@ -20,6 +20,9 @@
 #
 
 '''
+ACLs
+====
+
 API for ACL management.
 '''
 
@@ -92,18 +95,18 @@ Update package ACL
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
         pkg_branch = form.pkg_branch.data.split(',')
-        pkg_acl = form.pkg_acl.data
+        pkg_acl = form.pkg_acl.data.split(',')
         acl_status = form.acl_status.data
         pkg_user = form.pkg_user.data
 
         try:
             messages = []
-            for branch in pkg_branch:
+            for (acl, branch) in itertools.product(pkg_acl, pkg_branch):
                 message = pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=pkg_name,
                     pkg_branch=branch,
-                    acl=pkg_acl,
+                    acl=acl,
                     status=acl_status,
                     pkg_user=pkg_user,
                     user=flask.g.fas_user,
