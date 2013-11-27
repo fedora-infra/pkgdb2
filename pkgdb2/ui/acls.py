@@ -29,7 +29,7 @@ import itertools
 import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import (SESSION, APP, fas_login_required,
-                   packager_login_required)
+                    packager_login_required)
 from pkgdb2.ui import UI
 
 

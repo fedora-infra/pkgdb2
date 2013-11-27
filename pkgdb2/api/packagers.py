@@ -78,7 +78,8 @@ User's ACL
                   "status": "Approved",
                   "upstream_url": null,
                   "description": null,
-                  "summary": "Data of T- and B-cell Acute Lymphocytic Leukemia",
+                  "summary": "Data of T- and B-cell Acute Lymphocytic "
+                             "Leukemia",
                   "creation_date": 1384775354.0,
                   "review_url": null,
                   "name": "R-ALL"
@@ -101,7 +102,8 @@ User's ACL
                   "status": "Approved",
                   "upstream_url": null,
                   "description": null,
-                  "summary": "Data of T- and B-cell Acute Lymphocytic Leukemia",
+                  "summary": "Data of T- and B-cell Acute Lymphocytic "
+                             "Leukemia",
                   "creation_date": 1384775354.0,
                   "review_url": null,
                   "name": "R-ALL"

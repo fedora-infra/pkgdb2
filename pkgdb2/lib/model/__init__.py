@@ -475,7 +475,7 @@ class Collection(BASE):
 
         """
         return 'Collection(%r, %r, %r, owner:%r)' % (
-                   self.name, self.version, self.status, self.owner)
+            self.name, self.version, self.status, self.owner)
 
     def to_json(self, _seen=None):
         """ Used by fedmsg to serialize Collections in messages.
