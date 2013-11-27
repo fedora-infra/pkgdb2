@@ -40,7 +40,7 @@ setup(
     license='GPLv3+',
     download_url='https://fedorahosted.org/releases/p/k/pkgdb2/',
     url='https://fedorahosted.org/pkgdb2/',
-    packages=['pkgdb'],
+    packages=['pkgdb2'],
     include_package_data=True,
     install_requires=requires
     )
