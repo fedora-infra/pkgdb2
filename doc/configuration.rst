@@ -83,7 +83,7 @@ There are two configuration keys for this caching system.
 
 ``PKGDB_CACHE_KWARGS`` which allows passing arguments to this backend
 
-**Default:**:
+**Default:**
 
 ::
 
@@ -92,7 +92,7 @@ There are two configuration keys for this caching system.
         'arguments': {
             'url': "127.0.0.1:11211",
         }
-}
+    }
 
 
 More information about the possible backends and configurations can be found
