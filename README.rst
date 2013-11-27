@@ -2,12 +2,21 @@ Fedora PackageDB
 ================
 
 PackageDB2 is a rewrite of `packagedb <https://fedorahosted.org/packagedb/>`_
-to use flask.
+using flask.
 
-This project will be merged into packagedb when deemed descent enough and when
-we get closer to a release.
+PackageDB is the package database for Fedora.
 
-This is work in progress, consider it as such.
+It is the application handling who is allowed to commit on the git of the
+Fedora packages, it also handles who is the person getting the bugs on the
+bugzilla and who get the notifications for changes in the git, builds or bugs.
+
+
+:Project page: https://fedorahosted.org/packagedb/
+:Documentation: http://packagedb.rtfd.org
+:Git repository: http://git.fedorahosted.org/git/packagedb
+:Github mirror: https://github.com/fedora-infra/packagedb2
+:Project mailing list: https://lists.fedorahosted.org/mailman/listinfo/packagedb
+
 
 Hacking
 -------
@@ -49,12 +58,5 @@ running::
 Open your browser and visit http://localhost:5000 to check it out.
 
 
-Deploying
----------
-
-We need instructions here for
-
-1. installing packagedb2 from yum
-2. installing, initializing, and configuring a postgresql db
-3. installing and configuring apache/mod_wsgi
-4. setting up any configuration specific to packagedb2 itself.
+For more information about the project configuration or deployment, check out
+the `documentation <http://packagedb.rtfd.org>`_
