@@ -75,7 +75,7 @@ install -m 644 utility/pkgdb.conf $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/pk
 
 # Install configuration file
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb
-install -m 644 utility/pkgdb.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/fedocal/pkgdb.cfg
+install -m 644 utility/pkgdb.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb/pkgdb.cfg
 
 # Install WSGI file
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/pkgdb
