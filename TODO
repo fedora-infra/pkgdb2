@@ -1,4 +1,0 @@
-- API authentication (client side)
-- update pkgdb-cli
-- Email for changes ?
-  -> Or do we integrate this in the fedmsg-notify app?
