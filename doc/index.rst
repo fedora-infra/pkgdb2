@@ -23,7 +23,6 @@ Contents:
 
    deployment
    configuration
-   api
    development
    contributing
    contributors
