@@ -13,3 +13,4 @@ dogpile.cache
 mock
 python-bugzilla
 python-memcached
+blinker # required by Flask for the unit-tests (for signaling)
