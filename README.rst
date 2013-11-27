@@ -15,7 +15,7 @@ bugzilla and who get the notifications for changes in the git, builds or bugs.
 :Documentation: http://packagedb.rtfd.org
 :Git repository: http://git.fedorahosted.org/git/packagedb
 :Github mirror: https://github.com/fedora-infra/packagedb2
-:Project mailing list: https://lists.fedorahosted.org/mailman/listinfo/packagedb
+:Mailing list: https://lists.fedorahosted.org/mailman/listinfo/packagedb
 
 
 Hacking
