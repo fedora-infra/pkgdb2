@@ -50,7 +50,7 @@ configuration file refers to the
 `FAS <https://admin.fedoraproject.org/accounts>`_ group that manages this
 pkgdb instance.
 
-It defaults to ``ADMIN_GROUP = ['sysadmin-main', 'sysadmin-cvs']``.
+**Default:** ``ADMIN_GROUP = ['sysadmin-main', 'sysadmin-cvs']``.
 
 
 Items per page
@@ -59,7 +59,7 @@ Items per page
 The ``ITEMS_PER_PAGE`` allows setting how many items should be presented per
 page. Items in this case may be packages, packagers or collections.
 
-It defaults to ``ITEMS_PER_PAGE = 50``.
+**Default:** ``ITEMS_PER_PAGE = 50``.
 
 
 Auto-approve ACLs
@@ -68,7 +68,7 @@ Auto-approve ACLs
 The ``AUTO_APPROVE`` lists the ACLs we handle, there are a couple which
 that can be automatically approved when a user requests them.
 
-It defaults to ``AUTO_APPROVE = ['watchcommits', 'watchbugzilla']``.
+**Default:** ``AUTO_APPROVE = ['watchcommits', 'watchbugzilla']``.
 
 
 Caching configuration
@@ -83,7 +83,7 @@ There are two configuration keys for this caching system.
 
 ``PKGDB_CACHE_KWARGS`` which allows passing arguments to this backend
 
-It defaults to:
+**Default:**:
 
 ::
 
@@ -105,7 +105,7 @@ Bugzilla integration
 bugzilla in the unit-tests. This setting has no effect with the actual
 application, as such there is no point changing it in production.
 
-It defaults to ``PKGDB_BUGZILLA_IN_TESTS = False``.
+**Default:** ``PKGDB_BUGZILLA_IN_TESTS = False``.
 
 
 ``PKGDB_BUGZILLA_NOTIFICATION`` is used to change the owner of a component
@@ -114,25 +114,25 @@ the owner of the component in bugzilla will not reflect the change in the
 point of contact in packagedb.
 This should set to ``True`` in production.
 
-It defaults to ``PKGDB_BUGZILLA_NOTIFICATION = False``.
+**Default:** ``PKGDB_BUGZILLA_NOTIFICATION = False``.
 
 
 ``PKGDB_BUGZILLA_URL`` is the url to the bugzilla instance the packagedb
 application should synchronize with.
 
-It defaults to ``PKGDB_BUGZILLA_URL = 'https://bugzilla.redhat.com'``.
+**Default:** ``PKGDB_BUGZILLA_URL = 'https://bugzilla.redhat.com'``.
 
 
 ``PKGDB_BUGZILLA_USER`` is the bugzilla user the packagedb application can
 log in with onto the bugzilla server set.
 
-It defaults to ``PKGDB_BUGZILLA_USER = None``.
+**Default:** ``PKGDB_BUGZILLA_USER = None``.
 
 
 ``PKGDB_BUGZILLA_PASSWORD`` is the password of the bugzilla user the
 packagedb application can log in with onto the bugzilla server set.
 
-It defaults to ``PKGDB_BUGZILLA_PASSWORD = None``.
+**Default:** ``PKGDB_BUGZILLA_PASSWORD = None``.
 
 
 FAS integration
@@ -145,18 +145,18 @@ packagers.
 
 ``PKGDB_FAS_URL`` is the URL to the FAS instance pkgdb should query.
 
-It defaults to ``PKGDB_FAS_URL = None``.
+**Default:** ``PKGDB_FAS_URL = None``.
 
 
 ``PKGDB_FAS_USER`` is the FAS user pkgdb can log in with on the FAS server.
 
-It defaults to ``PKGDB_FAS_USER = None``.
+**Default:** ``PKGDB_FAS_USER = None``.
 
 
 ``PKGDB_FAS_PASSWORD`` is the FAS user password, pkgdb can log in with on
 the FAS server.
 
-It defaults to ``PKGDB_FAS_PASSWORD = None``.
+**Default:** ``PKGDB_FAS_PASSWORD = None``.
 
 
 Notification settings
@@ -165,29 +165,29 @@ Notification settings
 ``PKGDB_FEDMSG_NOTIFICATION`` boolean specifying if the pkgdb application
 should broadcast notifications via `fedmsg <http://www.fedmsg.com/>`_.
 
-It defaults to ``PKGDB_FEDMSG_NOTIFICATION = True``.
+**Default:** ``PKGDB_FEDMSG_NOTIFICATION = True``.
 
 
 ``PKGDB_EMAIL_NOTIFICATION`` is a boolean specifying if the pkgdb application
 should send its notificationds by email.
 
-It defaults to ``PKGDB_EMAIL_NOTIFICATION = False``.
+**Default:** ``PKGDB_EMAIL_NOTIFICATION = False``.
 
 
 ``PKGDB_EMAIL_TO`` is a template to specify to which email the email
 notifications should be set. This implies there are number of aliases set
 redirecting from these emails to the users.
 
-It defaults to ``PKGDB_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'``.
+**Default:** ``PKGDB_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'``.
 
 
 ``PKGDB_EMAIL_FROM`` specifies the from field used if the notifications are
 sent by emails.
 
-It defaults to ``PKGDB_EMAIL_FROM = 'nobody@fedoraproject.org'``.
+**Default:** ``PKGDB_EMAIL_FROM = 'nobody@fedoraproject.org'``.
 
 
 ``PKGDB_EMAIL_SMTP_SERVER`` specifies the SMTP server to use to send the
 notifications if they are set to be sent by emails.
 
-It defaults to ``PKGDB_EMAIL_SMTP_SERVER = 'localhost'``.
+**Default:** ``PKGDB_EMAIL_SMTP_SERVER = 'localhost'``.
