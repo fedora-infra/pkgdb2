@@ -955,7 +955,7 @@ class Package(BASE):
             Package.name.like(pkg_name)
         ).order_by(
             Package.name
-        ).distinct()
+        )
 
         if pkg_poc:
             query = query.join(
@@ -994,16 +994,23 @@ class Package(BASE):
             )
 
         if orphaned is not None:
-            if not pkg_poc and not pkg_branch:
-                query = query.join(PackageListing)
             if orphaned is True:
-                query = query.filter(
+                subquery = session.query(
+                    PackageListing.package_id
+                ).filter(
                     PackageListing.status == 'Orphaned'
                 )
-            elif orphaned is False:
-                query = query.filter(
+            else:
+                subquery = session.query(
+                    PackageListing.package_id
+                ).filter(
                     PackageListing.status != 'Orphaned'
                 )
+            subquery = subquery.subquery()
+
+            query = query.filter(
+                Package.id.in_(subquery)
+            )
 
         if count:
             return query.count()
