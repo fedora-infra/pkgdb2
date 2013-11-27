@@ -13,7 +13,7 @@ hostname = socket.gethostname().split('.')[0]
 
 config = dict(
     endpoints={
-        "pkgdb.%s" % hostname: [
+        "pkgdb2.%s" % hostname: [
             "tcp://127.0.0.1:3005",
         ],
     },
