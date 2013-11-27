@@ -1,8 +1,8 @@
 include LICENSE README.rst *.sample  requirements.txt
-include pkgdb.spec pkgdb.wsgi pkgdb.conf alembic.ini.sample
-include runtests.sh createdb.py
+include runtests.sh createdb.py nosetest
 recursive-include pkgdb *
 recursive-include alembic *
 recursive-include tests *
+include utility/*
 include doc/*
 
