@@ -23,6 +23,10 @@
 pkgdb default configuration.
 '''
 
+from datetime import timedelta
+
+# Set the time after which the session expires
+PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 # url to the database server:
 DB_URL = 'sqlite:////var/tmp/packagedb2.sqlite'
@@ -37,34 +41,34 @@ SECRET_KEY = '<insert here your own key>'
 AUTO_APPROVE = ['watchcommits', 'watchbugzilla']
 
 # FAS group for the pkgdb admin
-ADMIN_GROUP = ('sysadmin-main', 'sysadmin-cvs')
+ADMIN_GROUP = ['sysadmin-main', 'sysadmin-cvs']
 
 # The default backend for dogpile
 # Options are listed at:
 # http://dogpilecache.readthedocs.org/en/latest/api.html  (backend section)
-#PKGDB_CACHE_BACKEND = 'dogpile.cache.memory'
-PKGDB_CACHE_BACKEND = 'dogpile.cache.memcached'
-PKGDB_CACHE_KWARGS = {
+#PKGDB2_CACHE_BACKEND = 'dogpile.cache.memory'
+PKGDB2_CACHE_BACKEND = 'dogpile.cache.memcached'
+PKGDB2_CACHE_KWARGS = {
     'arguments': {
         'url': "127.0.0.1:11211",
     }
 }
 
 # Bugzilla information
-PKGDB_BUGZILLA_IN_TESTS = False
-PKGDB_BUGZILLA_NOTIFICATION = False
-PKGDB_BUGZILLA_URL = 'https://bugzilla.redhat.com'
-PKGDB_BUGZILLA_USER = None
-PKGDB_BUGZILLA_PASSWORD = None
+PKGDB2_BUGZILLA_IN_TESTS = False
+PKGDB2_BUGZILLA_NOTIFICATION = False
+PKGDB2_BUGZILLA_URL = 'https://bugzilla.redhat.com'
+PKGDB2_BUGZILLA_USER = None
+PKGDB2_BUGZILLA_PASSWORD = None
 
 # FAS information
-PKGDB_FAS_URL = None
-PKGDB_FAS_USER = None
-PKGDB_FAS_PASSWORD = None
+PKGDB2_FAS_URL = None
+PKGDB2_FAS_USER = None
+PKGDB2_FAS_PASSWORD = None
 
 # pkgdb notifications
-PKGDB_FEDMSG_NOTIFICATION = True
-PKGDB_EMAIL_NOTIFICATION = False
-PKGDB_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'
-PKGDB_EMAIL_FROM = 'nobody@fedoraproject.org'
-PKGDB_EMAIL_SMTP_SERVER = 'localhost'
+PKGDB2_FEDMSG_NOTIFICATION = True
+PKGDB2_EMAIL_NOTIFICATION = False
+PKGDB2_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'
+PKGDB2_EMAIL_FROM = 'nobody@fedoraproject.org'
+PKGDB2_EMAIL_SMTP_SERVER = 'localhost'
