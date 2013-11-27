@@ -27,11 +27,11 @@ import flask
 from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
-import pkgdb.forms
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, APP, is_admin, is_pkgdb_admin, \
+import pkgdb2.forms
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin, \
     is_pkg_admin, packager_login_required
-from pkgdb.ui import UI
+from pkgdb2.ui import UI
 
 
 @UI.route('/packages/')
@@ -91,6 +91,7 @@ def list_packages(motif=None, orphaned=False, status='Approved',
         packages_count=packages_count,
         page=page
     )
+
 
 @UI.route('/orphaned/')
 @UI.route('/orphaned/<motif>/')
@@ -179,12 +180,12 @@ def package_info(package):
 def package_new():
     ''' Page to create a new package. '''
 
-    collections = pkgdb.lib.search_collection(
+    collections = pkgdb2.lib.search_collection(
         SESSION, '*', 'Under Development')
-    collections.extend(pkgdb.lib.search_collection(SESSION, '*', 'Active'))
-    pkg_status = pkgdb.lib.get_status(SESSION, 'pkg_status')['pkg_status']
+    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    pkg_status = pkgdb2.lib.get_status(SESSION, 'pkg_status')['pkg_status']
 
-    form = pkgdb.forms.AddPackageForm(
+    form = pkgdb2.forms.AddPackageForm(
         collections=collections,
         pkg_status_list=pkg_status,
     )
@@ -260,7 +261,7 @@ def package_give(package):
             elif acl.collection.status != 'EOL':
                 collect_name.append(acl.collection.branchname)
 
-    form = pkgdb.forms.GivePoCForm(collections=collect_name)
+    form = pkgdb2.forms.GivePoCForm(collections=collect_name)
 
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 

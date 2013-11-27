@@ -27,9 +27,9 @@ import flask
 from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, APP
-from pkgdb.ui import UI
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION, APP
+from pkgdb2.ui import UI
 
 
 @UI.route('/packagers/')

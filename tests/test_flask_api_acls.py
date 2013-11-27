@@ -36,9 +36,9 @@ from mock import patch
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb import APP
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2 import APP
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 
@@ -51,12 +51,12 @@ class FlaskApiAclsTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskApiAclsTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.api.acls.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.api.acls.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
-    @patch('pkgdb.packager_login_required')
+    @patch('pkgdb2.packager_login_required')
     def test_acl_update(self, login_func):
         """ Test the api_acl_update function.  """
         login_func.return_value=None
@@ -139,8 +139,8 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertEqual(json_out, exp)
 
-    @patch('pkgdb.lib.utils')
-    @patch('pkgdb.packager_login_required')
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
     def test_acl_reassign(self, login_func, mock_func):
         """ Test the api_acl_reassign function. """
         login_func.return_value=None

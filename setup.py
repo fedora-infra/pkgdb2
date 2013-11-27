@@ -9,7 +9,7 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 from setuptools import setup
-from pkgdb import __version__
+from pkgdb2 import __version__
 
 def get_requires():
     ''' Reads the requirements.txt and return its content in a list. '''
@@ -30,16 +30,16 @@ def get_requires():
 requires = get_requires()
 
 setup(
-    name='packagedb',
-    description='PackageDB is the Package database for Fedora.',
+    name='pkgdb2',
+    description='Pkgdb2 is the newest Package database for Fedora.',
     version=__version__,
     author='Pierre-Yves Chibon',
     author_email='pingou@pingoured.fr',
     maintainer='Pierre-Yves Chibon',
     maintainer_email='pingou@pingoured.fr',
     license='GPLv3+',
-    download_url='https://fedorahosted.org/releases/p/a/packagedb/',
-    url='https://fedorahosted.org/packagedb/',
+    download_url='https://fedorahosted.org/releases/p/k/pkgdb2/',
+    url='https://fedorahosted.org/pkgdb2/',
     packages=['pkgdb'],
     include_package_data=True,
     install_requires=requires

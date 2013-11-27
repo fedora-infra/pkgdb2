@@ -28,13 +28,13 @@ import flask
 
 API = flask.Blueprint('api_ns', __name__, url_prefix='/api')
 
-from pkgdb import __version__, __api_version__, APP
-from pkgdb.doc_utils import load_doc
+from pkgdb2 import __version__, __api_version__, APP
+from pkgdb2.doc_utils import load_doc
 
-from pkgdb.api import acls
-from pkgdb.api import collections
-from pkgdb.api import packagers
-from pkgdb.api import packages
+from pkgdb2.api import acls
+from pkgdb2.api import collections
+from pkgdb2.api import packagers
+from pkgdb2.api import packages
 
 
 @APP.template_filter('InsertDiv')
@@ -60,7 +60,7 @@ def insert_div(content):
 
 @API.context_processor
 def inject_pkgdb_version():
-    """ Inject whether the pkgdb version number on every template of this
+    """ Inject whether the pkgdb2 version number on every template of this
     namespace as well.
     """
     return dict(version=__version__)

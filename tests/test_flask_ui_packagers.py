@@ -36,8 +36,8 @@ from mock import patch
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 
@@ -49,15 +49,15 @@ class FlaskUiPackagersTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskUiPackagersTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.ui.SESSION = self.session
-        pkgdb.ui.acls.SESSION = self.session
-        pkgdb.ui.admin.SESSION = self.session
-        pkgdb.ui.collections.SESSION = self.session
-        pkgdb.ui.packagers.SESSION = self.session
-        pkgdb.ui.packages.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.ui.SESSION = self.session
+        pkgdb2.ui.acls.SESSION = self.session
+        pkgdb2.ui.admin.SESSION = self.session
+        pkgdb2.ui.collections.SESSION = self.session
+        pkgdb2.ui.packagers.SESSION = self.session
+        pkgdb2.ui.packages.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
     def test_list_packagers(self):
         """ Test the list_packagers function. """

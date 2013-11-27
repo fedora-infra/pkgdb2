@@ -47,7 +47,7 @@ from sqlalchemy.sql.expression import Executable, ClauseElement
 
 BASE = declarative_base()
 
-ERROR_LOG = logging.getLogger('pkgdb.lib.model.packages')
+ERROR_LOG = logging.getLogger('pkgdb2.lib.model.packages')
 
 DEFAULT_GROUPS = {'provenpackager': {'commit': True}}
 

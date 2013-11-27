@@ -27,8 +27,8 @@ import flask
 
 from urlparse import urlparse
 
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, FAS, is_pkgdb_admin, __version__
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION, FAS, is_pkgdb_admin, __version__
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')

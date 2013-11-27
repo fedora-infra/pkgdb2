@@ -33,7 +33,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from pkgdb.lib import model
+from pkgdb2.lib import model
 from tests import Modeltests, create_package_acl
 
 

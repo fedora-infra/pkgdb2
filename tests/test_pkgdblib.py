@@ -39,8 +39,8 @@ from sqlalchemy.exc import IntegrityError
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-import pkgdb.lib as pkgdblib
+import pkgdb2
+import pkgdb2.lib as pkgdblib
 from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
                    FakeFasGroupValid, FakeFasGroupInvalid,
                    create_collection, create_package,
@@ -87,8 +87,8 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        pkgdb.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb.lib.utils.get_packagers.reset_mock()
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.reset_mock()
 
         # Configuration to query FAS isn't set
         self.assertRaises(pkgdblib.PkgdbException,
@@ -105,8 +105,8 @@ class PkgdbLibtests(Modeltests):
                           pkg_upstreamURL='http://guake.org',
                           user=FakeFasUserAdmin())
 
-        pkgdb.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb.lib.utils.get_packagers.return_value = ['pingou']
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = ['pingou']
 
         # 'Ralph' is not in the packager group
         self.assertRaises(pkgdblib.PkgdbException,
@@ -123,8 +123,8 @@ class PkgdbLibtests(Modeltests):
                           pkg_upstreamURL='http://guake.org',
                           user=FakeFasUserAdmin())
 
-        pkgdb.lib.utils.get_fas_group = mock.MagicMock()
-        pkgdb.lib.utils.get_fas_group.return_value = FakeFasGroupInvalid
+        pkgdb2.lib.utils.get_fas_group = mock.MagicMock()
+        pkgdb2.lib.utils.get_fas_group.return_value = FakeFasGroupInvalid
 
         # Invalid FAS group returned
         self.assertRaises(pkgdblib.PkgdbException,
@@ -141,8 +141,8 @@ class PkgdbLibtests(Modeltests):
                           pkg_upstreamURL=None,
                           user=FakeFasUserAdmin())
 
-        pkgdb.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb.lib.utils.get_packagers.return_value = ['ralph', 'pingou']
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = ['ralph', 'pingou']
 
         msg = pkgdblib.add_package(self.session,
                                     pkg_name='guake',
@@ -178,8 +178,8 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual('guake', packages[0].name)
         self.assertEqual('geany', packages[1].name)
 
-        pkgdb.lib.utils.get_fas_group = mock.MagicMock()
-        pkgdb.lib.utils.get_fas_group.return_value = FakeFasGroupValid
+        pkgdb2.lib.utils.get_fas_group = mock.MagicMock()
+        pkgdb2.lib.utils.get_fas_group.return_value = FakeFasGroupValid
 
         pkgdblib.add_package(self.session,
                              pkg_name='fedocal',
@@ -416,8 +416,8 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        pkgdb.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb.lib.utils.get_packagers.return_value = [
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = [
             'pingou', 'toshio', 'ralph']
 
         # User must be the actual Point of Contact (or an admin of course,
@@ -474,8 +474,8 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'ralph')
 
-        pkgdb.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb.lib.utils.get_packagers.return_value = ['pingou', 'toshio']
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = ['pingou', 'toshio']
 
         # PoC can change PoC
         user = FakeFasUser()
@@ -503,8 +503,8 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        pkgdb.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb.lib.utils.get_packagers.return_value = ['pingou', 'kevin']
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = ['pingou', 'kevin']
 
         # Admin can change PoC
         pkgdblib.update_pkg_poc(self.session,
@@ -1204,7 +1204,7 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        # PKGDB_BUGZILLA_* configuration not set
+        # PKGDB2_BUGZILLA_* configuration not set
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
@@ -1215,11 +1215,11 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        if pkgdb.APP.config['PKGDB_BUGZILLA_IN_TESTS']:
-            pkgdb.lib.utils.get_bz_email_user = mock.MagicMock()
-            pkgdb.lib.utils.get_bz_email_user.return_value = FakeFasUser
+        if pkgdb2.APP.config['PKGDB2_BUGZILLA_IN_TESTS']:
+            pkgdb2.lib.utils.get_bz_email_user = mock.MagicMock()
+            pkgdb2.lib.utils.get_bz_email_user.return_value = FakeFasUser
         else:
-            pkgdb.lib.utils._set_bugzilla_owner = mock.MagicMock()
+            pkgdb2.lib.utils._set_bugzilla_owner = mock.MagicMock()
         self.session.commit()
 
         # Orphan package

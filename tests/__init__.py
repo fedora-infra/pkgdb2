@@ -43,8 +43,8 @@ from sqlalchemy.orm import scoped_session
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from pkgdb import APP, FAS
-from pkgdb.lib import model
+from pkgdb2 import APP, FAS
+from pkgdb2.lib import model
 
 #DB_PATH = 'sqlite:///:memory:'
 ## A file database is required to check the integrity, don't ask

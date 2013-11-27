@@ -26,11 +26,11 @@ ACLs management for the Flask application.
 import flask
 import itertools
 
-import pkgdb.forms
-import pkgdb.lib as pkgdblib
-from pkgdb import (SESSION, APP, fas_login_required,
+import pkgdb2.forms
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import (SESSION, APP, fas_login_required,
                    packager_login_required)
-from pkgdb.ui import UI
+from pkgdb2.ui import UI
 
 
 @UI.route('/acl/<package>/request/', methods=('GET', 'POST'))
@@ -38,12 +38,12 @@ from pkgdb.ui import UI
 def request_acl(package):
     ''' Request acls for a specific package. '''
 
-    collections = pkgdb.lib.search_collection(
+    collections = pkgdblib.search_collection(
         SESSION, '*', 'Under Development')
-    collections.extend(pkgdb.lib.search_collection(SESSION, '*', 'Active'))
-    pkg_acl = pkgdb.lib.get_status(SESSION, 'pkg_acl')['pkg_acl']
+    collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
+    pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
 
-    form = pkgdb.forms.RequestAclPackageForm(
+    form = pkgdb2.forms.RequestAclPackageForm(
         collections=collections,
         pkg_acl_list=pkg_acl
     )
@@ -186,9 +186,9 @@ def update_acl(package, user, branch=None):
         pending_acls = pending_acls2
 
     collections = set([item['collection'] for item in pending_acls])
-    status = pkgdb.lib.get_status(SESSION, ['pkg_acl', 'acl_status'])
+    status = pkgdblib.get_status(SESSION, ['pkg_acl', 'acl_status'])
 
-    form = pkgdb.forms.UpdateAclPackageForm(
+    form = pkgdb2.forms.UpdateAclPackageForm(
         collections=collections,
         pkg_acl_list=status['pkg_acl'],
         acl_status=status['acl_status'],

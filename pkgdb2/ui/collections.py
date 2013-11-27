@@ -26,10 +26,10 @@ UI namespace for the Flask application.
 import flask
 from math import ceil
 
-import pkgdb.forms
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, APP, is_admin, is_pkgdb_admin
-from pkgdb.ui import UI
+import pkgdb2.forms
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin
+from pkgdb2.ui import UI
 
 
 @UI.route('/collections/')
@@ -99,8 +99,8 @@ def collection_edit(collection):
         flask.flash('No collection of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    clt_status = pkgdb.lib.get_status(SESSION, 'clt_status')['clt_status']
-    form = pkgdb.forms.AddCollectionForm(
+    clt_status = pkgdblib.get_status(SESSION, 'clt_status')['clt_status']
+    form = pkgdb2.forms.AddCollectionForm(
         clt_status=clt_status
     )
 
@@ -133,7 +133,7 @@ def collection_edit(collection):
             SESSION.rollback()
             flask.flash(err.message, 'errors')
     else:
-        form = pkgdb.forms.AddCollectionForm(
+        form = pkgdb2.forms.AddCollectionForm(
             clt_status=clt_status,
             collection=collection
         )
@@ -150,8 +150,8 @@ def collection_edit(collection):
 def collection_new():
     ''' Page to create a new collection. '''
 
-    clt_status = pkgdb.lib.get_status(SESSION, 'clt_status')['clt_status']
-    form = pkgdb.forms.AddCollectionForm(clt_status=clt_status)
+    clt_status = pkgdblib.get_status(SESSION, 'clt_status')['clt_status']
+    form = pkgdb2.forms.AddCollectionForm(clt_status=clt_status)
     if form.validate_on_submit():
         clt_name = form.collection_name.data
         clt_version = form.collection_version.data

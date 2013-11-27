@@ -1,6 +1,6 @@
 include COPYING README.rst requirements.txt
 include runtests.sh createdb.py nosetests
-recursive-include pkgdb *
+recursive-include pkgdb2 *
 recursive-include tests *
 recursive-include utility *
 include doc/*

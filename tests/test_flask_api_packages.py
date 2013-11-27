@@ -36,9 +36,9 @@ from mock import patch
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb import lib as pkgdblib
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2 import lib as pkgdblib
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_collection, create_package, create_package_acl,
                    user_set)
@@ -51,13 +51,13 @@ class FlaskApiPackagesTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskApiPackagesTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.api.packages.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.api.packages.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
-    @patch('pkgdb.lib.utils')
-    @patch('pkgdb.is_admin')
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.is_admin')
     def test_api_package_new(self, login_func, mock_func):
         """ Test the api_package_new function.  """
         login_func.return_value=None
@@ -65,13 +65,13 @@ class FlaskApiPackagesTest(Modeltests):
         # Redirect as you are not admin
         user = FakeFasUser()
 
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUserAdmin()
 
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -103,7 +103,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_poc': '',
             'pkg_upstreamURL': '',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -146,7 +146,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_upstreamURL': 'http://www.gnome.org/',
             'pkg_critpath': False,
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -176,7 +176,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_upstreamURL': 'http://www.gnome.org/',
             'pkg_critpath': False,
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -204,7 +204,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_upstreamURL': 'http://www.gnome.org/',
             'pkg_critpath': False,
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
@@ -218,8 +218,8 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
 
-    @patch('pkgdb.lib.utils')
-    @patch('pkgdb.packager_login_required')
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
     def test_api_package_orphan(self, login_func, mock_func):
         """ Test the api_package_orphan function.  """
         login_func.return_value=None
@@ -228,12 +228,12 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.groups = []
 
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUser()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -255,7 +255,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -275,7 +275,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
@@ -297,8 +297,8 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
             self.assertEqual(pkg_acl[1].status, 'Orphaned')
 
-    @patch('pkgdb.lib.utils')
-    @patch('pkgdb.packager_login_required')
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
     def test_api_package_unorphan(self, login_func, mock_func):
         """ Test the api_package_unorphan function.  """
         login_func.return_value=None
@@ -307,12 +307,12 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.groups = []
 
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUser()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -334,7 +334,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -355,7 +355,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -373,7 +373,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
@@ -401,7 +401,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -419,7 +419,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'pingou',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
@@ -445,8 +445,8 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
             self.assertEqual(pkg_acl[1].status, 'Approved')
 
-    @patch('pkgdb.lib.utils')
-    @patch('pkgdb.packager_login_required')
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
     def test_api_package_retire(self, login_func, mock_func):
         """ Test the api_package_retire function.  """
         login_func.return_value=None
@@ -455,12 +455,12 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.groups = []
 
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUser()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -481,7 +481,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -501,7 +501,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_name': 'guake',
             'clt_name': 'F-18,devel',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -521,7 +521,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_name': 'guake',
             'clt_name': 'F-18,devel',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
@@ -533,8 +533,8 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
 
-    @patch('pkgdb.lib.utils')
-    @patch('pkgdb.packager_login_required')
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
     def test_api_package_unretire(self, login_func, mock_func):
         """ Test the api_package_unretire function.  """
         login_func.return_value=None
@@ -543,12 +543,12 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.groups = []
 
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUser()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -569,7 +569,7 @@ class FlaskApiPackagesTest(Modeltests):
             'clt_name': 'F-18,devel',
             'pkg_poc': 'test',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -589,7 +589,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_name': 'guake',
             'clt_name': 'F-18,devel',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
@@ -609,7 +609,7 @@ class FlaskApiPackagesTest(Modeltests):
             'pkg_name': 'guake',
             'clt_name': 'F-18,devel',
         }
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)

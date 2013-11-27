@@ -34,8 +34,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser,
                    create_package_acl, create_package_acl2,
                    create_package_critpath)
@@ -48,13 +48,13 @@ class FlaskApiExtrasTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskApiExtrasTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.api.extras.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.api.extras.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
         # Let's make sure the cache is empty for the tests
-        pkgdb.CACHE.invalidate()
+        pkgdb2.CACHE.invalidate()
 
     def test_api_bugzilla_empty(self):
         """ Test the api_bugzilla function with an empty database. """

@@ -28,9 +28,9 @@ import flask
 from dateutil import parser
 from math import ceil
 
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, APP, is_admin
-from pkgdb.ui import UI
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION, APP, is_admin
+from pkgdb2.ui import UI
 
 
 @UI.route('/admin/')

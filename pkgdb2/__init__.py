@@ -39,9 +39,9 @@ __api_version__ = '0.1.0'
 APP = flask.Flask(__name__)
 LOG = logging.getLogger(__name__)
 
-APP.config.from_object('pkgdb.default_config')
-if 'PKGDB_CONFIG' in os.environ:  # pragma: no cover
-    APP.config.from_envvar('PKGDB_CONFIG')
+APP.config.from_object('pkgdb2.default_config')
+if 'PKGDB2_CONFIG' in os.environ:  # pragma: no cover
+    APP.config.from_envvar('PKGDB2_CONFIG')
 
 if APP.config.get('LOGGER_CONFIG_FILE') \
         and os.path.exists(APP.config['LOGGER_CONFIG_FILE']):
@@ -52,12 +52,12 @@ FAS = FAS(APP)
 
 # Initialize the cache.
 CACHE = dogpile.cache.make_region().configure(
-    APP.config.get('PKGDB_CACHE_BACKEND', 'dogpile.cache.memory'),
-    **APP.config.get('PKGDB_CACHE_KWARGS', {})
+    APP.config.get('PKGDB2_CACHE_BACKEND', 'dogpile.cache.memory'),
+    **APP.config.get('PKGDB2_CACHE_KWARGS', {})
 )
 
 
-import pkgdb.lib as pkgdblib
+import pkgdb2.lib as pkgdblib
 
 
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])

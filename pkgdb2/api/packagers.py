@@ -28,9 +28,9 @@ API for collection management.
 
 import flask
 
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION
-from pkgdb.api import API
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION
+from pkgdb2.api import API
 
 
 ## Packagers

@@ -36,9 +36,9 @@ from mock import patch
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb import APP
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2 import APP
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 
@@ -51,10 +51,10 @@ class FlaskApiTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskApiTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.api.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.api.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
     def test_api_version(self):
         """ Test the api_version function.  """
@@ -62,7 +62,7 @@ class FlaskApiTest(Modeltests):
         output = self.app.get('/api/version')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
-        self.assertEqual(data['version'], pkgdb.__api_version__)
+        self.assertEqual(data['version'], pkgdb2.__api_version__)
         self.assertEqual(data.keys(), ['version'])
 
 

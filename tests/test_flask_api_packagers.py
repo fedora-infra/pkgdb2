@@ -34,8 +34,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2.lib import model
 from tests import Modeltests, FakeFasUser, create_package_acl, user_set
 
 
@@ -46,10 +46,10 @@ class FlaskApiPackagersTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskApiPackagersTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.api.packagers.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.api.packagers.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
     def test_packager_acl(self):
         """ Test the api_packager_acl function.  """

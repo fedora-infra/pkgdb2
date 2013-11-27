@@ -31,9 +31,9 @@ import itertools
 
 from sqlalchemy.orm.exc import NoResultFound
 
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, forms, is_admin, packager_login_required
-from pkgdb.api import API
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION, forms, is_admin, packager_login_required
+from pkgdb2.api import API
 
 
 ## Package

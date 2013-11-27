@@ -23,7 +23,7 @@
 Utilities for all classes to use
 '''
 
-import pkgdb
+import pkgdb2
 
 from bugzilla import RHBugzilla3
 
@@ -45,25 +45,25 @@ def get_fas():  # pragma: no cover
         return _FAS
 
     # Get a connection to FAS
-    fas_url = pkgdb.APP.config['PKGDB_FAS_URL']
+    fas_url = pkgdb2.APP.config['PKGDB2_FAS_URL']
     if not fas_url:
-        raise pkgdb.lib.PkgdbException('No PKGDB_FAS_URL configured')
+        raise pkgdb2.lib.PkgdbException('No PKGDB2_FAS_URL configured')
 
-    fas_user = pkgdb.APP.config['PKGDB_FAS_USER']
+    fas_user = pkgdb2.APP.config['PKGDB2_FAS_USER']
     if not fas_user:  # pragma: no cover
-        raise pkgdb.lib.PkgdbException('No PKGDB_FAS_USER configured')
+        raise pkgdb2.lib.PkgdbException('No PKGDB2_FAS_USER configured')
 
-    fas_pass = pkgdb.APP.config['PKGDB_FAS_PASSWORD']
+    fas_pass = pkgdb2.APP.config['PKGDB2_FAS_PASSWORD']
     if not fas_pass:  # pragma: no cover
-        raise pkgdb.lib.PkgdbException(
-            'No PKGDB_FAS_PASSWORD configured')
+        raise pkgdb2.lib.PkgdbException(
+            'No PKGDB2_FAS_PASSWORD configured')
 
     _FAS = AccountSystem(
         fas_url, username=fas_user, password=fas_pass, cache_session=False)
     return _FAS
 
 
-@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
+@pkgdb2.CACHE.cache_on_arguments(expiration_time=3600)
 def __get_fas_grp_member(group='packager'):  # pragma: no cover
     ''' Retrieve from FAS the list of users in the packager group.
     '''
@@ -81,7 +81,7 @@ def get_packagers():
     return output
 
 
-@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
+@pkgdb2.CACHE.cache_on_arguments(expiration_time=3600)
 def get_fas_group(group):
     """ Return group information from FAS based on the specified group name.
     """
@@ -90,7 +90,7 @@ def get_fas_group(group):
     return fas.group_by_name(group)
 
 
-@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
+@pkgdb2.CACHE.cache_on_arguments(expiration_time=3600)
 def get_bz_email_user(username):  # pragma: no cover
     ''' Retrieve the bugzilla email associated to the provided username.
     '''
@@ -109,12 +109,12 @@ def get_bz():
         return _BUGZILLA
 
     # Get a connection to bugzilla
-    bz_server = pkgdb.APP.config['PKGDB_BUGZILLA_URL']
+    bz_server = pkgdb2.APP.config['PKGDB2_BUGZILLA_URL']
     if not bz_server:
-        raise pkgdb.lib.PkgdbException('No PKGDB_BUGZILLA_URL configured')
+        raise pkgdb2.lib.PkgdbException('No PKGDB2_BUGZILLA_URL configured')
     bz_url = bz_server + '/xmlrpc.cgi'
-    bz_user = pkgdb.APP.config['PKGDB_BUGZILLA_USER']
-    bz_pass = pkgdb.APP.config['PKGDB_BUGZILLA_PASSWORD']
+    bz_user = pkgdb2.APP.config['PKGDB2_BUGZILLA_USER']
+    bz_pass = pkgdb2.APP.config['PKGDB2_BUGZILLA_PASSWORD']
 
     _BUGZILLA = RHBugzilla3(url=bz_url, user=bz_user, password=bz_pass,
                             cookiefile=None)
@@ -151,7 +151,7 @@ def _set_bugzilla_owner(
     queryResults = get_bz().query(bzQuery)  # pylint:disable-msg=E1101
 
     for bug in queryResults:
-        if pkgdb.APP.config['PKGDB_BUGZILLA_NOTIFICATION']:  # pragma: no cover
+        if pkgdb2.APP.config['PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
             bug.setassignee(assigned_to=bzMail, comment=bzComment)
         else:
             print(
@@ -183,8 +183,8 @@ def log(session, package, topic, message):
     """
 
     # To avoid a circular import.
-    import pkgdb.lib.model as model
-    from pkgdb.lib.notifications import fedmsg_publish, email_publish
+    import pkgdb2.lib.model as model
+    from pkgdb2.lib.notifications import fedmsg_publish, email_publish
 
     # A big lookup of fedmsg topics to model.Log template strings.
     templates = {
@@ -223,8 +223,8 @@ def log(session, package, topic, message):
 
     model.Log.insert(session, message['agent'], package, final_msg)
 
-    if pkgdb.APP.config.get('PKGDB_FEDMSG_NOTIFICATION', True):
+    if pkgdb2.APP.config.get('PKGDB2_FEDMSG_NOTIFICATION', True):
         fedmsg_publish(topic, message)
-    if pkgdb.APP.config.get('PKGDB_EMAIL_NOTIFICATION', False):
+    if pkgdb2.APP.config.get('PKGDB2_EMAIL_NOTIFICATION', False):
         email_publish(message['agent'], package, final_msg)
     return final_msg

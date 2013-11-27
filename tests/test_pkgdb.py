@@ -33,7 +33,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
+import pkgdb2
 from tests import Modeltests, FakeFasUser, FakeFasUserAdmin
 
 
@@ -41,30 +41,30 @@ class Pkgdbtests(Modeltests):
     """ pkgdb tests. """
 
     def test_is_pkgdb_admin(self):
-        """ Test the is_pkgdb_admin function of pkgdb. """
+        """ Test the is_pkgdb_admin function of pkgdb2. """
         user = FakeFasUser()
-        out = pkgdb.is_pkgdb_admin(user)
+        out = pkgdb2.is_pkgdb_admin(user)
         self.assertEqual(out, False)
 
         user.groups = []
-        out = pkgdb.is_pkgdb_admin(user)
+        out = pkgdb2.is_pkgdb_admin(user)
         self.assertEqual(out, False)
 
         user = FakeFasUser()
-        out = pkgdb.is_pkgdb_admin(None)
+        out = pkgdb2.is_pkgdb_admin(None)
         self.assertEqual(out, False)
 
         user = FakeFasUserAdmin()
-        out = pkgdb.is_pkgdb_admin(user)
+        out = pkgdb2.is_pkgdb_admin(user)
         self.assertEqual(out, True)
 
-        pkgdb.APP.config['ADMIN_GROUP'] = 'sysadmin-main'
+        pkgdb2.APP.config['ADMIN_GROUP'] = 'sysadmin-main'
 
-        out = pkgdb.is_pkgdb_admin(user)
+        out = pkgdb2.is_pkgdb_admin(user)
         self.assertEqual(out, False)
 
         # Reset the ADMIN_GROUP for the other tests
-        pkgdb.APP.config['ADMIN_GROUP'] = ('sysadmin-main', 'sysadmin-cvs')
+        pkgdb2.APP.config['ADMIN_GROUP'] = ('sysadmin-main', 'sysadmin-cvs')
 
 
 if __name__ == '__main__':

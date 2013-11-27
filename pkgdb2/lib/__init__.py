@@ -33,13 +33,13 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from fedora.client.fas2 import FASError
 
-import pkgdb
-from pkgdb.lib import model
-from pkgdb.lib import utils
+import pkgdb2
+from pkgdb2.lib import model
+from pkgdb2.lib import utils
 
 
 class PkgdbException(Exception):
-    """ Generic Exception object used to throw pkgdb specific error.
+    """ Generic Exception object used to throw pkgdb2 specific error.
     """
     pass
 
@@ -61,9 +61,9 @@ def _validate_poc(pkg_poc):
         group = pkg_poc.split('group::')[1]
         # is pkg_poc a valid group (of type pkgdb)
         try:
-            group_obj = pkgdb.lib.utils.get_fas_group(group)
+            group_obj = pkgdb2.lib.utils.get_fas_group(group)
         except FASError as err:  # pragma: no cover
-            pkgdb.LOG.exception(err)
+            pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not find group "%s" ' % group)
         if group_obj.group_type != 'pkgdb':
             raise PkgdbException(
@@ -71,7 +71,7 @@ def _validate_poc(pkg_poc):
                 'should be of type "pkgdb".' % group)
     else:
         # if pkg_poc is a packager
-        packagers = pkgdb.lib.utils.get_packagers()
+        packagers = pkgdb2.lib.utils.get_packagers()
         if pkg_poc not in packagers:
             raise PkgdbException(
                 'The point of contact of this package is not in the packager '
@@ -121,7 +121,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
     :returns: a message informating that the package has been successfully
         created.
     :rtype: str()
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - You are not allowed to add a package, only pkgdb admin can
             - Something went wrong when adding the Package to the database
@@ -132,7 +132,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
         found in the database with the name ``pkg_collection``.
 
     """
-    if user is None or not pkgdb.is_pkgdb_admin(user):
+    if user is None or not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException("You're not allowed to add a package")
 
     _validate_poc(pkg_poc)
@@ -156,7 +156,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
     try:
         session.flush()
     except SQLAlchemyError, err:  # pragma: no cover
-        pkgdb.LOG.exception(err)
+        pkgdb2.LOG.exception(err)
         session.rollback()
         raise PkgdbException('Could not create package')
 
@@ -170,11 +170,11 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
         try:
             session.flush()
         except SQLAlchemyError, err:  # pragma: no cover
-            pkgdb.LOG.exception(err)
+            pkgdb2.LOG.exception(err)
             session.rollback()
             raise PkgdbException('Could not add packages to collections')
         else:
-            pkgdb.lib.utils.log(session, package, 'package.new', dict(
+            pkgdb2.lib.utils.log(session, package, 'package.new', dict(
                 agent=user.username,
                 package_name=package.name,
                 package_listing=pkglisting.to_json(),
@@ -203,7 +203,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
         session.flush()
         return 'Package created'
     except SQLAlchemyError, err:  # pragma: no cover
-        pkgdb.LOG.exception(err)
+        pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not add ACLs')
 
 
@@ -216,7 +216,7 @@ def get_acl_package(session, pkg_name, pkg_clt=None):
         of.
     :returns: a list of ``PackageListing``.
     :rtype: list(PackageListing)
-    :raises pkgdb.lib.PkgdbException: when user restricted the acl to a
+    :raises pkgdb2.lib.PkgdbException: when user restricted the acl to a
         specific branch using ``pkg_clt`` and this branch could not be
         found associated with this package.
     :raises sqlalchemy.orm.exc.NoResultFound: when there is no package
@@ -251,7 +251,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     :arg pkg_user: the FAS user for which the ACL should be set/change.
     :arg status: the status of the ACLs.
     :arg user: the user making the action.
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The ``pkg_name`` does not correspond to any package in the
                 database.
@@ -278,13 +278,13 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         raise PkgdbException('No collection found by the name of %s'
                              % pkg_branch)
 
-    if not pkgdb.is_pkg_admin(session, user, package.name, pkg_branch):
+    if not pkgdb2.is_pkg_admin(session, user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
         elif user.username == pkg_user and status not in \
                 ('Awaiting Review', 'Removed', 'Obsolete') \
-                and acl not in pkgdb.APP.config['AUTO_APPROVE']:
+                and acl not in pkgdb2.APP.config['AUTO_APPROVE']:
             raise PkgdbException(
                 'You are not allowed to approve or deny '
                 'ACLs for yourself.')
@@ -318,7 +318,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     prev_status = personpkg.status
     personpkg.status = status
     session.flush()
-    return pkgdb.lib.utils.log(session, package, 'acl.update', dict(
+    return pkgdb2.lib.utils.log(session, package, 'acl.update', dict(
         agent=user.username,
         username=pkg_user,
         acl=acl,
@@ -340,7 +340,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     :returns: a message informing that the point of contact has been
         successfully changed.
     :rtype: str()
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The ``pkg_name`` does not correspond to any package in the
                 database.
@@ -375,7 +375,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
 
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
-            and not pkgdb.is_pkgdb_admin(user) \
+            and not pkgdb2.is_pkgdb_admin(user) \
             and not pkglisting.point_of_contact.startswith('group::'):
         raise PkgdbException(
             'You are not allowed to change the point of contact.')
@@ -396,7 +396,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
 
     session.add(pkglisting)
     session.flush()
-    output = pkgdb.lib.utils.log(
+    output = pkgdb2.lib.utils.log(
         session, pkglisting.package, 'owner.update', dict(
             agent=user.username,
             username=pkg_poc,
@@ -406,7 +406,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
         )
     )
     # Update Bugzilla about new owner
-    pkgdb.lib.utils._set_bugzilla_owner(
+    pkgdb2.lib.utils._set_bugzilla_owner(
         pkg_poc, package.name, collection.name, collection.version)
 
     return output
@@ -420,7 +420,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
     :arg pkg_name: the name of the package.
     :arg pkg_branch: the name of the collection.
     :arg user: the user making the action.
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The provided ``pkg_name`` does not correspond to any package
                 in the database.
@@ -462,7 +462,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
     if status == 'Retired':
         # Admins can deprecate everything
         # Users can deprecate Fedora devel and EPEL branches
-        if pkgdb.is_pkgdb_admin(user) \
+        if pkgdb2.is_pkgdb_admin(user) \
                 or (collection.name == 'Fedora'
                     and collection.version == 'devel') \
                 or collection.name == 'EPEL':
@@ -481,7 +481,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         pkglisting.point_of_contact = 'orphan'
         session.add(pkglisting)
         session.flush()
-    elif pkgdb.is_pkgdb_admin(user):
+    elif pkgdb2.is_pkgdb_admin(user):
         if status == 'Approved':
             if pkglisting.status == 'Orphaned' and poc == 'orphan':
                 raise PkgdbException(
@@ -495,7 +495,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         session.add(pkglisting)
         session.flush()
         # Update Bugzilla about new owner
-        pkgdb.lib.utils._set_bugzilla_owner(
+        pkgdb2.lib.utils._set_bugzilla_owner(
             poc, package.name, collection.name,
             collection.version)
 
@@ -506,7 +506,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 package.name, collection.branchname, status)
         )
 
-    return pkgdb.lib.utils.log(session, package, 'package.update', dict(
+    return pkgdb2.lib.utils.log(session, package, 'package.update', dict(
         agent=user.username,
         status=status,
         prev_status=prev_status,
@@ -534,7 +534,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
     :returns: a list of ``Package`` entry corresponding to the given
         criterias.
     :rtype: list(Package)
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The provided ``limit`` is not an integer.
             - The provided ``page`` is not an integer.
@@ -581,7 +581,7 @@ def search_collection(session, pattern, status=None, page=None,
     :returns: a list of ``Collection`` entry corresponding to the given
         criterias.
     :rtype: list(Collection)
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The provided ``limit`` is not an integer.
             - The provided ``page`` is not an integer.
@@ -626,7 +626,7 @@ def search_packagers(session, pattern, page=None, limit=None,
     :returns: a list of ``PackageListing`` entry corresponding to the given
         criterias.
     :rtype: list(PackageListing)
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The provided ``limit`` is not an integer.
             - The provided ``page`` is not an integer.
@@ -673,7 +673,7 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
             if true, returns the data if false (default).
     :returns: a list of ``Log`` entry corresponding to the given criterias.
     :rtype: list(Log)
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The provided ``limit`` is not an integer.
             - The provided ``page`` is not an integer.
@@ -784,7 +784,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
     :returns: a message informing that the collection was successfully
         created.
     :rtype: str()
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - You are not allowed to edit a collection, only pkgdb admin can.
             - An error occured while updating the collection in the database
@@ -793,7 +793,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
     """
 
-    if not pkgdb.is_pkgdb_admin(user):
+    if not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to create collections')
 
     collection = model.Collection(
@@ -808,13 +808,13 @@ def add_collection(session, clt_name, clt_version, clt_status,
     try:
         session.add(collection)
         session.flush()
-        pkgdb.lib.utils.log(session, None, 'collection.new', dict(
+        pkgdb2.lib.utils.log(session, None, 'collection.new', dict(
             agent=user.username,
             collection=collection.to_json(),
         ))
         return 'Collection "%s" created' % collection.branchname
     except SQLAlchemyError, err:  # pragma: no cover
-        pkgdb.LOG.exception(err)
+        pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not add Collection to the database.')
 
 
@@ -838,7 +838,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     :returns: a message informing that the collection was successfully
         updated.
     :rtype: str()
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - You are not allowed to edit a collection, only pkgdb admin can.
             - An error occured while updating the collection in the database
@@ -847,7 +847,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
 
     """
 
-    if not pkgdb.is_pkgdb_admin(user):
+    if not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to edit collections')
 
     edited = []
@@ -875,14 +875,14 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
         try:
             session.add(collection)
             session.flush()
-            pkgdb.lib.utils.log(session, None, 'collection.update', dict(
+            pkgdb2.lib.utils.log(session, None, 'collection.update', dict(
                 agent=user.username,
                 fields=edited,
                 collection=collection.to_json(),
             ))
             return 'Collection "%s" edited' % collection.branchname
         except SQLAlchemyError, err:  # pragma: no cover
-            pkgdb.LOG.exception(err)
+            pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit Collection.')
 
 
@@ -898,7 +898,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
     :returns: a message information whether the status of the collection
         has been updated correclty or if it was not necessary.
     :rtype: str()
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - You are not allowed to edit a collection, only pkgdb admin can.
             - An error occured while updating the collection in the database
@@ -907,7 +907,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
             - The specified collection could not be found in the database.
 
     """
-    if not pkgdb.is_pkgdb_admin(user):
+    if not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to edit collections')
 
     try:
@@ -919,7 +919,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
             message = 'Collection updated to "%s"' % clt_status
             session.add(collection)
             session.flush()
-            pkgdb.lib.utils.log(session, None, 'collection.update', dict(
+            pkgdb2.lib.utils.log(session, None, 'collection.update', dict(
                 agent=user.username,
                 fields=['status'],
                 collection=collection.to_json(),
@@ -933,7 +933,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
         raise PkgdbException('Could not find collection "%s"' %
                              clt_branchname)
     except SQLAlchemyError, err:  # pragma: no cover
-        pkgdb.LOG.exception(err)
+        pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not update the status of collection'
                              '"%s".' % clt_branchname)
 
@@ -1093,7 +1093,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     :arg pkg_branch: the name of the collection.
     :arg pkg_user: the FAS user requesting the package.
     :arg user: the user making the action.
-    :raises pkgdb.lib.PkgdbException: There are few conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The package name provided does not correspond to any package
                 in the database.
@@ -1120,7 +1120,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     if not pkg_listing.status in ('Orphaned', 'Retired'):
         raise PkgdbException('Package is not orphaned on %s' % pkg_branch)
 
-    if not pkgdb.is_pkgdb_admin(user):
+    if not pkgdb2.is_pkgdb_admin(user):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
@@ -1133,7 +1133,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     session.add(pkg_listing)
     session.flush()
 
-    pkgdb.lib.utils.log(session, pkg_listing.package, 'owner.update', dict(
+    pkgdb2.lib.utils.log(session, pkg_listing.package, 'owner.update', dict(
         agent=user.username,
         username=pkg_user,
         previous_owner="orphan",
@@ -1141,7 +1141,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         package_name=pkg_listing.package.name,
         package_listing=pkg_listing.to_json(),
     ))
-    pkgdb.lib.utils._set_bugzilla_owner(
+    pkgdb2.lib.utils._set_bugzilla_owner(
         user.username, package.name, collection.name, collection.version)
 
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
@@ -1156,7 +1156,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         personpkg.status = status
         session.add(personpkg)
 
-        pkgdb.lib.utils.log(session, pkg_listing.package, 'acl.update', dict(
+        pkgdb2.lib.utils.log(session, pkg_listing.package, 'acl.update', dict(
             agent=user.username,
             username=pkg_user,
             acl=acl,
@@ -1186,14 +1186,14 @@ def add_branch(session, clt_from, clt_to, user):
         might be the results of trying to create a PackageListing object
         already existing.
     :rtype: list(str)
-    :raises pkgdb.lib.PkgdbException: There are three conditions leading to
+    :raises pkgdb2.lib.PkgdbException: There are three conditions leading to
         this exception beeing raised:
             - You are not allowed to branch (only pkgdb admin can do it)
             - The specified branch from is invalid (does not exist)
             - The specified branch to is invalid (does not exist).
 
     """
-    if not pkgdb.is_pkgdb_admin(user):
+    if not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to branch: %s to %s' % (
             clt_from, clt_to))
 
@@ -1207,7 +1207,7 @@ def add_branch(session, clt_from, clt_to, user):
     except NoResultFound:
         raise PkgdbException('Branch %s not found' % clt_to)
 
-    pkgdb.lib.utils.log(session, None, 'branch.start', dict(
+    pkgdb2.lib.utils.log(session, None, 'branch.start', dict(
         agent=user.username,
         collection_from=clt_from.to_json(),
         collection_to=clt_to.to_json(),
@@ -1221,13 +1221,13 @@ def add_branch(session, clt_from, clt_to, user):
             try:
                 pkglist.branch(session, clt_to)
             except SQLAlchemyError, err:  # pragma: no cover
-                pkgdb.LOG.exception(err)
+                pkgdb2.LOG.exception(err)
                 messages.append(err)
 
     # Should we raise a PkgdbException if messages != [], or just return
     # them?
 
-    pkgdb.lib.utils.log(session, None, 'branch.complete', dict(
+    pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
         agent=user.username,
         collection_from=clt_from.to_json(),
         collection_to=clt_to.to_json(),

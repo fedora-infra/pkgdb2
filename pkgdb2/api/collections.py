@@ -28,10 +28,10 @@ API for collection management.
 
 import flask
 
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION, forms, is_admin
-from pkgdb.api import API
-from pkgdb.lib import model
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION, forms, is_admin
+from pkgdb2.api import API
+from pkgdb2.lib import model
 
 
 ## Collection

@@ -36,8 +36,8 @@ from mock import patch
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 
@@ -49,34 +49,34 @@ class FlaskUiAdminTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskUiAdminTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.ui.SESSION = self.session
-        pkgdb.ui.acls.SESSION = self.session
-        pkgdb.ui.admin.SESSION = self.session
-        pkgdb.ui.collections.SESSION = self.session
-        pkgdb.ui.packagers.SESSION = self.session
-        pkgdb.ui.packages.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.ui.SESSION = self.session
+        pkgdb2.ui.acls.SESSION = self.session
+        pkgdb2.ui.admin.SESSION = self.session
+        pkgdb2.ui.collections.SESSION = self.session
+        pkgdb2.ui.packagers.SESSION = self.session
+        pkgdb2.ui.packages.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
-    @patch('pkgdb.is_admin')
+    @patch('pkgdb2.is_admin')
     def test_admin(self, login_func):
         """ Test the admin function. """
         login_func.return_value=None
 
         user = FakeFasUserAdmin()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/admin/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h1>Admin interface</h1>' in output.data)
 
-    @patch('pkgdb.is_admin')
+    @patch('pkgdb2.is_admin')
     def test_admin_log(self, login_func):
         """ Test the admin_log function. """
         login_func.return_value=None
 
         user = FakeFasUserAdmin()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/admin/log/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h1>Logs</h1>' in output.data)

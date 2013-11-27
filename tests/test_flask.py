@@ -34,8 +34,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, create_package_acl, user_set)
 
 
@@ -46,15 +46,15 @@ class FlaskTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.ui.SESSION = self.session
-        pkgdb.ui.acls.SESSION = self.session
-        pkgdb.ui.admin.SESSION = self.session
-        pkgdb.ui.collections.SESSION = self.session
-        pkgdb.ui.packagers.SESSION = self.session
-        pkgdb.ui.packages.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.ui.SESSION = self.session
+        pkgdb2.ui.acls.SESSION = self.session
+        pkgdb2.ui.admin.SESSION = self.session
+        pkgdb2.ui.collections.SESSION = self.session
+        pkgdb2.ui.packagers.SESSION = self.session
+        pkgdb2.ui.packages.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
     def test_index(self):
         """ Test the index function. """
@@ -242,7 +242,7 @@ engineers need to create packages and spin them into a distribution."""
                         in output.data)
 
         user = FakeFasUser()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/logout/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(

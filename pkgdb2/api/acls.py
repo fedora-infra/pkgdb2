@@ -31,16 +31,16 @@ import flask
 
 from sqlalchemy.orm.exc import NoResultFound
 
-import pkgdb
-import pkgdb.forms as forms
-import pkgdb.lib as pkgdblib
-from pkgdb import SESSION
-from pkgdb.api import API
+import pkgdb2
+import pkgdb2.forms as forms
+import pkgdb2.lib as pkgdblib
+from pkgdb2 import SESSION
+from pkgdb2.api import API
 
 
 ## ACL
 @API.route('/package/acl/', methods=['POST'])
-@pkgdb.packager_login_required
+@pkgdb2.packager_login_required
 def api_acl_update():
     '''
 Update package ACL
@@ -85,7 +85,7 @@ Update package ACL
     httpcode = 200
     output = {}
 
-    status = pkgdb.lib.get_status(SESSION, ['pkg_acl', 'acl_status'])
+    status = pkgdblib.get_status(SESSION, ['pkg_acl', 'acl_status'])
 
     form = forms.SetAclPackageForm(
         csrf_enabled=False,
@@ -137,7 +137,7 @@ Update package ACL
 
 
 @API.route('/package/acl/reassign/', methods=['POST'])
-@pkgdb.packager_login_required
+@pkgdb2.packager_login_required
 def api_acl_reassign():
     '''
 Reassign packages

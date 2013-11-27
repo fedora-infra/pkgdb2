@@ -9,16 +9,16 @@
 
 #import os
 ## Set the environment variable pointing to the configuration file
-#os.environ['PKGDB_CONFIG'] = '/etc/pkgdb/pkgdb.cfg'
+#os.environ['PKGDB2_CONFIG'] = '/etc/pkgdb2/pkgdb2.cfg'
 
 ## The following is only needed if you did not install pkgdb
 ## as a python module (for example if you run it from a git clone).
 #import sys
-#sys.path.insert(0, '/path/to/pkgdb/')
+#sys.path.insert(0, '/path/to/pkgdb2/')
 
 
 ## The most import line to make the wsgi working
-#from pkgdb import APP as application
+#from pkgdb2 import APP as application
 
 ## Turn on the debug mode to get more information in the logs about internal
 ## errors

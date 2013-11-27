@@ -32,7 +32,7 @@ import warnings
 
 from email.mime.text import MIMEText
 
-import pkgdb
+import pkgdb2
 
 
 def fedmsg_publish(*args, **kwargs):  # pragma: no cover
@@ -52,18 +52,18 @@ def email_publish(user, package, message):  # pragma: no cover
 
     msg = MIMEText(message)
     msg['Subject'] = '[PkgDB] {0} updated {1}'.format(user, package.name)
-    from_email = pkgdb.APP.config.get(
-        'PKGDB_EMAIL_FROM', 'nobody@fedoraproject.org')
-    email_to_template = pkgdb.APP.config.get(
-        'PKGDB_EMAIL_TO', '{pkg_name}-owner@fedoraproject.org')
+    from_email = pkgdb2.APP.config.get(
+        'PKGDB2_EMAIL_FROM', 'nobody@fedoraproject.org')
+    email_to_template = pkgdb2.APP.config.get(
+        'PKGDB2_EMAIL_TO', '{pkg_name}-owner@fedoraproject.org')
     to_email = email_to_template.format(pkg_name=package.name)
     msg['From'] = from_email
     msg['To'] = to_email
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP(pkgdb.APP.config.get(
-        'PKGDB_EMAIL_SMTP_SERVER', 'localhost'))
+    s = smtplib.SMTP(pkgdb2.APP.config.get(
+        'PKGDB2_EMAIL_SMTP_SERVER', 'localhost'))
     s.sendmail(from_email,
                [to_email],
                msg.as_string())

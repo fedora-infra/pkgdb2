@@ -36,8 +36,8 @@ from mock import patch
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb
-from pkgdb.lib import model
+import pkgdb2
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 
@@ -49,15 +49,15 @@ class FlaskUiCollectionsTest(Modeltests):
         """ Set up the environnment, ran before every tests. """
         super(FlaskUiCollectionsTest, self).setUp()
 
-        pkgdb.APP.config['TESTING'] = True
-        pkgdb.SESSION = self.session
-        pkgdb.ui.SESSION = self.session
-        pkgdb.ui.acls.SESSION = self.session
-        pkgdb.ui.admin.SESSION = self.session
-        pkgdb.ui.collections.SESSION = self.session
-        pkgdb.ui.packagers.SESSION = self.session
-        pkgdb.ui.packages.SESSION = self.session
-        self.app = pkgdb.APP.test_client()
+        pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.SESSION = self.session
+        pkgdb2.ui.SESSION = self.session
+        pkgdb2.ui.acls.SESSION = self.session
+        pkgdb2.ui.admin.SESSION = self.session
+        pkgdb2.ui.collections.SESSION = self.session
+        pkgdb2.ui.packagers.SESSION = self.session
+        pkgdb2.ui.packages.SESSION = self.session
+        self.app = pkgdb2.APP.test_client()
 
     def test_list_collections(self):
         """ Test the list_collections function. """
@@ -83,19 +83,19 @@ class FlaskUiCollectionsTest(Modeltests):
         self.assertTrue('<li class="errors">No collection of this name '
                         'found.</li>' in output.data)
 
-    @patch('pkgdb.is_admin')
+    @patch('pkgdb2.is_admin')
     def test_collection_new(self, login_func):
         """ Test the collection_new function. """
         login_func.return_value=None
         create_package_acl(self.session)
 
         user = FakeFasUser()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/new/collection/')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUserAdmin()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/new/collection/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -124,7 +124,7 @@ class FlaskUiCollectionsTest(Modeltests):
                 ), 5)
 
         user = FakeFasUserAdmin()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/new/collection/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -152,19 +152,19 @@ class FlaskUiCollectionsTest(Modeltests):
                 '<li class="message">Collection &#34;f19&#34; created</li>'
                 in output.data)
 
-    @patch('pkgdb.is_admin')
+    @patch('pkgdb2.is_admin')
     def test_collection_edit(self, login_func):
         """ Test the collection_edit function. """
         login_func.return_value=None
         create_package_acl(self.session)
 
         user = FakeFasUser()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/collection/devel/edit')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUserAdmin()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/collection/devel/edit')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -173,7 +173,7 @@ class FlaskUiCollectionsTest(Modeltests):
                 '<input id="csrf_token" name="csrf_token"' in output.data)
 
         user = FakeFasUserAdmin()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/collection/random/edit')
 
             self.assertEqual(output.status_code, 200)
@@ -182,7 +182,7 @@ class FlaskUiCollectionsTest(Modeltests):
                 in output.data)
 
         user = FakeFasUserAdmin()
-        with user_set(pkgdb.APP, user):
+        with user_set(pkgdb2.APP, user):
             output = self.app.get('/collection/F-17/edit')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
