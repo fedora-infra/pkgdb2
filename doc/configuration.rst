@@ -5,6 +5,11 @@ There are the main configuration options to set to have pkgdb running.
 These options are all present and described in the pkgdb.cfg file.
 
 
+Here are listed some configuration options specific to pkgdb2, but as a
+Flask application, you may also use the `Flask configuration options
+<http://flask.pocoo.org/docs/config/>`_.
+
+
 The secret key
 ---------------
 
