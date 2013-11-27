@@ -1,8 +1,7 @@
-include LICENSE README.rst *.sample  requirements.txt
-include runtests.sh createdb.py nosetest
+include COPYING README.rst requirements.txt
+include runtests.sh createdb.py nosetests
 recursive-include pkgdb *
-recursive-include alembic *
 recursive-include tests *
-include utility/*
+recursive-include utility *
 include doc/*
 
