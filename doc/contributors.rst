@@ -1,7 +1,7 @@
 Contributors to packagedb
 =========================
 
-PkgDB would be nothing without its contributors.
+Pkgdb2 would be nothing without its contributors.
 
 On November 26, 2013 (release --), the list looks as follow:
 

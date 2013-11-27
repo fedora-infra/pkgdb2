@@ -1,8 +1,8 @@
 Configuration
 =============
 
-There are the main configuration options to set to have pkgdb running.
-These options are all present and described in the pkgdb.cfg file.
+There are the main configuration options to set to have pkgdb2 running.
+These options are all present and described in the pkgdb2.cfg file.
 
 
 Here are listed some configuration options specific to pkgdb2, but as a
@@ -53,7 +53,7 @@ PackageDB relies on a group of administrator to create calendar which are then
 managed by people from this group. The ``ADMIN_GROUP`` field in the
 configuration file refers to the
 `FAS <https://admin.fedoraproject.org/accounts>`_ group that manages this
-pkgdb instance.
+pkgdb2 instance.
 
 **Default:** ``ADMIN_GROUP = ['sysadmin-main', 'sysadmin-cvs']``.
 
@@ -79,21 +79,21 @@ that can be automatically approved when a user requests them.
 Caching configuration
 ---------------------
 
-Pkgdb uses `dogplie.cache <https://pypi.python.org/pypi/dogpile.cache>`_
+Pkgdb2 uses `dogplie.cache <https://pypi.python.org/pypi/dogpile.cache>`_
 for caching. This caching is used in the extra API endpoints.
 
 There are two configuration keys for this caching system.
 
-``PKGDB_CACHE_BACKEND`` which specifies which backend to use for the caching
+``PKGDB2_CACHE_BACKEND`` which specifies which backend to use for the caching
 
-``PKGDB_CACHE_KWARGS`` which allows passing arguments to this backend
+``PKGDB2_CACHE_KWARGS`` which allows passing arguments to this backend
 
 **Default:**
 
 ::
 
-    PKGDB_CACHE_BACKEND = 'dogpile.cache.memcached'
-    PKGDB_CACHE_KWARGS = {
+    PKGDB2_CACHE_BACKEND = 'dogpile.cache.memcached'
+    PKGDB2_CACHE_KWARGS = {
         'arguments': {
             'url': "127.0.0.1:11211",
         }
@@ -106,38 +106,38 @@ in the `dogpile.cache documentation <http://dogpilecache.readthedocs.org/en/late
 Bugzilla integration
 --------------------
 
-``PKGDB_BUGZILLA_IN_TESTS`` is used to test the integration of pkgdb with
+``PKGDB2_BUGZILLA_IN_TESTS`` is used to test the integration of pkgdb2 with
 bugzilla in the unit-tests. This setting has no effect with the actual
 application, as such there is no point changing it in production.
 
-**Default:** ``PKGDB_BUGZILLA_IN_TESTS = False``.
+**Default:** ``PKGDB2_BUGZILLA_IN_TESTS = False``.
 
 
-``PKGDB_BUGZILLA_NOTIFICATION`` is used to change the owner of a component
+``PKGDB2_BUGZILLA_NOTIFICATION`` is used to change the owner of a component
 in bugzilla upon changes of the point of contact of a package. If False,
 the owner of the component in bugzilla will not reflect the change in the
 point of contact in packagedb.
 This should set to ``True`` in production.
 
-**Default:** ``PKGDB_BUGZILLA_NOTIFICATION = False``.
+**Default:** ``PKGDB2_BUGZILLA_NOTIFICATION = False``.
 
 
-``PKGDB_BUGZILLA_URL`` is the url to the bugzilla instance the packagedb
+``PKGDB2_BUGZILLA_URL`` is the url to the bugzilla instance the packagedb
 application should synchronize with.
 
-**Default:** ``PKGDB_BUGZILLA_URL = 'https://bugzilla.redhat.com'``.
+**Default:** ``PKGDB2_BUGZILLA_URL = 'https://bugzilla.redhat.com'``.
 
 
-``PKGDB_BUGZILLA_USER`` is the bugzilla user the packagedb application can
+``PKGDB2_BUGZILLA_USER`` is the bugzilla user the packagedb application can
 log in with onto the bugzilla server set.
 
-**Default:** ``PKGDB_BUGZILLA_USER = None``.
+**Default:** ``PKGDB2_BUGZILLA_USER = None``.
 
 
-``PKGDB_BUGZILLA_PASSWORD`` is the password of the bugzilla user the
+``PKGDB2_BUGZILLA_PASSWORD`` is the password of the bugzilla user the
 packagedb application can log in with onto the bugzilla server set.
 
-**Default:** ``PKGDB_BUGZILLA_PASSWORD = None``.
+**Default:** ``PKGDB2_BUGZILLA_PASSWORD = None``.
 
 
 FAS integration
@@ -148,51 +148,51 @@ ensure users asking for ACL on a package are in fact already approved
 packagers.
 
 
-``PKGDB_FAS_URL`` is the URL to the FAS instance pkgdb should query.
+``PKGDB2_FAS_URL`` is the URL to the FAS instance pkgdb2 should query.
 
-**Default:** ``PKGDB_FAS_URL = None``.
-
-
-``PKGDB_FAS_USER`` is the FAS user pkgdb can log in with on the FAS server.
-
-**Default:** ``PKGDB_FAS_USER = None``.
+**Default:** ``PKGDB2_FAS_URL = None``.
 
 
-``PKGDB_FAS_PASSWORD`` is the FAS user password, pkgdb can log in with on
+``PKGDB2_FAS_USER`` is the FAS user pkgdb2 can log in with on the FAS server.
+
+**Default:** ``PKGDB2_FAS_USER = None``.
+
+
+``PKGDB2_FAS_PASSWORD`` is the FAS user password, pkgdb2 can log in with on
 the FAS server.
 
-**Default:** ``PKGDB_FAS_PASSWORD = None``.
+**Default:** ``PKGDB2_FAS_PASSWORD = None``.
 
 
 Notification settings
 ---------------------
 
-``PKGDB_FEDMSG_NOTIFICATION`` boolean specifying if the pkgdb application
+``PKGDB2_FEDMSG_NOTIFICATION`` boolean specifying if the pkgdb2 application
 should broadcast notifications via `fedmsg <http://www.fedmsg.com/>`_.
 
-**Default:** ``PKGDB_FEDMSG_NOTIFICATION = True``.
+**Default:** ``PKGDB2_FEDMSG_NOTIFICATION = True``.
 
 
-``PKGDB_EMAIL_NOTIFICATION`` is a boolean specifying if the pkgdb application
+``PKGDB2_EMAIL_NOTIFICATION`` is a boolean specifying if the pkgdb2 application
 should send its notificationds by email.
 
-**Default:** ``PKGDB_EMAIL_NOTIFICATION = False``.
+**Default:** ``PKGDB2_EMAIL_NOTIFICATION = False``.
 
 
-``PKGDB_EMAIL_TO`` is a template to specify to which email the email
+``PKGDB2_EMAIL_TO`` is a template to specify to which email the email
 notifications should be set. This implies there are number of aliases set
 redirecting from these emails to the users.
 
-**Default:** ``PKGDB_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'``.
+**Default:** ``PKGDB2_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'``.
 
 
-``PKGDB_EMAIL_FROM`` specifies the from field used if the notifications are
+``PKGDB2_EMAIL_FROM`` specifies the from field used if the notifications are
 sent by emails.
 
-**Default:** ``PKGDB_EMAIL_FROM = 'nobody@fedoraproject.org'``.
+**Default:** ``PKGDB2_EMAIL_FROM = 'nobody@fedoraproject.org'``.
 
 
-``PKGDB_EMAIL_SMTP_SERVER`` specifies the SMTP server to use to send the
+``PKGDB2_EMAIL_SMTP_SERVER`` specifies the SMTP server to use to send the
 notifications if they are set to be sent by emails.
 
-**Default:** ``PKGDB_EMAIL_SMTP_SERVER = 'localhost'``.
+**Default:** ``PKGDB2_EMAIL_SMTP_SERVER = 'localhost'``.

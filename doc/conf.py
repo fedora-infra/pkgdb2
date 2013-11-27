@@ -44,8 +44,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'PackageDB'
-copyright = u'2012, 2013, Pierre-Yves Chibon <pingou@pingoured.fr>'
+project = u'Pkgdb2'
+copyright = u'2013, Pierre-Yves Chibon <pingou@pingoured.fr>'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -219,7 +219,7 @@ html_sidebars = {
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pkgdb'
+htmlhelp_basename = 'pkgdb2'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -238,7 +238,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'pkgdb.tex', u'PackageDB Documentation',
+  ('index', 'pkgdb2.tex', u'Pkgdb2 Documentation',
    u'Pierre-Yves Chibon \\textless{}pingou@pingoured.fr\\textgreater{}', 'manual'),
 ]
 
@@ -268,7 +268,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pkgdb', u'PackageDB Documentation',
+    ('index', 'pkgdb2', u'Pkgdb2 Documentation',
      [u'Pierre-Yves Chibon <pingou@pingoured.fr>'], 1)
 ]
 
@@ -282,7 +282,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'pkgdb', u'PackageDB Documentation',
+  ('index', 'pkgdb2', u'Pkgdb2 Documentation',
    u'Pierre-Yves Chibon <pingou@pingoured.fr>', 'pkgdb', 'The package database of Fedora.',
    'Miscellaneous'),
 ]

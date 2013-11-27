@@ -1,7 +1,7 @@
 Contributing
 ============
 
-If you're submitting patches to pkgdb, please observe the following:
+If you're submitting patches to pkgdb2, please observe the following:
 
 - Check that your python code is `PEP8-compliant
   <http://www.python.org/dev/peps/pep-0008/>`_.  There is a `pep8 tool
@@ -17,7 +17,7 @@ If you're submitting patches to pkgdb, please observe the following:
   in unit-tests.
 
 - If your change warrants a modification to the docs in ``doc/`` or any
-  docstrings in ``pkgdb/`` please make that modification.
+  docstrings in ``pkgdb2/`` please make that modification.
 
 .. note:: You have a doubt, you don't know how to do something, you have an
    idea but don't know how to implement it, you just have something bugging

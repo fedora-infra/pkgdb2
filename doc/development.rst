@@ -8,19 +8,19 @@ Anonymous:
 
 ::
 
-  git clone http://git.fedorahosted.org/git/packagedb.git
+  git clone http://git.fedorahosted.org/git/pkgdb2.git
 
 Contributors:
 
 ::
 
-  git clone ssh://<FAS user>@git.fedorahosted.org/git/packagedb.git
+  git clone ssh://<FAS user>@git.fedorahosted.org/git/pkgdb2.git
 
 
 Dependencies
 ------------
 
-The dependencies of packagedb are listed in the file ``requirements.txt``
+The dependencies of pkgdb2 are listed in the file ``requirements.txt``
 at the top level of the sources.
 
 
@@ -34,7 +34,7 @@ Run pkgdb for development
 -------------------------
 Copy the configuration file::
 
- cp pkgdb.cfg.sample pkgdb.cfg
+ cp pkgdb2.cfg.sample pkgdb2.cfg
 
 Adjust the configuration file (secret key, database URL, admin group...)
 See :doc:`configuration` for more detailed information about the
@@ -79,7 +79,7 @@ We are also inspecting the code using `pylint
 Send patch
 ----------
 
-The easiest way to work on packagedb is to make your own branch in git, make
+The easiest way to work on pkgdb2 is to make your own branch in git, make
 your changes to this branch, commit whenever you want, rebase on master,
 whenever you need and when you are done, send the patch either by email,
 via the trac or a pull-request (using git or github).
@@ -111,7 +111,7 @@ trac.
 Unit-tests
 ----------
 
-PackageDB has a number of unit-tests providing at the moment a full
+Pkgdb2 has a number of unit-tests providing at the moment a full
 coverage of the backend library (pkgdb.lib).
 
 
@@ -152,7 +152,7 @@ error or failure. For example, the command could be:
 
 ::
 
-  PKGDB_CONFIG=tests/pkgdb_test.cfg python -m unittest -f -v pkgdb.tests.test_collection
+  PKGDB_CONFIG=tests/pkgd2b_test.cfg python -m unittest -f -v pkgdb2.tests.test_collection
 
 
 .. note:: In order to have coverage information you might have to install
