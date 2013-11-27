@@ -28,7 +28,7 @@ BuildRequires:  python-mock
 BuildRequires:  python-bugzilla
 BuildRequires:  python-memcached
 BuildRequires:  python-setuptools
-
+BuildRequires:  python-blinker
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -48,7 +48,6 @@ Requires:  python-fedora-flask
 Requires:  python-docutils
 Requires:  python-dateutil
 Requires:  python-dogpile.cache
-Requires:  python-mock
 Requires:  python-bugzilla
 Requires:  python-memcached
 Requires:  python-setuptools
