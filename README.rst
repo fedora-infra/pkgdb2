@@ -50,6 +50,11 @@ You should run the test suite to make sure nothing is broken before proceeding::
 They'll take a little while (since they interact with the awesome `faitout
 <https://github.com/fedora-infra/faitout>`_ project).
 
+You should then create your own sqlite database for your development instance of
+pkgdb2::
+
+    (my-pkgdb2-env)$ python createdb.py
+
 If all goes well, you can start a development instance of the server by
 running::
 
