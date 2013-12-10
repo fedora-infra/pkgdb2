@@ -76,7 +76,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         output = self.app.get('/package/geany/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>geany</h1>' in output.data)
+        self.assertTrue('<h1 property="doap:name">geany</h1>' in output.data)
         self.assertTrue('<h3>Fedora 18</h3>' in output.data)
         self.assertTrue('<a href="/packager/pingou/">' in output.data)
         self.assertTrue('<a href="/packager/group::gtk-sig/">' in output.data)
@@ -244,7 +244,7 @@ class FlaskUiPackagesTest(Modeltests):
             output = self.app.post('/package/guake/give', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h1>guake</h1>' in output.data)
+            self.assertTrue('<h1 property="doap:name">guake</h1>' in output.data)
             self.assertTrue('<a href="/packager/spot/">' in output.data)
 
         with user_set(pkgdb2.APP, user):
