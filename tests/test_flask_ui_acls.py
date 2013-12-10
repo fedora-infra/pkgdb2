@@ -183,6 +183,25 @@ class FlaskUiAclsTest(Modeltests):
                 '/acl/guake/comaintain/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
+                '<li class="error">You are already a co-maintainer on '
+                'F-18</li>' in output.data)
+            self.assertFalse(
+                '<li class="message">ACLs updated</li>' in output.data)
+
+            output = self.app.get(
+                '/acl/random/comaintain/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No package found by this name</li>'
+                in output.data)
+
+        user = FakeFasUser()
+        user.username = 'kevin'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/acl/guake/comaintain/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
                 '<li class="message">ACLs updated</li>' in output.data)
 
             output = self.app.get(

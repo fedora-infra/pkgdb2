@@ -147,6 +147,21 @@ def comaintain_package(package):
     pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
     pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
 
+    # Make sure the requester does not already have commit
+    pkg_branchs2 = []
+    for pkg_branch in pkg_branchs:
+        if pkgdblib.has_acls(SESSION, flask.g.fas_user.username, pkg.name,
+                             pkg_branch, 'commit'):
+            flask.flash(
+                'You are already a co-maintainer on %s' % pkg_branch,
+                'error')
+        else:
+            pkg_branchs2.append(pkg_branch)
+    pkg_branchs = pkg_branchs2
+
+    if not pkg_branchs:
+        return flask.redirect(flask.url_for('.package_info', package=package))
+
     try:
         for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
             acl_status = 'Awaiting Review'
