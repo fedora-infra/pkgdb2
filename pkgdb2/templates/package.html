@@ -40,16 +40,12 @@
 
 {% block content %}
 
-<h1>{{ package.name }}</h1>
+<h1 property="doap:name">{{ package.name }}</h1>
 
-<p>
-    {{ package.summary }}
-</p>
+<p property="doap:shortdesc">{{ package.summary }}</p>
 
 {% if package.description %}
-<p id="description">
-    {{ package.description }}
-</p>
+<p id="description" property="doap:description">{{ package.description }}</p>
 {% endif %}
 
 <ul id="actions">
@@ -91,7 +87,7 @@
     </tr>
     <tr>
         <th>Created on</th>
-        <td>{{ package.date_created.strftime('%Y-%m-%d') }}</td>
+        <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
     </tr>
 </table>
 
