@@ -15,7 +15,9 @@
             filename='jquery-ui-1.10.3.custom.min.css')}}" />
     {% block header %}{% endblock %}
   </head>
-  <body id="{% block tag %}{% endblock %}">
+  <body id="{% block tag %}{% endblock %}"
+        prefix="doap: http://usefulinc.com/ns/doap#"
+  >
 
     <div id="wrap">
       <div id="innerwrap">
