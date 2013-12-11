@@ -995,6 +995,7 @@ def get_acl_user_package(session, user, package, status=None):
             {'package': package.packagelist.package.name,
              'user': package.fas_name,
              'collection': package.packagelist.collection.branchname,
+             'collection_status': package.packagelist.collection.status,
              'acl': package.acl,
              'status': package.status,
              }
