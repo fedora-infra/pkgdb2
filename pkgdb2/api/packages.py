@@ -611,6 +611,10 @@ List packages
     :arg orphaned: Boolean to retrict the search to orphaned packages.
     :arg status: Allows to filter packages based on their status: Approved,
         Orphaned, Retired, Removed.
+    :arg acls: Boolean use to retrieve the acls in addition of the package
+        information. Beware that this may reduce significantly the response
+        time, it is advise to use it in combinaition with a specifir branch.
+        Defaults to False.
     :kwarg limit: An integer to limit the number of results, defaults to
         100, maybe be None.
     :kwarg page: The page number to return (useful in combination to limit).
@@ -634,29 +638,6 @@ List packages
                              "press a key to invoke him,and press again"
                              " to hide."
               "summary": "Drop-down terminal for GNOME",
-              "acls": [
-                {
-                  "point_of_contact": "pingou",
-                  "collection": {
-                    "status": "EOL",
-                    "branchname": "f16",
-                    "version": "16",
-                    "name": "Fedora"
-                  },
-                  "package": {
-                    "status": "Approved",
-                    "upstream_url": null,
-                    "description": "Guake is a drop-down terminal for Gnome "
-                                   "Desktop Environment, so you just need to "
-                                   "press a key to invoke him,and press again"
-                                   " to hide."
-                    "summary": "Drop-down terminal for GNOME",
-                    "creation_date": 1384775354.0,
-                    "review_url": null,
-                    "name": "guake"
-                  }
-                }
-              ],
                "creation_date": 1384775354.0,
                 "review_url": null,
                 "name": "guake"
@@ -664,31 +645,88 @@ List packages
           ]
         }
 
+        /api/packages/cl*?status=Orphaned&branches=f20&acls=true
+
+        {
+          "output": "ok",
+          "packages": [
+            {
+              "status": "Approved",
+              "upstream_url": null,
+              "description": "clive is a video extraction tool for "
+                             "user-uploaded video hosts such as Youtube,"
+                             "Google Video, Dailymotion, Guba, Metacafe "
+                             "and Sevenload.It can be chained with 3rd "
+                             "party tools for subsequent video re-encoding"
+                             " and and playing.",
+              "summary": "Video extraction tool for user-uploaded video hosts",
+              "acls": [
+                {
+                  "point_of_contact": "orphan",
+                  "status_change": 1385363055.0,
+                  "collection": {
+                    "status": "Active",
+                    "branchname": "f20",
+                    "version": "20",
+                    "name": "Fedora"
+                  },
+                  "package": null
+                }
+              ],
+              "creation_date": 1385361948.0,
+              "review_url": null,
+              "name": "clive"
+            }
+          ]
+        }
+
+    .. note:: the ``status_change`` and ``create_date`` fields are both
+             timestamps expressed in `Unix TIME <https://en.wikipedia.org/wiki/Unix_time>`_
+
     '''
     httpcode = 200
     output = {}
 
     pattern = flask.request.args.get('pattern', pattern) or '*'
-    branches = flask.request.args.get('branches', None)
+    branches = flask.request.args.getlist('branches', None)
     poc = flask.request.args.get('poc', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
+    acls = bool(flask.request.args.get('acls', False))
     status = flask.request.args.get('status', None)
     page = flask.request.args.get('page', None)
     limit = flask.request.args.get('limit', 100)
     count = flask.request.args.get('count', False)
 
     try:
-        packages = pkgdblib.search_package(
-            SESSION,
-            pkg_name=pattern,
-            pkg_branch=branches,
-            pkg_poc=poc,
-            orphaned=orphaned,
-            status=status,
-            page=page,
-            limit=limit,
-            count=count,
-        )
+        packages = []
+        if branches:
+            for branch in branches:
+                packages.extend(
+                    pkgdblib.search_package(
+                        SESSION,
+                        pkg_name=pattern,
+                        pkg_branch=branch,
+                        pkg_poc=poc,
+                        orphaned=orphaned,
+                        status=status,
+                        page=page,
+                        limit=limit,
+                        count=count,
+                    )
+                )
+        else:
+            packages = pkgdblib.search_package(
+                SESSION,
+                pkg_name=pattern,
+                pkg_branch=None,
+                pkg_poc=poc,
+                orphaned=orphaned,
+                status=status,
+                page=page,
+                limit=limit,
+                count=count,
+            )
+
         if not packages:
             output['output'] = 'notok'
             output['packages'] = []
@@ -699,8 +737,10 @@ List packages
             if isinstance(packages, (int, float, long)):
                 output['packages'] = packages
             else:
-                output['packages'] = [pkg.to_json(acls=False)
-                                      for pkg in packages]
+                output['packages'] = [
+                    pkg.to_json(acls=acls, collection=branches, package=False)
+                    for pkg in packages
+                ]
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
