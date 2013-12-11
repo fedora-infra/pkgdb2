@@ -698,11 +698,10 @@ List packages
     count = flask.request.args.get('count', False)
 
     try:
-        packages = []
+        packages = set()
         if branches:
             for branch in branches:
-                packages.extend(
-                    pkgdblib.search_package(
+                packages.update(pkgdblib.search_package(
                         SESSION,
                         pkg_name=pattern,
                         pkg_branch=branch,
