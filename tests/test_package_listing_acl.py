@@ -62,6 +62,7 @@ class PackageListingAcltests(Modeltests):
 
         # Because matching times in tests is hard.
         del output['packagelist']['package']['creation_date']
+        del output['packagelist']['status_change']
 
         target = {
             'status': u'Approved',

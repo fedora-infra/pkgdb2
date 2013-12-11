@@ -99,7 +99,8 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
-                         set(['package', 'collection', 'point_of_contact']))
+                         set(['package', 'status_change', 'collection',
+                              'point_of_contact']))
         self.assertEqual(set(output['acls'][0]['packagelist']['package'].keys()),
                          set([u'upstream_url', u'name', u'review_url',
                               u'status', u'creation_date', u'summary',
@@ -122,7 +123,8 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
-                         set(['package', 'collection', 'point_of_contact']))
+                         set(['package', 'status_change', 'collection',
+                              'point_of_contact']))
         self.assertEqual(
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
