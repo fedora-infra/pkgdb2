@@ -59,6 +59,7 @@ class PackageListingAcltests(Modeltests):
             self.session, 'pingou')
         self.assertEqual(5, len(packager))
         output = packager[0].to_json()
+        print output
 
         # Because matching times in tests is hard.
         del output['packagelist']['package']['creation_date']
@@ -69,6 +70,7 @@ class PackageListingAcltests(Modeltests):
             'acl': 'commit',
             'fas_name': u'pingou',
             'packagelist': {
+                'status': u'Approved',
                 'point_of_contact': u'pingou',
                 'collection': {
                     'branchname': u'F-18',

@@ -610,6 +610,7 @@ class PackageListing(BASE):
             package=None,
             collection=None,
             point_of_contact=self.point_of_contact,
+            status=self.status,
             status_change=time.mktime(self.status_change.timetuple()),
         )
 

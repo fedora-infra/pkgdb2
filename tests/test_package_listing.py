@@ -150,7 +150,8 @@ class PackageListingtests(Modeltests):
         package = package.to_json()
         self.assertEqual(
             package.keys(),
-            ['point_of_contact', 'status_change','collection', 'package'])
+            ['status', 'point_of_contact', 'status_change','collection',
+             'package'])
 
     def test_search_packagers(self):
         """ Test the search_packagers function of PackageListing. """
