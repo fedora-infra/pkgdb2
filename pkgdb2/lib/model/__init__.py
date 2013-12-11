@@ -602,7 +602,7 @@ class PackageListing(BASE):
                    self.id, self.point_of_contact, self.status,
                    self.package_id, self.collection_id)
 
-    def to_json(self, _seen=None):
+    def to_json(self, _seen=None, package=True):
         """ Return a dictionary representation of this object. """
         _seen = _seen or []
         _seen.append(type(self))
@@ -613,7 +613,7 @@ class PackageListing(BASE):
             status_change=time.mktime(self.status_change.timetuple()),
         )
 
-        if self.package:
+        if package and self.package:
             result['package'] = self.package.to_json(_seen)
 
         if self.collection:
@@ -1099,7 +1099,7 @@ class Package(BASE):
 
         return query.all()
 
-    def to_json(self, _seen=None, acls=True):
+    def to_json(self, _seen=None, acls=True, package=True, collection=None):
         """ Return a dictionnary representation of the object.
 
         """
@@ -1119,7 +1119,15 @@ class Package(BASE):
 
         # Protect against infinite recursion
         if acls and not PackageListing in _seen:
-            result['acls'] = [pkg.to_json(_seen) for pkg in self.listings]
+            if isinstance(collection, basestring):
+                collection = [collection]
+            result['acls'] = []
+            for pkg in self.listings:
+                if collection:
+                    if pkg.collection.branchname in collection:
+                        result['acls'].append(pkg.to_json(_seen, package=package))
+                else:
+                    result['acls'].append(pkg.to_json(_seen, package=package))
 
         return result
 
