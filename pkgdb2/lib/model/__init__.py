@@ -890,6 +890,11 @@ class Package(BASE):
         self.shouldopen = shouldopen
         self.upstream_url = upstream_url
 
+    def __hash__(self):
+        """ Returns the name of the package as hash. """
+        ord3 = lambda arg : '%.3d' % ord(arg)
+        return int(''.join(map(ord3, self.name)))
+
     def __repr__(self):
         """ The string representation of this object.
 
