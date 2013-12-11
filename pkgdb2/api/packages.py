@@ -60,7 +60,8 @@ New package
         'Awaiting Review', 'Denied', 'Obsolete', 'Removed'
     :arg pkg_shouldopen: boolean specifying if this package should open
     :arg pkg_collection: branch name of the collection in which this package
-        is added
+        is added. Can be multiple collections if specified via a comma
+        separated list of the branch names.
     :arg pkg_poc: FAS username of the point of contact
     :arg pkg_upstream_url: the URL of the upstream project
     :arg pkg_critpath: boolean specifying if the package is in the critpath
@@ -158,9 +159,9 @@ Orphan package
 
     Accept POST queries only.
 
-    :arg pkg_name: List of string of the packages name.
-    :arg clt_name: List of string of the branches name in which these
-        packages will be orphaned.
+    :arg pkg_name: Comma separated list of string of the packages name.
+    :arg clt_name: Comma separated list of string of the branches name in
+        which these packages will be orphaned.
 
 
     Sample response:
@@ -239,9 +240,9 @@ Unorphan packages
 
     Accept POST queries only.
 
-    :arg pkg_name: List of string of the packages name.
-    :arg clt_name: List of string of the branches name in which these
-        packages will be unorphaned.
+    :arg pkg_name: Comma separated list of string of the packages name.
+    :arg clt_name: Comma separated list of string of the branches name in
+        which these packages will be unorphaned.
     :arg pkg_poc: String of the name of the user taking ownership of
         this package. If you are not an admin, this name must be None.
 
@@ -322,9 +323,9 @@ Retire packages
 
     Accept POST queries only.
 
-    :arg pkg_name: List of string of the packages name.
-    :arg clt_name: List of string of the branches name in which these
-        packages will be retire.
+    :arg pkg_name: Comma separated list of string of the packages name.
+    :arg clt_name: Comma separated list of string of the branches name in
+        which these packages will be retire.
 
     Sample response:
 
@@ -401,9 +402,9 @@ Unretire packages
 
     Accept POST queries only.
 
-    :arg pkg_name: List of string of the packages name.
-    :arg clt_name: List of string of the branches name in which these
-        packages will be un-deprecated.
+    :arg pkg_name: Comma separated list of the packages names.
+    :arg clt_name: Comma separated list of string of the branches names in
+        which these packages will be un-deprecated.
 
 
     Sample response:
