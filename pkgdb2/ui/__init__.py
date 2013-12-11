@@ -103,7 +103,7 @@ def msg():
 
 
 @UI.route('/login/', methods=['GET', 'POST'])
-def login():
+def login():  # pragma: no cover
     """ Login mechanism for this application.
     """
     next_url = flask.url_for('ui_ns.index')
@@ -127,12 +127,12 @@ def logout():
     Return to the index page at the end.
     """
     next_url = flask.url_for('ui_ns.index')
-    if 'next' in flask.request.args:
+    if 'next' in flask.request.args:  # pragma: no cover
         next_url = flask.request.args['next']
-    elif 'next' in flask.request.form:
+    elif 'next' in flask.request.form:  # pragma: no cover
         next_url = flask.request.form['next']
 
-    if next_url == flask.url_for('ui_ns.login'):
+    if next_url == flask.url_for('ui_ns.login'):  # pragma: no cover
         next_url = flask.url_for('ui_ns.index')
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         FAS.logout()
