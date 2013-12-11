@@ -193,12 +193,17 @@ def update_acl(package, user, branch=None):
 
     pending_acls = pkgdblib.get_acl_user_package(
         SESSION, user, package, status=None)
+
+    pending_acls2 = []
     if branch is not None:
-        pending_acls2 = []
         for acls in pending_acls:
             if acls['collection'] == branch:
                 pending_acls2.append(acls)
-        pending_acls = pending_acls2
+    else:
+        for acls in pending_acls:
+            if acls['collection_status'] != 'EOL':
+                pending_acls2.append(acls)
+    pending_acls = pending_acls2
 
     collections = set([item['collection'] for item in pending_acls])
     status = pkgdblib.get_status(SESSION, ['pkg_acl', 'acl_status'])
