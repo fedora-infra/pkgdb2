@@ -71,6 +71,8 @@ def admin_log():
                 'Incorrect from_date provided, using default', 'errors')
             from_date = None
 
+    ## Could not infer the date() function
+    # pylint: disable=E1103
     if from_date:
         from_date = from_date.date()
 
