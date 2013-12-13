@@ -36,6 +36,11 @@ from pkgdb2 import SESSION, forms, is_admin, packager_login_required
 from pkgdb2.api import API
 
 
+## Some of the object we use here have inherited methods which apparently
+## pylint does not detect.
+# pylint: disable=E1101
+
+
 ## Package
 @API.route('/package/new/', methods=['POST'])
 @is_admin
@@ -682,7 +687,8 @@ List packages
         }
 
     .. note:: the ``status_change`` and ``create_date`` fields are both
-             timestamps expressed in `Unix TIME <https://en.wikipedia.org/wiki/Unix_time>`_
+            timestamps expressed in
+            `Unix TIME <https://en.wikipedia.org/wiki/Unix_time>`_
 
     '''
     httpcode = 200
@@ -702,7 +708,8 @@ List packages
         packages = set()
         if branches:
             for branch in branches:
-                packages.update(pkgdblib.search_package(
+                packages.update(
+                    pkgdblib.search_package(
                         SESSION,
                         pkg_name=pattern,
                         pkg_branch=branch,
