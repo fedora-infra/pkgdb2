@@ -33,6 +33,8 @@ from fedora.client.fas2 import AccountSystem
 
 ## We use global variable for a reason
 # pylint: disable=W0603
+## Some variable cannot be inferred from the inheritance
+# pylint: disable=E1103
 
 
 # Have a global connection to bugzilla open.
