@@ -68,7 +68,5 @@ def email_publish(user, package, message):  # pragma: no cover
     # envelope header.
     smtp = smtplib.SMTP(pkgdb2.APP.config.get(
         'PKGDB2_EMAIL_SMTP_SERVER', 'localhost'))
-    smtp.sendmail(from_email,
-               [to_email],
-               msg.as_string())
+    smtp.sendmail(from_email, [to_email], msg.as_string())
     smtp.quit()
