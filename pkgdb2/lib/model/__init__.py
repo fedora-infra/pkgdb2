@@ -911,7 +911,7 @@ class Package(BASE):
     def __hash__(self):
         """ Returns the name of the package as hash. """
         ord3 = lambda arg : '%.3d' % ord(arg)
-        return int(''.join(map(ord3, self.name)))
+        return int(''.join([ord3(char) for char in self.name]))
 
     def __repr__(self):
         """ The string representation of this object.
@@ -1148,7 +1148,8 @@ class Package(BASE):
             for pkg in self.listings:
                 if collection:
                     if pkg.collection.branchname in collection:
-                        result['acls'].append(pkg.to_json(_seen, package=package))
+                        result['acls'].append(
+                            pkg.to_json(_seen, package=package))
                 else:
                     result['acls'].append(pkg.to_json(_seen, package=package))
 
