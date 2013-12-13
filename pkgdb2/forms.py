@@ -23,14 +23,16 @@
 WTF Forms of the pkgdb Flask application.
 '''
 
-from flask.ext import wtf
-import wtforms
-
-
+## pylint cannot import flask extension correctly
+# pylint: disable=E0611,F0401
 ## The forms here don't have specific methods, they just inherit them.
 # pylint: disable=R0903
 ## We apparently use old style super in our __init__
 # pylint: disable=E1002
+
+
+from flask.ext import wtf
+import wtforms
 
 
 class AddCollectionForm(wtf.Form):
