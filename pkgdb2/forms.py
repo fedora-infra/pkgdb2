@@ -29,6 +29,8 @@ WTF Forms of the pkgdb Flask application.
 # pylint: disable=R0903
 ## We apparently use old style super in our __init__
 # pylint: disable=E1002
+## Couple of our forms do not even have __init__
+# pylint: disable=W0232
 
 
 from flask.ext import wtf
