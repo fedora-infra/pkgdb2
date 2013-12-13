@@ -28,9 +28,12 @@ from math import ceil
 
 import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin
+from pkgdb2 import SESSION, APP, is_admin
 from pkgdb2.ui import UI
 
+## Some of the object we use here have inherited methods which apparently
+## pylint does not detect.
+# pylint: disable=E1101
 
 @UI.route('/collections/')
 @UI.route('/collections/page/<int:page>/')
