@@ -6,7 +6,7 @@ SECRET_KEY='<The web application secret key>'
 ### url to the database server:
 #DB_URL=mysql://user:pass@host/db_name
 #DB_URL=postgres://user:pass@host/db_name
-DB_URL='sqlite:////var/tmp/pkgdb_dev.sqlite'
+DB_URL='sqlite:////var/tmp/pkgdb2_dev.sqlite'
 
 ### the number of items (packages, packagers..) to display on the search
 ### pages

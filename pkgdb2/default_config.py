@@ -29,7 +29,7 @@ from datetime import timedelta
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 # url to the database server:
-DB_URL = 'sqlite:////var/tmp/packagedb2.sqlite'
+DB_URL = 'sqlite:////var/tmp/pkgdb2_dev.sqlite'
 
 # the number of items to display on the search pages
 ITEMS_PER_PAGE = 50
