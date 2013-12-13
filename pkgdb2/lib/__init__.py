@@ -47,7 +47,7 @@ from pkgdb2.lib import utils
 ## Ignore warnings about TODOs
 # pylint: disable=W0511
 ## Ignore variable name that are too short
-# pylint: disable=R0103
+# pylint: disable=C0103
 
 
 class PkgdbException(Exception):
