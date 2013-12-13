@@ -37,6 +37,10 @@ import pkgdb2
 
 def fedmsg_publish(*args, **kwargs):  # pragma: no cover
     ''' Try to publish a message on the fedmsg bus. '''
+    ## We catch Exception if we want :-p
+    # pylint: disable=W0703
+    ## Ignore message about fedmsg import
+    # pylint: disable=F0401
     try:
         import fedmsg
         fedmsg.publish(*args, **kwargs)
@@ -62,9 +66,9 @@ def email_publish(user, package, message):  # pragma: no cover
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP(pkgdb2.APP.config.get(
+    smtp = smtplib.SMTP(pkgdb2.APP.config.get(
         'PKGDB2_EMAIL_SMTP_SERVER', 'localhost'))
-    s.sendmail(from_email,
+    smtp.sendmail(from_email,
                [to_email],
                msg.as_string())
-    s.quit()
+    smtp.quit()
