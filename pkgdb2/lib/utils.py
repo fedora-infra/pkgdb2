@@ -33,8 +33,9 @@ from fedora.client.fas2 import AccountSystem
 
 ## We use global variable for a reason
 # pylint: disable=W0603
-## Some variable cannot be inferred from the inheritance
+## Some variable/method cannot be inferred from the inheritance
 # pylint: disable=E1103
+# pylint: disable=E1101
 
 
 # Have a global connection to bugzilla open.
@@ -155,9 +156,9 @@ def _set_bugzilla_owner(
     bzQuery['version'] = collectn_version
     if bzQuery['version'] == 'devel':
         bzQuery['version'] = 'rawhide'
-    queryResults = get_bz().query(bzQuery)  # pylint:disable-msg=E1101
+    query_results = get_bz().query(bzQuery)
 
-    for bug in queryResults:
+    for bug in query_results:
         if pkgdb2.APP.config['PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
             bug.setassignee(assigned_to=bzMail, comment=bz_comment)
         else:
