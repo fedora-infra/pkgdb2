@@ -40,6 +40,14 @@ from pkgdb2.lib import utils
 
 ## Apparently some of our methods have too many arguments
 # pylint: disable=R0913
+## to many branches
+# pylint: disable=R0912
+## or to many variables
+# pylint: disable=R0914
+## Ignore warnings about TODOs
+# pylint: disable=W0511
+## Ignore variable name that are too short
+# pylint: disable=R0103
 
 
 class PkgdbException(Exception):
