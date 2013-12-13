@@ -52,6 +52,20 @@ ERROR_LOG = logging.getLogger('pkgdb2.lib.model.packages')
 DEFAULT_GROUPS = {'provenpackager': {'commit': True}}
 
 
+## Apparently some of our methods have too few public methods
+# pylint: disable=R0903
+## Others have too many attributes
+# pylint: disable=R0902
+## Others have too many arguments
+# pylint: disable=R0913
+## We use id for the identifier in our db but that's too short
+# pylint: disable=C0103
+## Some of the object we use here have inherited methods which apparently
+## pylint does not detect.
+# pylint: disable=E1101
+
+
+
 def create_tables(db_url, alembic_ini=None, debug=False):
     """ Create the tables in the database using the information from the
     url obtained.
@@ -71,6 +85,8 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     BASE.metadata.create_all(engine)
     #engine.execute(collection_package_create_view(driver=engine.driver))
     if db_url.startswith('sqlite:'):
+        ## Ignore the warning about con_record
+        # pylint: disable=W0613
         def _fk_pragma_on_connect(dbapi_con, con_record):
             ''' Tries to enforce referential constraints on sqlite. '''
             dbapi_con.execute('pragma foreign_keys=ON')
@@ -79,6 +95,9 @@ def create_tables(db_url, alembic_ini=None, debug=False):
     if alembic_ini is not None:  # pragma: no cover
         # then, load the Alembic configuration and generate the
         # version table, "stamping" it with the most recent rev:
+
+        ## Ignore the warning missing alembic
+        # pylint: disable=F0401
         from alembic.config import Config
         from alembic import command
         alembic_cfg = Config(alembic_ini)
@@ -390,7 +409,6 @@ class PackageListingAcl(BASE):
         )
         return query.all()
 
-    # pylint: disable-msg=R0903
     def __init__(self, fas_name, packagelisting_id, acl, status):
         """ Constructor.
 
@@ -459,7 +477,6 @@ class Collection(BASE):
         sa.UniqueConstraint('name', 'version'),
     )
 
-    # pylint: disable-msg=R0902, R0903
     def __init__(self, name, version, status, owner,
                  branchname=None, distTag=None, git_branch_name=None):
         self.name = name
