@@ -38,6 +38,10 @@ from pkgdb2.lib import model
 from pkgdb2.lib import utils
 
 
+## Apparently some of our methods have too many arguments
+# pylint: disable=R0913
+
+
 class PkgdbException(Exception):
     """ Generic Exception object used to throw pkgdb2 specific error.
     """
