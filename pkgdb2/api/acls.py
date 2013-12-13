@@ -38,6 +38,11 @@ from pkgdb2 import SESSION
 from pkgdb2.api import API
 
 
+## Some of the object we use here have inherited methods which apparently
+## pylint does not detect.
+# pylint: disable=E1101
+
+
 ## ACL
 @API.route('/package/acl/', methods=['POST'])
 @pkgdb2.packager_login_required

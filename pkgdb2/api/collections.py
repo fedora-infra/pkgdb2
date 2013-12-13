@@ -34,6 +34,11 @@ from pkgdb2.api import API
 from pkgdb2.lib import model
 
 
+## Some of the object we use here have inherited methods which apparently
+## pylint does not detect.
+# pylint: disable=E1101
+
+
 ## Collection
 @API.route('/collection/new/', methods=['POST'])
 @API.route('/collection/new', methods=['POST'])
