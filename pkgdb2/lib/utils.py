@@ -31,6 +31,10 @@ from bugzilla import RHBugzilla3
 from fedora.client.fas2 import AccountSystem
 
 
+## We use global variable for a reason
+# pylint: disable=W0603
+
+
 # Have a global connection to bugzilla open.
 _BUGZILLA = None
 # Have a global connection to FAS open.
@@ -122,19 +126,20 @@ def get_bz():
 
 
 def _set_bugzilla_owner(
-        username, pkg_name, collectn, collectn_version, bzComment=None):
+        username, pkg_name, collectn, collectn_version, bz_comment=None):
     '''Change the package owner
 
      :arg user_email: User email address to change the owner.
      :arg pkg_name: Name of the package to change the owner.
      :arg collectn: Collection name of the package.
      :arg collectn_version: Collection version.
-     :kwarg bzComment: the comment of changes, if left to None, rely on a
+     :kwarg bz_comment: the comment of changes, if left to None, rely on a
         default comment.
     '''
-    bzComment = 'This package has changed ownership in the Fedora'\
-                ' Package Database.  Reassigning to the new owner'\
-                ' of this component.'
+    if not bz_comment:
+        bz_comment = 'This package has changed ownership in the Fedora'\
+                     ' Package Database.  Reassigning to the new owner'\
+                     ' of this component.'
 
     user_email = get_bz_email_user(username).bugzilla_email
 
@@ -152,7 +157,7 @@ def _set_bugzilla_owner(
 
     for bug in queryResults:
         if pkgdb2.APP.config['PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
-            bug.setassignee(assigned_to=bzMail, comment=bzComment)
+            bug.setassignee(assigned_to=bzMail, comment=bz_comment)
         else:
             print(
                 'Would have reassigned bug #%(bug_num)s '
