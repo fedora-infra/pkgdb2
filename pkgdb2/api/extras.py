@@ -23,8 +23,6 @@
 Extras API endpoints for the Flask application.
 '''
 
-import operator
-
 import flask
 
 import pkgdb2.lib as pkgdblib
@@ -33,6 +31,7 @@ from pkgdb2.api import API
 
 
 def request_wants_json():
+    """ Return weather a json output was requested. """
     best = flask.request.accept_mimetypes \
         .best_match(['application/json', 'text/html'])
     return best == 'application/json' and \
