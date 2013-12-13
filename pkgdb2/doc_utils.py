@@ -19,22 +19,24 @@
 # of Red Hat, Inc.
 #
 
-import docutils
-import docutils.examples
-import markupsafe
-
 '''
 Provide utility function to convert rst in docstring of functions into html
 '''
+
+import docutils
+import docutils.examples
+import markupsafe
 
 
 def modify_rst(rst):
     """ Downgrade some of our rst directives if docutils is too old. """
 
+    ## We catch Exception if we want :-p
+    # pylint: disable=W0703
     try:
         # The rst features we need were introduced in this version
         minimum = [0, 9]
-        version = map(int, docutils.__version__.split('.'))
+        version = [int(cpt) for cpt in docutils.__version__.split('.')]
 
         # If we're at or later than that version, no need to downgrade
         if version >= minimum:
