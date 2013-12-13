@@ -124,7 +124,9 @@ class FlaskApiCollectionTest(Modeltests):
                 data,
                 {
                     "output": "ok",
-                    "messages": ['Collection updated to \"EOL\"'],
+                    "messages": [
+                        'Collection updated from "Active" to \"EOL\"'
+                    ],
                 }
             )
 

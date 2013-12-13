@@ -409,7 +409,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
         )
     )
     # Update Bugzilla about new owner
-    pkgdb2.lib.utils._set_bugzilla_owner(
+    pkgdb2.lib.utils.set_bugzilla_owner(
         pkg_poc, package.name, collection.name, collection.version)
 
     return output
@@ -498,7 +498,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         session.add(pkglisting)
         session.flush()
         # Update Bugzilla about new owner
-        pkgdb2.lib.utils._set_bugzilla_owner(
+        pkgdb2.lib.utils.set_bugzilla_owner(
             poc, package.name, collection.name,
             collection.version)
 
@@ -919,7 +919,8 @@ def update_collection_status(session, clt_branchname, clt_status, user):
         if collection.status != clt_status:
             prev_status = collection.status
             collection.status = clt_status
-            message = 'Collection updated to "%s"' % clt_status
+            message = 'Collection updated from "%s" to "%s"' % (
+                prev_status, clt_status)
             session.add(collection)
             session.flush()
             pkgdb2.lib.utils.log(session, None, 'collection.update', dict(
@@ -1022,12 +1023,12 @@ def has_acls(session, user, package, branch, acl):
     """
     acls = get_acl_user_package(session, user=user,
                                 package=package, status='Approved')
-    has_acls = False
+    user_has_acls = False
     for user_acl in acls:
         if user_acl['collection'] == branch and user_acl['acl'] == acl:
-            has_acls = True
+            user_has_acls = True
             break
-    return has_acls
+    return user_has_acls
 
 
 def get_status(session, status='all'):
@@ -1145,7 +1146,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         package_name=pkg_listing.package.name,
         package_listing=pkg_listing.to_json(),
     ))
-    pkgdb2.lib.utils._set_bugzilla_owner(
+    pkgdb2.lib.utils.set_bugzilla_owner(
         user.username, package.name, collection.name, collection.version)
 
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']

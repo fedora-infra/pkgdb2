@@ -128,7 +128,7 @@ def get_bz():
     return _BUGZILLA
 
 
-def _set_bugzilla_owner(
+def set_bugzilla_owner(
         username, pkg_name, collectn, collectn_version, bz_comment=None):
     '''Change the package owner
 

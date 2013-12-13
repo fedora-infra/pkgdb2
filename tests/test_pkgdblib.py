@@ -1219,7 +1219,7 @@ class PkgdbLibtests(Modeltests):
             pkgdb2.lib.utils.get_bz_email_user = mock.MagicMock()
             pkgdb2.lib.utils.get_bz_email_user.return_value = FakeFasUser
         else:
-            pkgdb2.lib.utils._set_bugzilla_owner = mock.MagicMock()
+            pkgdb2.lib.utils.set_bugzilla_owner = mock.MagicMock()
         self.session.commit()
 
         # Orphan package
