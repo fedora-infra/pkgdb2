@@ -27,6 +27,12 @@ from flask.ext import wtf
 import wtforms
 
 
+## The forms here don't have specific methods, they just inherit them.
+# pylint: disable=R0903
+## We apparently use old style super in our __init__
+# pylint: disable=E1002
+
+
 class AddCollectionForm(wtf.Form):
     """ Form to add or edit collections. """
     collection_name = wtforms.TextField(
