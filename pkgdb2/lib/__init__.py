@@ -272,7 +272,6 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     """
     try:
         package = model.Package.by_name(session, pkg_name)
-        package_acl = get_acl_package(session, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
