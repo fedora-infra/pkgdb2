@@ -30,6 +30,8 @@ import flask
 import dogpile.cache
 
 from functools import wraps
+## pylint cannot import flask extension correctly
+# pylint: disable=E0611,F0401
 from flask.ext.fas_openid import FAS
 
 
