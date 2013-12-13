@@ -25,7 +25,6 @@ UI namespace for the Flask application.
 
 import flask
 from math import ceil
-from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP
