@@ -146,27 +146,28 @@ def set_bugzilla_owner(
 
     user_email = get_bz_email_user(username).bugzilla_email
 
-    bzMail = '%s' % user_email
-    bzQuery = {}
-    bzQuery['product'] = collectn
-    bzQuery['component'] = pkg_name
-    bzQuery['bug_status'] = [
+    bz_mail = '%s' % user_email
+    bz_query = {}
+    bz_query['product'] = collectn
+    bz_query['component'] = pkg_name
+    bz_query['bug_status'] = [
         'NEW', 'ASSIGNED', 'ON_DEV', 'ON_QA', 'MODIFIED', 'POST',
         'FAILS_QA', 'PASSES_QA', 'RELEASE_PENDING']
-    bzQuery['version'] = collectn_version
-    if bzQuery['version'] == 'devel':
-        bzQuery['version'] = 'rawhide'
-    query_results = get_bz().query(bzQuery)
+    bz_query['version'] = collectn_version
+    if bz_query['version'] == 'devel':
+        bz_query['version'] = 'rawhide'
+    query_results = get_bz().query(bz_query)
 
     for bug in query_results:
-        if pkgdb2.APP.config['PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
-            bug.setassignee(assigned_to=bzMail, comment=bz_comment)
+        if pkgdb2.APP.config[
+                'PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
+            bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
         else:
             print(
                 'Would have reassigned bug #%(bug_num)s '
                 'from %(former)s to %(current)s' % {
                     'bug_num': bug.bug_id, 'former': bug.assigned_to,
-                    'current': bzMail})
+                    'current': bz_mail})
 
 
 def _construct_substitutions(msg):
