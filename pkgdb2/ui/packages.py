@@ -34,6 +34,11 @@ from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin, \
 from pkgdb2.ui import UI
 
 
+## Some of the object we use here have inherited methods which apparently
+## pylint does not detect.
+# pylint: disable=E1101
+
+
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
 def list_packages(motif=None, orphaned=False, status='Approved',

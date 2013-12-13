@@ -33,6 +33,11 @@ from pkgdb2 import (SESSION, APP, fas_login_required,
 from pkgdb2.ui import UI
 
 
+## Some of the object we use here have inherited methods which apparently
+## pylint does not detect.
+# pylint: disable=E1101
+
+
 @UI.route('/acl/<package>/request/', methods=('GET', 'POST'))
 @fas_login_required
 def request_acl(package):
