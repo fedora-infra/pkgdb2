@@ -14,7 +14,7 @@
 ## The following is only needed if you did not install pkgdb
 ## as a python module (for example if you run it from a git clone).
 #import sys
-#sys.path.insert(0, '/path/to/pkgdb2/')
+#sys.path.insert(0, '/path/to/packagedb2/')
 
 
 ## The most import line to make the wsgi working
