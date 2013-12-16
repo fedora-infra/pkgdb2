@@ -8,6 +8,12 @@ Clone the source::
 
  git clone http://git.fedorahosted.org/git/pkgdb2.git
 
+Install the dependencies listed in the ``requirements.txt`` file.
+
+.. note:: The ``requirements.txt`` file require flask>=0.10 but this is only
+          required for the unit-tests and in fact flask<0.10 is **required** for
+          python-fedora to work at the moment.
+          The next release of python-fedora should fix this problem.
 
 Copy the configuration files::
 
@@ -18,10 +24,6 @@ See :doc:`configuration` for detailed information about the configuration.
 
 
 Create the database scheme::
-
-   sh createdb
-
-or::
 
    PKGDB_CONFIG=/path/to/pkgdb2.cfg python createdb.py
 
