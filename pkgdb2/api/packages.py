@@ -504,60 +504,60 @@ Package information
           "packages": [
             {
               "status": "Approved",
-              "upstream_url": null,
-              "description": "Guake is a drop-down terminal for Gnome "
+              "point_of_contact": "pingou",
+              "package": {
+                "status": "Approved",
+                "upstream_url": null,
+                "description": "Guake is a drop-down terminal for Gnome "
                              "Desktop Environment, so you just need to "
-                             "press a key to invoke him,and press again"
-                             " to hide."
-              "summary": "Drop-down terminal for GNOME",
+                             "press a key to invoke him,and press again "
+                             "to hide."
+                "summary": "Drop-down terminal for GNOME",
+                "creation_date": 1385365548.0,
+                "review_url": null,
+                "name": "guake"
+              },
+              "collection": {
+                "status": "Under Development",
+                "branchname": "devel",
+                "version": "devel",
+                "name": "Fedora"
+              },
               "acls": [
                 {
-                  "point_of_contact": "pingou",
-                  "collection": {
-                    "status": "EOL",
-                    "branchname": "f16",
-                    "version": "16",
-                    "name": "Fedora"
-                  },
-                  "package": {
-                    "status": "Approved",
-                    "upstream_url": null,
-                    "description": "Guake is a drop-down terminal for Gnome "
-                                   "Desktop Environment, so you just need to "
-                                   "press a key to invoke him,and press again"
-                                   " to hide."
-                    "summary": "Drop-down terminal for GNOME",
-                    "creation_date": 1384775354.0,
-                    "review_url": null,
-                    "name": "guake"
-                  }
+                  "status": "Approved",
+                  "fas_name": "pingou",
+                  "acl": "watchcommits"
                 },
                 {
-                  "point_of_contact": "pingou",
-                  "collection": {
-                    "status": "Active",
-                    "branchname": "EL-6",
-                    "version": "6",
-                    "name": "Fedora EPEL"
-                  },
-                  "package": {
-                    "status": "Approved",
-                    "upstream_url": null,
-                    "description": "Guake is a drop-down terminal for Gnome "
-                                   "Desktop Environment, so you just need to "
-                                   "press a key to invoke him,and press again"
-                                   " to hide."
-                    "summary": "Drop-down terminal for GNOME",
-                    "creation_date": 1384775354.0,
-                    "review_url": null,
-                    "name": "guake"
-                  }
+                  "status": "Approved",
+                  "fas_name": "pingou",
+                  "acl": "watchbugzilla"
+                },
+                {
+                  "status": "Approved",
+                  "fas_name": "pingou",
+                  "acl": "commit"
+                },
+                {
+                  "status": "Approved",
+                  "fas_name": "pingou",
+                  "acl": "approveacls"
+                },
+                {
+                  "status": "Obsolete",
+                  "fas_name": "maxamillion",
+                  "acl": "watchcommits"
+                },
+                {
+                  "status": "Obsolete",
+                  "fas_name": "maxamillion",
+                  "acl": "watchbugzilla"
                 }
               ],
-              "creation_date": 1384775354.0,
-              "review_url": null,
-              "name": "guake"
-            }
+              "status_change": 1385366044.0
+            },
+            ...
           ]
         }
 
