@@ -118,7 +118,6 @@ def packager_login_required(function):
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
         if flask.g.fas_user is None:
-            flask.flash('Login required', 'errors')
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
         elif not flask.g.fas_user.cla_done:
@@ -140,7 +139,6 @@ def is_admin(function):
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
         if flask.g.fas_user is None:
-            flask.flash('Login required', 'errors')
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
         elif not flask.g.fas_user.cla_done:
