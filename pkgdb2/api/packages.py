@@ -668,6 +668,7 @@ List packages
               "summary": "Video extraction tool for user-uploaded video hosts",
               "acls": [
                 {
+                  "status": "Retired",
                   "point_of_contact": "orphan",
                   "status_change": 1385363055.0,
                   "collection": {
