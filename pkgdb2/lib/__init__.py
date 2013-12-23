@@ -517,13 +517,15 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 package.name, collection.branchname, status)
         )
 
-    return pkgdb2.lib.utils.log(session, package, 'package.update', dict(
-        agent=user.username,
-        status=status,
-        prev_status=prev_status,
-        package_name=package.name,
-        package_listing=pkglisting.to_json(),
-    ))
+    return pkgdb2.lib.utils.log(session, package, 'package.update.status',
+        dict(
+            agent=user.username,
+            status=status,
+            prev_status=prev_status,
+            package_name=package.name,
+            package_listing=pkglisting.to_json(),
+        )
+    )
 
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
@@ -852,9 +854,9 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - You are not allowed to edit a collection, only pkgdb admin can.
-            - An error occured while updating the collection in the database
-                the message returned is then the error message from the
-                database.
+            - An error occured while updating the package in the database
+                the message returned is a dummy information message to
+                return to the user, the trace back is in the logs.
 
     """
 
@@ -895,6 +897,75 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
         except SQLAlchemyError, err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit Collection.')
+
+
+def edit_package(session, package, pkg_name=None, pkg_summary=None,
+                    pkg_description=None, pkg_review_url=None,
+                    pkg_upstream_url=None, pkg_status=None, user=None):
+    """ Edit a specified package
+
+    This method only flushes the new object, nothing is committed to the
+    database.
+
+    :arg session: the session with which to connect to the database.
+    :arg package: the ``Package`` object to update.
+    :kwarg pkg_name: the new name of the package.
+    :kwarg pkg_summary: the new summary of the package.
+    :kwarg pkg_description: the new description of the package.
+    :kwarg pkg_review_url: the new URL to the package review on bugzilla.
+    :kwarg pkg_upstream_url: the new URL to the project upstream.
+    :kwarg pkg_status: the new status to give to this package.
+    :kwarg user: The user performing the update.
+    :returns: a message informing that the package was successfully
+        updated.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to edit a package, only pkgdb admin can.
+            - An error occured while updating the package in the database
+                the message returned is a dummy information message to
+                return to the user, the trace back is in the logs.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to edit collections')
+
+    edited = []
+
+    if pkg_name and pkg_name != package.name:
+        package.name = pkg_name
+        edited.append('name')
+    if pkg_summary and pkg_summary != package.summary:
+        package.summary = pkg_summary
+        edited.append('summary')
+    if pkg_description and pkg_description != package.description:
+        package.description = pkg_description
+        edited.append('description')
+    if pkg_review_url and pkg_review_url != package.review_url:
+        package.review_url = pkg_review_url
+        edited.append('review_url')
+    if pkg_upstream_url and pkg_upstream_url != package.upstream_url:
+        package.upstream_url = pkg_upstream_url
+        edited.append('upstream_url')
+    if pkg_status and pkg_status != package.status:
+        package.status = pkg_status
+        edited.append('status')
+
+    if edited:
+        try:
+            session.add(package)
+            session.flush()
+            pkgdb2.lib.utils.log(session, None, 'package.update', dict(
+                agent=user.username,
+                fields=edited,
+                package=package.to_json(),
+            ))
+            return 'Package "%s" edited' % package.name
+        except SQLAlchemyError, err:  # pragma: no cover
+            pkgdb2.LOG.exception(err)
+            raise PkgdbException('Could not edit package.')
+
 
 
 def update_collection_status(session, clt_branchname, clt_status, user):

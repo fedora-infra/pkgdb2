@@ -218,6 +218,8 @@ def log(session, package, topic, message):
                        '%(package_listing.collection.branchname)s for poc: '
                        '%(package_listing.point_of_contact)s',
         'package.update': 'user: %(agent)s updated package: '
+                          '%(package.name)s',
+        'package.update.status': 'user: %(agent)s updated package: '
                           '%(package_name)s status from: '
                           '%(prev_status)s to '
                           '%(status)s on branch: '

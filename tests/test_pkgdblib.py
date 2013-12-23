@@ -1094,6 +1094,45 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(collection.name, 'Fedora youhou!')
         self.assertEqual(collection.status, 'EOL')
 
+    def test_edit_package(self):
+        """ Test the edit_package function. """
+        create_collection(self.session)
+        create_package(self.session)
+
+        package = pkgdblib.search_package(self.session, 'guake')[0]
+
+        out = pkgdblib.edit_package(self.session, package,
+                                       user=FakeFasUserAdmin())
+        self.assertEqual(out, None)
+
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.edit_package,
+                          self.session,
+                          package)
+
+        out = pkgdblib.edit_package(
+            self.session,
+            package,
+            pkg_name='Fedora youhou!',
+            pkg_summary='Youhou Fedora is awesome!',
+            pkg_status='Orphaned',
+            pkg_description='this package says how awesome fedora is',
+            pkg_review_url='http://bugzilla.rh.com/42',
+            pkg_upstream_url='https://fedoraproject.org',
+            user=FakeFasUserAdmin(),
+            )
+
+        self.assertEqual(out, 'Package "Fedora youhou!" edited')
+
+        collections = pkgdblib.search_package(self.session, 'guake')
+        self.assertEqual(collections, [])
+
+        package = pkgdblib.search_package(self.session, 'Fedora youhou!')[0]
+        self.assertEqual(package.name, 'Fedora youhou!')
+        self.assertEqual(package.review_url, 'http://bugzilla.rh.com/42')
+        self.assertEqual(package.summary, 'Youhou Fedora is awesome!')
+        self.assertEqual(package.status, 'Orphaned')
+
     def test_get_top_maintainers(self):
         """ Test the get_top_maintainers funtion. """
         create_package_acl(self.session)
