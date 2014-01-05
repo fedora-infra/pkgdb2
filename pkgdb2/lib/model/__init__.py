@@ -65,7 +65,6 @@ DEFAULT_GROUPS = {'provenpackager': {'commit': True}}
 # pylint: disable=E1101
 
 
-
 def create_tables(db_url, alembic_ini=None, debug=False):
     """ Create the tables in the database using the information from the
     url obtained.
@@ -910,7 +909,7 @@ class Package(BASE):
 
     def __hash__(self):
         """ Returns the name of the package as hash. """
-        ord3 = lambda arg : '%.3d' % ord(arg)
+        ord3 = lambda arg: '%.3d' % ord(arg)
         return int(''.join([ord3(char) for char in self.name]))
 
     def __repr__(self):

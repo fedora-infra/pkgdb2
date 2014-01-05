@@ -11,6 +11,7 @@ import pkg_resources
 from setuptools import setup
 from pkgdb2 import __version__
 
+
 def get_requires():
     ''' Reads the requirements.txt and return its content in a list. '''
     stream = open('requirements.txt')

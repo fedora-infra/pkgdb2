@@ -517,7 +517,10 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 package.name, collection.branchname, status)
         )
 
-    return pkgdb2.lib.utils.log(session, package, 'package.update.status',
+    return pkgdb2.lib.utils.log(
+        session,
+        package,
+        'package.update.status',
         dict(
             agent=user.username,
             status=status,
@@ -888,11 +891,16 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
         try:
             session.add(collection)
             session.flush()
-            pkgdb2.lib.utils.log(session, None, 'collection.update', dict(
-                agent=user.username,
-                fields=edited,
-                collection=collection.to_json(),
-            ))
+            pkgdb2.lib.utils.log(
+                session,
+                None,
+                'collection.update',
+                dict(
+                    agent=user.username,
+                    fields=edited,
+                    collection=collection.to_json(),
+                )
+            )
             return 'Collection "%s" edited' % collection.branchname
         except SQLAlchemyError, err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
@@ -900,8 +908,8 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
 
 
 def edit_package(session, package, pkg_name=None, pkg_summary=None,
-                    pkg_description=None, pkg_review_url=None,
-                    pkg_upstream_url=None, pkg_status=None, user=None):
+                 pkg_description=None, pkg_review_url=None,
+                 pkg_upstream_url=None, pkg_status=None, user=None):
     """ Edit a specified package
 
     This method only flushes the new object, nothing is committed to the
@@ -965,7 +973,6 @@ def edit_package(session, package, pkg_name=None, pkg_summary=None,
         except SQLAlchemyError, err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit package.')
-
 
 
 def update_collection_status(session, clt_branchname, clt_status, user):

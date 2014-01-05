@@ -50,8 +50,8 @@ import pkgdb.lib
 from pkgdb.lib import model
 
 
-DB_URL_PKGDB1= ''
-DB_URL_PKGDB2= ''
+DB_URL_PKGDB1 = ''
+DB_URL_PKGDB2 = ''
 
 
 STATUS = {
@@ -133,7 +133,7 @@ def convert_collections(pkg1_sess, pkg2_sess):
     cnt = 0
     for collect in pkg1_sess.query(P1Collection).all():
         branch = pkg1_sess.query(P1Branch).filter(
-            P1Branch.collectionid==collect.id).one()
+            P1Branch.collectionid == collect.id).one()
         new_collection = model.Collection(
             name=collect.name,
             version=collect.version,
@@ -232,7 +232,7 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
         if pkg.acl in ('build', 'checkout'):
             continue
         person = pkg1_sess.query(P1PersonPackagelisting).filter(
-            P1PersonPackagelisting.id==pkg.personpackagelistingid
+            P1PersonPackagelisting.id == pkg.personpackagelistingid
         ).one()
         new_pkglistacl = model.PackageListingAcl(
             fas_name=person.username,
@@ -274,5 +274,3 @@ if __name__ == '__main__':
         sys.exit(1)
 
     main(DB_URL_PKGDB1, DB_URL_PKGDB2)
-
-
