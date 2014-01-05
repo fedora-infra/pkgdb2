@@ -24,6 +24,7 @@ Top level of the pkgdb Flask application.
 '''
 
 import logging
+import logging.handlers
 import os
 
 import flask
@@ -39,7 +40,6 @@ __version__ = '0.1.0'
 __api_version__ = '0.1.0'
 
 APP = flask.Flask(__name__)
-LOG = logging.getLogger(__name__)
 
 APP.config.from_object('pkgdb2.default_config')
 if 'PKGDB2_CONFIG' in os.environ:  # pragma: no cover
@@ -57,6 +57,29 @@ CACHE = dogpile.cache.make_region().configure(
     APP.config.get('PKGDB2_CACHE_BACKEND', 'dogpile.cache.memory'),
     **APP.config.get('PKGDB2_CACHE_KWARGS', {})
 )
+
+# Set up the logger
+## Send emails for big exception
+mail_handler = logging.handlers.SMTPHandler(
+    APP.config.get('SMTP_SERVER', '127.0.0.1'),
+    'nobody@fedoraproject.org',
+    APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org'),
+    'PkgDB2 error')
+mail_handler.setFormatter(logging.Formatter('''
+    Message type:       %(levelname)s
+    Location:           %(pathname)s:%(lineno)d
+    Module:             %(module)s
+    Function:           %(funcName)s
+    Time:               %(asctime)s
+
+    Message:
+
+    %(message)s
+'''))
+mail_handler.setLevel(logging.ERROR)
+APP.logger.addHandler(mail_handler)
+
+LOG = APP.logger
 
 
 import pkgdb2.lib as pkgdblib
