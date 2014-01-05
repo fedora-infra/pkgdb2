@@ -17,8 +17,8 @@ BuildRequires:  python-flask
 BuildRequires:  python-flask-wtf
 BuildRequires:  python-wtforms
 BuildRequires:  python-kitchen
-BuildRequires:  python-fedora >= 0.3.32.3-3
-BuildRequires:  python-fedora-flask
+BuildRequires:  python-fedora >= 0.3.33
+BuildRequires:  python-fedora-flask >= 0.3.33
 BuildRequires:  python-openid-teams
 BuildRequires:  python-openid-cla
 BuildRequires:  python-docutils
