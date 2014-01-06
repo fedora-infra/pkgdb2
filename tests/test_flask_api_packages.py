@@ -700,7 +700,9 @@ class FlaskApiPackagesTest(Modeltests):
         output = self.app.get('/api/packages/guake/')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
-        self.assertEqual(data.keys(), ['output', 'packages'])
+        self.assertEqual(
+            data.keys(),
+            ['output', 'packages', 'pages_total', 'page'])
         self.assertEqual(len(data['packages']), 1)
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(
@@ -728,7 +730,9 @@ class FlaskApiPackagesTest(Modeltests):
             data,
             {
                 "output": "ok",
-                "packages": 2
+                "packages": 2,
+                "page": 1,
+                "pages_total": 1,
             }
         )
 

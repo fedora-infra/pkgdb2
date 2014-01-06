@@ -29,6 +29,7 @@ API for package management.
 import flask
 import itertools
 
+from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb2.lib as pkgdblib
@@ -701,12 +702,13 @@ List packages
     orphaned = bool(flask.request.args.get('orphaned', False))
     acls = bool(flask.request.args.get('acls', False))
     status = flask.request.args.get('status', None)
-    page = flask.request.args.get('page', None)
+    page = flask.request.args.get('page', 1)
     limit = flask.request.args.get('limit', 100)
     count = flask.request.args.get('count', False)
 
     try:
         packages = set()
+        packages_count = 0
         if branches:
             for branch in branches:
                 packages.update(
@@ -722,6 +724,17 @@ List packages
                         count=count,
                     )
                 )
+                packages_count += pkgdblib.search_package(
+                    SESSION,
+                    pkg_name=pattern,
+                    pkg_branch=branch,
+                    pkg_poc=poc,
+                    orphaned=orphaned,
+                    status=status,
+                    page=page,
+                    limit=limit,
+                    count=True
+                )
         else:
             packages = pkgdblib.search_package(
                 SESSION,
@@ -734,6 +747,17 @@ List packages
                 limit=limit,
                 count=count,
             )
+            packages_count += pkgdblib.search_package(
+                    SESSION,
+                    pkg_name=pattern,
+                    pkg_branch=None,
+                    pkg_poc=poc,
+                    orphaned=orphaned,
+                    status=status,
+                    page=page,
+                    limit=limit,
+                    count=True
+                )
 
         if not packages:
             output['output'] = 'notok'
@@ -742,6 +766,8 @@ List packages
             httpcode = 404
         else:
             output['output'] = 'ok'
+            output['page'] = page
+            output['pages_total'] = int(ceil(packages_count / float(limit)))
             if isinstance(packages, (int, float, long)):
                 output['packages'] = packages
             else:
