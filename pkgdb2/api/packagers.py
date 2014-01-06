@@ -198,7 +198,7 @@ List packagers
     httpcode = 200
     output = {}
 
-    pattern = flask.request.args.get('pattern', None) or pattern
+    pattern = flask.request.args.get('pattern', pattern) or '*'
     if pattern:
         packagers = pkgdblib.search_packagers(SESSION,
                                               pattern=pattern,

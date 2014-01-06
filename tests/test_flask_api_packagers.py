@@ -136,13 +136,13 @@ class FlaskApiPackagersTest(Modeltests):
         """ Test the api_packager_list function.  """
 
         output = self.app.get('/api/packagers/')
-        self.assertEqual(output.status_code, 500)
+        self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         self.assertEqual(
             data,
             {
-                "output": "notok",
-                "error": "Invalid request",
+                "output": "ok",
+                "packagers": [],
             }
         )
 
