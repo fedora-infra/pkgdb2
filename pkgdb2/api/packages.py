@@ -766,7 +766,7 @@ List packages
             httpcode = 404
         else:
             output['output'] = 'ok'
-            output['page'] = page
+            output['page'] = int(page)
             output['pages_total'] = int(ceil(packages_count / float(limit)))
             if isinstance(packages, (int, float, long)):
                 output['packages'] = packages
