@@ -637,7 +637,7 @@ class PackageListing(BASE):
         if self.acls and not type(self.acls[0]) in _seen:
             tmp = []
             for acl in self.acls:
-                tmp.append(acl.to_json(_seen))
+                tmp.append(acl.to_json([type(self)]))
             if tmp:
                 result['acls'] = tmp
 
