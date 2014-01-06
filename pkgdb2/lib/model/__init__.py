@@ -623,8 +623,6 @@ class PackageListing(BASE):
         _seen = _seen or []
         _seen.append(type(self))
         result = dict(
-            package=None,
-            collection=None,
             point_of_contact=self.point_of_contact,
             status=self.status,
             status_change=time.mktime(self.status_change.timetuple()),
