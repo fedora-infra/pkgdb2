@@ -230,16 +230,19 @@ class PackageListingAcl(BASE):
     fas_name = sa.Column(sa.String(32), nullable=False, index=True)
     packagelisting_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey('PackageListing.id',
-                      ondelete='CASCADE',
-                      onupdate='CASCADE'
-                      ),
+        sa.ForeignKey(
+            'PackageListing.id', ondelete='CASCADE', onupdate='CASCADE'),
+        nullable=False)
+    acl = sa.Column(
+        sa.String(50),
+        sa.ForeignKey('PkgAcls.status', onupdate='CASCADE'),
         nullable=False,
-    )
-    acl = sa.Column(sa.String(50), sa.ForeignKey('PkgAcls.status'),
-                    nullable=False, index=True)
-    status = sa.Column(sa.String(50), sa.ForeignKey('AclStatus.status'),
-                       nullable=False, index=True)
+        index=True)
+    status = sa.Column(
+        sa.String(50),
+        sa.ForeignKey('AclStatus.status', onupdate='CASCADE'),
+        nullable=False,
+        index=True)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
@@ -462,8 +465,10 @@ class Collection(BASE):
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
-    status = sa.Column(sa.String(50), sa.ForeignKey('CollecStatus.status'),
-                       nullable=False)
+    status = sa.Column(
+        sa.String(50),
+        sa.ForeignKey('CollecStatus.status', onupdate='CASCADE'),
+        nullable=False)
     owner = sa.Column(sa.String(32), nullable=False)
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
     distTag = sa.Column(sa.String(32), unique=True, nullable=False)
@@ -570,21 +575,22 @@ class PackageListing(BASE):
 
     __tablename__ = 'PackageListing'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    package_id = sa.Column(sa.Integer,
-                           sa.ForeignKey('Package.id',
-                                         ondelete="CASCADE",
-                                         onupdate="CASCADE"
-                                         ),
-                           nullable=False)
+    package_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False)
     point_of_contact = sa.Column(sa.Text, nullable=False, index=True)
-    collection_id = sa.Column(sa.Integer,
-                              sa.ForeignKey('Collection.id',
-                                            ondelete="CASCADE",
-                                            onupdate="CASCADE"
-                                            ),
-                              nullable=False)
-    status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
-                       nullable=False, index=True)
+    collection_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False)
+    status = sa.Column(
+        sa.String(50),
+        sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
+        nullable=False,
+        index=True)
     critpath = sa.Column(sa.Boolean, default=False, nullable=False)
     status_change = sa.Column(sa.DateTime, nullable=False,
                               default=datetime.datetime.utcnow)
@@ -877,8 +883,10 @@ class Package(BASE):
     description = sa.Column(sa.Text, nullable=True)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
-    status = sa.Column(sa.String(50), sa.ForeignKey('PkgStatus.status'),
-                       nullable=False)
+    status = sa.Column(
+        sa.String(50),
+        sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
+        nullable=False)
     shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
     listings = relation(PackageListing)
@@ -1168,14 +1176,12 @@ class Log(BASE):
     user = sa.Column(sa.String(32), nullable=False, index=True)
     change_time = sa.Column(sa.DateTime, nullable=False,
                             default=datetime.datetime.utcnow, index=True)
-    package_id = sa.Column(sa.Integer,
-                           sa.ForeignKey('Package.id',
-                                         ondelete='RESTRICT',
-                                         onupdate='CASCADE'
-                                         ),
-                           nullable=True,
-                           index=True
-                           )
+    package_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Package.id', ondelete='RESTRICT', onupdate='CASCADE'),
+        nullable=True,
+        index=True)
     description = sa.Column(sa.Text, nullable=False)
 
     def __init__(self, user, package_id, description):
