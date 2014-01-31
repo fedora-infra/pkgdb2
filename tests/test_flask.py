@@ -273,8 +273,10 @@ engineers need to create packages and spin them into a distribution."""
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name" colspan="2">arg collection_name:</th></tr>
-<tr class="field"><td>&nbsp;</td><td class="field-body">String of the collection name to be created.</td>
+<tr class="field"><th class="field-name" colspan="2">arg """\
+"""collection_name:</th></tr>
+<tr class="field"><td>&nbsp;</td><td class="field-body">String of the """\
+"""collection name to be created.</td>
 """
         self.assertTrue(expected in output.data)
 

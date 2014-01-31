@@ -123,34 +123,37 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
             u'bugzillaAcls': {
                 u'Fedora': [
                     {
-                    "fedocal": {
-                      "owner": "orphan",
-                      "cclist": {
-                        "groups": [],
-                        "people": ["pingou", 'toshio']
-                      },
-                      "qacontact": None,
-                      "summary": "A web-based calendar for Fedora"
-                    }
-                  },
-                    {u'geany': {
-                        u'owner': u'@gtk-sig',
-                        u'cclist': {
-                            u'groups': [],
-                            u'people': []
-                        },
-                        u'qacontact': None,
-                        u'summary': u'A fast and lightweight IDE using GTK2'
+                        "fedocal": {
+                            "owner": "orphan",
+                            "cclist": {
+                                "groups": [],
+                                "people": ["pingou", 'toshio']
+                            },
+                            "qacontact": None,
+                            "summary": "A web-based calendar for Fedora"
                         }
                     },
-                    {u'guake': {
-                        u'owner': u'pingou',
-                        u'cclist': {
-                            u'groups': [],
-                            u'people': [u'spot']
-                        },
-                        u'qacontact': None,
-                        u'summary': u'Top down terminal for GNOME'
+                    {
+                        u'geany': {
+                            u'owner': u'@gtk-sig',
+                            u'cclist': {
+                                u'groups': [],
+                                u'people': []
+                            },
+                            u'qacontact': None,
+                            u'summary': u'A fast and lightweight IDE using '
+                            'GTK2'
+                        }
+                    },
+                    {
+                        u'guake': {
+                            u'owner': u'pingou',
+                            u'cclist': {
+                                u'groups': [],
+                                u'people': [u'spot']
+                            },
+                            u'qacontact': None,
+                            u'summary': u'Top down terminal for GNOME'
                         }
                     },
                 ]
@@ -351,7 +354,7 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
                     "master": {
                         "commit": {
                             "groups": ["provenpackager"],
-                            "people": ["pingou","toshio"]
+                            "people": ["pingou", "toshio"]
                         }
                     },
                     "f17": {
@@ -383,7 +386,7 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
         output = self.app.get('/api/critpath/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
-        expected = {"pkgs":{}}
+        expected = {"pkgs": {}}
 
         self.assertEqual(data, expected)
 

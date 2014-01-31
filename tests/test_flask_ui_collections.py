@@ -86,7 +86,7 @@ class FlaskUiCollectionsTest(Modeltests):
     @patch('pkgdb2.is_admin')
     def test_collection_new(self, login_func):
         """ Test the collection_new function. """
-        login_func.return_value=None
+        login_func.return_value = None
         create_package_acl(self.session)
 
         user = FakeFasUser()
@@ -142,6 +142,7 @@ class FlaskUiCollectionsTest(Modeltests):
                 'collection_branchname': 'f19',
                 'collection_distTag': '.fc19',
                 'collection_git_branch_name': 'f19',
+                'collection_kojiname': 'f19',
                 'csrf_token': csrf_token,
             }
 
@@ -155,7 +156,7 @@ class FlaskUiCollectionsTest(Modeltests):
     @patch('pkgdb2.is_admin')
     def test_collection_edit(self, login_func):
         """ Test the collection_edit function. """
-        login_func.return_value=None
+        login_func.return_value = None
         create_package_acl(self.session)
 
         user = FakeFasUser()
@@ -206,6 +207,7 @@ class FlaskUiCollectionsTest(Modeltests):
                 'collection_branchname': 'F-17',
                 'collection_distTag': '.fc17',
                 'collection_git_branch_name': 'f17',
+                'collection_kojiname': 'f17',
                 'csrf_token': csrf_token,
             }
 

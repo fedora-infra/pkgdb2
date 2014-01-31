@@ -62,7 +62,7 @@ class FlaskUiAdminTest(Modeltests):
     @patch('pkgdb2.is_admin')
     def test_admin(self, login_func):
         """ Test the admin function. """
-        login_func.return_value=None
+        login_func.return_value = None
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
@@ -73,7 +73,7 @@ class FlaskUiAdminTest(Modeltests):
     @patch('pkgdb2.is_admin')
     def test_admin_log(self, login_func):
         """ Test the admin_log function. """
-        login_func.return_value=None
+        login_func.return_value = None
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
@@ -92,10 +92,10 @@ class FlaskUiAdminTest(Modeltests):
                 'Restrict to package: <input type="text" name="package" />'
                 in output.data)
             self.assertTrue(
-                '<li class="errors">Incorrect limit provided, using default</li>'
+                'class="errors">Incorrect limit provided, using default</'
                 in output.data)
             self.assertTrue(
-                '<li class="errors">Incorrect from_date provided, using default</li>'
+                'class="errors">Incorrect from_date provided, using default</'
                 in output.data)
             self.assertTrue(
                 '<li class="errors">No package exists</li>' in output.data)

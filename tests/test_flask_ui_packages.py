@@ -91,7 +91,7 @@ class FlaskUiPackagesTest(Modeltests):
     @patch('pkgdb2.is_admin')
     def test_package_new(self, login_func, mock_func):
         """ Test the package_new function. """
-        login_func.return_value=None
+        login_func.return_value = None
         create_package_acl(self.session)
 
         user = FakeFasUser()
@@ -134,7 +134,7 @@ class FlaskUiPackagesTest(Modeltests):
                     '<td class="errors">This field is required.</td>'
                 ) in (5, 7))
 
-            mock_func.get_packagers.return_value=['mclasen']
+            mock_func.get_packagers.return_value = ['mclasen']
             mock_func.log.return_value = ''
 
             data = {
@@ -165,7 +165,7 @@ class FlaskUiPackagesTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_package_give(self, login_func, mock_func):
         """ Test the package_give function. """
-        login_func.return_value=None
+        login_func.return_value = None
         create_package_acl(self.session)
 
         user = FakeFasUser()
@@ -220,7 +220,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'is not in the packager group</li>'
                 in output.data)
 
-        mock_func.get_packagers.return_value=['spot']
+        mock_func.get_packagers.return_value = ['spot']
         mock_func.log.return_value = ''
 
         with user_set(pkgdb2.APP, user):
@@ -244,7 +244,8 @@ class FlaskUiPackagesTest(Modeltests):
             output = self.app.post('/package/guake/give', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h1 property="doap:name">guake</h1>' in output.data)
+            self.assertTrue('<h1 property="doap:name">guake</h1>'
+                            in output.data)
             self.assertTrue('<a href="/packager/spot/">' in output.data)
 
         with user_set(pkgdb2.APP, user):
@@ -284,7 +285,7 @@ class FlaskUiPackagesTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_package_orphan(self, login_func, mock_func):
         """ Test the package_orphan function. """
-        login_func.return_value=None
+        login_func.return_value = None
         create_package_acl(self.session)
 
         user = FakeFasUser()
@@ -323,12 +324,11 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
-
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
     def test_package_retire(self, login_func, mock_func):
         """ Test the package_retire function. """
-        login_func.return_value=None
+        login_func.return_value = None
         create_package_acl(self.session)
 
         user = FakeFasUser()
@@ -390,12 +390,11 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
-
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
     def test_package_take(self, login_func, mock_func):
         """ Test the package_take function. """
-        login_func.return_value=None
+        login_func.return_value = None
         create_package_acl(self.session)
 
         user = FakeFasUser()

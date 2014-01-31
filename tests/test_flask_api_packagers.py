@@ -105,12 +105,14 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
                          set(['package', 'status_change', 'collection',
                               'point_of_contact', 'status']))
-        self.assertEqual(set(output['acls'][0]['packagelist']['package'].keys()),
-                         set([u'upstream_url', u'name', u'review_url',
-                              u'status', u'creation_date', u'summary',
-                              u'description']))
-        self.assertEqual(set(output['acls'][0]['packagelist']['collection'].keys()),
-                         set([u'branchname', u'version', u'name', u'status']))
+        self.assertEqual(
+            set(output['acls'][0]['packagelist']['package'].keys()),
+            set([u'upstream_url', u'name', u'review_url',
+                 u'status', u'creation_date', u'summary',
+                 u'description']))
+        self.assertEqual(
+            set(output['acls'][0]['packagelist']['collection'].keys()),
+            set([u'branchname', u'version', u'name', u'status']))
         self.assertEqual(
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
@@ -135,7 +137,6 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(
             output['acls'][0]['packagelist']['collection']['branchname'],
             'F-18')
-
 
     def test_packager_list(self):
         """ Test the api_packager_list function.  """
@@ -172,8 +173,6 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['packagers']), 1)
         self.assertEqual(output['packagers'][0], 'pingou')
-
-
 
     def test_packager_stats(self):
         """ Test the api_packager_stats function.  """
@@ -251,7 +250,6 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output['F-18']['co-maintainer'], 0)
         self.assertEqual(output['devel']['point of contact'], 0)
         self.assertEqual(output['devel']['co-maintainer'], 0)
-
 
 
 if __name__ == '__main__':

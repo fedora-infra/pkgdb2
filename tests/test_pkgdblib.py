@@ -145,16 +145,16 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_packagers.return_value = ['ralph', 'pingou']
 
         msg = pkgdblib.add_package(self.session,
-                                    pkg_name='guake',
-                                    pkg_summary='Drop down terminal',
-                                    pkg_description='Drop down terminal desc',
-                                    pkg_status='Approved',
-                                    pkg_collection='F-18',
-                                    pkg_poc='ralph',
-                                    pkg_reviewURL=None,
-                                    pkg_shouldopen=None,
-                                    pkg_upstreamURL='http://guake.org',
-                                    user=FakeFasUserAdmin())
+                                   pkg_name='guake',
+                                   pkg_summary='Drop down terminal',
+                                   pkg_description='Drop down terminal desc',
+                                   pkg_status='Approved',
+                                   pkg_collection='F-18',
+                                   pkg_poc='ralph',
+                                   pkg_reviewURL=None,
+                                   pkg_shouldopen=None,
+                                   pkg_upstreamURL='http://guake.org',
+                                   user=FakeFasUserAdmin())
         self.assertEqual(msg, 'Package created')
         self.session.commit()
         packages = pkgdblib.model.Package.all(self.session)
@@ -231,7 +231,6 @@ class PkgdbLibtests(Modeltests):
                           self.session,
                           'guake',
                           'unknown')
-
 
     def test_set_acl_package(self):
         """ Test the set_acl_package function. """
@@ -437,12 +436,12 @@ class PkgdbLibtests(Modeltests):
         user.username = 'ralph'
         # Change PoC to a group
         pkgdblib.update_pkg_poc(
-                          self.session,
-                          pkg_name='guake',
-                          pkg_branch='F-18',
-                          user=user,
-                          pkg_poc='group::perl-sig',
-                          )
+            self.session,
+            pkg_name='guake',
+            pkg_branch='F-18',
+            user=user,
+            pkg_poc='group::perl-sig',
+        )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
@@ -462,12 +461,12 @@ class PkgdbLibtests(Modeltests):
 
         user.groups.append('perl-sig')
         pkgdblib.update_pkg_poc(
-                          self.session,
-                          pkg_name='guake',
-                          pkg_branch='F-18',
-                          user=user,
-                          pkg_poc='ralph',
-                          )
+            self.session,
+            pkg_name='guake',
+            pkg_branch='F-18',
+            user=user,
+            pkg_poc='ralph',
+        )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
@@ -481,11 +480,11 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'ralph'
         pkgdblib.update_pkg_poc(self.session,
-                                 pkg_name='guake',
-                                 pkg_branch='F-18',
-                                 user=user,
-                                 pkg_poc='toshio',
-                                 )
+                                pkg_name='guake',
+                                pkg_branch='F-18',
+                                user=user,
+                                pkg_poc='toshio',
+                                )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
@@ -508,11 +507,11 @@ class PkgdbLibtests(Modeltests):
 
         # Admin can change PoC
         pkgdblib.update_pkg_poc(self.session,
-                                 pkg_name='guake',
-                                 pkg_branch='F-18',
-                                 user=FakeFasUserAdmin(),
-                                 pkg_poc='kevin',
-                                 )
+                                pkg_name='guake',
+                                pkg_branch='F-18',
+                                user=FakeFasUserAdmin(),
+                                pkg_poc='kevin',
+                                )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
@@ -523,11 +522,11 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'kevin'
         pkgdblib.update_pkg_poc(self.session,
-                                 pkg_name='guake',
-                                 pkg_branch='F-18',
-                                 user=user,
-                                 pkg_poc='orphan',
-                                 )
+                                pkg_name='guake',
+                                pkg_branch='F-18',
+                                user=user,
+                                pkg_poc='orphan',
+                                )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
@@ -537,18 +536,17 @@ class PkgdbLibtests(Modeltests):
 
         # Take orphaned package -> status changed to Approved
         pkgdblib.update_pkg_poc(self.session,
-                                 pkg_name='guake',
-                                 pkg_branch='F-18',
-                                 user=FakeFasUser(),
-                                 pkg_poc=FakeFasUser().username,
-                                 )
+                                pkg_name='guake',
+                                pkg_branch='F-18',
+                                user=FakeFasUser(),
+                                pkg_poc=FakeFasUser().username,
+                                )
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
         self.assertEqual(pkg_acl[0].status, 'Approved')
-
 
     def test_create_session(self):
         """ Test the create_session function. """
@@ -764,7 +762,6 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
         self.assertEqual(pkg_acl[1].status, 'Orphaned')
 
-
         # Admin can un-orphan package
         pkgdblib.update_pkg_status(self.session,
                                    pkg_name='guake',
@@ -869,6 +866,7 @@ class PkgdbLibtests(Modeltests):
                           clt_branchname='F-19',
                           clt_disttag='.fc19',
                           clt_gitbranch='f19',
+                          clt_koji_name='f19',
                           user=FakeFasUser(),
                           )
         self.session.rollback()
@@ -880,6 +878,7 @@ class PkgdbLibtests(Modeltests):
                                 clt_branchname='F-19',
                                 clt_disttag='.fc19',
                                 clt_gitbranch='f19',
+                                clt_koji_name='f19',
                                 user=FakeFasUserAdmin(),
                                 )
         self.session.commit()
@@ -1004,13 +1003,15 @@ class PkgdbLibtests(Modeltests):
 
     def test_has_acls(self):
         """ Test the has_acls function. """
-        self.assertFalse(pkgdblib.has_acls(self.session, 'pingou',
-            'guake', 'devel', 'approveacl'))
+        self.assertFalse(
+            pkgdblib.has_acls(
+                self.session, 'pingou', 'guake', 'devel', 'approveacl'))
 
         create_package_acl(self.session)
 
-        self.assertTrue(pkgdblib.has_acls(self.session, 'pingou',
-            'guake', 'devel', 'commit'))
+        self.assertTrue(
+            pkgdblib.has_acls(
+                self.session, 'pingou', 'guake', 'devel', 'commit'))
 
     def test_get_status(self):
         """ Test the get_status function. """
@@ -1042,8 +1043,8 @@ class PkgdbLibtests(Modeltests):
         """ Test the get_package_maintained function. """
         create_package_acl(self.session)
 
-        pkg = pkgdblib.get_package_maintained(self.session, 'pingou',
-            poc=True)
+        pkg = pkgdblib.get_package_maintained(
+            self.session, 'pingou', poc=True)
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0].name, 'guake')
         expected = set(['devel', 'F-18'])
@@ -1051,8 +1052,8 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(branches.symmetric_difference(expected), set())
         self.assertEqual(len(pkg[0][1]), 2)
 
-        pkg = pkgdblib.get_package_maintained(self.session, 'pingou',
-            poc=False)
+        pkg = pkgdblib.get_package_maintained(
+            self.session, 'pingou', poc=False)
         self.assertEqual(pkg, [])
 
         pkg = pkgdblib.get_package_maintained(self.session, 'ralph')
@@ -1101,8 +1102,8 @@ class PkgdbLibtests(Modeltests):
 
         package = pkgdblib.search_package(self.session, 'guake')[0]
 
-        out = pkgdblib.edit_package(self.session, package,
-                                       user=FakeFasUserAdmin())
+        out = pkgdblib.edit_package(
+            self.session, package, user=FakeFasUserAdmin())
         self.assertEqual(out, None)
 
         self.assertRaises(pkgdblib.PkgdbException,
@@ -1139,7 +1140,6 @@ class PkgdbLibtests(Modeltests):
 
         top = pkgdblib.get_top_maintainers(self.session)
         self.assertEqual(top, [(u'group::gtk-sig', 1), (u'pingou', 1)])
-
 
     def test_get_top_poc(self):
         """ Test the get_top_poc function. """
@@ -1301,12 +1301,12 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[1].status, 'Orphaned')
 
         pkgdblib.unorphan_package(
-                          self.session,
-                          pkg_name='guake',
-                          pkg_branch='devel',
-                          pkg_user='pingou',
-                          user=FakeFasUser()
-                          )
+            self.session,
+            pkg_name='guake',
+            pkg_branch='devel',
+            pkg_user='pingou',
+            user=FakeFasUser()
+        )
         self.session.commit()
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
@@ -1328,14 +1328,14 @@ class PkgdbLibtests(Modeltests):
 
         # Create a new collection
         new_collection = pkgdblib.model.Collection(
-                                  name='Fedora',
-                                  version='19',
-                                  status='Active',
-                                  owner='toshio',
-                                  branchname='F-19',
-                                  distTag='.fc19',
-                                  git_branch_name='f19',
-                                  )
+            name='Fedora',
+            version='19',
+            status='Active',
+            owner='toshio',
+            branchname='F-19',
+            distTag='.fc19',
+            git_branch_name='f19',
+        )
         self.session.add(new_collection)
         self.session.commit()
 

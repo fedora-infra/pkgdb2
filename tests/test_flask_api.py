@@ -43,7 +43,6 @@ from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 
 
-
 class FlaskApiTest(Modeltests):
     """ Flask API tests. """
 

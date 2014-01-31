@@ -45,18 +45,18 @@ class PackageListingtests(Modeltests):
         """ Test the __init__ function of PackageListing. """
         create_package_listing(self.session)
         pkg = model.Package.by_name(self.session, 'guake')
-        self.assertEqual(2,
-                         len(model.PackageListing.by_package_id(
-                            self.session,
-                            pkg.id))
-                         )
+        self.assertEqual(
+            2,
+            len(model.PackageListing.by_package_id(
+                self.session, pkg.id))
+        )
 
     def test_repr_package_listing(self):
         """ Test the __repr__ function of PackageListing. """
         create_package_listing(self.session)
         pkg = model.Package.by_name(self.session, 'guake')
-        packages = model.PackageListing.by_package_id(self.session,
-                                                        pkg.id)
+        packages = model.PackageListing.by_package_id(
+            self.session, pkg.id)
         self.assertEqual("PackageListing(id:1, u'pingou', "
                          "u'Approved', packageid=1, collectionid=2)",
                          packages[0].__repr__())
@@ -140,7 +140,6 @@ class PackageListingtests(Modeltests):
                                                offset=1)
         self.assertEqual(len(packages), 0)
 
-
     def test_to_json(self):
         """ Test the to_json function of PackageListing. """
         create_package_listing(self.session)
@@ -150,7 +149,7 @@ class PackageListingtests(Modeltests):
         package = package.to_json()
         self.assertEqual(
             package.keys(),
-            ['status', 'package', 'status_change','collection',
+            ['status', 'package', 'status_change', 'collection',
              'point_of_contact'])
 
     def test_search_packagers(self):
@@ -195,14 +194,13 @@ class PackageListingtests(Modeltests):
         self.assertEqual(pkg_list[0].collection.branchname, 'devel')
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
 
-
     def test_branch(self):
         """ Test the branch method of PackageListing. """
         create_package_acl(self.session)
 
         pkg = model.Package.by_name(self.session, 'guake')
-        pkg_list = model.PackageListing.by_package_id(self.session,
-                                                     pkg.id)
+        pkg_list = model.PackageListing.by_package_id(
+            self.session, pkg.id)
         self.assertEqual(len(pkg_list), 2)
         self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
         self.assertEqual(len(pkg_list[0].acls), 2)
@@ -211,22 +209,22 @@ class PackageListingtests(Modeltests):
 
         # Create a new collection
         new_collection = model.Collection(
-                                  name='Fedora',
-                                  version='19',
-                                  status='Active',
-                                  owner='toshio',
-                                  branchname='F-19',
-                                  distTag='.fc19',
-                                  git_branch_name='f19',
-                                  )
+            name='Fedora',
+            version='19',
+            status='Active',
+            owner='toshio',
+            branchname='F-19',
+            distTag='.fc19',
+            git_branch_name='f19',
+        )
         self.session.add(new_collection)
         self.session.commit()
 
         # Branch guake from devel to F-19
         pkg_list[1].branch(self.session, new_collection)
 
-        pkg_list = model.PackageListing.by_package_id(self.session,
-                                                     pkg.id)
+        pkg_list = model.PackageListing.by_package_id(
+            self.session, pkg.id)
         self.assertEqual(len(pkg_list), 3)
         self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
@@ -265,7 +263,6 @@ class PackageListingtests(Modeltests):
             pkg_list[0].point_of_contact, "group::kernel-maint")
         self.assertEqual(
             pkg_list[0].collection.branchname, "devel")
-
 
 
 if __name__ == '__main__':

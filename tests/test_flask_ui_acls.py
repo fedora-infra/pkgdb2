@@ -61,7 +61,7 @@ class FlaskUiAclsTest(Modeltests):
     @patch('pkgdb2.fas_login_required')
     def test_request_acl(self, login_func):
         """ Test the request_acl function. """
-        login_func.return_value=None
+        login_func.return_value = None
 
         create_package_acl(self.session)
 
@@ -151,7 +151,7 @@ class FlaskUiAclsTest(Modeltests):
     @patch('pkgdb2.fas_login_required')
     def test_watch_package(self, login_func):
         """ Test the watch_package function. """
-        login_func.return_value=None
+        login_func.return_value = None
 
         create_package_acl(self.session)
 
@@ -173,7 +173,7 @@ class FlaskUiAclsTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_comaintain_package(self, login_func):
         """ Test the comaintain_package function. """
-        login_func.return_value=None
+        login_func.return_value = None
 
         create_package_acl(self.session)
 
@@ -224,7 +224,7 @@ class FlaskUiAclsTest(Modeltests):
     @patch('pkgdb2.fas_login_required')
     def test_update_acl(self, login_func):
         """ Test the update_acl function. """
-        login_func.return_value=None
+        login_func.return_value = None
 
         create_package_acl(self.session)
 
@@ -265,7 +265,8 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<h1>Update ACLs on package: guake</h1>' in output.data)
             self.assertTrue(
-                'No pending ACLs for this user on this package.' in output.data)
+                'No pending ACLs for this user on this package.'
+                in output.data)
 
         user = FakeFasUser()
         user.groups = ['gitr2spec']
@@ -308,7 +309,7 @@ class FlaskUiAclsTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_pending_acl(self, login_func):
         """ Test the pending_acl function. """
-        login_func.return_value=None
+        login_func.return_value = None
 
         create_package_acl(self.session)
 

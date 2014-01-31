@@ -85,7 +85,6 @@ class Collectiontests(Modeltests):
             limit=1)
         self.assertEqual(1, len(collections))
 
-
     def test_to_json(self):
         """ Test the to_json function of Collection. """
         create_collection(self.session)

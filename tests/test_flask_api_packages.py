@@ -60,7 +60,7 @@ class FlaskApiPackagesTest(Modeltests):
     @patch('pkgdb2.is_admin')
     def test_api_package_new(self, login_func, mock_func):
         """ Test the api_package_new function.  """
-        login_func.return_value=None
+        login_func.return_value = None
 
         # Redirect as you are not admin
         user = FakeFasUser()
@@ -112,25 +112,27 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertTrue(
                 data ==
                 {
-                  "error": "Invalid input submitted",
-                  "error_detail": [
-                    "pkg_status: This field is required.",
-                    "pkg_poc: This field is required.",
-                    "pkg_collection: '' is not a valid choice for this field",
-                    "pkg_critpath: This field is required.",
-                    "pkg_shouldopen: This field is required."
-                  ],
-                  "output": "notok"
+                    "error": "Invalid input submitted",
+                    "error_detail": [
+                        "pkg_status: This field is required.",
+                        "pkg_poc: This field is required.",
+                        "pkg_collection: '' is not a valid choice for this "
+                        "field",
+                        "pkg_critpath: This field is required.",
+                        "pkg_shouldopen: This field is required."
+                    ],
+                    "output": "notok"
                 }
                 or data ==
                 {
-                  "error": "Invalid input submitted",
-                  "error_detail": [
-                    "pkg_status: This field is required.",
-                    "pkg_poc: This field is required.",
-                    "pkg_collection: '' is not a valid choice for this field"
-                  ],
-                  "output": "notok"
+                    "error": "Invalid input submitted",
+                    "error_detail": [
+                        "pkg_status: This field is required.",
+                        "pkg_poc: This field is required.",
+                        "pkg_collection: '' is not a valid choice for this "
+                        "field"
+                    ],
+                    "output": "notok"
                 }
             )
 
@@ -155,7 +157,8 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkg_collection: 'devel' is not a valid choice for this field"
+                        "pkg_collection: 'devel' is not a valid choice for "
+                        "this field"
                     ],
                     "output": "notok"
                 }
@@ -189,7 +192,7 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
 
-        mock_func.get_packagers.return_value=['mclasen']
+        mock_func.get_packagers.return_value = ['mclasen']
         mock_func.log.return_value = ''
 
         data = {
@@ -222,7 +225,7 @@ class FlaskApiPackagesTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_api_package_orphan(self, login_func, mock_func):
         """ Test the api_package_orphan function.  """
-        login_func.return_value=None
+        login_func.return_value = None
 
         # Redirect as you are not a packager
         user = FakeFasUser()
@@ -301,7 +304,7 @@ class FlaskApiPackagesTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_api_package_unorphan(self, login_func, mock_func):
         """ Test the api_package_unorphan function.  """
-        login_func.return_value=None
+        login_func.return_value = None
 
         # Redirect as you are not a packager
         user = FakeFasUser()
@@ -408,7 +411,8 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "You are not allowed to update ACLs of someone else.",
+                    "error": "You are not allowed to update ACLs of someone "
+                    "else.",
                     "output": "notok"
                 }
             )
@@ -449,7 +453,7 @@ class FlaskApiPackagesTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_api_package_retire(self, login_func, mock_func):
         """ Test the api_package_retire function.  """
-        login_func.return_value=None
+        login_func.return_value = None
 
         # Redirect as you are not a packager
         user = FakeFasUser()
@@ -537,7 +541,7 @@ class FlaskApiPackagesTest(Modeltests):
     @patch('pkgdb2.packager_login_required')
     def test_api_package_unretire(self, login_func, mock_func):
         """ Test the api_package_unretire function.  """
-        login_func.return_value=None
+        login_func.return_value = None
 
         # Redirect as you are not a packager
         user = FakeFasUser()
@@ -675,7 +679,8 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(
             data,
             {
-                "error": "Collection F-19 is not associated with package guake",
+                "error": "Collection F-19 is not associated with package "
+                "guake",
                 "output": "notok"
             }
         )
