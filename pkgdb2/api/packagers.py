@@ -58,6 +58,11 @@ User's ACL
     Accept GET queries only.
 
     :arg username: String of the packager name.
+    :kwarg page: The page number to return (useful in combination to limit).
+    :kwarg limit: An integer to limit the number of results, defaults to
+        250 (acls).
+    :kwarg count: A boolean to return the number of packages instead of the
+        list. Defaults to False.
 
     Sample response:
 
@@ -67,6 +72,8 @@ User's ACL
 
         {
           "output": "ok",
+          "page": 1,
+          "page_total": 12
           "acls": [
             {
               "status": "Approved",
@@ -131,20 +138,36 @@ User's ACL
     output = {}
 
     packagername = flask.request.args.get('packagername', None) or packagername
-    if packagername:
-        packagers = pkgdblib.get_acl_packager(SESSION,
-                                              packager=packagername,
-                                              )
-        if packagers:
 
+    page = flask.request.args.get('page', 1)
+    limit = flask.request.args.get('limit', 250)
+    count = flask.request.args.get('count', False)
+
+    if packagername:
+        packagers = pkgdblib.get_acl_packager(
+            SESSION,
+            packager=packagername,
+            page=page,
+            limit=limit,
+            count=count)
+        if packagers:
             output['output'] = 'ok'
             output['acls'] = [pkg.to_json() for pkg in packagers]
+
+            total_acl = pkgdblib.get_acl_packager(
+            SESSION,
+            packager=packagername,
+            count=True)
+
+            output['page_total'] = total_acl / limit
         else:
             output = {'output': 'notok', 'error': 'No ACL found for this user'}
             httpcode = 404
     else:
         output = {'output': 'notok', 'error': 'Invalid request'}
         httpcode = 500
+
+    output['page'] = page
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
