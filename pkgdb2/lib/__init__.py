@@ -777,7 +777,7 @@ def get_critpath_packages(session, branch=None):
         session, branch=branch)
 
 
-def get_package_maintained(session, packager, poc=True):
+def get_package_maintained(session, packager, poc=True, branch=None):
     """ Return all the packages and branches where given packager has
     commit acl.
 
@@ -793,6 +793,9 @@ def get_package_maintained(session, packager, poc=True):
     output = {}
     for pkg, clt in model.Package.get_package_of_user(
             session, packager, poc=poc):
+        if branch is not None:
+            if clt.branchname != branch:
+                continue
         if pkg.name in output:
             output[pkg.name][1].append(clt)
         else:
