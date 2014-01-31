@@ -36,6 +36,8 @@ from pkgdb2.api import API
 ## Some of the object we use here have inherited methods which apparently
 ## pylint does not detect.
 # pylint: disable=E1101
+# pylint: disable=R0801 ## similar line
+# pylint: disable=R0401 ## cyclic import
 
 
 ## Packagers
