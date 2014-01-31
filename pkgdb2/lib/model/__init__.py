@@ -303,7 +303,7 @@ class PackageListingAcl(BASE):
 
     @classmethod
     def get_acl_packager(
-            cls, session, packager,offset=None, limit=None, count=False):
+            cls, session, packager, offset=None, limit=None, count=False):
         """ Retrieve the ACLs associated with a packager.
 
         :arg session: the database session used to connect to the

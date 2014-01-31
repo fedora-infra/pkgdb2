@@ -156,9 +156,9 @@ User's ACL
             output['acls'] = [pkg.to_json() for pkg in packagers]
 
             total_acl = pkgdblib.get_acl_packager(
-            SESSION,
-            packager=packagername,
-            count=True)
+                SESSION,
+                packager=packagername,
+                count=True)
 
             output['page_total'] = total_acl / limit
         else:
@@ -340,7 +340,7 @@ List packagers
         SESSION.commit()
         output['output'] = 'ok'
         output['packagers'] = packagers
-    else:
+    else:  # pragma: no cover # In theory we can never get here
         output = {'output': 'notok', 'error': 'Invalid request'}
         httpcode = 500
 

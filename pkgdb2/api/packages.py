@@ -748,16 +748,16 @@ List packages
                 count=count,
             )
             packages_count += pkgdblib.search_package(
-                    SESSION,
-                    pkg_name=pattern,
-                    pkg_branch=None,
-                    pkg_poc=poc,
-                    orphaned=orphaned,
-                    status=status,
-                    page=page,
-                    limit=limit,
-                    count=True
-                )
+                SESSION,
+                pkg_name=pattern,
+                pkg_branch=None,
+                pkg_poc=poc,
+                orphaned=orphaned,
+                status=status,
+                page=page,
+                limit=limit,
+                count=True
+            )
 
         if not packages:
             output['output'] = 'notok'

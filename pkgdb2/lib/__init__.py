@@ -1397,7 +1397,8 @@ def bugzilla(session, name=None):
                     pass
                 elif pkg[6] == 'devel':
                     output[pkg[0]][pkg[2]]['poc'] = pkg[4]
-                elif pkg[6] > output[pkg[0]][pkg[2]]['version']:  # pragma: no cover
+                elif pkg[6] > output[pkg[0]][pkg[2]
+                        ]['version']:  # pragma: no cover
                     ## TODO: check this logic w/ Toshio
                     output[pkg[0]][pkg[2]]['poc'] = pkg[4]
                 # If #5 is not poc, add it to cc
