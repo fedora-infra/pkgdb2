@@ -302,7 +302,8 @@ class PackageListingAcl(BASE):
         return query.all()
 
     @classmethod
-    def get_acl_packager(cls, session, packager):
+    def get_acl_packager(
+            cls, session, packager,offset=None, limit=None, count=False):
         """ Retrieve the ACLs associated with a packager.
 
         :arg session: the database session used to connect to the
@@ -311,10 +312,23 @@ class PackageListingAcl(BASE):
             of.
 
         """
-        acls = session.query(PackageListingAcl).filter(
+        query = session.query(
+            cls
+        ).filter(
             PackageListingAcl.fas_name == packager
-        ).order_by(PackageListingAcl.id).all()
-        return acls
+        )
+
+        if count:
+            return query.count()
+
+        query = query.order_by(PackageListingAcl.id)
+
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
+
+        return query.all()
 
     @classmethod
     def get_acl_package(cls, session, user, package,

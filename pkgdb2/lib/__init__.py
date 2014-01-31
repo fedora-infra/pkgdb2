@@ -732,18 +732,36 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
                             count=count)
 
 
-def get_acl_packager(session, packager):
+def get_acl_packager(session, packager, page=1, limit=100, count=False):
     """ Return the list of ACL associated with a packager.
 
     :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
+    :kwarg page: the page number to apply to the results.
+    :kwarg limit: the number of results to return.
+    :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
     :returns: a list of ``PackageListingAcl`` associated to the specified
         user.
     :rtype: list(PackageListingAcl)
 
     """
+
+    if page is not None:
+        try:
+            page = int(page)
+        except ValueError:
+            raise PkgdbException('Wrong page provided')
+
+    if page is not None and limit is not None and limit != 0:
+        page = (page - 1) * limit
+
     return model.PackageListingAcl.get_acl_packager(
-        session, packager=packager)
+        session,
+        packager=packager,
+        offset=page,
+        limit=limit,
+        count=count)
 
 
 def get_critpath_packages(session, branch=None):
