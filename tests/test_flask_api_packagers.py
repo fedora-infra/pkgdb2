@@ -62,6 +62,7 @@ class FlaskApiPackagersTest(Modeltests):
             {
                 "output": "notok",
                 "error": "Invalid request",
+                "page": 1
             }
         )
 
@@ -73,6 +74,7 @@ class FlaskApiPackagersTest(Modeltests):
             {
                 "output": "notok",
                 "error": 'No ACL found for this user',
+                "page": 1
             }
         )
 
@@ -84,6 +86,7 @@ class FlaskApiPackagersTest(Modeltests):
             {
                 "output": "notok",
                 "error": 'No ACL found for this user',
+                "page": 1
             }
         )
 
@@ -93,8 +96,9 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
-                         ['output', 'acls'])
+                         ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['page_total'], 0)
         self.assertEqual(len(output['acls']), 5)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
@@ -117,8 +121,9 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output.keys(),
-                         ['output', 'acls'])
+                         ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['page_total'], 0)
         self.assertEqual(len(output['acls']), 5)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
@@ -167,6 +172,86 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['packagers']), 1)
         self.assertEqual(output['packagers'][0], 'pingou')
+
+
+
+    def test_packager_stats(self):
+        """ Test the api_packager_stats function.  """
+
+        output = self.app.get('/api/packager/stats/')
+        self.assertEqual(output.status_code, 500)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data,
+            {
+                "output": "notok",
+                "error": "Invalid request",
+            }
+        )
+
+        output = self.app.get('/api/packager/stats/pingou/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data,
+            {'output': 'ok'}
+        )
+
+        output = self.app.get('/api/packager/stats/?packagername=pingou')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data,
+            {'output': 'ok'}
+        )
+
+        create_package_acl(self.session)
+
+        output = self.app.get('/api/packager/stats/pingou/')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(output.keys(),
+                         ['F-18', 'output', 'devel', 'el6', 'F-17'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['el6']['point of contact'], 0)
+        self.assertEqual(output['el6']['co-maintainer'], 0)
+        self.assertEqual(output['F-17']['point of contact'], 0)
+        self.assertEqual(output['F-17']['co-maintainer'], 0)
+        self.assertEqual(output['F-18']['point of contact'], 1)
+        self.assertEqual(output['F-18']['co-maintainer'], 0)
+        self.assertEqual(output['devel']['point of contact'], 1)
+        self.assertEqual(output['devel']['co-maintainer'], 0)
+
+        output = self.app.get('/api/packager/stats/?packagername=pingou')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(output.keys(),
+                         ['F-18', 'output', 'devel', 'el6', 'F-17'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['el6']['point of contact'], 0)
+        self.assertEqual(output['el6']['co-maintainer'], 0)
+        self.assertEqual(output['F-17']['point of contact'], 0)
+        self.assertEqual(output['F-17']['co-maintainer'], 0)
+        self.assertEqual(output['F-18']['point of contact'], 1)
+        self.assertEqual(output['F-18']['co-maintainer'], 0)
+        self.assertEqual(output['devel']['point of contact'], 1)
+        self.assertEqual(output['devel']['co-maintainer'], 0)
+
+        output = self.app.get('/api/packager/stats/?packagername=random')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(output.keys(),
+                         ['F-18', 'output', 'devel', 'el6', 'F-17'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['el6']['point of contact'], 0)
+        self.assertEqual(output['el6']['co-maintainer'], 0)
+        self.assertEqual(output['F-17']['point of contact'], 0)
+        self.assertEqual(output['F-17']['co-maintainer'], 0)
+        self.assertEqual(output['F-18']['point of contact'], 0)
+        self.assertEqual(output['F-18']['co-maintainer'], 0)
+        self.assertEqual(output['devel']['point of contact'], 0)
+        self.assertEqual(output['devel']['co-maintainer'], 0)
+
 
 
 if __name__ == '__main__':
