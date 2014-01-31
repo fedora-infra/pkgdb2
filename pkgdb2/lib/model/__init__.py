@@ -487,6 +487,7 @@ class Collection(BASE):
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
     distTag = sa.Column(sa.String(32), unique=True, nullable=False)
     git_branch_name = sa.Column(sa.Text)
+    koji_name = sa.Column(sa.Text)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
@@ -496,7 +497,8 @@ class Collection(BASE):
     )
 
     def __init__(self, name, version, status, owner,
-                 branchname=None, distTag=None, git_branch_name=None):
+                 branchname=None, distTag=None, git_branch_name=None,
+                 koji_name=None):
         self.name = name
         self.version = version
         self.status = status
@@ -504,6 +506,7 @@ class Collection(BASE):
         self.branchname = branchname
         self.distTag = distTag
         self.git_branch_name = git_branch_name
+        self.koji_name = koji_name
 
     def __repr__(self):
         """ The string representation of this object.
