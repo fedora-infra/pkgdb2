@@ -181,7 +181,7 @@ User's ACL
 def api_packager_stats(packagername=None):
     '''
 User's stats
-----------
+------------
     Give some stats about the ACLs of the user.
 
     ::
