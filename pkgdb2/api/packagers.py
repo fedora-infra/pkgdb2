@@ -174,6 +174,115 @@ User's ACL
     return jsonout
 
 
+@API.route('/packager/stats/')
+@API.route('/packager/stats')
+@API.route('/packager/stats/<packagername>/')
+@API.route('/packager/stats/<packagername>')
+def api_packager_stats(packagername=None):
+    '''
+User's stats
+----------
+    Give some stats about the ACLs of the user.
+
+    ::
+
+        /api/packager/stats/<fas_username>/
+
+        /api/packager/stats/?packagername=<username>
+
+    Accept GET queries only.
+
+    :arg packagername: String of the packager name.
+
+    Sample response:
+
+    ::
+
+        /api/packager/stats/pingou
+
+        {
+          "EL-6": {
+            "co-maintainer": 8,
+            "point of contact": 12
+          },
+          "devel": {
+            "co-maintainer": 12,
+            "point of contact": 60
+          },
+          "f19": {
+            "co-maintainer": 12,
+            "point of contact": 60
+          },
+          "f20": {
+            "co-maintainer": 12,
+            "point of contact": 60
+          },
+          "output": "ok"
+        }
+
+
+        /api/packager/stats/?packagername=random
+
+        {
+          "EL-6": {
+            "co-maintainer": 0,
+            "point of contact": 0
+          },
+          "devel": {
+            "co-maintainer": 0,
+            "point of contact": 0
+          },
+          "f19": {
+            "co-maintainer": 0,
+            "point of contact": 0
+          },
+          "f20": {
+            "co-maintainer": 0,
+            "point of contact": 0
+          },
+          "output": "ok"
+        }
+
+    '''
+
+    httpcode = 200
+    output = {}
+
+    packagername = flask.request.args.get('packagername', None) or packagername
+
+    if packagername:
+        collections = pkgdblib.search_collection(
+            SESSION, '*', status='Active', limit=10000)
+        collections.extend(pkgdblib.search_collection(
+            SESSION, '*', status='Under Development', limit=10000))
+        for collection in collections:
+            packages_co = pkgdblib.get_package_maintained(
+                SESSION,
+                packager=packagername,
+                poc=False,
+                branch=collection.branchname
+            )
+
+            packages = pkgdblib.get_package_maintained(
+                SESSION,
+                packager=packagername,
+                poc=True,
+                branch=collection.branchname
+            )
+            output[collection.branchname] = {
+                'point of contact': len(packages),
+                'co-maintainer': len(packages_co)
+            }
+        output['output'] = 'ok'
+    else:
+        output = {'output': 'notok', 'error': 'Invalid request'}
+        httpcode = 500
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
+
+
 @API.route('/packagers/')
 @API.route('/packagers')
 @API.route('/packagers/<pattern>/')
