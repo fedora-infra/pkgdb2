@@ -804,7 +804,8 @@ def get_package_maintained(session, packager, poc=True, branch=None):
 
 
 def add_collection(session, clt_name, clt_version, clt_status,
-                   clt_branchname, clt_disttag, clt_gitbranch, user):
+                   clt_branchname, clt_disttag, clt_gitbranch,
+                   clt_koji_name, user):
     """ Add a new collection to the database.
 
     This method only flushes the new object, nothing is committed to the
@@ -817,6 +818,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
     :kwarg clt_branchname: the branchname of the collection.
     :kwarg clt_disttag: the dist tag of the collection.
     :kwarg clt_gitbranch: the git branch name of the collection.
+    :kward clt_koji_name: the name of the collection in koji.
     :kwarg user: The user performing the update.
     :returns: a message informing that the collection was successfully
         created.
@@ -841,6 +843,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
         branchname=clt_branchname,
         distTag=clt_disttag,
         git_branch_name=clt_gitbranch,
+        koji_name=clt_koji_name,
     )
     try:
         session.add(collection)
@@ -857,7 +860,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
 def edit_collection(session, collection, clt_name=None, clt_version=None,
                     clt_status=None, clt_branchname=None, clt_disttag=None,
-                    clt_gitbranch=None, user=None):
+                    clt_gitbranch=None, clt_koji_name=None, user=None):
     """ Edit a specified collection
 
     This method only flushes the new object, nothing is committed to the
@@ -871,6 +874,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     :kwarg clt_branchname: the new branchname of the collection.
     :kwarg clt_disttag: the new dist tag of the collection.
     :kwarg clt_gitbranch: the new git branch name of the collection.
+    :kward clt_koji_name: the name of the collection in koji.
     :kwarg user: The user performing the update.
     :returns: a message informing that the collection was successfully
         updated.
@@ -907,6 +911,9 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if clt_gitbranch and clt_gitbranch != collection.git_branch_name:
         collection.git_branch_name = clt_gitbranch
         edited.append('git_branch_name')
+    if clt_koji_name and clt_koji_name != collection.koji_name:
+        collection.koji_name = clt_koji_name
+        edited.append('koji_name')
 
     if edited:
         try:

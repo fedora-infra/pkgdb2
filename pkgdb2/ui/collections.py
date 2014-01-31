@@ -116,6 +116,7 @@ def collection_edit(collection):
         clt_branchname = form.collection_branchname.data
         clt_disttag = form.collection_distTag.data
         clt_gitbranch = form.collection_git_branch_name.data
+        clt_koji_name = form.collection_kojiname.data
 
         try:
             pkgdblib.edit_collection(
@@ -127,6 +128,7 @@ def collection_edit(collection):
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_gitbranch=clt_gitbranch,
+                clt_koji_name=clt_koji_name,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
@@ -164,6 +166,7 @@ def collection_new():
         clt_branchname = form.collection_branchname.data
         clt_disttag = form.collection_distTag.data
         clt_gitbranch = form.collection_git_branch_name.data
+        clt_koji_name = form.collection_kojiname.data
 
         try:
             message = pkgdblib.add_collection(
@@ -174,6 +177,7 @@ def collection_new():
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_gitbranch=clt_gitbranch,
+                clt_koji_name=clt_koji_name,
                 user=flask.g.fas_user,
             )
             SESSION.commit()

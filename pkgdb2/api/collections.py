@@ -68,6 +68,7 @@ New collection
         (ie: .fc18).
     :arg collection_git_branch_name: The git branch name for this collection
         (ie: f18).
+    :arg collection_kojiname: the name of the collection in koji.
 
     Sample response:
 
@@ -100,6 +101,7 @@ New collection
         clt_branchname = form.collection_branchname.data
         clt_disttag = form.collection_distTag.data
         clt_gitbranch = form.collection_git_branch_name.data
+        clt_koji_name = form.collection_kojiname.data
 
         try:
             message = pkgdblib.add_collection(
@@ -110,6 +112,7 @@ New collection
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_gitbranch=clt_gitbranch,
+                clt_koji_name=clt_koji_name,
                 user=flask.g.fas_user,
             )
             SESSION.commit()

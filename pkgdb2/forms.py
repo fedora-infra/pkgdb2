@@ -56,6 +56,10 @@ class AddCollectionForm(wtf.Form):
         'Branch name',
         [wtforms.validators.Required()]
     )
+    collection_kojiname = wtforms.TextField(
+        'Koji name',
+        [wtforms.validators.Required()]
+    )
     collection_distTag = wtforms.TextField(
         'Dist tag',
         [wtforms.validators.Required()]
@@ -80,6 +84,7 @@ class AddCollectionForm(wtf.Form):
             self.collection_branchname.data = collection.branchname
             self.collection_distTag.data = collection.distTag
             self.collection_git_branch_name.data = collection.git_branch_name
+            self.collection_kojiname.data = collection.koji_name
 
             # Set the drop down menu to the current value
             opt = (collection.status, collection.status)
