@@ -130,7 +130,8 @@ User's ACL
 
         {
           "output": "notok",
-          "error": "No ACL found for this user"
+          "error": "No ACL found for this user",
+          "page": 1
         }
 
     '''
