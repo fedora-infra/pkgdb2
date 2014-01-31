@@ -142,6 +142,7 @@ def convert_collections(pkg1_sess, pkg2_sess):
             branchname=branch.branchname,
             distTag=branch.disttag,
             git_branch_name=branch.gitbranchname,
+            koji_name=collect.koji_name,
         )
         new_collection.id = collect.id
         pkg2_sess.add(new_collection)
