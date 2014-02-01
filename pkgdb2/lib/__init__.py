@@ -23,6 +23,8 @@
 PkgDB internal API to interact with the database.
 '''
 
+import operator
+
 import sqlalchemy
 
 from datetime import timedelta
@@ -1364,6 +1366,26 @@ def count_collection(session):
 
     """
     return model.Package.count_collection(session)
+
+
+def count_fedora_collection(session):
+    """ Return the number of package 'Approved' for each Fedora collection.
+
+    :arg session: the session to connect to the database with.
+
+    """
+    collections_fedora = model.Package.count_fedora_collection(session)
+
+    # We need to get devel out to sort the releases correctly
+    devel = collections_fedora.pop()
+    collections_fedora = [[int(item[0]), item[1]]
+                          for item in collections_fedora]
+
+    collections_fedora.sort(key=operator.itemgetter(1))
+    collections_fedora.append(devel)
+
+    return collections_fedora
+
 
 
 def notify(session, eol=False, name=None, version=None):
