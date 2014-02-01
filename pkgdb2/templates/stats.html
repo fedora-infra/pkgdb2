@@ -27,6 +27,13 @@
     {% endfor %}
 </table>
 
+
+<h2>Evolution in Fedora</h2>
+
+<div class="demo-container">
+    <div id="placeholder" class="demo-placeholder"></div>
+</div>
+
 <h2>Top maintainers</h2>
 
 <table>
@@ -66,5 +73,79 @@
     </tr>
     {% endfor %}
 </table>
+
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+
+<script language="javascript" type="text/javascript"
+        src="{{ url_for('static', filename='jquery.flot.js') }}"></script>
+<script language="javascript" type="text/javascript"
+    src="{{ url_for('static', filename='jquery.flot.categories.js') }}"></script>
+
+
+<script type="text/javascript">
+
+    {% autoescape false %}
+    var data = [{'color': '#1F77B4',
+                'data': {{ collections_fedora_data }},
+                'bars': {'order': 1, 'barWidth': 0.8, 'show': 1},
+                'label': 'Number of packages',
+                'ticks': {{ collections_fedora_lbl }},
+                }];
+    {% endautoescape %}
+
+    $(function() {
+        var plot = $.plot("#placeholder", data, {
+            series: {
+                clickable: true,
+                hoverable: true
+            },
+            grid: { hoverable: true, clickable: true },
+            xaxis: {
+                mode: "categories",
+                points: { show: true },
+                lines: { show: true },
+                tickLength: 0,
+                //show: false
+            }
+        });
+
+        // show the tooltip
+        function showTooltip(x, y, contents) {
+            $('<div id="tooltip">' + contents + '</div>').css( {
+                position: 'absolute',
+                display: 'none',
+                top: y + 5,
+                left: x + 5,
+                border: '1px solid #fdd',
+                padding: '2px',
+                'background-color': '#fee',
+                opacity: 0.80
+            }).appendTo("body").fadeIn(200);
+        }
+
+        $("#placeholder").bind("plothover", function (event, pos, item) {
+            $("#x").text(pos.x);
+            $("#y").text(pos.y);
+
+            if (item) {
+                $("#tooltip").remove();
+                var x = item.datapoint[0],
+                    y = item.datapoint[1];
+
+                if (item.series.label == 'Number of packages') {
+                    showTooltip(item.pageX, item.pageY,
+                            y + " packages in Fedora "
+                            + data[0].ticks[item.dataIndex][0]);
+                }
+            } else {
+                document.body.style.cursor = 'default';
+                $("#tooltip").remove();
+            }
+        });
+    });
+</script>
 
 {% endblock %}

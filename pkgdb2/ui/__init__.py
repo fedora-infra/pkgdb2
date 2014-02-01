@@ -57,6 +57,15 @@ def stats():
         SESSION, '*', 'Under Development'))
 
     collections = pkgdblib.count_collection(SESSION)
+    collections_fedora = pkgdblib.count_fedora_collection(SESSION)
+
+    cnt = 1
+    collections_fedora_lbl = []
+    collections_fedora_data = []
+    for item in collections_fedora:
+        collections_fedora_lbl.append([cnt, str(item[0])])
+        collections_fedora_data.append([cnt, float(item[1])])
+        cnt += 1
 
     # Top maintainers
     top_maintainers = pkgdblib.get_top_maintainers(SESSION)
@@ -66,6 +75,8 @@ def stats():
     return flask.render_template(
         'stats.html',
         collections=collections,
+        collections_fedora_lbl=collections_fedora_lbl,
+        collections_fedora_data=collections_fedora_data,
         top_maintainers=top_maintainers,
         top_poc=top_poc,
     )
