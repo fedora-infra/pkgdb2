@@ -1376,13 +1376,14 @@ def count_fedora_collection(session):
     """
     collections_fedora = model.Package.count_fedora_collection(session)
 
-    # We need to get devel out to sort the releases correctly
-    devel = collections_fedora.pop()
-    collections_fedora = [[int(item[0]), item[1]]
-                          for item in collections_fedora]
+    if collections_fedora:
+        # We need to get devel out to sort the releases correctly
+        devel = collections_fedora.pop()
+        collections_fedora = [[int(item[0]), item[1]]
+                              for item in collections_fedora]
 
-    collections_fedora.sort(key=operator.itemgetter(1))
-    collections_fedora.append(devel)
+        collections_fedora.sort(key=operator.itemgetter(1))
+        collections_fedora.append(devel)
 
     return collections_fedora
 
