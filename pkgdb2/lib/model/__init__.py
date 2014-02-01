@@ -1099,6 +1099,34 @@ class Package(BASE):
         return query.all()
 
     @classmethod
+    def count_fedora_collection(cls, session):
+        """ Return the number of packages present in each Fedora collection.
+
+        :arg session: session with which to connect to the database
+
+        """
+        query = session.query(
+            Collection.version,
+            sa.func.count(sa.func.distinct(Package.id))
+        ).filter(
+            PackageListing.package_id == Package.id
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Package.status == 'Approved'
+        ).filter(
+            Collection.name == 'Fedora'
+        ).filter(
+            PackageListing.status == 'Approved'
+        ).group_by(
+            Collection.branchname, Collection.version
+        ).order_by(
+            Collection.version
+        )
+
+        return query.all()
+
+    @classmethod
     def get_package_of_user(cls, session, user, pkg_status=None, poc=True):
         """ Return the list of packages on which a given user has commit
         rights and is poc (unless specified otherwise).
