@@ -26,6 +26,7 @@ Top level of the pkgdb Flask application.
 import logging
 import logging.handlers
 import os
+import sys
 
 import flask
 import dogpile.cache
@@ -78,6 +79,11 @@ mail_handler.setFormatter(logging.Formatter('''
 '''))
 mail_handler.setLevel(logging.ERROR)
 APP.logger.addHandler(mail_handler)
+
+# Log to stderr as well
+stderr_log = logging.StreamHandler(sys.stderr)
+stderr_log.setLevel(logging.INFO)
+APP.logger.addHandler(stderr_log)
 
 LOG = APP.logger
 
