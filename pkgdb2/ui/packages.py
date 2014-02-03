@@ -227,7 +227,7 @@ def package_new():
         # Keep it in, but normally we shouldn't hit this
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
-            flask.flash(err.message, 'error')
+            flask.flash(str(err), 'error')
 
     return flask.render_template(
         'package_new.html',
@@ -301,7 +301,7 @@ def package_give(package):
                 SESSION.commit()
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
-            flask.flash(err.message, 'error')
+            flask.flash(str(err), 'error')
 
         return flask.redirect(
             flask.url_for('.package_info', package=packagename)
@@ -343,7 +343,7 @@ def package_orphan(package, collection):
                     'You are no longer point of contact on branch: %s'
                     % collection)
             except pkgdblib.PkgdbException, err:
-                flask.flash(err.message, 'error')
+                flask.flash(str(err), 'error')
                 SESSION.rollback()
             break
 
@@ -352,7 +352,7 @@ def package_orphan(package, collection):
     # Keep it in, but normally we shouldn't hit this
     except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
-        flask.flash(err.message, 'error')
+        flask.flash(str(err), 'error')
 
     return flask.redirect(
         flask.url_for('.package_info', package=package.name))
@@ -388,7 +388,7 @@ def package_retire(package, collection):
                         'This package has been retired on branch: %s'
                         % collection)
                 except pkgdblib.PkgdbException, err:
-                    flask.flash(err.message, 'error')
+                    flask.flash(str(err), 'error')
                     SESSION.rollback()
                 break
             else:
@@ -401,7 +401,7 @@ def package_retire(package, collection):
     # Keep it in, but normally we shouldn't hit this
     except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
-        flask.flash(err.message, 'error')
+        flask.flash(str(err), 'error')
 
     return flask.redirect(
         flask.url_for('.package_info', package=package.name))
@@ -425,7 +425,7 @@ def package_take(package, collection):
             package, collection))
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
-        flask.flash(err.message, 'error')
+        flask.flash(str(err), 'error')
 
     return flask.redirect(
         flask.url_for('.package_info', package=package))

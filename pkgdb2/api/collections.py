@@ -123,7 +123,7 @@ New collection
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -201,7 +201,7 @@ Update collection status
             except pkgdblib.PkgdbException, err:
                 SESSION.rollback()
                 output['output'] = 'notok'
-                output['error'] = err.message
+                output['error'] = str(err)
                 httpcode = 500
         else:
             output['output'] = 'notok'

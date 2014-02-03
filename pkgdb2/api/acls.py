@@ -123,7 +123,7 @@ Update package ACL
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -207,7 +207,7 @@ Reassign packages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
 
     jsonout = flask.jsonify(output)

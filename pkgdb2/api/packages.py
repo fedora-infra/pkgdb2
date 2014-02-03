@@ -133,7 +133,7 @@ New package
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -214,7 +214,7 @@ Orphan package
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -297,7 +297,7 @@ Unorphan packages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -376,7 +376,7 @@ Retire packages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -456,7 +456,7 @@ Unretire packages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = err.message
+            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
@@ -584,7 +584,7 @@ Package information
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
-        output['error'] = err.message
+        output['error'] = str(err)
         httpcode = 500
 
     jsonout = flask.jsonify(output)
@@ -778,7 +778,7 @@ List packages
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
-        output['error'] = err.message
+        output['error'] = str(err)
         httpcode = 500
 
     jsonout = flask.jsonify(output)

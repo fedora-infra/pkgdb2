@@ -138,7 +138,7 @@ def collection_edit(collection):
         # In theory we should never hit this
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
-            flask.flash(err.message, 'errors')
+            flask.flash(str(err), 'errors')
     else:
         form = pkgdb2.forms.AddCollectionForm(
             clt_status=clt_status,
@@ -186,7 +186,7 @@ def collection_new():
         # In theory we should never hit this
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
-            flask.flash(err.message, 'errors')
+            flask.flash(str(err), 'errors')
 
     return flask.render_template(
         'collection_new.html',

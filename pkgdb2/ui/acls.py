@@ -83,7 +83,7 @@ def request_acl(package):
                               package=package))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
-            flask.flash(err.message, 'error')
+            flask.flash(str(err), 'error')
 
     return flask.render_template(
         'acl_request.html',
@@ -123,7 +123,7 @@ def watch_package(package):
     # Let's keep this in although we should never see it
     except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
-        flask.flash(err.message, 'error')
+        flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for('.package_info', package=package))
 
 
@@ -186,7 +186,7 @@ def comaintain_package(package):
     # Let's keep this in although we should never see it
     except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
-        flask.flash(err.message, 'error')
+        flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for('.package_info', package=package))
 
 
@@ -248,7 +248,7 @@ def update_acl(package, user, branch=None):
         # Let's keep this in although we should never see it
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
-            flask.flash(err.message, 'errors')
+            flask.flash(str(err), 'errors')
 
     return flask.render_template(
         'acl_update.html',
