@@ -78,7 +78,8 @@ mail_handler.setFormatter(logging.Formatter('''
     %(message)s
 '''))
 mail_handler.setLevel(logging.ERROR)
-APP.logger.addHandler(mail_handler)
+if not APP.debug:
+    APP.logger.addHandler(mail_handler)
 
 # Log to stderr as well
 stderr_log = logging.StreamHandler(sys.stderr)

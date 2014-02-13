@@ -72,3 +72,5 @@ PKGDB2_EMAIL_NOTIFICATION = False
 PKGDB2_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'
 PKGDB2_EMAIL_FROM = 'nobody@fedoraproject.org'
 PKGDB2_EMAIL_SMTP_SERVER = 'localhost'
+
+MAIL_ADMIN = 'pingou@pingoured.fr'
