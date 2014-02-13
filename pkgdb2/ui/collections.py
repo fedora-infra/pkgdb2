@@ -139,7 +139,7 @@ def collection_edit(collection):
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'errors')
-    else:
+    elif flask.request.method == 'GET':
         form = pkgdb2.forms.AddCollectionForm(
             clt_status=clt_status,
             collection=collection
