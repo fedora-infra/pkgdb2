@@ -46,8 +46,8 @@ from progressbar import Bar, ETA, Percentage, ProgressBar, RotatingMarker
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-import pkgdb.lib
-from pkgdb.lib import model
+import pkgdb2.lib
+from pkgdb2.lib import model
 
 
 DB_URL_PKGDB1 = ''
@@ -259,7 +259,7 @@ def main(db_url_pkgdb1, db_url_pkgdb2):
     from one database model to the other.
     '''
     pkg1_sess = create_session(db_url_pkgdb1)
-    pkg2_sess = pkgdb.lib.create_session(db_url_pkgdb2)
+    pkg2_sess = pkgdb2.lib.create_session(db_url_pkgdb2)
     convert_collections(pkg1_sess, pkg2_sess)
     convert_packages(pkg1_sess, pkg2_sess)
     convert_packagelisting(pkg1_sess, pkg2_sess)
