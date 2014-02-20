@@ -121,7 +121,7 @@ class FlaskUiCollectionsTest(Modeltests):
             self.assertEqual(
                 output.data.count(
                     '<td class="errors">This field is required.</td>'
-                ), 5)
+                ), 6)
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
