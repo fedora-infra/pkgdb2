@@ -309,10 +309,7 @@ List collections
     status = flask.request.args.get('status', None)
     if pattern:
         if status:
-            if ',' in status:
-                status = status.split(',')
-            else:
-                status = [status]
+            status = status.split(',')
             collections = []
             for stat in status:
                 collections.extend(pkgdblib.search_collection(
