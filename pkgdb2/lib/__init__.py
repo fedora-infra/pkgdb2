@@ -1239,7 +1239,8 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     pkg_listing = get_acl_package(session, pkg_name, pkg_branch)[0]
 
     if not pkg_listing.status in ('Orphaned', 'Retired'):
-        raise PkgdbException('Package is not orphaned on %s' % pkg_branch)
+        raise PkgdbException(
+            'Package "%s" is not orphaned on %s' % (pkg_name, pkg_branch))
 
     if not pkgdb2.is_pkgdb_admin(user):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
