@@ -30,7 +30,7 @@ import flask
 
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION
-from pkgdb2.api import API
+from pkgdb2.api import API, get_limit
 
 
 ## Some of the object we use here have inherited methods which apparently
@@ -145,7 +145,7 @@ User's ACL
     packagername = flask.request.args.get('packagername', None) or packagername
 
     page = flask.request.args.get('page', 1)
-    limit = flask.request.args.get('limit', 250)
+    limit = get_limit()
     count = flask.request.args.get('count', False)
 
     if packagername:

@@ -31,6 +31,17 @@ API = flask.Blueprint('api_ns', __name__, url_prefix='/api')
 from pkgdb2 import __version__, __api_version__, APP
 from pkgdb2.doc_utils import load_doc
 
+
+def get_limit():
+    """ Retrieve the limit used to limit the output retrieved. """
+    limit = flask.request.args.get('limit', 250)
+    try:
+        limit = int(limit)
+    except ValueError:
+        limit = 250
+    return limit
+
+
 from pkgdb2.api import acls
 from pkgdb2.api import collections
 from pkgdb2.api import packagers

@@ -34,7 +34,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, forms, is_admin, packager_login_required
-from pkgdb2.api import API
+from pkgdb2.api import API, get_limit
 
 
 ## Some of the object we use here have inherited methods which apparently
@@ -709,7 +709,7 @@ List packages
     acls = bool(flask.request.args.get('acls', False))
     status = flask.request.args.get('status', None)
     page = flask.request.args.get('page', 1)
-    limit = flask.request.args.get('limit', 250)
+    limit = get_limit()
     count = flask.request.args.get('count', False)
 
     try:
