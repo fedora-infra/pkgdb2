@@ -628,6 +628,8 @@ List packages
     :kwarg count: A boolean to return the number of packages instead of the
         list. Defaults to False.
 
+    *Results are paginated*
+
     Sample response:
 
     ::
@@ -649,7 +651,9 @@ List packages
                 "review_url": null,
                 "name": "guake"
             }
-          ]
+          ],
+          "pages_total": 1,
+          "page": 1
         }
 
         /api/packages/cl*?status=Orphaned&branches=f20&acls=true
@@ -685,7 +689,9 @@ List packages
               "review_url": null,
               "name": "clive"
             }
-          ]
+          ],
+          "pages_total": 1,
+          "page": 1
         }
 
     .. note:: the ``status_change`` and ``create_date`` fields are both

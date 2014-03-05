@@ -66,6 +66,8 @@ User's ACL
     :kwarg count: A boolean to return the number of packages instead of the
         list. Defaults to False.
 
+    *Results are paginated*
+
     Sample response:
 
     ::
