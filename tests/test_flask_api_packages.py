@@ -717,17 +717,6 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(
             data['packages'][0]['summary'], 'Top down terminal for GNOME')
 
-        output = self.app.get('/api/packages/guake/?limit=abc')
-        self.assertEqual(output.status_code, 500)
-        data = json.loads(output.data)
-        self.assertEqual(
-            data,
-            {
-                "error": "Wrong limit provided",
-                "output": "notok"
-            }
-        )
-
         output = self.app.get('/api/packages/g*/?count=True')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
