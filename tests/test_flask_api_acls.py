@@ -73,7 +73,6 @@ class FlaskApiAclsTest(Modeltests):
                 {
                     "output": "notok",
                     "error_detail": [
-                        "pkg_acl: Not a valid choice",
                         "pkg_name: This field is required.",
                         "acl_status: Not a valid choice",
                         "pkg_user: This field is required.",
