@@ -91,16 +91,21 @@ Update package ACL
     output = {}
 
     status = pkgdblib.get_status(SESSION, ['pkg_acl', 'acl_status'])
+    collections = pkgdblib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
 
     form = forms.SetAclPackageForm(
         csrf_enabled=False,
+        collections=[col.branchname for col in collections],
         pkg_acl=status['pkg_acl'],
         acl_status=status['acl_status'],
     )
+
     if form.validate_on_submit():
         pkg_name = form.pkg_name.data
-        pkg_branch = form.pkg_branch.data.split(',')
-        pkg_acl = form.pkg_acl.data.split(',')
+        pkg_branch = form.pkg_branch.data
+        pkg_acl = form.pkg_acl.data
         acl_status = form.acl_status.data
         pkg_user = form.pkg_user.data
 
