@@ -705,8 +705,8 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         self.assertEqual(
-            data.keys(),
-            ['output', 'packages', 'page_total', 'page'])
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
         self.assertEqual(len(data['packages']), 1)
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(
@@ -725,7 +725,7 @@ class FlaskApiPackagesTest(Modeltests):
                 "output": "ok",
                 "packages": 2,
                 "page": 1,
-                "pages_total": 1,
+                "page_total": 1,
             }
         )
 
