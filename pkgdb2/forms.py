@@ -187,11 +187,12 @@ class SetAclPackageForm(wtf.Form):
         'Package name',
         [wtforms.validators.Required()]
     )
-    pkg_branch = wtforms.TextField(
-        'Fedora branch',
-        [wtforms.validators.Required()]
+    pkg_branch = wtforms.SelectMultipleField(
+        'Branch',
+        [wtforms.validators.Required()],
+        choices=[('', '')]
     )
-    pkg_acl = wtforms.SelectField(
+    pkg_acl = wtforms.SelectMultipleField(
         'ACL',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
@@ -212,6 +213,11 @@ class SetAclPackageForm(wtf.Form):
         drop-down list.
         """
         super(SetAclPackageForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            self.pkg_branch.choices = [
+                (collec, collec)
+                for collec in kwargs['collections']
+            ]
         if 'acl_status' in kwargs:
             self.acl_status.choices = [
                 (status, status)
@@ -219,8 +225,8 @@ class SetAclPackageForm(wtf.Form):
             ]
         if 'pkg_acl' in kwargs:
             self.pkg_acl.choices = [
-                (status, status)
-                for status in kwargs['pkg_acl']
+                (acl, acl)
+                for acl in kwargs['pkg_acl']
             ]
 
 
