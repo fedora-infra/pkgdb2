@@ -257,9 +257,9 @@ User's stats
 
     if packagername:
         collections = pkgdblib.search_collection(
-            SESSION, '*', status='Active', limit=10000)
+            SESSION, '*', status='Active')
         collections.extend(pkgdblib.search_collection(
-            SESSION, '*', status='Under Development', limit=10000))
+            SESSION, '*', status='Under Development'))
         for collection in collections:
             packages_co = pkgdblib.get_package_maintained(
                 SESSION,
