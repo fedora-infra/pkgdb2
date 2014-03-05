@@ -623,7 +623,7 @@ List packages
         time, it is advise to use it in combinaition with a specifir branch.
         Defaults to False.
     :kwarg limit: An integer to limit the number of results, defaults to
-        100, maybe be None.
+        250, maybe be None.
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg count: A boolean to return the number of packages instead of the
         list. Defaults to False.
@@ -709,7 +709,7 @@ List packages
     acls = bool(flask.request.args.get('acls', False))
     status = flask.request.args.get('status', None)
     page = flask.request.args.get('page', 1)
-    limit = flask.request.args.get('limit', 100)
+    limit = flask.request.args.get('limit', 250)
     count = flask.request.args.get('count', False)
 
     try:
