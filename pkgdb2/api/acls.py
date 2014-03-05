@@ -34,7 +34,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb2
 import pkgdb2.forms as forms
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION
+from pkgdb2 import SESSION, APP
 from pkgdb2.api import API
 
 
@@ -111,13 +111,20 @@ Update package ACL
 
         try:
             messages = []
-            for (acl, branch) in itertools.product(pkg_acl, pkg_branch):
+            for (branch, acl) in itertools.product(pkg_branch, pkg_acl):
+
+                acl_status2 = acl_status
+
+                if acl_status2 == 'Awaiting Review' and \
+                        acl in APP.config['AUTO_APPROVE']:
+                    acl_status2 = 'Approved'
+
                 message = pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=pkg_name,
                     pkg_branch=branch,
                     acl=acl,
-                    status=acl_status,
+                    status=acl_status2,
                     pkg_user=pkg_user,
                     user=flask.g.fas_user,
                 )
