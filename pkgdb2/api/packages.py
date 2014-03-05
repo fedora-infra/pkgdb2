@@ -275,6 +275,7 @@ Unorphan packages
     form = forms.PackageOwnerForm(
         csrf_enabled=False,
     )
+
     if form.validate_on_submit():
         pkg_names = form.pkg_name.data.split(',')
         pkg_branchs = form.clt_name.data.split(',')
@@ -653,7 +654,7 @@ List packages
                 "name": "guake"
             }
           ],
-          "pages_total": 1,
+          "page_total": 1,
           "page": 1
         }
 
@@ -691,7 +692,7 @@ List packages
               "name": "clive"
             }
           ],
-          "pages_total": 1,
+          "page_total": 1,
           "page": 1
         }
 
@@ -774,7 +775,7 @@ List packages
         else:
             output['output'] = 'ok'
             output['page'] = int(page)
-            output['pages_total'] = int(ceil(packages_count / float(limit)))
+            output['page_total'] = int(ceil(packages_count / float(limit)))
             if isinstance(packages, (int, float, long)):
                 output['packages'] = packages
             else:
