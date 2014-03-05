@@ -404,7 +404,7 @@ class FlaskUiPackagesTest(Modeltests):
                 '/package/guake/devel/take', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">Package is not orphaned on devel</li>'
+                '"error">Package &#34;guake&#34; is not orphaned on devel</'
                 in output.data)
 
         user = FakeFasUser()

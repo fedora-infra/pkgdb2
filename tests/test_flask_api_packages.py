@@ -245,7 +245,6 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkg_poc: This field is required.",
                         "clt_name: This field is required.",
                         "pkg_name: This field is required."
                     ],
@@ -365,7 +364,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "Package is not orphaned on F-18",
+                    "error": "Package \"guake\" is not orphaned on F-18",
                     "output": "notok"
                 }
             )
