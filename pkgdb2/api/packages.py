@@ -623,7 +623,7 @@ List packages
         time, it is advise to use it in combinaition with a specifir branch.
         Defaults to False.
     :kwarg limit: An integer to limit the number of results, defaults to
-        250, maybe be None.
+        250, maximum is 500.
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg count: A boolean to return the number of packages instead of the
         list. Defaults to False.

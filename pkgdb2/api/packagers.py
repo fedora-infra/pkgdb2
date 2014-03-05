@@ -62,7 +62,7 @@ User's ACL
     :arg username: String of the packager name.
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg limit: An integer to limit the number of results, defaults to
-        250 (acls).
+        250, maximum is 500 (acls).
     :kwarg count: A boolean to return the number of packages instead of the
         list. Defaults to False.
 

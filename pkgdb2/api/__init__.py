@@ -39,6 +39,10 @@ def get_limit():
         limit = int(limit)
     except ValueError:
         limit = 250
+
+    if limit > 500:
+        limit = 500
+
     return limit
 
 
