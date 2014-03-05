@@ -706,7 +706,7 @@ class FlaskApiPackagesTest(Modeltests):
         data = json.loads(output.data)
         self.assertEqual(
             data.keys(),
-            ['output', 'packages', 'pages_total', 'page'])
+            ['output', 'packages', 'page_total', 'page'])
         self.assertEqual(len(data['packages']), 1)
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(
