@@ -189,9 +189,10 @@ Orphan package
     httpcode = 200
     output = {}
 
-    form = forms.PackageOwnerForm(
+    form = forms.DeprecatePackageForm(
         csrf_enabled=False
     )
+
     if form.validate_on_submit():
         pkg_names = form.pkg_name.data.split(',')
         pkg_branchs = form.clt_name.data.split(',')
