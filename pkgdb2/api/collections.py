@@ -323,6 +323,7 @@ List collections
     output = {'collections':
               [collec.to_json() for collec in collections]
               }
+    output['output'] = 'ok'
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
