@@ -138,20 +138,20 @@ class FlaskApiCollectionTest(Modeltests):
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-                         '{\n  "collections": []\n}')
+                         '{\n  "collections": [],\n  "output": "ok"\n}')
 
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data,
-                         '{\n  "collections": []\n}')
+                         '{\n  "collections": [],\n  "output": "ok"\n}')
 
         create_collection(self.session)
 
         output = self.app.get('/api/collections/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
-        self.assertEqual(output.keys(),
-                         ['collections'])
+        self.assertEqual(sorted(output.keys()),
+                         ['collections', 'output'])
         self.assertEqual(len(output['collections']), 4)
         self.assertEqual(set(output['collections'][0].keys()),
                          set(['branchname', 'version', 'name', 'status']))
@@ -159,8 +159,8 @@ class FlaskApiCollectionTest(Modeltests):
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
-        self.assertEqual(output.keys(),
-                         ['collections'])
+        self.assertEqual(sorted(output.keys()),
+                         ['collections', 'output'])
         self.assertEqual(set(output['collections'][0].keys()),
                          set(['branchname', 'version', 'name', 'status']))
         self.assertEqual(len(output['collections']), 2)
