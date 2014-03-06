@@ -157,7 +157,10 @@ User's ACL
             count=count)
         if packagers:
             output['output'] = 'ok'
-            output['acls'] = [pkg.to_json() for pkg in packagers]
+            if count:
+                output['acls_count'] = packagers
+            else:
+                output['acls'] = [pkg.to_json() for pkg in packagers]
 
             total_acl = pkgdblib.get_acl_packager(
                 SESSION,
