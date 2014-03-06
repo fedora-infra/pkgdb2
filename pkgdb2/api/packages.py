@@ -778,6 +778,7 @@ List packages
             output['page_total'] = int(ceil(packages_count / float(limit)))
             if isinstance(packages, (int, float, long)):
                 output['packages'] = packages
+                output['page_total'] = 1
             else:
                 output['packages'] = [
                     pkg.to_json(acls=acls, collection=branches, package=False)
