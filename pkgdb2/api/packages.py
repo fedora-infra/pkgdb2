@@ -189,18 +189,14 @@ Orphan package
     httpcode = 200
     output = {}
 
-    form = forms.DeprecatePackageForm(
-        csrf_enabled=False
-    )
+    pkgnames = flask.request.form.getlist('pkgnames', None)
+    branches = flask.request.form.getlist('branches', None)
 
-    if form.validate_on_submit():
-        pkg_names = form.pkgnames.data.split(',')
-        pkg_branchs = form.branches.data.split(',')
-
+    if pkgnames and branches:
         try:
             messages = []
             for pkg_name, pkg_branch in itertools.product(
-                    pkg_names, pkg_branchs):
+                    pkgnames, branches):
                 message = pkgdblib.update_pkg_poc(
                     SESSION,
                     pkg_name=pkg_name,
@@ -220,11 +216,12 @@ Orphan package
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
-        if form.errors:
-            detail = []
-            for error in form.errors:
-                detail.append('%s: %s' % (error,
-                              '; '.join(form.errors[error])))
+        detail = []
+        if not pkgnames:
+            detail.append('pkgnames: This field is required.')
+        if not branches:
+            detail.append('branches: This field is required.')
+        if detail:
             output['error_detail'] = detail
         httpcode = 500
 
@@ -272,24 +269,20 @@ Unorphan packages
     httpcode = 200
     output = {}
 
-    form = forms.PackageOwnerForm(
-        csrf_enabled=False,
-    )
+    pkgnames = flask.request.form.getlist('pkgnames', None)
+    branches = flask.request.form.getlist('branches', None)
+    poc = flask.request.form.get('poc', None)
 
-    if form.validate_on_submit():
-        pkg_names = form.pkgnames.data.split(',')
-        pkg_branchs = form.branches.data.split(',')
-        pkg_poc = form.poc.data
-
+    if pkgnames and branches and poc:
         try:
             messages = []
             for pkg_name, pkg_branch in itertools.product(
-                    pkg_names, pkg_branchs):
+                    pkgnames, branches):
                 message = pkgdblib.unorphan_package(
                     session=SESSION,
                     pkg_name=pkg_name,
                     pkg_branch=pkg_branch,
-                    pkg_user=pkg_poc,
+                    pkg_user=poc,
                     user=flask.g.fas_user
                 )
                 messages.append(message)
@@ -304,11 +297,14 @@ Unorphan packages
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
-        if form.errors:
-            detail = []
-            for error in form.errors:
-                detail.append('%s: %s' % (error,
-                              '; '.join(form.errors[error])))
+        detail = []
+        if not pkgnames:
+            detail.append('pkgnames: This field is required.')
+        if not branches:
+            detail.append('branches: This field is required.')
+        if not poc:
+            detail.append('poc: This field is required.')
+        if detail:
             output['error_detail'] = detail
         httpcode = 500
 
@@ -355,15 +351,14 @@ Retire packages
     httpcode = 200
     output = {}
 
-    form = forms.DeprecatePackageForm(csrf_enabled=False)
-    if form.validate_on_submit():
-        pkg_names = form.pkgnames.data.split(',')
-        pkg_branchs = form.branches.data.split(',')
+    pkgnames = flask.request.form.getlist('pkgnames', None)
+    branches = flask.request.form.getlist('branches', None)
 
+    if pkgnames and branches:
         try:
             messages = []
             for pkg_name, pkg_branch in itertools.product(
-                    pkg_names, pkg_branchs):
+                    pkgnames, branches):
                 message = pkgdblib.update_pkg_status(
                     SESSION,
                     pkg_name=pkg_name,
@@ -383,11 +378,12 @@ Retire packages
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
-        if form.errors:
-            detail = []
-            for error in form.errors:
-                detail.append('%s: %s' % (error,
-                              '; '.join(form.errors[error])))
+        detail = []
+        if not pkgnames:
+            detail.append('pkgnames: This field is required.')
+        if not branches:
+            detail.append('branches: This field is required.')
+        if detail:
             output['error_detail'] = detail
         httpcode = 500
 
@@ -435,15 +431,14 @@ Unretire packages
     httpcode = 200
     output = {}
 
-    form = forms.DeprecatePackageForm(csrf_enabled=False)
-    if form.validate_on_submit():
-        pkg_names = form.pkgnames.data.split(',')
-        pkg_branchs = form.branches.data.split(',')
+    pkgnames = flask.request.form.getlist('pkgnames', None)
+    branches = flask.request.form.getlist('branches', None)
 
+    if pkgnames and branches:
         try:
             messages = []
             for pkg_name, pkg_branch in itertools.product(
-                    pkg_names, pkg_branchs):
+                    pkgnames, branches):
                 message = pkgdblib.update_pkg_status(
                     SESSION,
                     pkg_name=pkg_name,
@@ -463,11 +458,12 @@ Unretire packages
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
-        if form.errors:
-            detail = []
-            for error in form.errors:
-                detail.append('%s: %s' % (error,
-                              '; '.join(form.errors[error])))
+        detail = []
+        if not pkgnames:
+            detail.append('pkgnames: This field is required.')
+        if not branches:
+            detail.append('branches: This field is required.')
+        if detail:
             output['error_detail'] = detail
         httpcode = 500
 

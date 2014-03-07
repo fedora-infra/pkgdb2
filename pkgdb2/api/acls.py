@@ -191,8 +191,8 @@ Reassign packages
     httpcode = 200
     output = {}
 
-    packages = flask.request.form.get('pkgnames', '').split(',')
-    branches = flask.request.form.get('branches', '').split(',')
+    packages = flask.request.form.getlist('pkgnames', None)
+    branches = flask.request.form.getlist('branches', None)
     user_target = flask.request.form.get('poc', None)
 
     if not packages or not branches or not user_target:

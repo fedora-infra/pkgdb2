@@ -254,7 +254,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -274,7 +274,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -333,7 +333,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -354,7 +354,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan a not-orphaned package
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -372,7 +372,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Orphan the package
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -400,7 +400,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan the package for someone else
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -419,7 +419,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan the package
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'pingou',
         }
         with user_set(pkgdb2.APP, user):
@@ -481,7 +481,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -502,7 +502,7 @@ class FlaskApiPackagesTest(Modeltests):
         # User is not an admin
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -522,7 +522,7 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -569,7 +569,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -590,7 +590,7 @@ class FlaskApiPackagesTest(Modeltests):
         # User is not an admin
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -610,7 +610,7 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         data = {
             'pkgnames': 'guake',
-            'branches': 'F-18,devel',
+            'branches': ['F-18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)

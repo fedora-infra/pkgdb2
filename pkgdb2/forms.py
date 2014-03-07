@@ -300,34 +300,6 @@ class UpdateAclPackageForm(wtf.Form):
             ]
 
 
-class PackageOwnerForm(wtf.Form):
-    """ Form to change the point of contact of a package. """
-    pkgnames = wtforms.TextField(
-        'Package name',
-        [wtforms.validators.Required()]
-    )
-    branches = wtforms.TextField(
-        'Fedora branch',
-        [wtforms.validators.Required()]
-    )
-    poc = wtforms.TextField(
-        'New point of contact',
-        [wtforms.validators.Required()]
-    )
-
-
-class DeprecatePackageForm(wtf.Form):
-    """ Form to deprecate a package. """
-    pkgnames = wtforms.TextField(
-        'Package name',
-        [wtforms.validators.Required()]
-    )
-    branches = wtforms.TextField(
-        'Fedora branch',
-        [wtforms.validators.Required()]
-    )
-
-
 class GivePoCForm(wtf.Form):
     """ Form to change the Point of Contact of a package. """
     branches = wtforms.SelectMultipleField(

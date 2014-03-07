@@ -160,7 +160,7 @@ class FlaskApiAclsTest(Modeltests):
         create_package_acl(self.session)
 
         data = {
-            'pkgnames': 'guake,geany',
+            'pkgnames': ['guake', 'geany'],
             'branches': 'devel',
             'poc': 'toshio',
         }
