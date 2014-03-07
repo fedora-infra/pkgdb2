@@ -194,7 +194,7 @@ Orphan package
     )
 
     if form.validate_on_submit():
-        pkg_names = form.pkgname.data.split(',')
+        pkg_names = form.pkgnames.data.split(',')
         pkg_branchs = form.branches.data.split(',')
 
         try:
@@ -247,7 +247,7 @@ Unorphan packages
 
     Accept POST queries only.
 
-    :arg pkgname: Comma separated list of string of the packages name.
+    :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
         which these packages will be unorphaned.
     :arg poc: String of the name of the user taking ownership of
@@ -277,7 +277,7 @@ Unorphan packages
     )
 
     if form.validate_on_submit():
-        pkg_names = form.pkgname.data.split(',')
+        pkg_names = form.pkgnames.data.split(',')
         pkg_branchs = form.branches.data.split(',')
         pkg_poc = form.poc.data
 
@@ -331,7 +331,7 @@ Retire packages
 
     Accept POST queries only.
 
-    :arg pkgname: Comma separated list of string of the packages name.
+    :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
         which these packages will be retire.
 
@@ -357,7 +357,7 @@ Retire packages
 
     form = forms.DeprecatePackageForm(csrf_enabled=False)
     if form.validate_on_submit():
-        pkg_names = form.pkgname.data.split(',')
+        pkg_names = form.pkgnames.data.split(',')
         pkg_branchs = form.branches.data.split(',')
 
         try:
@@ -410,7 +410,7 @@ Unretire packages
 
     Accept POST queries only.
 
-    :arg pkgname: Comma separated list of the packages names.
+    :arg pkgnames: Comma separated list of the packages names.
     :arg branches: Comma separated list of string of the branches names in
         which these packages will be un-deprecated.
 
@@ -437,7 +437,7 @@ Unretire packages
 
     form = forms.DeprecatePackageForm(csrf_enabled=False)
     if form.validate_on_submit():
-        pkg_names = form.pkgname.data.split(',')
+        pkg_names = form.pkgnames.data.split(',')
         pkg_branchs = form.branches.data.split(',')
 
         try:

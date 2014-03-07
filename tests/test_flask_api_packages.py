@@ -245,7 +245,7 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkgname: This field is required.",
+                        "pkgnames: This field is required.",
                         "branches: This field is required.",
                     ],
                     "output": "notok"
@@ -253,7 +253,7 @@ class FlaskApiPackagesTest(Modeltests):
             )
 
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -273,7 +273,7 @@ class FlaskApiPackagesTest(Modeltests):
         mock_func.log.return_value = ''
 
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -323,7 +323,7 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkgname: This field is required.",
+                        "pkgnames: This field is required.",
                         "branches: This field is required.",
                         "poc: This field is required.",
                     ],
@@ -332,7 +332,7 @@ class FlaskApiPackagesTest(Modeltests):
             )
 
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -353,7 +353,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Unorphan a not-orphaned package
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -371,7 +371,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Orphan the package
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -399,7 +399,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Unorphan the package for someone else
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -418,7 +418,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Unorphan the package
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'pingou',
         }
@@ -472,7 +472,7 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkgname: This field is required.",
+                        "pkgnames: This field is required.",
                         "branches: This field is required.",
                     ],
                     "output": "notok"
@@ -480,7 +480,7 @@ class FlaskApiPackagesTest(Modeltests):
             )
 
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -501,7 +501,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # User is not an admin
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):
@@ -521,7 +521,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Retire the package
         user = FakeFasUserAdmin()
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):
@@ -560,7 +560,7 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkgname: This field is required.",
+                        "pkgnames: This field is required.",
                         "branches: This field is required.",
                     ],
                     "output": "notok"
@@ -568,7 +568,7 @@ class FlaskApiPackagesTest(Modeltests):
             )
 
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
             'poc': 'test',
         }
@@ -589,7 +589,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # User is not an admin
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):
@@ -609,7 +609,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unretire the package
         user = FakeFasUserAdmin()
         data = {
-            'pkgname': 'guake',
+            'pkgnames': 'guake',
             'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):

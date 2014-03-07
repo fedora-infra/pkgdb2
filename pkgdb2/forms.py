@@ -302,7 +302,7 @@ class UpdateAclPackageForm(wtf.Form):
 
 class PackageOwnerForm(wtf.Form):
     """ Form to change the point of contact of a package. """
-    pkgname = wtforms.TextField(
+    pkgnames = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
     )
@@ -318,7 +318,7 @@ class PackageOwnerForm(wtf.Form):
 
 class DeprecatePackageForm(wtf.Form):
     """ Form to deprecate a package. """
-    pkgname = wtforms.TextField(
+    pkgnames = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
     )
