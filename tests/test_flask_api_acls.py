@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -73,10 +73,11 @@ class FlaskApiAclsTest(Modeltests):
                 {
                     "output": "notok",
                     "error_detail": [
-                        "pkg_name: This field is required.",
+                        "pkgname: This field is required.",
                         "acl_status: Not a valid choice",
-                        "pkg_user: This field is required.",
-                        "pkg_branch: This field is required."
+                        "branches: This field is required.",
+                        "user: This field is required.",
+                        "acl: This field is required."
                     ],
                     "error": "Invalid input submitted",
                 }
@@ -85,11 +86,11 @@ class FlaskApiAclsTest(Modeltests):
         create_package_acl(self.session)
 
         data = {
-            'pkg_name': 'guake',
-            'pkg_branch': 'devel',
-            'pkg_acl': 'commit',
+            'pkgname': 'guake',
+            'branches': 'devel',
+            'acl': 'commit',
             'acl_status': 'Approved',
-            'pkg_user': 'toshio',
+            'user': 'toshio',
         }
 
         # Check if it works authenticated
@@ -159,9 +160,9 @@ class FlaskApiAclsTest(Modeltests):
         create_package_acl(self.session)
 
         data = {
-            'packages': 'guake,geany',
+            'pkgnames': 'guake,geany',
             'branches': 'devel',
-            'user_target': 'toshio',
+            'poc': 'toshio',
         }
 
         # Fails is user is not a packager.

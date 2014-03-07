@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -53,8 +53,8 @@ def request_acl(package):
         pkg_acl_list=pkg_acl
     )
     if form.validate_on_submit():
-        pkg_branchs = form.pkg_branch.data
-        pkg_acls = form.pkg_acl.data
+        pkg_branchs = form.branches.data
+        pkg_acls = form.acl.data
 
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
@@ -220,8 +220,8 @@ def update_acl(package, user, branch=None):
     )
 
     if form.validate_on_submit():
-        pkg_branchs = form.pkg_branch.data
-        pkg_acls = form.pkg_acl.data
+        pkg_branchs = form.branches.data
+        pkg_acls = form.acl.data
         acl_status = form.acl_status.data
 
         try:

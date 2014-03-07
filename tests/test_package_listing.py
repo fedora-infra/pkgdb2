@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -214,7 +214,7 @@ class PackageListingtests(Modeltests):
             status='Active',
             owner='toshio',
             branchname='F-19',
-            distTag='.fc19',
+            dist_tag='.fc19',
             git_branch_name='f19',
         )
         self.session.add(new_collection)

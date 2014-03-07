@@ -12,16 +12,16 @@
 
 <form action="{{ url_for('.package_new') }}" method="post">
   <table>
-    {{ render_field_in_row(form.pkg_name) }}
-    {{ render_field_in_row(form.pkg_summary) }}
-    {{ render_field_in_row(form.pkg_description) }}
-    {{ render_field_in_row(form.pkg_status) }}
-    {{ render_field_in_row(form.pkg_collection) }}
-    {{ render_field_in_row(form.pkg_poc) }}
-    {{ render_field_in_row(form.pkg_critpath) }}
-    {{ render_field_in_row(form.pkg_shouldopen) }}
-    {{ render_field_in_row(form.pkg_reviewURL) }}
-    {{ render_field_in_row(form.pkg_upstreamURL) }}
+    {{ render_field_in_row(form.pkgname) }}
+    {{ render_field_in_row(form.summary) }}
+    {{ render_field_in_row(form.description) }}
+    {{ render_field_in_row(form.status) }}
+    {{ render_field_in_row(form.branches) }}
+    {{ render_field_in_row(form.poc) }}
+    {{ render_field_in_row(form.critpath) }}
+    {{ render_field_in_row(form.shouldopen) }}
+    {{ render_field_in_row(form.review_url) }}
+    {{ render_field_in_row(form.upstream_url) }}
   </table>
   <p class="buttons indent">
     <input type="submit" class="submit positive button" value="Create">

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -138,16 +138,16 @@ class FlaskUiPackagesTest(Modeltests):
             mock_func.log.return_value = ''
 
             data = {
-                'pkg_name': 'gnome-terminal',
-                'pkg_summary': 'Terminal emulator for GNOME',
-                'pkg_description': 'Terminal for GNOME...',
-                'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
-                'pkg_status': 'Approved',
-                'pkg_shouldopen': True,
-                'pkg_collection': 'devel',
-                'pkg_poc': 'mclasen',
-                'pkg_upstreamURL': '',
-                'pkg_critpath': False,
+                'pkgname': 'gnome-terminal',
+                'summary': 'Terminal emulator for GNOME',
+                'description': 'Terminal for GNOME...',
+                'review_url': 'http://bugzilla.redhat.com/1234',
+                'status': 'Approved',
+                'shouldopen': True,
+                'branches': 'devel',
+                'poc': 'mclasen',
+                'upstream_url': '',
+                'critpath': False,
                 'csrf_token': csrf_token,
             }
 
@@ -182,8 +182,8 @@ class FlaskUiPackagesTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': '',
-                'pkg_poc': '',
+                'branches': '',
+                'poc': '',
                 'csrf_token': csrf_token,
             }
 
@@ -207,8 +207,8 @@ class FlaskUiPackagesTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_poc': 'limb',
+                'branches': 'devel',
+                'poc': 'limb',
                 'csrf_token': csrf_token,
             }
 
@@ -236,8 +236,8 @@ class FlaskUiPackagesTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_poc': 'spot',
+                'branches': 'devel',
+                'poc': 'spot',
                 'csrf_token': csrf_token,
             }
 
@@ -269,8 +269,8 @@ class FlaskUiPackagesTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_poc': 'spot',
+                'branches': 'devel',
+                'poc': 'spot',
                 'csrf_token': csrf_token,
             }
 
@@ -278,7 +278,7 @@ class FlaskUiPackagesTest(Modeltests):
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<td><select id="pkg_branch" multiple ''name="pkg_branch">'
+                '<td><select id="branches" multiple ''name="branches">'
                 '</select></td>' in output.data)
 
     @patch('pkgdb2.lib.utils')

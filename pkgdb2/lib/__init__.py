@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -73,6 +73,13 @@ def _validate_poc(pkg_poc):
     if pkg_poc.startswith('group::'):
         # if pkg_poc is a group:
         group = pkg_poc.split('group::')[1]
+
+        # is pkg_poc a group ending with -sig
+        if not group.endswith('-sig'):
+            raise PkgdbException(
+                'Invalid group "%s" all groups should ends with "-sig".' %
+                group)
+
         # is pkg_poc a valid group (of type pkgdb)
         try:
             group_obj = pkgdb2.lib.utils.get_fas_group(group)
@@ -113,8 +120,8 @@ def create_session(db_url, debug=False, pool_recycle=3600):
 
 
 def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
-                pkg_collection, pkg_poc, user, pkg_reviewURL=None,
-                pkg_shouldopen=None, pkg_upstreamURL=None,
+                pkg_collection, pkg_poc, user, pkg_review_url=None,
+                pkg_shouldopen=None, pkg_upstream_url=None,
                 pkg_critpath=False):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
@@ -127,9 +134,9 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
     :arg pkg_collection: the collection in which had the package.
     :arg pkg_poc: the point of contact for this package in this collection
     :arg user: the user performing the action
-    :kwarg pkg_reviewURL: the url of the review-request on the bugzilla
+    :kwarg pkg_review_url: the url of the review-request on the bugzilla
     :kwarg pkg_shouldopen: a boolean
-    :kwarg pkg_upstreamURL: the url of the upstream project.
+    :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
         being in critpath.
     :returns: a message informating that the package has been successfully
@@ -162,9 +169,9 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
                             summary=pkg_summary,
                             description=pkg_description,
                             status=pkg_status,
-                            review_url=pkg_reviewURL,
+                            review_url=pkg_review_url,
                             shouldopen=pkg_shouldopen,
-                            upstream_url=pkg_upstreamURL
+                            upstream_url=pkg_upstream_url
                             )
     session.add(package)
     try:
@@ -843,7 +850,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
         status=clt_status,
         owner=user.username,
         branchname=clt_branchname,
-        distTag=clt_disttag,
+        dist_tag=clt_disttag,
         git_branch_name=clt_gitbranch,
         koji_name=clt_koji_name,
     )
@@ -907,9 +914,9 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if clt_branchname and clt_branchname != collection.branchname:
         collection.branchname = clt_branchname
         edited.append('branchname')
-    if clt_disttag and clt_disttag != collection.distTag:
-        collection.distTag = clt_disttag
-        edited.append('distTag')
+    if clt_disttag and clt_disttag != collection.dist_tag:
+        collection.dist_tag = clt_disttag
+        edited.append('dist_tag')
     if clt_gitbranch and clt_gitbranch != collection.git_branch_name:
         collection.git_branch_name = clt_gitbranch
         edited.append('git_branch_name')

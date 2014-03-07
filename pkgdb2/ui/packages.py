@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -195,16 +195,16 @@ def package_new():
         pkg_status_list=pkg_status,
     )
     if form.validate_on_submit():
-        pkg_name = form.pkg_name.data
-        pkg_summary = form.pkg_summary.data
-        pkg_description = form.pkg_description.data
-        pkg_review_url = form.pkg_reviewURL.data
-        pkg_status = form.pkg_status.data
-        pkg_shouldopen = form.pkg_shouldopen.data
-        pkg_critpath = form.pkg_critpath.data
-        pkg_collection = form.pkg_collection.data
-        pkg_poc = form.pkg_poc.data
-        pkg_upstream_url = form.pkg_upstreamURL.data
+        pkg_name = form.pkgname.data
+        pkg_summary = form.summary.data
+        pkg_description = form.description.data
+        pkg_review_url = form.review_url.data
+        pkg_status = form.status.data
+        pkg_shouldopen = form.shouldopen.data
+        pkg_critpath = form.critpath.data
+        pkg_collection = form.branches.data
+        pkg_poc = form.poc.data
+        pkg_upstream_url = form.upstream_url.data
 
         try:
             message = pkgdblib.add_package(
@@ -212,13 +212,13 @@ def package_new():
                 pkg_name=pkg_name,
                 pkg_summary=pkg_summary,
                 pkg_description=pkg_description,
-                pkg_reviewURL=pkg_review_url,
+                pkg_review_url=pkg_review_url,
                 pkg_status=pkg_status,
                 pkg_shouldopen=pkg_shouldopen,
                 pkg_critpath=pkg_critpath,
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
-                pkg_upstreamURL=pkg_upstream_url,
+                pkg_upstream_url=pkg_upstream_url,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
@@ -271,8 +271,8 @@ def package_give(package):
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 
     if form.validate_on_submit():
-        collections = form.pkg_branch.data
-        pkg_poc = form.pkg_poc.data
+        collections = form.branches.data
+        pkg_poc = form.poc.data
         if pkg_poc.startswith('group::'):
             acls = ['commit', 'watchbugzilla', 'watchcommits']
 

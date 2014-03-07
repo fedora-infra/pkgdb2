@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -110,13 +110,13 @@ def collection_edit(collection):
     )
 
     if form.validate_on_submit():
-        clt_name = form.collection_name.data
-        clt_version = form.collection_version.data
-        clt_status = form.collection_status.data
-        clt_branchname = form.collection_branchname.data
-        clt_disttag = form.collection_distTag.data
-        clt_gitbranch = form.collection_git_branch_name.data
-        clt_koji_name = form.collection_kojiname.data
+        clt_name = form.clt_name.data
+        clt_version = form.version.data
+        clt_status = form.clt_status.data
+        clt_branchname = form.branchname.data
+        clt_disttag = form.dist_tag.data
+        clt_gitbranch = form.git_branch_name.data
+        clt_koji_name = form.kojiname.data
 
         try:
             pkgdblib.edit_collection(
@@ -160,13 +160,13 @@ def collection_new():
     clt_status = pkgdblib.get_status(SESSION, 'clt_status')['clt_status']
     form = pkgdb2.forms.AddCollectionForm(clt_status=clt_status)
     if form.validate_on_submit():
-        clt_name = form.collection_name.data
-        clt_version = form.collection_version.data
-        clt_status = form.collection_status.data
-        clt_branchname = form.collection_branchname.data
-        clt_disttag = form.collection_distTag.data
-        clt_gitbranch = form.collection_git_branch_name.data
-        clt_koji_name = form.collection_kojiname.data
+        clt_name = form.clt_name.data
+        clt_version = form.version.data
+        clt_status = form.clt_status.data
+        clt_branchname = form.branchname.data
+        clt_disttag = form.dist_tag.data
+        clt_gitbranch = form.git_branch_name.data
+        clt_koji_name = form.kojiname.data
 
         try:
             message = pkgdblib.add_collection(

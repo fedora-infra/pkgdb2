@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -57,20 +57,20 @@ New package
 
     Accept POST queries only.
 
-    :arg pkg_name: String of the package name to be created.
-    :arg pkg_summary: String of the summary description of the package.
-    :arg pkg_description: String describing the package (same as in the
+    :arg pkgname: String of the package name to be created.
+    :arg summary: String of the summary description of the package.
+    :arg description: String describing the package (same as in the
         spec file).
-    :arg pkg_review_url: the URL of the package review on the bugzilla.
-    :arg pkg_status: status of the package can be one of: 'Approved',
+    :arg review_url: the URL of the package review on the bugzilla.
+    :arg status: status of the package can be one of: 'Approved',
         'Awaiting Review', 'Denied', 'Obsolete', 'Removed'
-    :arg pkg_shouldopen: boolean specifying if this package should open
-    :arg pkg_collection: branch name of the collection in which this package
+    :arg shouldopen: boolean specifying if this package should open
+    :arg branches: branch name of the collection in which this package
         is added. Can be multiple collections if specified via a comma
         separated list of the branch names.
-    :arg pkg_poc: FAS username of the point of contact
-    :arg pkg_upstream_url: the URL of the upstream project
-    :arg pkg_critpath: boolean specifying if the package is in the critpath
+    :arg poc: FAS username of the point of contact
+    :arg upstream_url: the URL of the upstream project
+    :arg critpath: boolean specifying if the package is in the critpath
 
     Sample response:
 
@@ -101,16 +101,16 @@ New package
         pkg_status_list=pkg_status,
     )
     if form.validate_on_submit():
-        pkg_name = form.pkg_name.data
-        pkg_summary = form.pkg_summary.data
-        pkg_description = form.pkg_description.data
-        pkg_review_url = form.pkg_reviewURL.data
-        pkg_status = form.pkg_status.data
-        pkg_shouldopen = form.pkg_shouldopen.data
-        pkg_collection = form.pkg_collection.data
-        pkg_poc = form.pkg_poc.data
-        pkg_upstream_url = form.pkg_upstreamURL.data
-        pkg_critpath = form.pkg_critpath.data
+        pkg_name = form.pkgname.data
+        pkg_summary = form.summary.data
+        pkg_description = form.description.data
+        pkg_review_url = form.review_url.data
+        pkg_status = form.status.data
+        pkg_shouldopen = form.shouldopen.data
+        pkg_collection = form.branches.data
+        pkg_poc = form.poc.data
+        pkg_upstream_url = form.upstream_url.data
+        pkg_critpath = form.critpath.data
 
         try:
             message = pkgdblib.add_package(
@@ -118,12 +118,12 @@ New package
                 pkg_name=pkg_name,
                 pkg_summary=pkg_summary,
                 pkg_description=pkg_description,
-                pkg_reviewURL=pkg_review_url,
+                pkg_review_url=pkg_review_url,
                 pkg_status=pkg_status,
                 pkg_shouldopen=pkg_shouldopen,
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
-                pkg_upstreamURL=pkg_upstream_url,
+                pkg_upstream_url=pkg_upstream_url,
                 pkg_critpath=pkg_critpath,
                 user=flask.g.fas_user
             )
@@ -165,8 +165,8 @@ Orphan package
 
     Accept POST queries only.
 
-    :arg pkg_name: Comma separated list of string of the packages name.
-    :arg clt_name: Comma separated list of string of the branches name in
+    :arg pkgname: Comma separated list of string of the packages name.
+    :arg branches: Comma separated list of string of the branches name in
         which these packages will be orphaned.
 
 
@@ -194,8 +194,8 @@ Orphan package
     )
 
     if form.validate_on_submit():
-        pkg_names = form.pkg_name.data.split(',')
-        pkg_branchs = form.clt_name.data.split(',')
+        pkg_names = form.pkgname.data.split(',')
+        pkg_branchs = form.branches.data.split(',')
 
         try:
             messages = []
@@ -247,10 +247,10 @@ Unorphan packages
 
     Accept POST queries only.
 
-    :arg pkg_name: Comma separated list of string of the packages name.
-    :arg clt_name: Comma separated list of string of the branches name in
+    :arg pkgname: Comma separated list of string of the packages name.
+    :arg branches: Comma separated list of string of the branches name in
         which these packages will be unorphaned.
-    :arg pkg_poc: String of the name of the user taking ownership of
+    :arg poc: String of the name of the user taking ownership of
         this package. If you are not an admin, this name must be None.
 
     Sample response:
@@ -277,9 +277,9 @@ Unorphan packages
     )
 
     if form.validate_on_submit():
-        pkg_names = form.pkg_name.data.split(',')
-        pkg_branchs = form.clt_name.data.split(',')
-        pkg_poc = form.pkg_poc.data
+        pkg_names = form.pkgname.data.split(',')
+        pkg_branchs = form.branches.data.split(',')
+        pkg_poc = form.poc.data
 
         try:
             messages = []
@@ -331,8 +331,8 @@ Retire packages
 
     Accept POST queries only.
 
-    :arg pkg_name: Comma separated list of string of the packages name.
-    :arg clt_name: Comma separated list of string of the branches name in
+    :arg pkgname: Comma separated list of string of the packages name.
+    :arg branches: Comma separated list of string of the branches name in
         which these packages will be retire.
 
     Sample response:
@@ -357,8 +357,8 @@ Retire packages
 
     form = forms.DeprecatePackageForm(csrf_enabled=False)
     if form.validate_on_submit():
-        pkg_names = form.pkg_name.data.split(',')
-        pkg_branchs = form.clt_name.data.split(',')
+        pkg_names = form.pkgname.data.split(',')
+        pkg_branchs = form.branches.data.split(',')
 
         try:
             messages = []
@@ -410,8 +410,8 @@ Unretire packages
 
     Accept POST queries only.
 
-    :arg pkg_name: Comma separated list of the packages names.
-    :arg clt_name: Comma separated list of string of the branches names in
+    :arg pkgname: Comma separated list of the packages names.
+    :arg branches: Comma separated list of string of the branches names in
         which these packages will be un-deprecated.
 
 
@@ -437,8 +437,8 @@ Unretire packages
 
     form = forms.DeprecatePackageForm(csrf_enabled=False)
     if form.validate_on_submit():
-        pkg_names = form.pkg_name.data.split(',')
-        pkg_branchs = form.clt_name.data.split(',')
+        pkg_names = form.pkgname.data.split(',')
+        pkg_branchs = form.branches.data.split(',')
 
         try:
             messages = []
@@ -478,9 +478,9 @@ Unretire packages
 
 @API.route('/package/')
 @API.route('/package')
-@API.route('/package/<pkg_name>/')
-@API.route('/package/<pkg_name>')
-def api_package_info(pkg_name=None):
+@API.route('/package/<pkgname>/')
+@API.route('/package/<pkgname>')
+def api_package_info(pkgname=None):
     '''
 Package information
 -------------------
@@ -494,9 +494,9 @@ Package information
 
     Accept GET queries only
 
-    :arg pkg_name: The name of the package to retrieve the information of.
-    :kwarg pkg_clt: Restricts the package information to a specific
-        collection (branch).
+    :arg pkgname: The name of the package to retrieve the information of.
+    :kwarg branch: Restricts the package information to a specific
+        collection.
 
     Sample response:
 
@@ -568,8 +568,8 @@ Package information
     httpcode = 200
     output = {}
 
-    pkg_name = flask.request.args.get('pkg_name', pkg_name)
-    pkg_clt = flask.request.args.get('pkg_clt', None)
+    pkg_name = flask.request.args.get('pkgname', pkgname)
+    pkg_clt = flask.request.args.get('branch', None)
 
     try:
         packages = pkgdblib.get_acl_package(

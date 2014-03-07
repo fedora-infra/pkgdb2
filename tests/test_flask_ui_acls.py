@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -80,8 +80,8 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_acl': 'watchbugzilla',
+                'branches': 'devel',
+                'acl': 'watchbugzilla',
                 'csrf_token': csrf_token,
             }
 
@@ -107,8 +107,8 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_acl': 'commit',
+                'branches': 'devel',
+                'acl': 'commit',
                 'csrf_token': csrf_token,
             }
 
@@ -136,8 +136,8 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_acl': 'commit',
+                'branches': 'devel',
+                'acl': 'commit',
                 'csrf_token': csrf_token,
             }
 
@@ -244,8 +244,8 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_acl': 'commit',
+                'branches': 'devel',
+                'acl': 'commit',
                 'acl_status': 'Approved',
                 'csrf_token': csrf_token,
             }
@@ -293,8 +293,8 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'pkg_branch': 'devel',
-                'pkg_acl': 'watchbugzilla',
+                'branches': 'devel',
+                'acl': 'watchbugzilla',
                 'acl_status': 'Awaiting Review',
                 'csrf_token': csrf_token,
             }

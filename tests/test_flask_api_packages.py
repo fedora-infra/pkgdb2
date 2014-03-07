@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -80,33 +80,34 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkg_summary: This field is required.",
-                        "pkg_collection: This field is required.",
-                        "pkg_reviewURL: This field is required.",
-                        "pkg_poc: This field is required.",
-                        "pkg_status: Not a valid choice",
-                        "pkg_name: This field is required."
+                        "status: Not a valid choice",
+                        "branches: This field is required.",
+                        "summary: This field is required.",
+                        "pkgname: This field is required.",
+                        "review_url: This field is required.",
+                        "poc: This field is required.",
                     ],
                     "output": "notok"
                 }
             )
 
         data = {
-            'pkg_name': 'gnome-terminal',
-            'pkg_summary': 'Terminal emulator for GNOME',
-            'pkg_description': 'Terminal for GNOME...',
-            'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
-            'pkg_status': '',
-            'pkg_shouldopen': '',
-            'pkg_critpath': '',
-            'pkg_collection': '',
-            'pkg_poc': '',
-            'pkg_upstreamURL': '',
+            'pkgname': 'gnome-terminal',
+            'summary': 'Terminal emulator for GNOME',
+            'description': 'Terminal for GNOME...',
+            'review_url': 'http://bugzilla.redhat.com/1234',
+            'status': '',
+            'shouldopen': '',
+            'critpath': '',
+            'branches': '',
+            'poc': '',
+            'upstream_url': '',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
+            print output.data
             ## FIXME: this is damn ugly but there is something wrong between
             ## me and jenkins that needs sorting out.
             self.assertTrue(
@@ -114,39 +115,38 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkg_status: This field is required.",
-                        "pkg_poc: This field is required.",
-                        "pkg_collection: '' is not a valid choice for this "
-                        "field",
-                        "pkg_critpath: This field is required.",
-                        "pkg_shouldopen: This field is required."
+                        "status: This field is required.",
+                        "poc: This field is required.",
+                        "branches: '' is not a valid choice for this field",
+                        "critpath: This field is required.",
+                        "shouldopen: This field is required."
                     ],
                     "output": "notok"
                 }
+                ## Me v
                 or data ==
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkg_status: This field is required.",
-                        "pkg_poc: This field is required.",
-                        "pkg_collection: '' is not a valid choice for this "
-                        "field"
+                        "status: This field is required.",
+                        "branches: '' is not a valid choice for this field",
+                        "poc: This field is required.",
                     ],
                     "output": "notok"
                 }
             )
 
         data = {
-            'pkg_name': 'gnome-terminal',
-            'pkg_summary': 'Terminal emulator for GNOME',
-            'pkg_description': 'Terminal for GNOME...',
-            'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
-            'pkg_status': 'Approved',
-            'pkg_shouldopen': True,
-            'pkg_collection': 'devel',
-            'pkg_poc': 'mclasen',
-            'pkg_upstreamURL': 'http://www.gnome.org/',
-            'pkg_critpath': False,
+            'pkgname': 'gnome-terminal',
+            'summary': 'Terminal emulator for GNOME',
+            'description': 'Terminal for GNOME...',
+            'review_url': 'http://bugzilla.redhat.com/1234',
+            'status': 'Approved',
+            'shouldopen': True,
+            'branches': 'devel',
+            'poc': 'mclasen',
+            'upstream_url': 'http://www.gnome.org/',
+            'critpath': False,
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -157,8 +157,8 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkg_collection: 'devel' is not a valid choice for "
-                        "this field"
+                        "branches: 'devel' is not a valid choice for this "
+                        "field"
                     ],
                     "output": "notok"
                 }
@@ -168,16 +168,16 @@ class FlaskApiPackagesTest(Modeltests):
         create_collection(self.session)
 
         data = {
-            'pkg_name': 'gnome-terminal',
-            'pkg_summary': 'Terminal emulator for GNOME',
-            'pkg_description': 'Terminal for GNOME...',
-            'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
-            'pkg_status': 'Approved',
-            'pkg_shouldopen': True,
-            'pkg_collection': 'devel',
-            'pkg_poc': 'mclasen',
-            'pkg_upstreamURL': 'http://www.gnome.org/',
-            'pkg_critpath': False,
+            'pkgname': 'gnome-terminal',
+            'summary': 'Terminal emulator for GNOME',
+            'description': 'Terminal for GNOME...',
+            'review_url': 'http://bugzilla.redhat.com/1234',
+            'status': 'Approved',
+            'shouldopen': True,
+            'branches': 'devel',
+            'poc': 'mclasen',
+            'upstream_url': 'http://www.gnome.org/',
+            'critpath': False,
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -196,16 +196,16 @@ class FlaskApiPackagesTest(Modeltests):
         mock_func.log.return_value = ''
 
         data = {
-            'pkg_name': 'gnome-terminal',
-            'pkg_summary': 'Terminal emulator for GNOME',
-            'pkg_description': 'Terminal for GNOME...',
-            'pkg_reviewURL': 'http://bugzilla.redhat.com/1234',
-            'pkg_status': 'Approved',
-            'pkg_shouldopen': True,
-            'pkg_collection': 'devel',
-            'pkg_poc': 'mclasen',
-            'pkg_upstreamURL': 'http://www.gnome.org/',
-            'pkg_critpath': False,
+            'pkgname': 'gnome-terminal',
+            'summary': 'Terminal emulator for GNOME',
+            'description': 'Terminal for GNOME...',
+            'review_url': 'http://bugzilla.redhat.com/1234',
+            'status': 'Approved',
+            'shouldopen': True,
+            'branches': 'devel',
+            'poc': 'mclasen',
+            'upstream_url': 'http://www.gnome.org/',
+            'critpath': False,
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -245,17 +245,17 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "clt_name: This field is required.",
-                        "pkg_name: This field is required."
+                        "pkgname: This field is required.",
+                        "branches: This field is required.",
                     ],
                     "output": "notok"
                 }
             )
 
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/', data=data)
@@ -273,9 +273,9 @@ class FlaskApiPackagesTest(Modeltests):
         mock_func.log.return_value = ''
 
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/', data=data)
@@ -323,18 +323,18 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "pkg_poc: This field is required.",
-                        "clt_name: This field is required.",
-                        "pkg_name: This field is required."
+                        "pkgname: This field is required.",
+                        "branches: This field is required.",
+                        "poc: This field is required.",
                     ],
                     "output": "notok"
                 }
             )
 
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
@@ -353,9 +353,9 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Unorphan a not-orphaned package
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
@@ -371,9 +371,9 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Orphan the package
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/', data=data)
@@ -399,9 +399,9 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Unorphan the package for someone else
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
@@ -418,9 +418,9 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Unorphan the package
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'pingou',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'pingou',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
@@ -472,17 +472,17 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "clt_name: This field is required.",
-                        "pkg_name: This field is required."
+                        "pkgname: This field is required.",
+                        "branches: This field is required.",
                     ],
                     "output": "notok"
                 }
             )
 
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -501,8 +501,8 @@ class FlaskApiPackagesTest(Modeltests):
 
         # User is not an admin
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -521,8 +521,8 @@ class FlaskApiPackagesTest(Modeltests):
         # Retire the package
         user = FakeFasUserAdmin()
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -560,17 +560,17 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "clt_name: This field is required.",
-                        "pkg_name: This field is required."
+                        "pkgname: This field is required.",
+                        "branches: This field is required.",
                     ],
                     "output": "notok"
                 }
             )
 
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
-            'pkg_poc': 'test',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
+            'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -589,8 +589,8 @@ class FlaskApiPackagesTest(Modeltests):
 
         # User is not an admin
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -609,8 +609,8 @@ class FlaskApiPackagesTest(Modeltests):
         # Unretire the package
         user = FakeFasUserAdmin()
         data = {
-            'pkg_name': 'guake',
-            'clt_name': 'F-18,devel',
+            'pkgname': 'guake',
+            'branches': 'F-18,devel',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -659,7 +659,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['packages'][1]['package']['name'],
                          'guake')
 
-        output = self.app.get('/api/package/?pkg_name=guake&pkg_clt=devel')
+        output = self.app.get('/api/package/?pkgname=guake&branch=devel')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         self.assertEqual(data.keys(), ['output', 'packages'])
@@ -672,7 +672,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['packages'][0]['package']['name'],
                          'guake')
 
-        output = self.app.get('/api/package/?pkg_name=guake&pkg_clt=F-19')
+        output = self.app.get('/api/package/?pkgname=guake&branch=F-19')
         self.assertEqual(output.status_code, 500)
         data = json.loads(output.data)
         self.assertEqual(

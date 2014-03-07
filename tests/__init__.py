@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -155,7 +155,7 @@ def create_collection(session):
         status='Active',
         owner='toshio',
         branchname='F-17',
-        distTag='.fc17',
+        dist_tag='.fc17',
         git_branch_name='f17',
     )
     session.add(collection)
@@ -166,7 +166,7 @@ def create_collection(session):
         status='Active',
         owner='toshio',
         branchname='F-18',
-        distTag='.fc18',
+        dist_tag='.fc18',
         git_branch_name='f18',
     )
     session.add(collection)
@@ -177,7 +177,7 @@ def create_collection(session):
         status='Under Development',
         owner='kevin',
         branchname='devel',
-        distTag='devel',
+        dist_tag='devel',
         git_branch_name='master',
     )
     session.add(collection)
@@ -188,7 +188,7 @@ def create_collection(session):
         status='Active',
         owner='kevin',
         branchname='el6',
-        distTag='.el6',
+        dist_tag='.el6',
         git_branch_name='el6',
     )
     session.add(collection)

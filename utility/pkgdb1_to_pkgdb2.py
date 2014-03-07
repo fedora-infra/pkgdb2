@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -140,7 +140,7 @@ def convert_collections(pkg1_sess, pkg2_sess):
             status=STATUS[collect.statuscode],
             owner=collect.owner,
             branchname=branch.branchname,
-            distTag=branch.disttag,
+            dist_tag=branch.disttag,
             git_branch_name=branch.gitbranchname,
             koji_name=collect.koji_name,
         )

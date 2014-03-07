@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -39,32 +39,32 @@ import wtforms
 
 class AddCollectionForm(wtf.Form):
     """ Form to add or edit collections. """
-    collection_name = wtforms.TextField(
+    clt_name = wtforms.TextField(
         'Collection name',
         [wtforms.validators.Required()]
     )
-    collection_version = wtforms.TextField(
+    version = wtforms.TextField(
         'version',
         [wtforms.validators.Required()]
     )
-    collection_status = wtforms.SelectField(
+    clt_status = wtforms.SelectField(
         'Status',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    collection_branchname = wtforms.TextField(
+    branchname = wtforms.TextField(
         'Branch name',
         [wtforms.validators.Required()]
     )
-    collection_kojiname = wtforms.TextField(
+    kojiname = wtforms.TextField(
         'Koji name',
         [wtforms.validators.Required()]
     )
-    collection_distTag = wtforms.TextField(
+    dist_tag = wtforms.TextField(
         'Dist tag',
         [wtforms.validators.Required()]
     )
-    collection_git_branch_name = wtforms.TextField('Git branch name')
+    git_branch_name = wtforms.TextField('Git branch name')
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -73,34 +73,34 @@ class AddCollectionForm(wtf.Form):
         """
         super(AddCollectionForm, self).__init__(*args, **kwargs)
         if 'clt_status' in kwargs:
-            self.collection_status.choices = [
+            self.clt_status.choices = [
                 (status, status)
                 for status in kwargs['clt_status']
             ]
         if 'collection' in kwargs:
             collection = kwargs['collection']
-            self.collection_name.data = collection.name
-            self.collection_version.data = collection.version
-            self.collection_branchname.data = collection.branchname
-            self.collection_distTag.data = collection.distTag
-            self.collection_git_branch_name.data = collection.git_branch_name
-            self.collection_kojiname.data = collection.koji_name
+            self.clt_name.data = collection.name
+            self.version.data = collection.version
+            self.branchname.data = collection.branchname
+            self.dist_tag.data = collection.dist_tag
+            self.git_branch_name.data = collection.git_branch_name
+            self.kojiname.data = collection.koji_name
 
             # Set the drop down menu to the current value
             opt = (collection.status, collection.status)
-            ind = self.collection_status.choices.index(opt)
-            del(self.collection_status.choices[ind])
-            self.collection_status.choices.insert(
+            ind = self.clt_status.choices.index(opt)
+            del(self.clt_status.choices[ind])
+            self.clt_status.choices.insert(
                 0, opt)
 
 
 class CollectionStatusForm(wtf.Form):
     """ Form to update the status of a collection. """
-    collection_branchname = wtforms.TextField(
+    branch = wtforms.TextField(
         'Branch name',
         [wtforms.validators.Required()]
     )
-    collection_status = wtforms.SelectField(
+    clt_status = wtforms.SelectField(
         'Status',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
@@ -113,7 +113,7 @@ class CollectionStatusForm(wtf.Form):
         """
         super(CollectionStatusForm, self).__init__(*args, **kwargs)
         if 'clt_status' in kwargs:
-            self.collection_status.choices = [
+            self.clt_status.choices = [
                 (status, status)
                 for status in kwargs['clt_status']
             ]
@@ -121,44 +121,44 @@ class CollectionStatusForm(wtf.Form):
 
 class AddPackageForm(wtf.Form):
     """ Form to add or edit packages. """
-    pkg_name = wtforms.TextField(
+    pkgname = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
     )
-    pkg_summary = wtforms.TextField(
+    summary = wtforms.TextField(
         'Summary',
         [wtforms.validators.Required()]
     )
-    pkg_description = wtforms.TextField(
+    description = wtforms.TextField(
         'Description',
     )
-    pkg_reviewURL = wtforms.TextField(
+    review_url = wtforms.TextField(
         'Review URL',
         [wtforms.validators.Required()]
     )
-    pkg_status = wtforms.SelectField(
+    status = wtforms.SelectField(
         'Status',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_shouldopen = wtforms.BooleanField(
+    shouldopen = wtforms.BooleanField(
         'Should open',
         default=True
     )
-    pkg_critpath = wtforms.BooleanField(
+    critpath = wtforms.BooleanField(
         'Package in critpath',
         default=False
     )
-    pkg_collection = wtforms.SelectMultipleField(
+    branches = wtforms.SelectMultipleField(
         'Collection',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_poc = wtforms.TextField(
+    poc = wtforms.TextField(
         'Point of contact',
         [wtforms.validators.Required()]
     )
-    pkg_upstreamURL = wtforms.TextField(
+    upstream_url = wtforms.TextField(
         'Upstream URL',
         [wtforms.validators.optional()]
     )
@@ -170,12 +170,12 @@ class AddPackageForm(wtf.Form):
         """
         super(AddPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            self.pkg_collection.choices = [
+            self.branches.choices = [
                 (collec.branchname, collec.branchname)
                 for collec in kwargs['collections']
             ]
         if 'pkg_status_list' in kwargs:
-            self.pkg_status.choices = [
+            self.status.choices = [
                 (status, status)
                 for status in kwargs['pkg_status_list']
             ]
@@ -183,21 +183,21 @@ class AddPackageForm(wtf.Form):
 
 class SetAclPackageForm(wtf.Form):
     """ Form to set ACLs to someone on a package. """
-    pkg_name = wtforms.TextField(
+    pkgname = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
     )
-    pkg_branch = wtforms.SelectMultipleField(
+    branches = wtforms.SelectMultipleField(
         'Branch',
         [wtforms.validators.Required()],
         choices=[('', '')]
     )
-    pkg_acl = wtforms.SelectMultipleField(
+    acl = wtforms.SelectMultipleField(
         'ACL',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    pkg_user = wtforms.TextField(
+    user = wtforms.TextField(
         'Packager name',
         [wtforms.validators.Required()]
     )
@@ -214,7 +214,7 @@ class SetAclPackageForm(wtf.Form):
         """
         super(SetAclPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            self.pkg_branch.choices = [
+            self.branches.choices = [
                 (collec, collec)
                 for collec in kwargs['collections']
             ]
@@ -224,7 +224,7 @@ class SetAclPackageForm(wtf.Form):
                 for status in kwargs['acl_status']
             ]
         if 'pkg_acl' in kwargs:
-            self.pkg_acl.choices = [
+            self.acl.choices = [
                 (acl, acl)
                 for acl in kwargs['pkg_acl']
             ]
@@ -232,12 +232,12 @@ class SetAclPackageForm(wtf.Form):
 
 class RequestAclPackageForm(wtf.Form):
     """ Form to request ACLs on a package. """
-    pkg_branch = wtforms.SelectMultipleField(
+    branches = wtforms.SelectMultipleField(
         'Branch',
         [wtforms.validators.Required()],
         choices=[('', '')])
 
-    pkg_acl = wtforms.SelectMultipleField(
+    acl = wtforms.SelectMultipleField(
         'ACL',
         [wtforms.validators.Required()],
         choices=[('', '')]
@@ -250,12 +250,12 @@ class RequestAclPackageForm(wtf.Form):
         """
         super(RequestAclPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            self.pkg_branch.choices = [
+            self.branches.choices = [
                 (collec.branchname, collec.branchname)
                 for collec in kwargs['collections']
             ]
         if 'pkg_acl_list' in kwargs:
-            self.pkg_acl.choices = [
+            self.acl.choices = [
                 (status, status)
                 for status in kwargs['pkg_acl_list']
             ]
@@ -263,11 +263,11 @@ class RequestAclPackageForm(wtf.Form):
 
 class UpdateAclPackageForm(wtf.Form):
     """ Form to update ACLs on a package. """
-    pkg_branch = wtforms.SelectMultipleField(
+    branches = wtforms.SelectMultipleField(
         'Branch',
         [wtforms.validators.Required()],
         choices=[('', '')])
-    pkg_acl = wtforms.SelectMultipleField(
+    acl = wtforms.SelectMultipleField(
         'ACL',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
@@ -284,7 +284,7 @@ class UpdateAclPackageForm(wtf.Form):
         """
         super(UpdateAclPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            self.pkg_branch.choices = [
+            self.branches.choices = [
                 (collec, collec)
                 for collec in kwargs['collections']
             ]
@@ -294,7 +294,7 @@ class UpdateAclPackageForm(wtf.Form):
                 for status in kwargs['acl_status']
             ]
         if 'pkg_acl_list' in kwargs:
-            self.pkg_acl.choices = [
+            self.acl.choices = [
                 (status, status)
                 for status in kwargs['pkg_acl_list']
             ]
@@ -302,15 +302,15 @@ class UpdateAclPackageForm(wtf.Form):
 
 class PackageOwnerForm(wtf.Form):
     """ Form to change the point of contact of a package. """
-    pkg_name = wtforms.TextField(
+    pkgname = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
     )
-    clt_name = wtforms.TextField(
+    branches = wtforms.TextField(
         'Fedora branch',
         [wtforms.validators.Required()]
     )
-    pkg_poc = wtforms.TextField(
+    poc = wtforms.TextField(
         'New point of contact',
         [wtforms.validators.Required()]
     )
@@ -318,11 +318,11 @@ class PackageOwnerForm(wtf.Form):
 
 class DeprecatePackageForm(wtf.Form):
     """ Form to deprecate a package. """
-    pkg_name = wtforms.TextField(
+    pkgname = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
     )
-    clt_name = wtforms.TextField(
+    branches = wtforms.TextField(
         'Fedora branch',
         [wtforms.validators.Required()]
     )
@@ -330,11 +330,11 @@ class DeprecatePackageForm(wtf.Form):
 
 class GivePoCForm(wtf.Form):
     """ Form to change the Point of Contact of a package. """
-    pkg_branch = wtforms.SelectMultipleField(
+    branches = wtforms.SelectMultipleField(
         'Branch',
         [wtforms.validators.Required()],
         choices=[('', '')])
-    pkg_poc = wtforms.TextField(
+    poc = wtforms.TextField(
         'New point of contact',
         [wtforms.validators.Required()]
     )
@@ -345,7 +345,7 @@ class GivePoCForm(wtf.Form):
         """
         super(GivePoCForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
-            self.pkg_branch.choices = [
+            self.branches.choices = [
                 (collec, collec)
                 for collec in kwargs['collections']
             ]

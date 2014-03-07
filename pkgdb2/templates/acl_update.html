@@ -29,8 +29,8 @@
 <form action="{{ url_for('.update_acl', package=package,
                          user=user, branch=branch) }}" method="post">
   <table>
-    {{ render_field_in_cell(form.pkg_branch) }}
-    {{ render_field_in_cell(form.pkg_acl) }}
+    {{ render_field_in_cell(form.branches) }}
+    {{ render_field_in_cell(form.acl) }}
     {{ render_field_in_cell(form.acl_status) }}
   </table>
   <p class="buttons indent">

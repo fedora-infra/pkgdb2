@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -485,7 +485,7 @@ class Collection(BASE):
         nullable=False)
     owner = sa.Column(sa.String(32), nullable=False)
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
-    distTag = sa.Column(sa.String(32), unique=True, nullable=False)
+    dist_tag = sa.Column(sa.String(32), unique=True, nullable=False)
     git_branch_name = sa.Column(sa.Text)
     koji_name = sa.Column(sa.Text)
 
@@ -497,14 +497,14 @@ class Collection(BASE):
     )
 
     def __init__(self, name, version, status, owner,
-                 branchname=None, distTag=None, git_branch_name=None,
+                 branchname=None, dist_tag=None, git_branch_name=None,
                  koji_name=None):
         self.name = name
         self.version = version
         self.status = status
         self.owner = owner
         self.branchname = branchname
-        self.distTag = distTag
+        self.dist_tag = dist_tag
         self.git_branch_name = git_branch_name
         self.koji_name = koji_name
 

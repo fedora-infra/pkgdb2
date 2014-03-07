@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -107,12 +107,12 @@ class FlaskUiCollectionsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'collection_name': '',
-                'collection_version': '',
-                'collection_status': '',
-                'collection_branchname': '',
-                'collection_distTag': '',
-                'collection_git_branch_name': '',
+                'clt_name': '',
+                'version': '',
+                'clt_status': '',
+                'branchname': '',
+                'dist_tag': '',
+                'git_branch_name': '',
                 'csrf_token': csrf_token,
             }
 
@@ -136,13 +136,13 @@ class FlaskUiCollectionsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'collection_name': 'Fedora',
-                'collection_version': '19',
-                'collection_status': 'Active',
-                'collection_branchname': 'f19',
-                'collection_distTag': '.fc19',
-                'collection_git_branch_name': 'f19',
-                'collection_kojiname': 'f19',
+                'clt_name': 'Fedora',
+                'version': '19',
+                'clt_status': 'Active',
+                'branchname': 'f19',
+                'dist_tag': '.fc19',
+                'git_branch_name': 'f19',
+                'kojiname': 'f19',
                 'csrf_token': csrf_token,
             }
 
@@ -201,13 +201,13 @@ class FlaskUiCollectionsTest(Modeltests):
             self.assertEqual(collections.branchname, 'F-17')
 
             data = {
-                'collection_name': 'Fedora',
-                'collection_version': '17',
-                'collection_status': 'Active',
-                'collection_branchname': 'F-17',
-                'collection_distTag': '.fc17',
-                'collection_git_branch_name': 'f17',
-                'collection_kojiname': 'f17',
+                'clt_name': 'Fedora',
+                'version': '17',
+                'clt_status': 'Active',
+                'branchname': 'F-17',
+                'dist_tag': '.fc17',
+                'git_branch_name': 'f17',
+                'kojiname': 'f17',
                 'csrf_token': csrf_token,
             }
 

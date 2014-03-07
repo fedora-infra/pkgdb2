@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -273,10 +273,8 @@ engineers need to create packages and spin them into a distribution."""
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name" colspan="2">arg """\
-"""collection_name:</th></tr>
-<tr class="field"><td>&nbsp;</td><td class="field-body">String of the """\
-"""collection name to be created.</td>
+<tr class="field"><th class="field-name">arg clt_name:</th>"""\
+"""<td class="field-body">String of the collection name to be created.</td>
 """
         self.assertTrue(expected in output.data)
 

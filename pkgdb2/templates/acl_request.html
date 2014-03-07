@@ -12,8 +12,8 @@
 
 <form action="{{ url_for('.request_acl', package=package) }}" method="post">
   <table>
-    {{ render_field_in_row(form.pkg_branch) }}
-    {{ render_field_in_row(form.pkg_acl) }}
+    {{ render_field_in_row(form.branches) }}
+    {{ render_field_in_row(form.acl) }}
   </table>
   <p class="buttons indent">
     <input type="submit" class="submit positive button" value="Create">

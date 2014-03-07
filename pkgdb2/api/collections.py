@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -55,20 +55,15 @@ New collection
 
     Accept POST queries only.
 
-    :arg collection_name: String of the collection name to be created.
-    :arg collection_version: String of the version of the collection.
-    :arg collection_status: String of the name of the user owner of the
-        collection.
-    :arg collection_publishURLTemplate:
-    :arg collection_pendingURLTemplate:
-    :arg collection_summary: A summary description of the collection.
-    :arg collection_description: A description of the collection.
-    :arg collection_branchname: The short name of the collection (ie: F-18).
-    :arg collection_distTag: The dist tag used by rpm for this collection
-        (ie: .fc18).
-    :arg collection_git_branch_name: The git branch name for this collection
-        (ie: f18).
-    :arg collection_kojiname: the name of the collection in koji.
+    :arg clt_name: String of the collection name to be created.
+    :arg version: String of the version of the collection.
+    :arg clt_status: String of the name of the user owner of the collection.
+    :arg summary: A summary description of the collection.
+    :arg description: A description of the collection.
+    :arg branchname: The short name of the collection (ie: F-18).
+    :arg dist_tag: The dist tag used by rpm for this collection (ie: .fc18).
+    :arg git_branch_name: The git branch name for this collection (ie: f18).
+    :arg kojiname: the name of the collection in koji.
 
     Sample response:
 
@@ -95,13 +90,13 @@ New collection
         clt_status=clt_status,
     )
     if form.validate_on_submit():
-        clt_name = form.collection_name.data
-        clt_version = form.collection_version.data
-        clt_status = form.collection_status.data
-        clt_branchname = form.collection_branchname.data
-        clt_disttag = form.collection_distTag.data
-        clt_gitbranch = form.collection_git_branch_name.data
-        clt_koji_name = form.collection_kojiname.data
+        clt_name = form.clt_name.data
+        clt_version = form.version.data
+        clt_status = form.clt_status.data
+        clt_branchname = form.branchname.data
+        clt_disttag = form.dist_tag.data
+        clt_gitbranch = form.git_branch_name.data
+        clt_koji_name = form.kojiname.data
 
         try:
             message = pkgdblib.add_collection(
@@ -156,8 +151,8 @@ Update collection status
 
     Accept POST query only.
 
-    :arg collection_branchname: String of the collection branch name to change.
-    :arg collection_status: String of the status to change the collection to
+    :arg branch: String of the collection branch name to change.
+    :arg clt_status: String of the status to change the collection to
 
     Sample response:
 
@@ -184,8 +179,8 @@ Update collection status
         clt_status=clt_status,
     )
     if form.validate_on_submit():
-        clt_branchname = form.collection_branchname.data
-        clt_status = form.collection_status.data
+        clt_branchname = form.branch.data
+        clt_status = form.clt_status.data
 
         if collection == clt_branchname:
             try:
@@ -306,7 +301,7 @@ List collections
     output = {}
 
     pattern = flask.request.args.get('pattern', None) or pattern
-    status = flask.request.args.get('status', None)
+    status = flask.request.args.get('clt_status', None)
     if pattern:
         if status:
             status = status.split(',')

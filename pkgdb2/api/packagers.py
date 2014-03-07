@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -59,7 +59,7 @@ User's ACL
 
     Accept GET queries only.
 
-    :arg username: String of the packager name.
+    :arg packagername: String of the packager name.
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg limit: An integer to limit the number of results, defaults to
         250, maximum is 500 (acls).

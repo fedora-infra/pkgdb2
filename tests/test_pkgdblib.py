@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -64,9 +64,9 @@ class PkgdbLibtests(Modeltests):
                           pkg_status='Approved',
                           pkg_collection='F-18',
                           pkg_poc='ralph',
-                          pkg_reviewURL=None,
+                          pkg_review_url=None,
                           pkg_shouldopen=None,
-                          pkg_upstreamURL='http://example.org',
+                          pkg_upstream_url='http://example.org',
                           user=FakeFasUser()
                           )
         self.session.rollback()
@@ -80,9 +80,9 @@ class PkgdbLibtests(Modeltests):
                           pkg_status='Approved',
                           pkg_collection='F-18',
                           pkg_poc='group::tests',
-                          pkg_reviewURL=None,
+                          pkg_review_url=None,
                           pkg_shouldopen=None,
-                          pkg_upstreamURL='http://example.org',
+                          pkg_upstream_url='http://example.org',
                           user=FakeFasUserAdmin()
                           )
         self.session.rollback()
@@ -100,9 +100,9 @@ class PkgdbLibtests(Modeltests):
                           pkg_status='Approved',
                           pkg_collection='F-18',
                           pkg_poc='ralph',
-                          pkg_reviewURL=None,
+                          pkg_review_url=None,
                           pkg_shouldopen=None,
-                          pkg_upstreamURL='http://guake.org',
+                          pkg_upstream_url='http://guake.org',
                           user=FakeFasUserAdmin())
 
         pkgdb2.lib.utils.get_packagers = mock.MagicMock()
@@ -118,9 +118,9 @@ class PkgdbLibtests(Modeltests):
                           pkg_status='Approved',
                           pkg_collection='F-18',
                           pkg_poc='ralph',
-                          pkg_reviewURL=None,
+                          pkg_review_url=None,
                           pkg_shouldopen=None,
-                          pkg_upstreamURL='http://guake.org',
+                          pkg_upstream_url='http://guake.org',
                           user=FakeFasUserAdmin())
 
         pkgdb2.lib.utils.get_fas_group = mock.MagicMock()
@@ -136,9 +136,9 @@ class PkgdbLibtests(Modeltests):
                           pkg_status='Approved',
                           pkg_collection='devel, F-18',
                           pkg_poc='group::infra-sig',
-                          pkg_reviewURL=None,
+                          pkg_review_url=None,
                           pkg_shouldopen=None,
-                          pkg_upstreamURL=None,
+                          pkg_upstream_url=None,
                           user=FakeFasUserAdmin())
 
         pkgdb2.lib.utils.get_packagers = mock.MagicMock()
@@ -151,9 +151,9 @@ class PkgdbLibtests(Modeltests):
                                    pkg_status='Approved',
                                    pkg_collection='F-18',
                                    pkg_poc='ralph',
-                                   pkg_reviewURL=None,
+                                   pkg_review_url=None,
                                    pkg_shouldopen=None,
-                                   pkg_upstreamURL='http://guake.org',
+                                   pkg_upstream_url='http://guake.org',
                                    user=FakeFasUserAdmin())
         self.assertEqual(msg, 'Package created')
         self.session.commit()
@@ -168,9 +168,9 @@ class PkgdbLibtests(Modeltests):
                              pkg_status='Approved',
                              pkg_collection='devel, F-18',
                              pkg_poc='ralph',
-                             pkg_reviewURL=None,
+                             pkg_review_url=None,
                              pkg_shouldopen=None,
-                             pkg_upstreamURL=None,
+                             pkg_upstream_url=None,
                              user=FakeFasUserAdmin())
         self.session.commit()
         packages = pkgdblib.model.Package.all(self.session)
@@ -188,9 +188,9 @@ class PkgdbLibtests(Modeltests):
                              pkg_status='Approved',
                              pkg_collection='devel, F-18',
                              pkg_poc='group::infra-sig',
-                             pkg_reviewURL=None,
+                             pkg_review_url=None,
                              pkg_shouldopen=None,
-                             pkg_upstreamURL=None,
+                             pkg_upstream_url=None,
                              user=FakeFasUserAdmin())
         self.session.commit()
         packages = pkgdblib.model.Package.all(self.session)
@@ -1333,7 +1333,7 @@ class PkgdbLibtests(Modeltests):
             status='Active',
             owner='toshio',
             branchname='F-19',
-            distTag='.fc19',
+            dist_tag='.fc19',
             git_branch_name='f19',
         )
         self.session.add(new_collection)

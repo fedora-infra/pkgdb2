@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013  Red Hat, Inc.
+# Copyright © 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -58,15 +58,15 @@ Update package ACL
 
     Accept POST queries only.
 
-    :arg pkg_name: String of the package name.
-    :arg pkg_branch: List of strings with the name of the branches to change,
+    :arg pkgname: String of the package name.
+    :arg branches: List of strings with the name of the branches to change,
         update.
-    :arg pkg_acl: List of strings of the ACL to change/update. Possible acl
+    :arg acl: List of strings of the ACL to change/update. Possible acl
         are: 'commit', 'build', 'watchbugzilla', 'watchcommits',
         'approveacls', 'checkout'.
     :arg acl_status: String of the type of action required. Possible status
         are: 'Approved', 'Awaiting Review', 'Denied', 'Obsolete', 'Removed'.
-    :kwarg pkg_user: the name of the user that is the target of this ACL
+    :kwarg user: the name of the user that is the target of this ACL
         change/update. This will only work if: 1) you are an admin,
         2) you are changing one of your package.
 
@@ -103,11 +103,11 @@ Update package ACL
     )
 
     if form.validate_on_submit():
-        pkg_name = form.pkg_name.data
-        pkg_branch = form.pkg_branch.data
-        pkg_acl = form.pkg_acl.data
+        pkg_name = form.pkgname.data
+        pkg_branch = form.branches.data
+        pkg_acl = form.acl.data
         acl_status = form.acl_status.data
-        pkg_user = form.pkg_user.data
+        pkg_user = form.user.data
 
         try:
             messages = []
@@ -167,10 +167,10 @@ Reassign packages
 
     Accept POST queries only.
 
-    :arg packages: List of strings of the package name to reassign.
+    :arg pkgnames: List of strings of the package name to reassign.
     :arg branches: List of strings of the branchname of the Collection on
         which to reassign the point of contact.
-    :arg user_target: User name of the new point of contact.
+    :arg poc: User name of the new point of contact.
 
     Sample response:
 
@@ -191,9 +191,9 @@ Reassign packages
     httpcode = 200
     output = {}
 
-    packages = flask.request.form.get('packages', '').split(',')
+    packages = flask.request.form.get('pkgnames', '').split(',')
     branches = flask.request.form.get('branches', '').split(',')
-    user_target = flask.request.form.get('user_target', None)
+    user_target = flask.request.form.get('poc', None)
 
     if not packages or not branches or not user_target:
         output['output'] = 'notok'
