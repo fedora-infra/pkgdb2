@@ -65,9 +65,8 @@ New package
     :arg status: status of the package can be one of: 'Approved',
         'Awaiting Review', 'Denied', 'Obsolete', 'Removed'
     :arg shouldopen: boolean specifying if this package should open
-    :arg branches: branch name of the collection in which this package
-        is added. Can be multiple collections if specified via a comma
-        separated list of the branch names.
+    :arg branches: one or more branch names of the collection in which
+        this package is added.
     :arg poc: FAS username of the point of contact
     :arg upstream_url: the URL of the upstream project
     :arg critpath: boolean specifying if the package is in the critpath
