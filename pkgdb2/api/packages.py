@@ -164,7 +164,7 @@ Orphan package
 
     Accept POST queries only.
 
-    :arg pkgname: Comma separated list of string of the packages name.
+    :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
         which these packages will be orphaned.
 

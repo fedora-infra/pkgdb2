@@ -239,7 +239,7 @@ List collections
     Accept GET queries only.
 
     :arg pattern: a pattern to which the collection searched should match.
-    :arg status: restrict the search to certain status.
+    :arg clt_status: restrict the search to certain status.
 
     Sample response:
 
