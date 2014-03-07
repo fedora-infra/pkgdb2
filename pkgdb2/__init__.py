@@ -61,12 +61,12 @@ CACHE = dogpile.cache.make_region().configure(
 
 # Set up the logger
 ## Send emails for big exception
-mail_handler = logging.handlers.SMTPHandler(
+MAIL_HANDLER = logging.handlers.SMTPHandler(
     APP.config.get('SMTP_SERVER', '127.0.0.1'),
     'nobody@fedoraproject.org',
     APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org'),
     'PkgDB2 error')
-mail_handler.setFormatter(logging.Formatter('''
+MAIL_HANDLER.setFormatter(logging.Formatter('''
     Message type:       %(levelname)s
     Location:           %(pathname)s:%(lineno)d
     Module:             %(module)s
@@ -77,14 +77,14 @@ mail_handler.setFormatter(logging.Formatter('''
 
     %(message)s
 '''))
-mail_handler.setLevel(logging.ERROR)
+MAIL_HANDLER.setLevel(logging.ERROR)
 if not APP.debug:
-    APP.logger.addHandler(mail_handler)
+    APP.logger.addHandler(MAIL_HANDLER)
 
 # Log to stderr as well
-stderr_log = logging.StreamHandler(sys.stderr)
-stderr_log.setLevel(logging.INFO)
-APP.logger.addHandler(stderr_log)
+STDERR_LOG = logging.StreamHandler(sys.stderr)
+STDERR_LOG.setLevel(logging.INFO)
+APP.logger.addHandler(STDERR_LOG)
 
 LOG = APP.logger
 
