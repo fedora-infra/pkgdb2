@@ -196,3 +196,13 @@ sent by emails.
 notifications if they are set to be sent by emails.
 
 **Default:** ``PKGDB2_EMAIL_SMTP_SERVER = 'localhost'``.
+
+
+Email stacktraces
+-----------------
+
+PkgDB2 sends email when it faces an exception (trying to add an existing
+package or something alike. These emails are sent to the address set
+in the configuration key ``MAIL_ADMIN``
+
+**Default:** ``MAIL_ADMIN = '<my personnal email>'``.

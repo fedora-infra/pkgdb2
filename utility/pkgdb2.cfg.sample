@@ -64,3 +64,11 @@ PKGDB2_EMAIL_TO = '{pkg_name}-owner@fedoraproject.org'
 PKGDB2_EMAIL_FROM = 'nobody@fedoraproject.org'
 ## The SMTP server to use to send email notifications
 PKGDB2_EMAIL_SMTP_SERVER = 'localhost'
+
+
+### Email stacktrace
+
+## pkgdb sends email when it faces an exception (trying to add an existing
+## package or something alike. These emails are sent to the address set
+## here:
+#MAIL_ADMIN = 'admin@pkgdb'
