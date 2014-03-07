@@ -206,7 +206,7 @@ def api_bugzilla():
     if request_wants_json():
         out_format = 'json'
 
-    intro = """# Package Database VCS Acls
+    intro = r"""# Package Database VCS Acls
 # Text Format
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
 # Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
