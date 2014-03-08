@@ -239,7 +239,7 @@ List collections
     Accept GET queries only.
 
     :arg pattern: a pattern to which the collection searched should match.
-    :arg clt_status: restrict the search to certain status.
+    :arg clt_status: restrict the search to one or more collection status.
 
     Sample response:
 
@@ -301,10 +301,9 @@ List collections
     output = {}
 
     pattern = flask.request.args.get('pattern', None) or pattern
-    status = flask.request.args.get('clt_status', None)
+    status = flask.request.args.getlist('clt_status', None)
     if pattern:
         if status:
-            status = status.split(',')
             collections = []
             for stat in status:
                 collections.extend(pkgdblib.search_collection(
