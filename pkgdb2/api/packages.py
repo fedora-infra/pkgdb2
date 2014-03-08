@@ -700,20 +700,46 @@ List packages
     output = {}
 
     pattern = flask.request.args.get('pattern', pattern) or '*'
-    branches = flask.request.args.getlist('branches', None)
+    branches = flask.request.args.getlist('branches', [])
     poc = flask.request.args.get('poc', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
     acls = bool(flask.request.args.get('acls', False))
-    status = flask.request.args.get('status', None)
+    statuses = flask.request.args.getlist('status', [])
     page = flask.request.args.get('page', 1)
     limit = get_limit()
     count = flask.request.args.get('count', False)
 
     try:
-        packages = set()
-        packages_count = 0
-        if branches:
-            for branch in branches:
+        if not branches:
+            branches = [None]
+        if not statuses:
+            statuses = [None]
+
+        if count:
+            packages = 0
+            for status, branch in itertools.product(
+                    statuses, branches):
+                packages += pkgdblib.search_package(
+                    SESSION,
+                    pkg_name=pattern,
+                    pkg_branch=branch,
+                    pkg_poc=poc,
+                    orphaned=orphaned,
+                    status=status,
+                    page=page,
+                    limit=limit,
+                    count=count,
+                )
+
+            output['output'] = 'ok'
+            output['packages'] = packages
+            output['page'] = 1
+            output['page_total'] = 1
+        else:
+            packages = set()
+            packages_count = 0
+            for status, branch in itertools.product(
+                    statuses, branches):
                 packages.update(
                     pkgdblib.search_package(
                         SESSION,
@@ -736,49 +762,23 @@ List packages
                     status=status,
                     page=page,
                     limit=limit,
-                    count=True
+                    count=True,
                 )
-        else:
-            packages = pkgdblib.search_package(
-                SESSION,
-                pkg_name=pattern,
-                pkg_branch=None,
-                pkg_poc=poc,
-                orphaned=orphaned,
-                status=status,
-                page=page,
-                limit=limit,
-                count=count,
-            )
-            packages_count += pkgdblib.search_package(
-                SESSION,
-                pkg_name=pattern,
-                pkg_branch=None,
-                pkg_poc=poc,
-                orphaned=orphaned,
-                status=status,
-                page=page,
-                limit=limit,
-                count=True
-            )
 
-        if not packages:
-            output['output'] = 'notok'
-            output['packages'] = []
-            output['error'] = 'No packages found for these parameters'
-            httpcode = 404
-        else:
-            output['output'] = 'ok'
-            output['page'] = int(page)
-            output['page_total'] = int(ceil(packages_count / float(limit)))
-            if isinstance(packages, (int, float, long)):
-                output['packages'] = packages
-                output['page_total'] = 1
+            if not packages:
+                output['output'] = 'notok'
+                output['packages'] = []
+                output['error'] = 'No packages found for these parameters'
+                httpcode = 404
             else:
                 output['packages'] = [
                     pkg.to_json(acls=acls, collection=branches, package=False)
                     for pkg in packages
                 ]
+                output['output'] = 'ok'
+                output['page'] = int(page)
+                output['page_total'] = int(ceil(packages_count / float(limit)))
+
     except pkgdblib.PkgdbException, err:
         SESSION.rollback()
         output['output'] = 'notok'
