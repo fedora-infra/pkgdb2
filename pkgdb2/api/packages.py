@@ -700,11 +700,11 @@ List packages
     output = {}
 
     pattern = flask.request.args.get('pattern', pattern) or '*'
-    branches = flask.request.args.getlist('branches', [])
+    branches = flask.request.args.getlist('branches', None)
     poc = flask.request.args.get('poc', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
     acls = bool(flask.request.args.get('acls', False))
-    statuses = flask.request.args.getlist('status', [])
+    statuses = flask.request.args.getlist('status', None)
     page = flask.request.args.get('page', 1)
     limit = get_limit()
     count = flask.request.args.get('count', False)
