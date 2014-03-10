@@ -974,7 +974,7 @@ def edit_package(session, package, pkg_name=None, pkg_summary=None,
     """
 
     if not pkgdb2.is_pkgdb_admin(user):
-        raise PkgdbException('You are not allowed to edit collections')
+        raise PkgdbException('You are not allowed to edit packages')
 
     edited = []
 
