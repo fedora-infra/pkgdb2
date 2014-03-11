@@ -490,8 +490,8 @@ Package information
     Accept GET queries only
 
     :arg pkgname: The name of the package to retrieve the information of.
-    :kwarg branch: Restricts the package information to a specific
-        collection.
+    :kwarg branches: Restricts the package information to one or more
+        collection (branches).
 
     Sample response:
 
