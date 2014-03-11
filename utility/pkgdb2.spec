@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        0.1.0
+Version:        0.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -94,5 +94,9 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_createdb.py
 %{python_sitelib}/%{name}*.egg-info
 
 %changelog
+* Tue Mar 11 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2-1
+- Update to 0.2
+- Let /api/package/ allow filter for multiple branches
+
 * Wed Nov 27 2013 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.1.0-1
 - Initial packaging work for Fedora
