@@ -233,8 +233,8 @@ def get_acl_package(session, pkg_name, pkg_clt=None):
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package to retrieve the ACLs for.
-    :kward pkg_clt: the branche name of the collection to retrieve the ACLs
-        of.
+    :kward pkg_clt: the branche name of the collection or collections to
+        retrieve the ACLs of.
     :returns: a list of ``PackageListing``.
     :rtype: list(PackageListing)
     :raises pkgdb2.lib.PkgdbException: when user restricted the acl to a
@@ -247,18 +247,13 @@ def get_acl_package(session, pkg_name, pkg_clt=None):
     package = model.Package.by_name(session, pkg_name)
     pkglisting = model.PackageListing.by_package_id(session, package.id)
     if pkg_clt:
-        tmp = None
+        if isinstance(pkg_clt, basestring):
+            pkg_clt = [pkg_clt]
+        tmp = []
         for pkglist in pkglisting:
-            if pkglist.collection.branchname == pkg_clt:
-                tmp = pkglist
-                break
-        if tmp is None:
-            raise PkgdbException(
-                'Collection %s is not associated with package %s' % (
-                    pkg_clt, pkg_name)
-            )
-        else:
-            pkglisting = [tmp]
+            if pkglist.collection.branchname in pkg_clt:
+                tmp.append(pkglist)
+        pkglisting = tmp
     return pkglisting
 
 

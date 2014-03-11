@@ -226,11 +226,8 @@ class PkgdbLibtests(Modeltests):
                           'devel')
 
         # Collection does not exist
-        self.assertRaises(pkgdblib.PkgdbException,
-                          pkgdblib.get_acl_package,
-                          self.session,
-                          'guake',
-                          'unknown')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'unknown')
+        self.assertEqual(pkg_acl, [])
 
     def test_set_acl_package(self):
         """ Test the set_acl_package function. """
