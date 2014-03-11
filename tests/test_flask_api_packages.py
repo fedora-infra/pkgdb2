@@ -659,7 +659,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['packages'][1]['package']['name'],
                          'guake')
 
-        output = self.app.get('/api/package/?pkgname=guake&branch=devel')
+        output = self.app.get('/api/package/?pkgname=guake&branches=devel')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         self.assertEqual(data.keys(), ['output', 'packages'])
@@ -672,14 +672,13 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['packages'][0]['package']['name'],
                          'guake')
 
-        output = self.app.get('/api/package/?pkgname=guake&branch=F-19')
-        self.assertEqual(output.status_code, 500)
+        output = self.app.get('/api/package/?pkgname=guake&branches=F-19')
+        self.assertEqual(output.status_code, 404)
         data = json.loads(output.data)
         self.assertEqual(
             data,
             {
-                "error": "Collection F-19 is not associated with package "
-                "guake",
+                "error": "No package found on these branches: F-19",
                 "output": "notok"
             }
         )

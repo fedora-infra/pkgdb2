@@ -564,16 +564,22 @@ Package information
     output = {}
 
     pkg_name = flask.request.args.get('pkgname', pkgname)
-    pkg_clt = flask.request.args.get('branch', None)
+    branches = flask.request.args.getlist('branches', None)
 
     try:
         packages = pkgdblib.get_acl_package(
             SESSION,
             pkg_name=pkg_name,
-            pkg_clt=pkg_clt
+            pkg_clt=branches
         )
-        output['output'] = 'ok'
-        output['packages'] = [pkg.to_json() for pkg in packages]
+        if not packages:
+            output['output'] = 'notok'
+            output['error'] = 'No package found on these branches: %s' \
+                % ', '.join(branches)
+            httpcode = 404
+        else:
+            output['output'] = 'ok'
+            output['packages'] = [pkg.to_json() for pkg in packages]
     except NoResultFound:
         output['output'] = 'notok'
         output['error'] = 'Package: %s not found' % pkg_name
