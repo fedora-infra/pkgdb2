@@ -303,20 +303,35 @@ class PackageListingAcl(BASE):
 
     @classmethod
     def get_acl_packager(
-            cls, session, packager, offset=None, limit=None, count=False):
+            cls, session, packager, acls=None,
+            offset=None, limit=None, count=False):
         """ Retrieve the ACLs associated with a packager.
 
         :arg session: the database session used to connect to the
             database.
         :arg packager: the username of the packager to retrieve the ACls
             of.
+        :kwarg acls: one or more ACLs to restrict the query for.
+        :kwarg offset: the offset to apply to the results
+        :kwarg limit: the number of results to return
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
 
         """
+
+        if isinstance(acls, basestring):
+            acls = [acls]
+
         query = session.query(
             cls
         ).filter(
             PackageListingAcl.fas_name == packager
         )
+
+        if acls:
+            query = query.filter(
+                PackageListingAcl.acl.in_(acls)
+            )
 
         if count:
             return query.count()
