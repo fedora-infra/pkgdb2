@@ -139,13 +139,13 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output,
-                         {"collections": [],"output": "ok"})
+                         {"collections": [], "output": "ok"})
 
         output = self.app.get('/api/collections/F-*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output,
-                         {"collections": [],"output": "ok"})
+                         {"collections": [], "output": "ok"})
 
         create_collection(self.session)
 
