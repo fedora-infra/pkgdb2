@@ -60,6 +60,9 @@ User's ACL
     Accept GET queries only.
 
     :arg packagername: String of the packager name.
+    :kwarg acls: One or more ACL to filter the ACLs retrieved. Options are:
+        ``Approved``, ``Awaiting Review``, ``Denied``, ``Obsolete``,
+        ``Removed``.
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg limit: An integer to limit the number of results, defaults to
         250, maximum is 500 (acls).
@@ -143,6 +146,18 @@ User's ACL
     output = {}
 
     packagername = flask.request.args.get('packagername', None) or packagername
+    acls = flask.request.args.getlist('acls', None)
+
+    pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
+    for acl in acls:
+        if acl not in pkg_acl:
+            output = {
+                'output': 'notok',
+                'error': 'Invalid request, "%s" is an invalid acl' % acl}
+            httpcode = 500
+            jsonout = flask.jsonify(output)
+            jsonout.status_code = httpcode
+            return jsonout
 
     page = flask.request.args.get('page', 1)
     limit = get_limit()
@@ -152,6 +167,7 @@ User's ACL
         packagers = pkgdblib.get_acl_packager(
             SESSION,
             packager=packagername,
+            acls=acls,
             page=page,
             limit=limit,
             count=count)
@@ -165,6 +181,7 @@ User's ACL
             total_acl = pkgdblib.get_acl_packager(
                 SESSION,
                 packager=packagername,
+                acls=acls,
                 count=True)
 
             output['page_total'] = total_acl / limit
