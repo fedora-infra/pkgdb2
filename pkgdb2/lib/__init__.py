@@ -736,11 +736,13 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
                             count=count)
 
 
-def get_acl_packager(session, packager, page=1, limit=100, count=False):
+def get_acl_packager(
+        session, packager, acls, page=1, limit=100, count=False):
     """ Return the list of ACL associated with a packager.
 
     :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
+    :kwarg acls: one or more ACLs to restrict the query for.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -763,6 +765,7 @@ def get_acl_packager(session, packager, page=1, limit=100, count=False):
     return model.PackageListingAcl.get_acl_packager(
         session,
         packager=packager,
+        acls=acls,
         offset=page,
         limit=limit,
         count=count)
