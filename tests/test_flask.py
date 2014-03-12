@@ -149,17 +149,28 @@ engineers need to create packages and spin them into a distribution."""
         """ Test the stats function. """
         output = self.app.get('/stats')
         self.assertEqual(output.status_code, 301)
-
         output = self.app.get('/stats/')
         self.assertEqual(output.status_code, 200)
-
         expected = """<h1>Fedora Package Database</h1>
 
 <p>
     PkgDB stores currently information about 0
     active Fedora releases.
 </p>"""
+        self.assertTrue(expected in output.data)
 
+        create_package_acl(self.session)
+
+        output = self.app.get('/stats')
+        self.assertEqual(output.status_code, 301)
+        output = self.app.get('/stats/')
+        self.assertEqual(output.status_code, 200)
+        expected = """<h1>Fedora Package Database</h1>
+
+<p>
+    PkgDB stores currently information about 3
+    active Fedora releases.
+</p>"""
         self.assertTrue(expected in output.data)
 
     def test_search(self):
