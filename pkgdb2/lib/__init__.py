@@ -737,7 +737,7 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
 
 
 def get_acl_packager(
-        session, packager, acls, page=1, limit=100, count=False):
+        session, packager, acls=None, page=1, limit=100, count=False):
     """ Return the list of ACL associated with a packager.
 
     :arg session: session with which to connect to the database.
