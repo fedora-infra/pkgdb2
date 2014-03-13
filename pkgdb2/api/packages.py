@@ -492,6 +492,12 @@ Package information
     :arg pkgname: The name of the package to retrieve the information of.
     :kwarg branches: Restricts the package information to one or more
         collection (branches).
+    :kwarg eol: a boolean to specify whether to filter for or out
+        EOL collections. Defaults to None.
+        If True, it will return results only for EOL collections.
+        If False, it will return results only for non-EOL collections.
+        If None, it will not filter the results on the status of the
+        collection.
 
     Sample response:
 
@@ -565,12 +571,14 @@ Package information
 
     pkg_name = flask.request.args.get('pkgname', pkgname)
     branches = flask.request.args.getlist('branches', None)
+    eol = flask.request.args.get('eol', None)
 
     try:
         packages = pkgdblib.get_acl_package(
             SESSION,
             pkg_name=pkg_name,
-            pkg_clt=branches
+            pkg_clt=branches,
+            eol=eol,
         )
         if not packages:
             output['output'] = 'notok'
