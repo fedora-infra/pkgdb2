@@ -633,12 +633,18 @@ def search_collection(session, pattern, status=None, page=None,
                                    count=count)
 
 
-def search_packagers(session, pattern, page=None, limit=None,
+def search_packagers(session, pattern, eol=None, page=None, limit=None,
                      count=False):
     """ Return the list of Packagers maching the given pattern.
 
     :arg session: session with which to connect to the database.
     :arg pattern: pattern to match on the packagers.
+    :kwarg eol: a boolean to specify whether to filter for or out
+        EOL collections. Defaults to False.
+        If True, it will return results only for EOL collections.
+        If False, it will return results only for non-EOL collections.
+        If None, it will not filter the results on the status of the
+        collection.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -673,6 +679,7 @@ def search_packagers(session, pattern, page=None, limit=None,
     packagers = model.PackageListing.search_packagers(
         session,
         pattern=pattern,
+        eol=eol,
         offset=page,
         limit=limit,
         count=count)

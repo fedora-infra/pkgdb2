@@ -806,7 +806,7 @@ class PackageListing(BASE):
         return query.all()
 
     @classmethod
-    def search_packagers(cls, session, pattern, offset=None,
+    def search_packagers(cls, session, pattern, eol=None, offset=None,
                          limit=None, count=False):
         """ Return all the packagers whose name match the pattern.
         Are packagers user having at least one commit ACL on one package.
@@ -814,6 +814,12 @@ class PackageListing(BASE):
         :arg session: session with which to connect to the database
         :arg pattern: pattern the point_of_contact of the package should
             match
+        :kwarg eol: a boolean to specify whether to filter for or out
+            EOL collections. Defaults to False.
+            If True, it will return results only for EOL collections.
+            If False, it will return results only for non-EOL collections.
+            If None, it will not filter the results on the status of the
+            collection.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -831,6 +837,24 @@ class PackageListing(BASE):
         ).order_by(
             PackageListingAcl.fas_name
         )
+
+        if eol is not None:
+            if eol is True:
+                query = query.filter(
+                    PackageListingAcl.packagelisting_id == PackageListing.id
+                ).filter(
+                    PackageListing.collection_id == Collection.id
+                ).filter(
+                    Collection.status == 'EOL'
+                )
+            else:
+                query = query.filter(
+                    PackageListingAcl.packagelisting_id == PackageListing.id
+                ).filter(
+                    PackageListing.collection_id == Collection.id
+                ).filter(
+                    Collection.status != 'EOL'
+                )
 
         if count:
             return query.count()
