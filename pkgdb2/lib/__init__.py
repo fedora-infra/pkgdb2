@@ -752,7 +752,7 @@ def get_acl_packager(
     :arg packager: the name of the packager to retrieve the ACLs for.
     :kwarg acls: one or more ACLs to restrict the query for.
     :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to False.
+        EOL collections. Defaults to None.
         If True, it will return results only for EOL collections.
         If False, it will return results only for non-EOL collections.
         If None, it will not filter the results on the status of the
