@@ -303,7 +303,7 @@ class PackageListingAcl(BASE):
 
     @classmethod
     def get_acl_packager(
-            cls, session, packager, acls=None,
+            cls, session, packager, acls=None, eol=None,
             offset=None, limit=None, count=False):
         """ Retrieve the ACLs associated with a packager.
 
@@ -312,6 +312,12 @@ class PackageListingAcl(BASE):
         :arg packager: the username of the packager to retrieve the ACls
             of.
         :kwarg acls: one or more ACLs to restrict the query for.
+        :kwarg eol: a boolean to specify whether to filter for or out
+            EOL collections. Defaults to False.
+            If True, it will return results only for EOL collections.
+            If False, it will return results only for non-EOL collections.
+            If None, it will not filter the results on the status of the
+            collection.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -332,6 +338,24 @@ class PackageListingAcl(BASE):
             query = query.filter(
                 PackageListingAcl.acl.in_(acls)
             )
+
+        if eol is not None:
+            if eol is True:
+                query = query.filter(
+                    PackageListingAcl.packagelisting_id == PackageListing.id
+                ).filter(
+                    PackageListing.collection_id == Collection.id
+                ).filter(
+                    Collection.status == 'EOL'
+                )
+            else:
+                query = query.filter(
+                    PackageListingAcl.packagelisting_id == PackageListing.id
+                ).filter(
+                    PackageListing.collection_id == Collection.id
+                ).filter(
+                    Collection.status != 'EOL'
+                )
 
         if count:
             return query.count()
