@@ -318,8 +318,8 @@ List packagers
     List packagers based on a pattern. If no pattern is provided, return
     all the packagers.
 
-    Only packagers having at least commit right on one package are returned
-    (on the contrary to querying
+    Only packagers having at least commit right on one package on the
+    active collections are returned (on the contrary to querying
     `FAS <https://admin.fedorapoject.org/accounts>`_ for the members of the
     packager group).
 
@@ -361,9 +361,8 @@ List packagers
 
     pattern = flask.request.args.get('pattern', pattern) or '*'
     if pattern:
-        packagers = pkgdblib.search_packagers(SESSION,
-                                              pattern=pattern,
-                                              )
+        packagers = pkgdblib.search_packagers(
+            SESSION, pattern=pattern, eol=False)
         packagers = [pkg[0] for pkg in packagers]
         SESSION.commit()
         output['output'] = 'ok'
