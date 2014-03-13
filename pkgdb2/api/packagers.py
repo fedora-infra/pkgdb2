@@ -61,8 +61,7 @@ User's ACL
 
     :arg packagername: String of the packager name.
     :kwarg acls: One or more ACL to filter the ACLs retrieved. Options are:
-        ``Approved``, ``Awaiting Review``, ``Denied``, ``Obsolete``,
-        ``Removed``.
+        ``approveacls``, ``commit``, ``watchbugzilla``, ``watchcommits``.
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg limit: An integer to limit the number of results, defaults to
         250, maximum is 500 (acls).
