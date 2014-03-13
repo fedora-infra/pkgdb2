@@ -123,6 +123,28 @@ class Packagetests(Modeltests):
         )
         self.assertEqual(len(packages), 0)
 
+    def test_get_package_watch_by_user(self):
+        """ Test the get_package_watch_by_user function of Package. """
+        create_package_acl(self.session)
+
+        packages = model.Package.get_package_watch_by_user(
+            self.session, user='pingou',
+        )
+        self.assertEqual(len(packages), 2)
+        self.assertEqual(packages[0][0].name, 'guake')
+
+        expected = set(['devel', 'F-18'])
+        branches = set([packages[0][1].branchname,
+                        packages[1][1].branchname])
+        self.assertEqual(branches.symmetric_difference(expected), set())
+
+        packages = model.Package.get_package_of_user(
+            self.session,
+            user='pingou',
+            pkg_status='Awaiting Review',
+        )
+        self.assertEqual(len(packages), 0)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Packagetests)
