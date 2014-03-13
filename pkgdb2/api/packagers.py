@@ -318,6 +318,11 @@ List packagers
     List packagers based on a pattern. If no pattern is provided, return
     all the packagers.
 
+    Only packagers having at least commit right on one package are returned
+    (on the contrary to querying
+    `FAS <https://admin.fedorapoject.org/accounts>`_ for the members of the
+    packager group).
+
     ::
 
         /api/packagers/<pattern>/
