@@ -552,7 +552,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
-                   orphaned=None, status=None, page=None,
+                   orphaned=None, status=None, eol=None, page=None,
                    limit=None, count=False):
     """ Return the list of packages matching the given criteria.
 
@@ -563,6 +563,12 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
     :kwarg orphaned: boolean to restrict search to orphaned packages.
     :kwarg status: allows filtering the packages by their status:
         Approved, Retired, Removed, Orphaned.
+    :kwarg eol: a boolean to specify whether to filter for or out
+        EOL collections. Defaults to False.
+        If True, it will return results only for EOL collections.
+        If False, it will return results only for non-EOL collections.
+        If None, it will not filter the results on the status of the
+        collection.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -597,10 +603,17 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
     if page is not None and limit is not None and limit != 0:
         page = (page - 1) * limit
 
-    return model.Package.search(session, pkg_name=pkg_name,
-                                pkg_poc=pkg_poc, pkg_status=status,
-                                pkg_branch=pkg_branch, orphaned=orphaned,
-                                offset=page, limit=limit, count=count)
+    return model.Package.search(
+        session,
+        pkg_name=pkg_name,
+        pkg_poc=pkg_poc,
+        pkg_status=status,
+        pkg_branch=pkg_branch,
+        orphaned=orphaned,
+        eol=eol,
+        offset=page,
+        limit=limit,
+        count=count)
 
 
 def search_collection(session, pattern, status=None, page=None,

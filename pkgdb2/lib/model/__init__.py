@@ -1042,7 +1042,7 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               pkg_branch=None, orphaned=None,
+               pkg_branch=None, orphaned=None, eol=None,
                offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
@@ -1053,6 +1053,12 @@ class Package(BASE):
         :kwarg pkg_branch: branchname of the collection to search.
         :kwarg orphaned: a boolean specifying if the search should be
             restricted to only orphaned or not-orphaned packages.
+        :kwarg eol: a boolean to specify whether to filter for or out
+            EOL collections. Defaults to None.
+            If True, it will return results only for EOL collections.
+            If False, it will return results only for non-EOL collections.
+            If None, it will not filter the results on the status of the
+            collection.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -1122,6 +1128,20 @@ class Package(BASE):
             query = query.filter(
                 Package.id.in_(subquery)
             )
+
+        if eol is not None:
+            if eol is True:
+                query = query.filter(
+                    PackageListing.collection_id == Collection.id
+                ).filter(
+                    Collection.status == 'EOL'
+                )
+            else:
+                query = query.filter(
+                    PackageListing.collection_id == Collection.id
+                ).filter(
+                    Collection.status != 'EOL'
+                )
 
         if count:
             return query.count()
