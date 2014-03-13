@@ -1070,6 +1070,25 @@ class PkgdbLibtests(Modeltests):
         pkg = pkgdblib.get_package_maintained(self.session, 'ralph')
         self.assertEqual(pkg, [])
 
+    def test_get_package_watch(self):
+        """ Test the get_package_watch function. """
+        create_package_acl(self.session)
+
+        pkg = pkgdblib.get_package_watch(self.session, 'pingou')
+        self.assertEqual(len(pkg), 1)
+        self.assertEqual(pkg[0][0].name, 'guake')
+        expected = set(['devel', 'F-18'])
+        branches = set([pkg[0][1][0].branchname, pkg[0][1][1].branchname])
+        self.assertEqual(branches.symmetric_difference(expected), set())
+        self.assertEqual(len(pkg[0][1]), 2)
+
+        pkg = pkgdblib.get_package_watch(
+            self.session, 'pingou', pkg_status='Awaiting Review')
+        self.assertEqual(pkg, [])
+
+        pkg = pkgdblib.get_package_watch(self.session, 'ralph')
+        self.assertEqual(pkg, [])
+
     def test_edit_collection(self):
         """ Test the edit_collection function. """
         create_collection(self.session)
