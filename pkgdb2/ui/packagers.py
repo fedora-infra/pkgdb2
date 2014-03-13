@@ -93,6 +93,17 @@ def packager_info(packager):
         poc=True,
     )
 
+    packages_watch = pkgdblib.get_package_watch(
+        SESSION,
+        packager=packager,
+    )
+
+    # Filter out from the watch list packaged where user has commit rights
+    packages_obj = set([it[0] for it in packages_co])
+    packages_obj = packages_obj.union(set([it[0] for it in packages]))
+    packages_watch = [
+        it for it in packages_watch if it[0] not in packages_obj]
+
     if not packages and not packages_co:
         flask.flash('No packager of this name found.', 'errors')
         return flask.render_template('msg.html')
@@ -102,4 +113,5 @@ def packager_info(packager):
         packager=packager,
         packages=packages,
         packages_co=packages_co,
+        packages_watch=packages_watch,
     )

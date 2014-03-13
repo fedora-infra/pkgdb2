@@ -17,6 +17,10 @@
         <th>Co-maintainer:</th>
         <td>{{ packages_co | length}}</td>
     </tr>
+    <tr>
+        <th>Watched:</th>
+        <td>{{ packages_watch | length}}</td>
+    </tr>
 </table>
 
 {% if packages %}
@@ -41,6 +45,24 @@
 <h3>Co-maintainer: </h3>
 <ul>
 {% for info in packages_co %}
+    <li>
+        <a href="{{url_for('.package_info', package=info[0].name)}}">
+            {{ info[0].name }}</a>
+        -- {{ info[0].summary }}
+        (
+        {% for clt in info[1] %}
+            {{ clt.branchname }}
+        {% endfor %}
+        )
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if packages_watch %}
+<h3>Package watched: </h3>
+<ul>
+{% for info in packages_watch %}
     <li>
         <a href="{{url_for('.package_info', package=info[0].name)}}">
             {{ info[0].name }}</a>
