@@ -810,6 +810,31 @@ def get_package_maintained(session, packager, poc=True, branch=None):
     return [output[key] for key in sorted(output)]
 
 
+def get_package_watch(session, packager, branch=None, pkg_status=None):
+    """ Return all the packages and branches that the given packager
+    watches.
+
+    :arg session: session with which to connect to the database.
+    :arg packager: the name of the packager to retrieve the ACLs for.
+    :kwarg pkg_status: the status of the packages considered.
+    :returns: a list of ``Package`` associated to the specified user.
+    :rtype: list(Package, [Collection])
+
+    """
+    output = {}
+    for pkg, clt in model.Package.get_package_watch_by_user(
+            session, packager, pkg_status=pkg_status):
+
+        if branch is not None:
+            if clt.branchname != branch:
+                continue
+        if pkg.name in output:
+            output[pkg.name][1].append(clt)
+        else:
+            output[pkg.name] = [pkg, [clt]]
+    return [output[key] for key in sorted(output)]
+
+
 def add_collection(session, clt_name, clt_version, clt_status,
                    clt_branchname, clt_disttag, clt_gitbranch,
                    clt_koji_name, user):
