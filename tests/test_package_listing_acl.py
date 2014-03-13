@@ -122,17 +122,13 @@ class PackageListingAcltests(Modeltests):
         self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
         acls = model.PackageListingAcl.get_acl_packager(
-            self.session, 'pingou', eol=False)
+            self.session, 'pingou', eol=True)
         self.assertEqual(5, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
         self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
-
-        acls = model.PackageListingAcl.get_acl_packager(
-            self.session, 'pingou', eol=True)
-        self.assertEqual(0, len(acls))
 
 
 if __name__ == '__main__':

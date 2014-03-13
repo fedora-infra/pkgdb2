@@ -99,17 +99,10 @@ class Packagetests(Modeltests):
         packages = model.Package.search(
             session=self.session,
             pkg_name='g%',
-            eol=False,
+            eol=True,
             limit=1)
         self.assertEqual(len(packages), 1)
         self.assertEqual(packages[0].name, 'geany')
-
-        packages = model.Package.search(
-            session=self.session,
-            pkg_name='g%',
-            eol=True,
-            limit=1)
-        self.assertEqual(len(packages), 0)
 
     def test_get_package_of_user(self):
         """ Test the get_package_of_user function of Package. """
