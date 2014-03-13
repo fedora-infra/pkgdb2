@@ -138,6 +138,26 @@ class FlaskApiPackagersTest(Modeltests):
             output['acls'][0]['packagelist']['collection']['branchname'],
             'F-18')
 
+        output = self.app.get(
+            '/api/packager/acl/?packagername=pingou&acls=commit')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(output.keys(),
+                         ['page_total', 'output', 'acls', 'page'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['page_total'], 0)
+        self.assertEqual(len(output['acls']), 2)
+        self.assertEqual(set(output['acls'][0].keys()),
+                         set(['status', 'fas_name', 'packagelist', 'acl']))
+        self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
+                         set(['package', 'status_change', 'collection',
+                              'point_of_contact', 'status']))
+        self.assertEqual(
+            output['acls'][0]['packagelist']['package']['name'], 'guake')
+        self.assertEqual(
+            output['acls'][0]['packagelist']['collection']['branchname'],
+            'F-18')
+
     def test_packager_list(self):
         """ Test the api_packager_list function.  """
 
