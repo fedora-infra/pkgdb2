@@ -958,6 +958,20 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
         self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
+        acls = pkgdblib.get_acl_packager(
+            self.session, 'pingou', acls='commit')
+        self.assertEqual(len(acls), 2)
+        self.assertEqual(acls[0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'devel')
+
+        acls = pkgdblib.get_acl_packager(
+            self.session, 'pingou', acls=['commit', 'watchbugzilla'])
+        self.assertEqual(len(acls), 2)
+        self.assertEqual(acls[0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'devel')
+
     def test_get_pending_acl_user(self):
         """ Test the get_pending_acl_user function. """
         pending_acls = pkgdblib.get_pending_acl_user(
