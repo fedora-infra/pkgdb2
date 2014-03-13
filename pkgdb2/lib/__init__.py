@@ -228,19 +228,17 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
         raise PkgdbException('Could not add ACLs')
 
 
-def get_acl_package(session, pkg_name, pkg_clt=None, eol=None):
+def get_acl_package(session, pkg_name, pkg_clt=None, eol=False):
     """ Return the ACLs for the specified package.
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package to retrieve the ACLs for.
     :kward pkg_clt: the branche name of the collection or collections to
         retrieve the ACLs of.
-    :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to False.
-        If True, it will return results only for EOL collections.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
-        If None, it will not filter the results on the status of the
-        collection.
     :returns: a list of ``PackageListing``.
     :rtype: list(PackageListing)
     :raises pkgdb2.lib.PkgdbException: when user restricted the acl to a
@@ -262,11 +260,10 @@ def get_acl_package(session, pkg_name, pkg_clt=None, eol=None):
                 tmp.append(pkglist)
         pkglisting = tmp
 
-    if eol is not None:
+    if not eol:
         tmp = []
         for pkglist in pkglisting:
-            if (eol is True and pkglist.collection.status == 'EOL') \
-                    or (eol is False and pkglist.collection.status != 'EOL'):
+            if pkglist.collection.status != 'EOL':
                 tmp.append(pkglist)
         pkglisting = tmp
 
@@ -552,7 +549,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
-                   orphaned=None, status=None, eol=None, page=None,
+                   orphaned=None, status=None, eol=False, page=None,
                    limit=None, count=False):
     """ Return the list of packages matching the given criteria.
 
@@ -563,12 +560,10 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
     :kwarg orphaned: boolean to restrict search to orphaned packages.
     :kwarg status: allows filtering the packages by their status:
         Approved, Retired, Removed, Orphaned.
-    :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to False.
-        If True, it will return results only for EOL collections.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
-        If None, it will not filter the results on the status of the
-        collection.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -662,18 +657,16 @@ def search_collection(session, pattern, status=None, page=None,
                                    count=count)
 
 
-def search_packagers(session, pattern, eol=None, page=None, limit=None,
+def search_packagers(session, pattern, eol=False, page=None, limit=None,
                      count=False):
     """ Return the list of Packagers maching the given pattern.
 
     :arg session: session with which to connect to the database.
     :arg pattern: pattern to match on the packagers.
-    :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to False.
-        If True, it will return results only for EOL collections.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
-        If None, it will not filter the results on the status of the
-        collection.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -773,19 +766,17 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
 
 
 def get_acl_packager(
-        session, packager, acls=None, eol=None,
+        session, packager, acls=None, eol=False,
         page=1, limit=100, count=False):
     """ Return the list of ACL associated with a packager.
 
     :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
     :kwarg acls: one or more ACLs to restrict the query for.
-    :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to None.
-        If True, it will return results only for EOL collections.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
-        If None, it will not filter the results on the status of the
-        collection.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query

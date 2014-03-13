@@ -62,12 +62,10 @@ User's ACL
     :arg packagername: String of the packager name.
     :kwarg acls: One or more ACL to filter the ACLs retrieved. Options are:
         ``approveacls``, ``commit``, ``watchbugzilla``, ``watchcommits``.
-    :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to None.
-        If True, it will return results only for EOL collections.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
-        If None, it will not filter the results on the status of the
-        collection.
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg limit: An integer to limit the number of results, defaults to
         250, maximum is 500 (acls).
@@ -152,7 +150,7 @@ User's ACL
 
     packagername = flask.request.args.get('packagername', None) or packagername
     acls = flask.request.args.getlist('acls', None)
-    eol = flask.request.args.getlist('eol', None)
+    eol = flask.request.args.getlist('eol', False)
 
     pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
     for acl in acls:

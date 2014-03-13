@@ -303,7 +303,7 @@ class PackageListingAcl(BASE):
 
     @classmethod
     def get_acl_packager(
-            cls, session, packager, acls=None, eol=None,
+            cls, session, packager, acls=None, eol=False,
             offset=None, limit=None, count=False):
         """ Retrieve the ACLs associated with a packager.
 
@@ -312,12 +312,11 @@ class PackageListingAcl(BASE):
         :arg packager: the username of the packager to retrieve the ACls
             of.
         :kwarg acls: one or more ACLs to restrict the query for.
-        :kwarg eol: a boolean to specify whether to filter for or out
-            EOL collections. Defaults to None.
-            If True, it will return results only for EOL collections.
+        ::kwarg eol: a boolean to specify whether to include results for
+            EOL collections or not. Defaults to False.
+            If True, it will return results for all collections
+            (including EOL).
             If False, it will return results only for non-EOL collections.
-            If None, it will not filter the results on the status of the
-            collection.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -339,23 +338,14 @@ class PackageListingAcl(BASE):
                 PackageListingAcl.acl.in_(acls)
             )
 
-        if eol is not None:
-            if eol is True:
-                query = query.filter(
-                    PackageListingAcl.packagelisting_id == PackageListing.id
-                ).filter(
-                    PackageListing.collection_id == Collection.id
-                ).filter(
-                    Collection.status == 'EOL'
-                )
-            else:
-                query = query.filter(
-                    PackageListingAcl.packagelisting_id == PackageListing.id
-                ).filter(
-                    PackageListing.collection_id == Collection.id
-                ).filter(
-                    Collection.status != 'EOL'
-                )
+        if not eol:
+            query = query.filter(
+                PackageListingAcl.packagelisting_id == PackageListing.id
+            ).filter(
+                PackageListing.collection_id == Collection.id
+            ).filter(
+                Collection.status != 'EOL'
+            )
 
         if count:
             return query.count()
@@ -830,7 +820,7 @@ class PackageListing(BASE):
         return query.all()
 
     @classmethod
-    def search_packagers(cls, session, pattern, eol=None, offset=None,
+    def search_packagers(cls, session, pattern, eol=False, offset=None,
                          limit=None, count=False):
         """ Return all the packagers whose name match the pattern.
         Are packagers user having at least one commit ACL on one package.
@@ -838,12 +828,11 @@ class PackageListing(BASE):
         :arg session: session with which to connect to the database
         :arg pattern: pattern the point_of_contact of the package should
             match
-        :kwarg eol: a boolean to specify whether to filter for or out
-            EOL collections. Defaults to None.
-            If True, it will return results only for EOL collections.
+        :kwarg eol: a boolean to specify whether to include results for
+            EOL collections or not. Defaults to False.
+            If True, it will return results for all collections
+            (including EOL).
             If False, it will return results only for non-EOL collections.
-            If None, it will not filter the results on the status of the
-            collection.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -862,23 +851,14 @@ class PackageListing(BASE):
             PackageListingAcl.fas_name
         )
 
-        if eol is not None:
-            if eol is True:
-                query = query.filter(
-                    PackageListingAcl.packagelisting_id == PackageListing.id
-                ).filter(
-                    PackageListing.collection_id == Collection.id
-                ).filter(
-                    Collection.status == 'EOL'
-                )
-            else:
-                query = query.filter(
-                    PackageListingAcl.packagelisting_id == PackageListing.id
-                ).filter(
-                    PackageListing.collection_id == Collection.id
-                ).filter(
-                    Collection.status != 'EOL'
-                )
+        if not eol:
+            query = query.filter(
+                PackageListingAcl.packagelisting_id == PackageListing.id
+            ).filter(
+                PackageListing.collection_id == Collection.id
+            ).filter(
+                Collection.status != 'EOL'
+            )
 
         if count:
             return query.count()
@@ -1042,7 +1022,7 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               pkg_branch=None, orphaned=None, eol=None,
+               pkg_branch=None, orphaned=None, eol=False,
                offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
@@ -1053,12 +1033,11 @@ class Package(BASE):
         :kwarg pkg_branch: branchname of the collection to search.
         :kwarg orphaned: a boolean specifying if the search should be
             restricted to only orphaned or not-orphaned packages.
-        :kwarg eol: a boolean to specify whether to filter for or out
-            EOL collections. Defaults to None.
-            If True, it will return results only for EOL collections.
+        :kwarg eol: a boolean to specify whether to include results for
+            EOL collections or not. Defaults to False.
+            If True, it will return results for all collections
+            (including EOL).
             If False, it will return results only for non-EOL collections.
-            If None, it will not filter the results on the status of the
-            collection.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -1129,19 +1108,20 @@ class Package(BASE):
                 Package.id.in_(subquery)
             )
 
-        if eol is not None:
-            if eol is True:
-                query = query.filter(
-                    PackageListing.collection_id == Collection.id
-                ).filter(
-                    Collection.status == 'EOL'
-                )
-            else:
-                query = query.filter(
-                    PackageListing.collection_id == Collection.id
-                ).filter(
-                    Collection.status != 'EOL'
-                )
+        if not eol:
+            subquery = session.query(
+                PackageListing.package_id
+            ).join(
+                Collection
+            ).filter(
+                PackageListing.collection_id == Collection.id
+            ).filter(
+                Collection.status != 'EOL'
+            ).subquery()
+
+            query = query.filter(
+                Package.id.in_(subquery)
+            )
 
         if count:
             return query.count()

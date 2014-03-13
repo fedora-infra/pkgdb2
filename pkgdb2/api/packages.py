@@ -492,12 +492,10 @@ Package information
     :arg pkgname: The name of the package to retrieve the information of.
     :kwarg branches: Restricts the package information to one or more
         collection (branches).
-    :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to None.
-        If True, it will return results only for EOL collections.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
-        If None, it will not filter the results on the status of the
-        collection.
 
     Sample response:
 
@@ -571,7 +569,7 @@ Package information
 
     pkg_name = flask.request.args.get('pkgname', pkgname)
     branches = flask.request.args.getlist('branches', None)
-    eol = flask.request.args.get('eol', None)
+    eol = flask.request.args.get('eol', False)
 
     try:
         packages = pkgdblib.get_acl_package(
@@ -633,12 +631,10 @@ List packages
         information. Beware that this may reduce significantly the response
         time, it is advise to use it in combinaition with a specifir branch.
         Defaults to False.
-    :kwarg eol: a boolean to specify whether to filter for or out
-        EOL collections. Defaults to None.
-        If True, it will return results only for EOL collections.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
-        If None, it will not filter the results on the status of the
-        collection.
     :kwarg limit: An integer to limit the number of results, defaults to
         250, maximum is 500.
     :kwarg page: The page number to return (useful in combination to limit).
@@ -725,7 +721,7 @@ List packages
     orphaned = bool(flask.request.args.get('orphaned', False))
     acls = bool(flask.request.args.get('acls', False))
     statuses = flask.request.args.getlist('status', None)
-    eol = flask.request.args.get('eol', None)
+    eol = flask.request.args.get('eol', False)
     page = flask.request.args.get('page', 1)
     limit = get_limit()
     count = flask.request.args.get('count', False)
@@ -747,6 +743,7 @@ List packages
                     pkg_poc=poc,
                     orphaned=orphaned,
                     status=status,
+                    eol=eol,
                     page=page,
                     limit=limit,
                     count=count,
@@ -769,6 +766,7 @@ List packages
                         pkg_poc=poc,
                         orphaned=orphaned,
                         status=status,
+                        eol=eol,
                         page=page,
                         limit=limit,
                         count=count,
@@ -781,6 +779,7 @@ List packages
                     pkg_poc=poc,
                     orphaned=orphaned,
                     status=status,
+                    eol=eol,
                     page=page,
                     limit=limit,
                     count=True,
