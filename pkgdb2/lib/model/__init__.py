@@ -1187,6 +1187,44 @@ class Package(BASE):
 
         return query.all()
 
+    @classmethod
+    def get_package_watch_by_user(cls, session, user, pkg_status=None):
+        """ Return the list of packages watch by a given user.
+
+        :arg session: session with which to connect to the database.
+        :arg user: the FAS username of the user of interest.
+        :kwarg pkg_status: the status of the packages considered.
+
+        """
+
+        query = session.query(
+            Package,
+            Collection
+        ).filter(
+            Package.id == PackageListing.package_id
+        ).filter(
+            PackageListing.id == PackageListingAcl.packagelisting_id
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Collection.status != 'EOL'
+        ).filter(
+            PackageListing.status == 'Approved'
+        ).filter(
+            PackageListingAcl.fas_name == user
+        ).filter(
+            PackageListingAcl.acl.in_(['watchbugzilla', 'watchcommits'])
+        ).filter(
+            PackageListingAcl.status == 'Approved'
+        ).order_by(
+            Package.name, Collection.branchname
+        )
+
+        if pkg_status:
+            query = query.filter(Package.status == pkg_status)
+
+        return query.all()
+
     def to_json(self, _seen=None, acls=True, package=True, collection=None):
         """ Return a dictionnary representation of the object.
 
