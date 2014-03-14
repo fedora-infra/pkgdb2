@@ -312,7 +312,7 @@ class PackageListingAcl(BASE):
         :arg packager: the username of the packager to retrieve the ACls
             of.
         :kwarg acls: one or more ACLs to restrict the query for.
-        ::kwarg eol: a boolean to specify whether to include results for
+        :kwarg eol: a boolean to specify whether to include results for
             EOL collections or not. Defaults to False.
             If True, it will return results for all collections
             (including EOL).
