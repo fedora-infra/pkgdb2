@@ -107,7 +107,6 @@ class FlaskApiPackagesTest(Modeltests):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
-            print output.data
             ## FIXME: this is damn ugly but there is something wrong between
             ## me and jenkins that needs sorting out.
             self.assertTrue(
@@ -727,6 +726,40 @@ class FlaskApiPackagesTest(Modeltests):
                 "page_total": 1,
             }
         )
+
+        output = self.app.get('/api/packages/g*/?limit=abc')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(
+            data['packages'][0]['name'], 'geany')
+        self.assertEqual(
+            data['packages'][0]['status'], 'Approved')
+        self.assertEqual(
+            data['packages'][1]['name'], 'guake')
+        self.assertEqual(
+            data['packages'][1]['status'], 'Approved')
+
+        output = self.app.get('/api/packages/g*/?limit=5000')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(
+            data['packages'][0]['name'], 'geany')
+        self.assertEqual(
+            data['packages'][0]['status'], 'Approved')
+        self.assertEqual(
+            data['packages'][1]['name'], 'guake')
+        self.assertEqual(
+            data['packages'][1]['status'], 'Approved')
 
 
 if __name__ == '__main__':
