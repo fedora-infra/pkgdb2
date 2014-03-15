@@ -169,6 +169,13 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
         self.assertEqual(output['collections'][0]['version'], '17')
 
+        output = self.app.get('/api/collections/F-*/?clt_status=EOL')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(sorted(output.keys()),
+                         ['collections', 'output'])
+        self.assertEqual(output['collections'], [])
+
     @patch('pkgdb2.packager_login_required')
     def test_collection_new(self, login_func):
         """ Test the api_collection_new function.  """
@@ -186,7 +193,6 @@ class FlaskApiCollectionTest(Modeltests):
             output = self.app.post('/api/collection/new/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
-            print output.data
             self.assertEqual(
                 data,
                 {
