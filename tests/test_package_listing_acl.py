@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb2.lib import model
-from tests import Modeltests, create_package_acl
+from tests import Modeltests, create_package_acl, create_package_acl2
 
 
 class PackageListingAcltests(Modeltests):
@@ -110,11 +110,11 @@ class PackageListingAcltests(Modeltests):
             self.session, 'pingou')
         self.assertEqual(0, len(acls))
 
-        create_package_acl(self.session)
+        create_package_acl2(self.session)
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
-        self.assertEqual(5, len(acls))
+        self.assertEqual(7, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
@@ -123,12 +123,42 @@ class PackageListingAcltests(Modeltests):
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', eol=True)
-        self.assertEqual(5, len(acls))
+        self.assertEqual(7, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
         self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
+
+        acls = model.PackageListingAcl.get_acl_packager(
+            self.session, 'pingou', poc=True)
+        self.assertEqual(5, len(acls))
+        self.assertEqual(acls[0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[0].acl, 'commit')
+        self.assertEqual(acls[1].packagelist.package.name, 'guake')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].acl, 'watchcommits')
+        self.assertEqual(acls[2].packagelist.package.name, 'guake')
+        self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
+        self.assertEqual(acls[2].acl, 'commit')
+        self.assertEqual(acls[3].packagelist.package.name, 'guake')
+        self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
+        self.assertEqual(acls[3].acl, 'watchcommits')
+
+        acls = model.PackageListingAcl.get_acl_packager(
+            self.session, 'pingou', poc=False)
+        self.assertEqual(2, len(acls))
+        self.assertEqual(acls[0].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'devel')
+        self.assertEqual(acls[0].acl, 'commit')
+        self.assertEqual(acls[1].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[0].acl, 'commit')
+
+        acls = model.PackageListingAcl.get_acl_packager(
+            self.session, 'toshio', poc=True)
+        self.assertEqual(0, len(acls))
 
 
 if __name__ == '__main__':
