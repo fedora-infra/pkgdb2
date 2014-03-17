@@ -766,7 +766,7 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
 
 
 def get_acl_packager(
-        session, packager, acls=None, eol=False,
+        session, packager, acls=None, eol=False, poc=None,
         page=1, limit=100, count=False):
     """ Return the list of ACL associated with a packager.
 
@@ -777,6 +777,15 @@ def get_acl_packager(
         EOL collections or not. Defaults to False.
         If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
+    :kwarg poc: a boolean specifying whether the results should be
+        restricted to ACL for which the provided packager is the point
+        of contact or not. Defaults to None.
+        If ``True`` it will only return ACLs for packages on which the
+        provided packager is point of contact.
+        If ``False`` it will only return ACLs for packages on which the
+        provided packager is not the point of contact.
+        If ``None`` it will not filter the ACLs returned based on the point
+        of contact of the package (thus every packages is returned).
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -801,6 +810,7 @@ def get_acl_packager(
         packager=packager,
         acls=acls,
         eol=eol,
+        poc=poc,
         offset=page,
         limit=limit,
         count=count)
