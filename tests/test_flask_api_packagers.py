@@ -36,7 +36,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb2
 from pkgdb2.lib import model
-from tests import Modeltests, FakeFasUser, create_package_acl, user_set
+from tests import (Modeltests, FakeFasUser, create_package_acl,
+                    create_package_acl2, user_set)
 
 
 class FlaskApiPackagersTest(Modeltests):
@@ -90,7 +91,7 @@ class FlaskApiPackagersTest(Modeltests):
             }
         )
 
-        create_package_acl(self.session)
+        create_package_acl2(self.session)
 
         output = self.app.get('/api/packager/acl/pingou/')
         self.assertEqual(output.status_code, 200)
@@ -98,8 +99,8 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
-        self.assertEqual(output['page_total'], 0)
-        self.assertEqual(len(output['acls']), 5)
+        self.assertEqual(output['page_total'], 1)
+        self.assertEqual(len(output['acls']), 7)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
@@ -125,8 +126,8 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
-        self.assertEqual(output['page_total'], 0)
-        self.assertEqual(len(output['acls']), 5)
+        self.assertEqual(output['page_total'], 1)
+        self.assertEqual(len(output['acls']), 7)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
@@ -145,8 +146,8 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output.keys(),
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
-        self.assertEqual(output['page_total'], 0)
-        self.assertEqual(len(output['acls']), 2)
+        self.assertEqual(output['page_total'], 1)
+        self.assertEqual(len(output['acls']), 5)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
@@ -157,6 +158,68 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(
             output['acls'][0]['packagelist']['collection']['branchname'],
             'F-18')
+
+        output = self.app.get(
+            '/api/packager/acl/?packagername=pingou&acls=commits')
+        self.assertEqual(output.status_code, 500)
+        output = json.loads(output.data)
+        self.assertEqual(sorted(output.keys()),
+                         ['error', 'output'])
+        self.assertEqual(output['output'], 'notok')
+        self.assertEqual(
+            output['error'],
+            'Invalid request, "commits" is an invalid acl')
+
+        output = self.app.get(
+            '/api/packager/acl/?packagername=pingou&acls=commit&count=True')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(sorted(output.keys()),
+                         ['acls_count', 'output', 'page', 'page_total'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['acls_count'], 5)
+        self.assertEqual(output['page'], 1)
+        self.assertEqual(output['page_total'], 1)
+
+        output = self.app.get(
+            '/api/packager/acl/?packagername=pingou&acls=commit&poc=1')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(output.keys(),
+                         ['page_total', 'output', 'acls', 'page'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['page_total'], 1)
+        self.assertEqual(len(output['acls']), 3)
+        self.assertEqual(set(output['acls'][0].keys()),
+                         set(['status', 'fas_name', 'packagelist', 'acl']))
+        self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
+                         set(['package', 'status_change', 'collection',
+                              'point_of_contact', 'status']))
+        self.assertEqual(
+            output['acls'][0]['packagelist']['package']['name'], 'guake')
+        self.assertEqual(
+            output['acls'][0]['packagelist']['collection']['branchname'],
+            'F-18')
+
+        output = self.app.get(
+            '/api/packager/acl/?packagername=pingou&acls=commit&poc=False')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(output.keys(),
+                         ['page_total', 'output', 'acls', 'page'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['page_total'], 1)
+        self.assertEqual(len(output['acls']), 2)
+        self.assertEqual(set(output['acls'][0].keys()),
+                         set(['status', 'fas_name', 'packagelist', 'acl']))
+        self.assertEqual(set(output['acls'][0]['packagelist'].keys()),
+                         set(['package', 'status_change', 'collection',
+                              'point_of_contact', 'status']))
+        self.assertEqual(
+            output['acls'][0]['packagelist']['package']['name'], 'fedocal')
+        self.assertEqual(
+            output['acls'][0]['packagelist']['collection']['branchname'],
+            'devel')
 
     def test_packager_list(self):
         """ Test the api_packager_list function.  """
