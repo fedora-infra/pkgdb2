@@ -221,6 +221,8 @@ User's ACL
         httpcode = 500
 
     output['page'] = page
+    if not 'page_total' in output:
+        output['page_total'] = 1
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
