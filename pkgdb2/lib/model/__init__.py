@@ -303,7 +303,7 @@ class PackageListingAcl(BASE):
 
     @classmethod
     def get_acl_packager(
-            cls, session, packager, acls=None, eol=False,
+            cls, session, packager, acls=None, eol=False, poc=None,
             offset=None, limit=None, count=False):
         """ Retrieve the ACLs associated with a packager.
 
@@ -317,6 +317,16 @@ class PackageListingAcl(BASE):
             If True, it will return results for all collections
             (including EOL).
             If False, it will return results only for non-EOL collections.
+        :kwarg poc: a boolean specifying whether the results should be
+            restricted to ACL for which the provided packager is the point
+            of contact or not. Defaults to None.
+            If ``True`` it will only return ACLs for packages on which the
+            provided packager is point of contact.
+            If ``False`` it will only return ACLs for packages on which the
+            provided packager is not the point of contact.
+            If ``None`` it will not filter the ACLs returned based on the
+            point of contact of the package (thus every packages is
+            returned).
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -346,6 +356,20 @@ class PackageListingAcl(BASE):
             ).filter(
                 Collection.status != 'EOL'
             )
+
+        if poc is not None:
+            if poc is True:
+                query = query.filter(
+                    PackageListingAcl.packagelisting_id == PackageListing.id
+                ).filter(
+                    PackageListing.point_of_contact == packager
+                )
+            else:
+                query = query.filter(
+                    PackageListingAcl.packagelisting_id == PackageListing.id
+                ).filter(
+                    PackageListing.point_of_contact != packager
+                )
 
         if count:
             return query.count()
