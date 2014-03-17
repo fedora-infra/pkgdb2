@@ -45,7 +45,7 @@ from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
                    FakeFasGroupValid, FakeFasGroupInvalid,
                    create_collection, create_package,
                    create_package_listing, create_package_acl,
-                   create_package_critpath)
+                   create_package_acl2, create_package_critpath)
 
 
 class PkgdbLibtests(Modeltests):
@@ -956,10 +956,10 @@ class PkgdbLibtests(Modeltests):
         acls = pkgdblib.get_acl_packager(self.session, 'pingou')
         self.assertEqual(acls, [])
 
-        create_package_acl(self.session)
+        create_package_acl2(self.session)
 
         acls = pkgdblib.get_acl_packager(self.session, 'pingou')
-        self.assertEqual(len(acls), 5)
+        self.assertEqual(len(acls), 7)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
@@ -968,17 +968,35 @@ class PkgdbLibtests(Modeltests):
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls='commit')
-        self.assertEqual(len(acls), 2)
+        self.assertEqual(len(acls), 5)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.package.name, 'guake')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'devel')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit', 'watchbugzilla'])
-        self.assertEqual(len(acls), 2)
+        self.assertEqual(len(acls), 5)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.package.name, 'guake')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'devel')
+
+        acls = pkgdblib.get_acl_packager(
+            self.session, 'pingou', acls=['commit'], poc=True)
+        self.assertEqual(len(acls), 3)
+        self.assertEqual(acls[0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.package.name, 'guake')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'devel')
+
+        acls = pkgdblib.get_acl_packager(
+            self.session, 'pingou', acls=['commit'], poc=False)
+        self.assertEqual(len(acls), 2)
+        self.assertEqual(acls[0].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'devel')
+        self.assertEqual(acls[1].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
 
     def test_get_pending_acl_user(self):
         """ Test the get_pending_acl_user function. """
