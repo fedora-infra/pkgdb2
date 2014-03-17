@@ -63,7 +63,8 @@ class FlaskApiPackagersTest(Modeltests):
             {
                 "output": "notok",
                 "error": "Invalid request",
-                "page": 1
+                "page": 1,
+                "page_total": 1
             }
         )
 
@@ -75,7 +76,8 @@ class FlaskApiPackagersTest(Modeltests):
             {
                 "output": "notok",
                 "error": 'No ACL found for this user',
-                "page": 1
+                "page": 1,
+                "page_total": 1
             }
         )
 
@@ -87,7 +89,8 @@ class FlaskApiPackagersTest(Modeltests):
             {
                 "output": "notok",
                 "error": 'No ACL found for this user',
-                "page": 1
+                "page": 1,
+                "page_total": 1
             }
         )
 
@@ -251,7 +254,7 @@ class FlaskApiPackagersTest(Modeltests):
         output = self.app.get('/api/packagers/pin*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
-        self.assertEqual(output.keys(),
+        self.assertEqual(sorted(output.keys()),
                          ['output', 'packagers'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['packagers']), 1)

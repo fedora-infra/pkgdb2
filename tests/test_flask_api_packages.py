@@ -693,7 +693,8 @@ class FlaskApiPackagesTest(Modeltests):
             {
                 "error": "No packages found for these parameters",
                 "packages": [],
-                "output": "notok"
+                "output": "notok",
+                "page_total": 1
             }
         )
 
