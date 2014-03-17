@@ -28,6 +28,8 @@ API for collection management.
 
 import flask
 
+from math import ceil
+
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION
 from pkgdb2.api import API, get_limit
@@ -64,8 +66,18 @@ User's ACL
         ``approveacls``, ``commit``, ``watchbugzilla``, ``watchcommits``.
     :kwarg eol: a boolean to specify whether to include results for
         EOL collections or not. Defaults to False.
-        If True, it will return results for all collections (including EOL).
-        If False, it will return results only for non-EOL collections.
+        If ``True``, it will return results for all collections (including
+        EOL).
+        If ``False``, it will return results only for non-EOL collections.
+    :kwarg poc: a boolean specifying whether the results should be
+        restricted to ACL for which the provided packager is the point
+        of contact or not. Defaults to None.
+        If ``True`` it will only return ACLs for packages on which the
+        provided packager is point of contact.
+        If ``False`` it will only return ACLs for packages on which the
+        provided packager is not the point of contact.
+        If ``None`` it will not filter the ACLs returned based on the point
+        of contact of the package (thus every packages is returned).
     :kwarg page: The page number to return (useful in combination to limit).
     :kwarg limit: An integer to limit the number of results, defaults to
         250, maximum is 500 (acls).
@@ -150,7 +162,12 @@ User's ACL
 
     packagername = flask.request.args.get('packagername', None) or packagername
     acls = flask.request.args.getlist('acls', None)
-    eol = flask.request.args.getlist('eol', False)
+    eol = flask.request.args.get('eol', False)
+    poc = flask.request.args.get('poc', None)
+    if poc is not None:
+        if poc in ['False', '0', 0]:
+            poc = False
+        poc = bool(poc)
 
     pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
     for acl in acls:
@@ -173,6 +190,7 @@ User's ACL
             packager=packagername,
             acls=acls,
             eol=eol,
+            poc=poc,
             page=page,
             limit=limit,
             count=count)
@@ -188,9 +206,10 @@ User's ACL
                 packager=packagername,
                 acls=acls,
                 eol=eol,
+                poc=poc,
                 count=True)
 
-            output['page_total'] = total_acl / limit
+            output['page_total'] = int(ceil(total_acl / float(limit)))
         else:
             output = {'output': 'notok', 'error': 'No ACL found for this user'}
             httpcode = 404
