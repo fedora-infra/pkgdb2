@@ -209,7 +209,10 @@ User's ACL
                 poc=poc,
                 count=True)
 
-            output['page_total'] = int(ceil(total_acl / float(limit)))
+            if count:
+                output['page_total'] = 1
+            else:
+                output['page_total'] = int(ceil(total_acl / float(limit)))
         else:
             output = {'output': 'notok', 'error': 'No ACL found for this user'}
             httpcode = 404
