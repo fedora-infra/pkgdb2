@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        0.4
+Version:        0.5
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -94,6 +94,12 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_createdb.py
 %{python_sitelib}/%{name}*.egg-info
 
 %changelog
+* Tue Mar 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.5-1
+- Update to 0.5
+- Add support for the ``poc`` argument in the packager endpoint of the API
+- Improved unit-tests
+- Make sure the total_page if always returned on all pages that are paginated
+
 * Thu Mar 13 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.4-1
 - Update to 0.4
 - Add support for the ``eol`` argument in the API, this argument allows
