@@ -13,7 +13,7 @@ bugzilla and who get the notifications for changes in the git, builds or bugs.
 
 :Project page: https://fedorahosted.org/pkgdb2/
 :Documentation: http://pkgdb2.rtfd.org
-:Git repository: http://git.fedorahosted.org/git/pkgdb3
+:Git repository: http://git.fedorahosted.org/git/pkgdb2
 :Github mirror: https://github.com/fedora-infra/pkgdb2
 :Mailing list: https://lists.fedorahosted.org/mailman/listinfo/packagedb
 
