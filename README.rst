@@ -11,10 +11,10 @@ Fedora packages, it also handles who is the person getting the bugs on the
 bugzilla and who get the notifications for changes in the git, builds or bugs.
 
 
-:Project page: https://fedorahosted.org/packagedb/
-:Documentation: http://packagedb.rtfd.org
-:Git repository: http://git.fedorahosted.org/git/packagedb
-:Github mirror: https://github.com/fedora-infra/packagedb2
+:Project page: https://fedorahosted.org/pkgdb2/
+:Documentation: http://pkgdb2.rtfd.org
+:Git repository: http://git.fedorahosted.org/git/pkgdb3
+:Github mirror: https://github.com/fedora-infra/pkgdb2
 :Mailing list: https://lists.fedorahosted.org/mailman/listinfo/packagedb
 
 
