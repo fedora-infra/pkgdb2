@@ -98,6 +98,11 @@ a.cvs {
   background: url(https://fedoraproject.org/static/images/icons/fedora-infra-icon_source-control.png) 0 50% no-repeat;
 }
 
+a.fas {
+  padding-left: 20px;
+  background: url(https://fedoraproject.org/w/uploads/a/ac/Infra-icon_fas.png) 0 50% no-repeat;
+}
+
 #actions {
   line-height: 1;
   list-style: none;
@@ -185,4 +190,11 @@ a.cvs {
     height: 100%;
     font-size: 14px;
     line-height: 1.2em;
+}
+
+.inline h1 {
+    display: inline-block;
+}
+.inline span {
+    display: inline-block;
 }
