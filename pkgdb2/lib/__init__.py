@@ -1545,14 +1545,16 @@ def bugzilla(session, name=None):
     return output
 
 
-def vcs_acls(session):
+def vcs_acls(session, eol=False):
     """ Return the information to sync ACLs with gitolite.
 
     :arg session: the session to connect to the database with.
+    :kwarg eol: A boolean specifying whether to include information about
+        End Of Life collections or not. Defaults to ``False``.
 
     """
     output = {}
-    pkgs = model.vcs_acls(session=session)
+    pkgs = model.vcs_acls(session=session, eol=eol)
     for pkg in pkgs:
         user = None
         group = None
