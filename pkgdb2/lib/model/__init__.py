@@ -1515,10 +1515,12 @@ def bugzilla(session, name=None):
     return query.all()
 
 
-def vcs_acls(session):
+def vcs_acls(session, eol=False):
     """ Return information for each package to sync with bugzilla.
 
     :arg session: the session to connect to the database with.
+    :kwarg eol: A boolean specifying whether to include information about
+        End Of Life collections or not. Defaults to ``False``.
 
     """
     query = session.query(
@@ -1533,9 +1535,13 @@ def vcs_acls(session):
         PackageListing.collection_id == Collection.id
     ).filter(
         Package.status == 'Approved'
-    ).filter(
-        Collection.status != 'EOL'
-    ).filter(
+    )
+
+    if not eol:
+        query = query.filter(
+            Collection.status != 'EOL')
+
+    query = query.filter(
         PackageListingAcl.acl == 'commit'
     ).filter(
         PackageListingAcl.status == 'Approved'
