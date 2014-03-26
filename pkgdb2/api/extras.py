@@ -139,12 +139,15 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
 
 
 #@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
-def _vcs_acls_cache(out_format='text'):
+def _vcs_acls_cache(out_format='text', eol=False):
     '''Return ACLs for the version control system.
+
     :kwarg out_format: Specify if the output if text or json.
+    :kwarg eol: A boolean specifying whether to include information about
+        End Of Life collections or not. Defaults to ``False``.
 
     '''
-    packages = pkgdblib.vcs_acls(session=SESSION)
+    packages = pkgdblib.vcs_acls(session=SESSION, eol=eol)
     output = []
     if out_format == 'json':
         output = {'packageAcls': {},
@@ -265,7 +268,10 @@ def api_notify():
 @API.route('/vcs')
 def api_vcs():
     '''Return ACLs for the version control system.
+
     :kwarg out_format: Specify if the output if text or json.
+    :kwarg eol: A boolean specifying whether to include information about
+        End Of Life collections or not. Defaults to ``False``.
 
     '''
     intro = """# VCS ACLs
@@ -274,13 +280,15 @@ def api_vcs():
 """
 
     out_format = flask.request.args.get('format', 'text')
+    eol = flask.request.args.get('eol', False)
+
     if out_format not in ('text', 'json'):
         out_format = 'text'
 
     if request_wants_json():
         out_format = 'json'
 
-    acls = _vcs_acls_cache(out_format)
+    acls = _vcs_acls_cache(out_format, eol=eol)
 
     if out_format == 'json':
         return flask.jsonify(acls)
