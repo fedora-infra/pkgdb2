@@ -34,6 +34,22 @@
 {% endautoescape %}
 {% endfor %}
 
+<h2>Extras</h2>
+
+<p>
+  The pkgdb2 api has few other endpoints that are used for very specific
+  tasks such as synchronizing the point of contact and CC list with
+  bugzilla, or synchronizing the ACLs with the version control system (vcs).
+  These endpoints, althought listed here, are not quite meant for public
+  consumption, you may use them, just be precautionous.
+</p>
+
+{% for html in extras %}
+{% autoescape false %}
+{{ html | InsertDiv}}
+{% endautoescape %}
+{% endfor %}
+
 {% endblock %}
 
 {% block jscripts %}

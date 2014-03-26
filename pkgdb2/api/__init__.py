@@ -48,6 +48,7 @@ def get_limit():
 
 from pkgdb2.api import acls
 from pkgdb2.api import collections
+from pkgdb2.api import extras
 from pkgdb2.api import packagers
 from pkgdb2.api import packages
 
@@ -103,6 +104,11 @@ def api():
     api_acl_update = load_doc(acls.api_acl_update)
     api_acl_reassign = load_doc(acls.api_acl_reassign)
 
+    api_extras_bugzilla = load_doc(extras.api_bugzilla)
+    api_extras_critpath = load_doc(extras.api_critpath)
+    api_extras_notify = load_doc(extras.api_notify)
+    api_extras_vcs = load_doc(extras.api_vcs)
+
     return flask.render_template(
         'api.html',
         collections=[
@@ -120,6 +126,10 @@ def api():
         ],
         acls=[
             api_acl_update, api_acl_reassign,
+        ],
+        extras=[
+            api_extras_bugzilla, api_extras_critpath, api_extras_notify,
+            api_extras_vcs
         ]
     )
 
