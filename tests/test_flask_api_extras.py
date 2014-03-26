@@ -271,6 +271,10 @@ guake|pingou
 """
         self.assertEqual(output.data, expected)
 
+        output = self.app.get('/api/vcs/?eol=True')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
         output = self.app.get('/api/vcs/?format=random')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected)
@@ -310,6 +314,10 @@ avail | @provenpackager,pingou,toshio | rpms/fedocal/master
 avail | @provenpackager,@gtk-sig, | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/vcs/?eol=True')
+        self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/vcs/?format=random')
