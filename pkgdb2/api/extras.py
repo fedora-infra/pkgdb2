@@ -180,25 +180,35 @@ def _vcs_acls_cache(out_format='text', eol=False):
 @API.route('/bugzilla/')
 @API.route('/bugzilla')
 def api_bugzilla():
-    '''Return the package attributes used by bugzilla.
+    '''
+Bugzilla information
+--------------------
+    Return the package attributes used by bugzilla.
+
+    ::
+
+        /api/bugzilla
 
     :karg collection: Name of the bugzilla collection to gather data on.
-    :kwarg out_format: Specify if the output if text or json.
+    :kwarg format: Specify if the output if text or json.
 
     Note: The data returned by this function is for the way the current
     Fedora bugzilla is setup as of (2007/6/25).  In the future, bugzilla
     may change to have separate products for each collection-version.
     When that happens we'll have to change what this function returns.
 
-    The returned data looks like this:
+    The returned data looks like this::
 
-    bugzillaAcls[collection][package].attribute
+        bugzillaAcls[collection][package].attribute
+
     attribute is one of:
-        :owner: FAS username for the owner
-        :qacontact: if the package has a special qacontact, their userid
-            is listed here
-        :summary: Short description of the package
-        :cclist: list of FAS userids that are watching the package
+
+    :owner: FAS username for the owner
+    :qacontact: if the package has a special qacontact, their userid
+        is listed here
+    :summary: Short description of the package
+    :cclist: list of FAS userids that are watching the package
+
     '''
 
     name = flask.request.args.get('collection', None)
@@ -230,7 +240,14 @@ def api_bugzilla():
 @API.route('/notify/')
 @API.route('/notify')
 def api_notify():
-    '''List of usernames that should be notified of changes to a package.
+    '''
+Notification information
+------------------------
+    List of usernames that should be notified of changes to a package.
+
+    ::
+
+        /api/notify
 
     For the collections specified we want to retrieve all of the owners,
     watchbugzilla, and watchcommits accounts.
@@ -240,7 +257,7 @@ def api_notify():
         for a single version
     :kwarg eol: Set to True if you want to include end of life
         distributions
-    :kwarg out_format: Specify if the output if text or json.
+    :kwarg format: Specify if the output if text or json.
     '''
 
     name = flask.request.args.get('name', None)
@@ -267,9 +284,16 @@ def api_notify():
 @API.route('/vcs/')
 @API.route('/vcs')
 def api_vcs():
-    '''Return ACLs for the version control system.
+    '''
+Version Control System ACLs
+---------------------------
+    Return ACLs for the version control system.
 
-    :kwarg out_format: Specify if the output if text or json.
+    ::
+
+        /api/vcs
+
+    :kwarg format: Specify if the output if text or json.
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
 
@@ -302,10 +326,17 @@ def api_vcs():
 @API.route('/critpath/')
 @API.route('/critpath')
 def api_critpath():
-    '''Return the list of package marked as critpath for all active release
+    '''
+Critical path packages
+----------------------
+    Return the list of package marked as critpath for all active release
     of fedora.
 
-    :kwarg out_format: Specify if the output if text or json.
+    ::
+
+        /api/critpath
+
+    :kwarg format: Specify if the output if text or json.
 
     '''
 
