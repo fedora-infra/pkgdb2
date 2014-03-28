@@ -215,7 +215,6 @@ class PackageListingtests(Modeltests):
             owner='toshio',
             branchname='F-19',
             dist_tag='.fc19',
-            git_branch_name='f19',
         )
         self.session.add(new_collection)
         self.session.commit()

@@ -112,7 +112,6 @@ class FlaskUiCollectionsTest(Modeltests):
                 'clt_status': '',
                 'branchname': '',
                 'dist_tag': '',
-                'git_branch_name': '',
                 'csrf_token': csrf_token,
             }
 
@@ -141,7 +140,6 @@ class FlaskUiCollectionsTest(Modeltests):
                 'clt_status': 'Active',
                 'branchname': 'f19',
                 'dist_tag': '.fc19',
-                'git_branch_name': 'f19',
                 'kojiname': 'f19',
                 'csrf_token': csrf_token,
             }
@@ -206,7 +204,6 @@ class FlaskUiCollectionsTest(Modeltests):
                 'clt_status': 'Active',
                 'branchname': 'F-17',
                 'dist_tag': '.fc17',
-                'git_branch_name': 'f17',
                 'kojiname': 'f17',
                 'csrf_token': csrf_token,
             }

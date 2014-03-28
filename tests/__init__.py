@@ -156,7 +156,6 @@ def create_collection(session):
         owner='toshio',
         branchname='F-17',
         dist_tag='.fc17',
-        git_branch_name='f17',
     )
     session.add(collection)
 
@@ -167,7 +166,6 @@ def create_collection(session):
         owner='toshio',
         branchname='F-18',
         dist_tag='.fc18',
-        git_branch_name='f18',
     )
     session.add(collection)
 
@@ -178,7 +176,6 @@ def create_collection(session):
         owner='kevin',
         branchname='devel',
         dist_tag='devel',
-        git_branch_name='master',
     )
     session.add(collection)
 
@@ -189,7 +186,6 @@ def create_collection(session):
         owner='kevin',
         branchname='el6',
         dist_tag='.el6',
-        git_branch_name='el6',
     )
     session.add(collection)
 
