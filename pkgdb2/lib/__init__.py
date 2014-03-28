@@ -919,7 +919,6 @@ def add_collection(session, clt_name, clt_version, clt_status,
         owner=user.username,
         branchname=clt_branchname,
         dist_tag=clt_disttag,
-        git_branch_name=clt_gitbranch,
         koji_name=clt_koji_name,
     )
     try:
@@ -985,9 +984,6 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if clt_disttag and clt_disttag != collection.dist_tag:
         collection.dist_tag = clt_disttag
         edited.append('dist_tag')
-    if clt_gitbranch and clt_gitbranch != collection.git_branch_name:
-        collection.git_branch_name = clt_gitbranch
-        edited.append('git_branch_name')
     if clt_koji_name and clt_koji_name != collection.koji_name:
         collection.koji_name = clt_koji_name
         edited.append('koji_name')

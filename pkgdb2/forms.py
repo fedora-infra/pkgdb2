@@ -64,7 +64,6 @@ class AddCollectionForm(wtf.Form):
         'Dist tag',
         [wtforms.validators.Required()]
     )
-    git_branch_name = wtforms.TextField('Git branch name')
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -83,7 +82,6 @@ class AddCollectionForm(wtf.Form):
             self.version.data = collection.version
             self.branchname.data = collection.branchname
             self.dist_tag.data = collection.dist_tag
-            self.git_branch_name.data = collection.git_branch_name
             self.kojiname.data = collection.koji_name
 
             # Set the drop down menu to the current value

@@ -539,7 +539,6 @@ class Collection(BASE):
     owner = sa.Column(sa.String(32), nullable=False)
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
     dist_tag = sa.Column(sa.String(32), unique=True, nullable=False)
-    git_branch_name = sa.Column(sa.Text)
     koji_name = sa.Column(sa.Text)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
@@ -550,15 +549,13 @@ class Collection(BASE):
     )
 
     def __init__(self, name, version, status, owner,
-                 branchname=None, dist_tag=None, git_branch_name=None,
-                 koji_name=None):
+                 branchname=None, dist_tag=None, koji_name=None):
         self.name = name
         self.version = version
         self.status = status
         self.owner = owner
         self.branchname = branchname
         self.dist_tag = dist_tag
-        self.git_branch_name = git_branch_name
         self.koji_name = koji_name
 
     def __repr__(self):
@@ -1526,7 +1523,6 @@ def vcs_acls(session, eol=False):
     query = session.query(
         Package.name,  # 0
         PackageListingAcl.fas_name,  # 1
-        Collection.git_branch_name,  # 2
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(
@@ -1547,7 +1543,6 @@ def vcs_acls(session, eol=False):
         PackageListingAcl.status == 'Approved'
     ).group_by(
         Package.name, PackageListingAcl.fas_name,
-        Collection.git_branch_name,
     ).order_by(
         Package.name
     )

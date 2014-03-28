@@ -115,7 +115,6 @@ def collection_edit(collection):
         clt_status = form.clt_status.data
         clt_branchname = form.branchname.data
         clt_disttag = form.dist_tag.data
-        clt_gitbranch = form.git_branch_name.data
         clt_koji_name = form.kojiname.data
 
         try:
@@ -127,7 +126,6 @@ def collection_edit(collection):
                 clt_status=clt_status,
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
-                clt_gitbranch=clt_gitbranch,
                 clt_koji_name=clt_koji_name,
                 user=flask.g.fas_user,
             )
@@ -165,7 +163,6 @@ def collection_new():
         clt_status = form.clt_status.data
         clt_branchname = form.branchname.data
         clt_disttag = form.dist_tag.data
-        clt_gitbranch = form.git_branch_name.data
         clt_koji_name = form.kojiname.data
 
         try:

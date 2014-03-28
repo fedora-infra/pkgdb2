@@ -62,7 +62,6 @@ New collection
     :arg description: A description of the collection.
     :arg branchname: The short name of the collection (ie: F-18).
     :arg dist_tag: The dist tag used by rpm for this collection (ie: .fc18).
-    :arg git_branch_name: The git branch name for this collection (ie: f18).
     :arg kojiname: the name of the collection in koji.
 
     Sample response:
@@ -95,7 +94,6 @@ New collection
         clt_status = form.clt_status.data
         clt_branchname = form.branchname.data
         clt_disttag = form.dist_tag.data
-        clt_gitbranch = form.git_branch_name.data
         clt_koji_name = form.kojiname.data
 
         try:
@@ -106,7 +104,6 @@ New collection
                 clt_status=clt_status,
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
-                clt_gitbranch=clt_gitbranch,
                 clt_koji_name=clt_koji_name,
                 user=flask.g.fas_user,
             )
