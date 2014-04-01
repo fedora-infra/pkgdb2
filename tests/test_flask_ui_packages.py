@@ -350,11 +350,11 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="message">You are no longer point of contact on '
                 'branch: devel</li>' in output.data)
             output = self.app.get(
-                '/package/guake/F-18/orphan', follow_redirects=True)
+                '/package/guake/f18/orphan', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
-                'branch: F-18</li>' in output.data)
+                'branch: f18</li>' in output.data)
 
         user = FakeFasUser()
         user.username = 'toshio'
@@ -367,20 +367,20 @@ class FlaskUiPackagesTest(Modeltests):
                 'branch: devel</li>' in output.data)
 
             output = self.app.get(
-                '/package/guake/F-18/retire', follow_redirects=True)
+                '/package/guake/f18/retire', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">You are not allowed to retire the '
-                'package: guake on branch F-18.</li>' in output.data)
+                'package: guake on branch f18.</li>' in output.data)
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/package/guake/F-18/retire', follow_redirects=True)
+                '/package/guake/f18/retire', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">This package has been retired on '
-                'branch: F-18</li>' in output.data)
+                'branch: f18</li>' in output.data)
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(

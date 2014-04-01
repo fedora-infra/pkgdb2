@@ -53,7 +53,7 @@ class Collectiontests(Modeltests):
         self.assertEqual("Collection(u'Fedora', u'17', u'Active', "
                          "owner:u'toshio')",
                          collections[1].__repr__())
-        self.assertEqual(collections[2].branchname, 'F-18')
+        self.assertEqual(collections[2].branchname, 'f18')
 
     def test_search(self):
         """ Test the search function of Collection. """
@@ -62,33 +62,33 @@ class Collectiontests(Modeltests):
         collections = model.Collection.search(self.session, 'EPEL%')
         self.assertEqual(len(collections), 0)
 
-        collections = model.Collection.search(self.session, 'F-%', 'Active')
+        collections = model.Collection.search(self.session, 'f%', 'Active')
         self.assertEqual("Collection(u'Fedora', u'17', u'Active', "
                          "owner:u'toshio')",
                          collections[0].__repr__())
 
-        collections = model.Collection.search(self.session, 'F-%')
+        collections = model.Collection.search(self.session, 'f%')
         self.assertEqual(2, len(collections))
 
-        cnt = model.Collection.search(self.session, 'F-%', count=True)
+        cnt = model.Collection.search(self.session, 'f%', count=True)
         self.assertEqual(2, cnt)
 
         collections = model.Collection.search(
             session=self.session,
-            clt_name='F-%',
+            clt_name='f%',
             offset=1)
         self.assertEqual(1, len(collections))
 
         collections = model.Collection.search(
             session=self.session,
-            clt_name='F-%',
+            clt_name='f%',
             limit=1)
         self.assertEqual(1, len(collections))
 
     def test_to_json(self):
         """ Test the to_json function of Collection. """
         create_collection(self.session)
-        collection = model.Collection.by_name(self.session, 'F-18')
+        collection = model.Collection.by_name(self.session, 'f18')
         collection = collection.to_json()
         self.assertEqual(
             set(collection.keys()), set(['branchname', 'version',

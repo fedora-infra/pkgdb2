@@ -154,7 +154,7 @@ def create_collection(session):
         version='17',
         status='Active',
         owner='toshio',
-        branchname='F-17',
+        branchname='f17',
         dist_tag='.fc17',
     )
     session.add(collection)
@@ -164,7 +164,7 @@ def create_collection(session):
         version='18',
         status='Active',
         owner='toshio',
-        branchname='F-18',
+        branchname='f18',
         dist_tag='.fc18',
     )
     session.add(collection)
@@ -239,8 +239,8 @@ def create_package_listing(session):
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
 
-    f17_collec = model.Collection.by_name(session, 'F-17')
-    f18_collec = model.Collection.by_name(session, 'F-18')
+    f17_collec = model.Collection.by_name(session, 'f17')
+    f18_collec = model.Collection.by_name(session, 'f18')
     devel_collec = model.Collection.by_name(session, 'devel')
 
     # Pkg: guake - Collection: F18 - Approved
@@ -318,7 +318,7 @@ def create_package_critpath(session):
     )
     session.add(package)
 
-    f18_collec = model.Collection.by_name(session, 'F-18')
+    f18_collec = model.Collection.by_name(session, 'f18')
     devel_collec = model.Collection.by_name(session, 'devel')
 
     # Pkg: geany - Collection: F18 - Approved
@@ -351,7 +351,7 @@ def create_package_acl(session):
     guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
-    f18_collec = model.Collection.by_name(session, 'F-18')
+    f18_collec = model.Collection.by_name(session, 'f18')
     devel_collec = model.Collection.by_name(session, 'devel')
 
     pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(
@@ -428,8 +428,8 @@ def create_package_acl2(session):
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
 
-    f17_collec = model.Collection.by_name(session, 'F-17')
-    f18_collec = model.Collection.by_name(session, 'F-18')
+    f17_collec = model.Collection.by_name(session, 'f17')
+    f18_collec = model.Collection.by_name(session, 'f18')
     devel_collec = model.Collection.by_name(session, 'devel')
 
     pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(

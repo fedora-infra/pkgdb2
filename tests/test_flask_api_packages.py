@@ -253,7 +253,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -273,7 +273,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -288,7 +288,7 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
             pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
-            self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+            self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
             self.assertEqual(pkg_acl[0].package.name, 'guake')
             self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
             self.assertEqual(pkg_acl[0].status, 'Orphaned')
@@ -332,7 +332,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -353,7 +353,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan a not-orphaned package
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -363,7 +363,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "Package \"guake\" is not orphaned on F-18",
+                    "error": "Package \"guake\" is not orphaned on f18",
                     "output": "notok"
                 }
             )
@@ -371,7 +371,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Orphan the package
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -386,7 +386,7 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
             pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
-            self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+            self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
             self.assertEqual(pkg_acl[0].package.name, 'guake')
             self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
             self.assertEqual(pkg_acl[0].status, 'Orphaned')
@@ -399,7 +399,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan the package for someone else
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -418,7 +418,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan the package
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'pingou',
         }
         with user_set(pkgdb2.APP, user):
@@ -429,7 +429,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "messages": [
-                        "Package guake has been unorphaned on F-18 by pingou",
+                        "Package guake has been unorphaned on f18 by pingou",
                         "Package guake has been unorphaned on devel by pingou"
                     ],
                     "output": "ok"
@@ -437,7 +437,7 @@ class FlaskApiPackagesTest(Modeltests):
             )
 
             pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
-            self.assertEqual(pkg_acl[0].collection.branchname, 'F-18')
+            self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
             self.assertEqual(pkg_acl[0].package.name, 'guake')
             self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
             self.assertEqual(pkg_acl[0].status, 'Approved')
@@ -480,7 +480,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -501,7 +501,7 @@ class FlaskApiPackagesTest(Modeltests):
         # User is not an admin
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -511,7 +511,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to retire the package: "
-                             "guake on branch F-18.",
+                             "guake on branch f18.",
                     "output": "notok"
                 }
 
@@ -521,7 +521,7 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -568,7 +568,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -589,7 +589,7 @@ class FlaskApiPackagesTest(Modeltests):
         # User is not an admin
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -599,7 +599,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to update the status of "
-                             "the package: guake on branch F-18 to "
+                             "the package: guake on branch f18 to "
                              "Approved.",
                     "output": "notok"
                 }
@@ -609,7 +609,7 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         data = {
             'pkgnames': 'guake',
-            'branches': ['F-18', 'devel'],
+            'branches': ['f18', 'devel'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -646,7 +646,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(len(data['packages']), 2)
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(data['packages'][0]['collection']['branchname'],
-                         'F-18')
+                         'f18')
         self.assertEqual(data['packages'][0]['point_of_contact'],
                          'pingou')
         self.assertEqual(data['packages'][0]['package']['name'],
@@ -671,13 +671,13 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['packages'][0]['package']['name'],
                          'guake')
 
-        output = self.app.get('/api/package/?pkgname=guake&branches=F-19')
+        output = self.app.get('/api/package/?pkgname=guake&branches=f19')
         self.assertEqual(output.status_code, 404)
         data = json.loads(output.data)
         self.assertEqual(
             data,
             {
-                "error": "No package found on these branches: F-19",
+                "error": "No package found on these branches: f19",
                 "output": "notok"
             }
         )

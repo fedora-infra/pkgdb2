@@ -63,13 +63,13 @@ class FlaskApiCollectionTest(Modeltests):
         user = FakeFasUser()
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/collection/F-18/status/')
+            output = self.app.post('/api/collection/f18/status/')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUserAdmin()
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/collection/F-18/status/')
+            output = self.app.post('/api/collection/f18/status/')
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
             self.assertEqual(
@@ -84,10 +84,10 @@ class FlaskApiCollectionTest(Modeltests):
                 }
             )
 
-        data = {'branch': 'F-18',
+        data = {'branch': 'f18',
                 'clt_status': 'EOL'}
         with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/collection/F-19/status/', data=data)
+            output = self.app.post('/api/collection/f19/status/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
             self.assertEqual(
@@ -98,26 +98,26 @@ class FlaskApiCollectionTest(Modeltests):
                 }
             )
 
-        data = {'branch': 'F-18',
+        data = {'branch': 'f18',
                 'clt_status': 'EOL'}
         with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/collection/F-18/status', data=data)
+            output = self.app.post('/api/collection/f18/status', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
             self.assertEqual(
                 data,
                 {
                     "output": "notok",
-                    "error": 'Could not find collection "F-18"',
+                    "error": 'Could not find collection "f18"',
                 }
             )
 
         create_collection(self.session)
 
-        data = {'branch': 'F-18',
+        data = {'branch': 'f18',
                 'clt_status': 'EOL'}
         with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/collection/F-18/status', data=data)
+            output = self.app.post('/api/collection/f18/status', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
             self.assertEqual(
@@ -132,16 +132,16 @@ class FlaskApiCollectionTest(Modeltests):
 
     def test_collection_list(self):
         """ Test the api_collection_list function.  """
-        output = self.app.get('/api/collections/F-*')
+        output = self.app.get('/api/collections/f*')
         self.assertEqual(output.status_code, 200)
 
-        output = self.app.get('/api/collections/F-*/')
+        output = self.app.get('/api/collections/f*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output,
                          {"collections": [], "output": "ok"})
 
-        output = self.app.get('/api/collections/F-*/')
+        output = self.app.get('/api/collections/f*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(output,
@@ -158,7 +158,7 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(set(output['collections'][0].keys()),
                          set(['branchname', 'version', 'name', 'status']))
 
-        output = self.app.get('/api/collections/F-*/')
+        output = self.app.get('/api/collections/f*/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(sorted(output.keys()),
@@ -169,7 +169,7 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
         self.assertEqual(output['collections'][0]['version'], '17')
 
-        output = self.app.get('/api/collections/F-*/?clt_status=EOL')
+        output = self.app.get('/api/collections/f*/?clt_status=EOL')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(sorted(output.keys()),

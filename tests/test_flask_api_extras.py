@@ -106,7 +106,7 @@ class FlaskApiExtrasTest(Modeltests):
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
 # Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
 
-Fedora|fedocal|A web-based calendar for Fedora|orphan||pingou,toshio
+Fedora|fedocal|A web-based calendar for Fedora|pingou||pingou,toshio
 Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig||
 Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         self.assertEqual(output.data, expected)
@@ -124,7 +124,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
                 u'Fedora': [
                     {
                         "fedocal": {
-                            "owner": "orphan",
+                            "owner": "pingou",
                             "cclist": {
                                 "groups": [],
                                 "people": ["pingou", 'toshio']
@@ -308,12 +308,12 @@ guake|pingou
         expected = """# VCS ACLs
 # avail|@groups,users|rpms/Package/branch
 
+avail | @provenpackager,pingou,toshio | rpms/fedocal/master
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
-avail | @provenpackager,pingou,toshio | rpms/fedocal/master
 avail | @provenpackager,@gtk-sig, | rpms/geany/master
-avail | @provenpackager,pingou | rpms/guake/f18
-avail | @provenpackager,pingou,spot | rpms/guake/master"""
+avail | @provenpackager,pingou,spot | rpms/guake/master
+avail | @provenpackager,pingou | rpms/guake/f18"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/vcs/?eol=True')
@@ -417,7 +417,7 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
 
         expected = """== devel ==
 * kernel
-== F-18 ==
+== f18 ==
 * kernel
 """
         self.assertEqual(output.data, expected)
@@ -432,7 +432,7 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
 
         expected = {
             u'pkgs': {
-                u'F-18': [
+                u'f18': [
                     u"kernel"
                 ],
                 u'devel': [

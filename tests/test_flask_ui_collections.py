@@ -182,7 +182,7 @@ class FlaskUiCollectionsTest(Modeltests):
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/collection/F-17/edit')
+            output = self.app.get('/collection/f17/edit')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Edit collection</h1>' in output.data)
@@ -192,34 +192,34 @@ class FlaskUiCollectionsTest(Modeltests):
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
-            collections = model.Collection.by_name(self.session, 'F-17')
+            collections = model.Collection.by_name(self.session, 'f17')
             self.assertEqual(
                 "Collection(u'Fedora', u'17', u'Active', owner:u'toshio')",
                 collections.__repr__())
-            self.assertEqual(collections.branchname, 'F-17')
+            self.assertEqual(collections.branchname, 'f17')
 
             data = {
                 'clt_name': 'Fedora',
                 'version': '17',
                 'clt_status': 'Active',
-                'branchname': 'F-17',
+                'branchname': 'f17',
                 'dist_tag': '.fc17',
                 'kojiname': 'f17',
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/collection/F-17/edit', data=data,
+            output = self.app.post('/collection/f17/edit', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Collection &#34;F-17&#34; edited</li>'
+                '<li class="message">Collection &#34;f17&#34; edited</li>'
                 in output.data)
 
-            collections = model.Collection.by_name(self.session, 'F-17')
+            collections = model.Collection.by_name(self.session, 'f17')
             self.assertEqual(
                 "Collection(u'Fedora', u'17', u'Active', owner:u'toshio')",
                 collections.__repr__())
-            self.assertEqual(collections.branchname, 'F-17')
+            self.assertEqual(collections.branchname, 'f17')
 
 
 if __name__ == '__main__':

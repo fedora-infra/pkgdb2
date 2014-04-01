@@ -184,7 +184,7 @@ class FlaskUiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">You are already a co-maintainer on '
-                'F-18</li>' in output.data)
+                'f18</li>' in output.data)
             self.assertFalse(
                 '<li class="message">ACLs updated</li>' in output.data)
 

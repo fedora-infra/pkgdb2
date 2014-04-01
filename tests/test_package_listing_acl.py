@@ -72,7 +72,7 @@ class PackageListingAcltests(Modeltests):
                 'status': u'Approved',
                 'point_of_contact': u'pingou',
                 'collection': {
-                    'branchname': u'F-18',
+                    'branchname': u'f18',
                     'version': u'18',
                     'name': u'Fedora',
                     'status': u'Active',
@@ -116,8 +116,8 @@ class PackageListingAcltests(Modeltests):
             self.session, 'pingou')
         self.assertEqual(7, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
         self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
@@ -125,8 +125,8 @@ class PackageListingAcltests(Modeltests):
             self.session, 'pingou', eol=True)
         self.assertEqual(7, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
         self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
@@ -134,10 +134,10 @@ class PackageListingAcltests(Modeltests):
             self.session, 'pingou', poc=True)
         self.assertEqual(5, len(acls))
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[0].acl, 'commit')
         self.assertEqual(acls[1].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1].acl, 'watchcommits')
         self.assertEqual(acls[2].packagelist.package.name, 'guake')
         self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
@@ -153,7 +153,7 @@ class PackageListingAcltests(Modeltests):
         self.assertEqual(acls[0].packagelist.collection.branchname, 'devel')
         self.assertEqual(acls[0].acl, 'commit')
         self.assertEqual(acls[1].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'F-18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[0].acl, 'commit')
 
         acls = model.PackageListingAcl.get_acl_packager(

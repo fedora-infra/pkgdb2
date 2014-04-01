@@ -121,7 +121,7 @@ class FlaskApiPackagersTest(Modeltests):
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
             output['acls'][0]['packagelist']['collection']['branchname'],
-            'F-18')
+            'f18')
 
         output = self.app.get('/api/packager/acl/?packagername=pingou')
         self.assertEqual(output.status_code, 200)
@@ -140,7 +140,7 @@ class FlaskApiPackagersTest(Modeltests):
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
             output['acls'][0]['packagelist']['collection']['branchname'],
-            'F-18')
+            'f18')
 
         output = self.app.get(
             '/api/packager/acl/?packagername=pingou&acls=commit')
@@ -160,7 +160,7 @@ class FlaskApiPackagersTest(Modeltests):
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
             output['acls'][0]['packagelist']['collection']['branchname'],
-            'F-18')
+            'f18')
 
         output = self.app.get(
             '/api/packager/acl/?packagername=pingou&acls=commits')
@@ -202,7 +202,7 @@ class FlaskApiPackagersTest(Modeltests):
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
             output['acls'][0]['packagelist']['collection']['branchname'],
-            'F-18')
+            'f18')
 
         output = self.app.get(
             '/api/packager/acl/?packagername=pingou&acls=commit&poc=False')
@@ -295,45 +295,45 @@ class FlaskApiPackagersTest(Modeltests):
         output = self.app.get('/api/packager/stats/pingou/')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
-        self.assertEqual(output.keys(),
-                         ['F-18', 'output', 'devel', 'el6', 'F-17'])
+        self.assertEqual(sorted(output.keys()),
+                         ['devel', 'el6', 'f17', 'f18', 'output'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['el6']['point of contact'], 0)
         self.assertEqual(output['el6']['co-maintainer'], 0)
-        self.assertEqual(output['F-17']['point of contact'], 0)
-        self.assertEqual(output['F-17']['co-maintainer'], 0)
-        self.assertEqual(output['F-18']['point of contact'], 1)
-        self.assertEqual(output['F-18']['co-maintainer'], 0)
+        self.assertEqual(output['f17']['point of contact'], 0)
+        self.assertEqual(output['f17']['co-maintainer'], 0)
+        self.assertEqual(output['f18']['point of contact'], 1)
+        self.assertEqual(output['f18']['co-maintainer'], 0)
         self.assertEqual(output['devel']['point of contact'], 1)
         self.assertEqual(output['devel']['co-maintainer'], 0)
 
         output = self.app.get('/api/packager/stats/?packagername=pingou')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
-        self.assertEqual(output.keys(),
-                         ['F-18', 'output', 'devel', 'el6', 'F-17'])
+        self.assertEqual(sorted(output.keys()),
+                         ['devel', 'el6', 'f17', 'f18', 'output'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['el6']['point of contact'], 0)
         self.assertEqual(output['el6']['co-maintainer'], 0)
-        self.assertEqual(output['F-17']['point of contact'], 0)
-        self.assertEqual(output['F-17']['co-maintainer'], 0)
-        self.assertEqual(output['F-18']['point of contact'], 1)
-        self.assertEqual(output['F-18']['co-maintainer'], 0)
+        self.assertEqual(output['f17']['point of contact'], 0)
+        self.assertEqual(output['f17']['co-maintainer'], 0)
+        self.assertEqual(output['f18']['point of contact'], 1)
+        self.assertEqual(output['f18']['co-maintainer'], 0)
         self.assertEqual(output['devel']['point of contact'], 1)
         self.assertEqual(output['devel']['co-maintainer'], 0)
 
         output = self.app.get('/api/packager/stats/?packagername=random')
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
-        self.assertEqual(output.keys(),
-                         ['F-18', 'output', 'devel', 'el6', 'F-17'])
+        self.assertEqual(sorted(output.keys()),
+                         ['devel', 'el6', 'f17', 'f18', 'output'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['el6']['point of contact'], 0)
         self.assertEqual(output['el6']['co-maintainer'], 0)
-        self.assertEqual(output['F-17']['point of contact'], 0)
-        self.assertEqual(output['F-17']['co-maintainer'], 0)
-        self.assertEqual(output['F-18']['point of contact'], 0)
-        self.assertEqual(output['F-18']['co-maintainer'], 0)
+        self.assertEqual(output['f17']['point of contact'], 0)
+        self.assertEqual(output['f17']['co-maintainer'], 0)
+        self.assertEqual(output['f18']['point of contact'], 0)
+        self.assertEqual(output['f18']['co-maintainer'], 0)
         self.assertEqual(output['devel']['point of contact'], 0)
         self.assertEqual(output['devel']['co-maintainer'], 0)
 

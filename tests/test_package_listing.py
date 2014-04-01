@@ -64,7 +64,7 @@ class PackageListingtests(Modeltests):
     def test_search_listing(self):
         """ Test the search function of PackageListing. """
         create_package_listing(self.session)
-        collection = model.Collection.by_name(self.session, 'F-18')
+        collection = model.Collection.by_name(self.session, 'f18')
         packages = model.PackageListing.search(self.session,
                                                pkg_name='g%',
                                                clt_id=collection.id,
@@ -181,12 +181,12 @@ class PackageListingtests(Modeltests):
         """ Test the by_collectionid method of PackageListing. """
         create_package_acl(self.session)
 
-        # Collection 2 == F-18
+        # Collection 2 == f18
         pkg_list = model.PackageListing.by_collectionid(self.session, 2)
         self.assertEqual(len(pkg_list), 3)
-        self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
-        self.assertEqual(pkg_list[1].collection.branchname, 'F-18')
-        self.assertEqual(pkg_list[2].collection.branchname, 'F-18')
+        self.assertEqual(pkg_list[0].collection.branchname, 'f18')
+        self.assertEqual(pkg_list[1].collection.branchname, 'f18')
+        self.assertEqual(pkg_list[2].collection.branchname, 'f18')
 
         # Collection 3 == devel
         pkg_list = model.PackageListing.by_collectionid(self.session, 3)
@@ -202,7 +202,7 @@ class PackageListingtests(Modeltests):
         pkg_list = model.PackageListing.by_package_id(
             self.session, pkg.id)
         self.assertEqual(len(pkg_list), 2)
-        self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_list[0].collection.branchname, 'f18')
         self.assertEqual(len(pkg_list[0].acls), 2)
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
         self.assertEqual(len(pkg_list[1].acls), 4)
@@ -213,22 +213,22 @@ class PackageListingtests(Modeltests):
             version='19',
             status='Active',
             owner='toshio',
-            branchname='F-19',
+            branchname='f19',
             dist_tag='.fc19',
         )
         self.session.add(new_collection)
         self.session.commit()
 
-        # Branch guake from devel to F-19
+        # Branch guake from devel to f19
         pkg_list[1].branch(self.session, new_collection)
 
         pkg_list = model.PackageListing.by_package_id(
             self.session, pkg.id)
         self.assertEqual(len(pkg_list), 3)
-        self.assertEqual(pkg_list[0].collection.branchname, 'F-18')
+        self.assertEqual(pkg_list[0].collection.branchname, 'f18')
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
         self.assertEqual(len(pkg_list[1].acls), 4)
-        self.assertEqual(pkg_list[2].collection.branchname, 'F-19')
+        self.assertEqual(pkg_list[2].collection.branchname, 'f19')
         self.assertEqual(len(pkg_list[2].acls), 4)
 
     def test_get_critpath_packages(self):
@@ -249,7 +249,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual(
             pkg_list[0].point_of_contact, "kernel-maint")
         self.assertEqual(
-            pkg_list[0].collection.branchname, "F-18")
+            pkg_list[0].collection.branchname, "f18")
         self.assertEqual(
             pkg_list[1].point_of_contact, "group::kernel-maint")
         self.assertEqual(
