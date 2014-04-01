@@ -870,7 +870,6 @@ class PkgdbLibtests(Modeltests):
                           clt_status='Active',
                           clt_branchname='F-19',
                           clt_disttag='.fc19',
-                          clt_gitbranch='f19',
                           clt_koji_name='f19',
                           user=FakeFasUser(),
                           )
@@ -882,7 +881,6 @@ class PkgdbLibtests(Modeltests):
                                 clt_status='Active',
                                 clt_branchname='F-19',
                                 clt_disttag='.fc19',
-                                clt_gitbranch='f19',
                                 clt_koji_name='f19',
                                 user=FakeFasUserAdmin(),
                                 )
@@ -1138,7 +1136,6 @@ class PkgdbLibtests(Modeltests):
             clt_status='EOL',
             clt_branchname='f18_b',
             clt_disttag='fc18',
-            clt_gitbranch='F-18',
             user=FakeFasUserAdmin(),
             )
 

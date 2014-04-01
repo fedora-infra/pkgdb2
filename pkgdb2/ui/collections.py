@@ -173,7 +173,6 @@ def collection_new():
                 clt_status=clt_status,
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
-                clt_gitbranch=clt_gitbranch,
                 clt_koji_name=clt_koji_name,
                 user=flask.g.fas_user,
             )

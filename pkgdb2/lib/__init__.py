@@ -881,8 +881,7 @@ def get_package_watch(session, packager, branch=None, pkg_status=None):
 
 
 def add_collection(session, clt_name, clt_version, clt_status,
-                   clt_branchname, clt_disttag, clt_gitbranch,
-                   clt_koji_name, user):
+                   clt_branchname, clt_disttag, clt_koji_name, user):
     """ Add a new collection to the database.
 
     This method only flushes the new object, nothing is committed to the
@@ -894,7 +893,6 @@ def add_collection(session, clt_name, clt_version, clt_status,
     :kwarg clt_status: the status of the collection.
     :kwarg clt_branchname: the branchname of the collection.
     :kwarg clt_disttag: the dist tag of the collection.
-    :kwarg clt_gitbranch: the git branch name of the collection.
     :kward clt_koji_name: the name of the collection in koji.
     :kwarg user: The user performing the update.
     :returns: a message informing that the collection was successfully
@@ -936,7 +934,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
 def edit_collection(session, collection, clt_name=None, clt_version=None,
                     clt_status=None, clt_branchname=None, clt_disttag=None,
-                    clt_gitbranch=None, clt_koji_name=None, user=None):
+                    clt_koji_name=None, user=None):
     """ Edit a specified collection
 
     This method only flushes the new object, nothing is committed to the
@@ -949,7 +947,6 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     :kwarg clt_status: the new status of the collection.
     :kwarg clt_branchname: the new branchname of the collection.
     :kwarg clt_disttag: the new dist tag of the collection.
-    :kwarg clt_gitbranch: the new git branch name of the collection.
     :kward clt_koji_name: the name of the collection in koji.
     :kwarg user: The user performing the update.
     :returns: a message informing that the collection was successfully
