@@ -308,11 +308,11 @@ guake|pingou
         expected = """# VCS ACLs
 # avail|@groups,users|rpms/Package/branch
 
-avail | @provenpackager,pingou,toshio | rpms/fedocal/master
+avail | @provenpackager,pingou,toshio | rpms/fedocal/devel
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
-avail | @provenpackager,@gtk-sig, | rpms/geany/master
-avail | @provenpackager,pingou,spot | rpms/guake/master
+avail | @provenpackager,@gtk-sig, | rpms/geany/devel
+avail | @provenpackager,pingou,spot | rpms/guake/devel
 avail | @provenpackager,pingou | rpms/guake/f18"""
         self.assertEqual(output.data, expected)
 
@@ -337,7 +337,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
                             u'people': [u'pingou']
                         }
                     },
-                    u'master': {
+                    u'devel': {
                         u'commit': {
                             u'groups': [u'provenpackager'],
                             u'people': [u'pingou', u'spot']
@@ -345,7 +345,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
                     }
                 },
                 u'geany': {
-                    u'master': {
+                    u'devel': {
                         u'commit': {
                             u'groups': [u'provenpackager', u'gtk-sig'],
                             u'people': []
@@ -359,7 +359,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
                             "people": ["pingou"]
                         }
                     },
-                    "master": {
+                    "devel": {
                         "commit": {
                             "groups": ["provenpackager"],
                             "people": ["pingou", "toshio"]
