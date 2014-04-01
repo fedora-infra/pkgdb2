@@ -1523,6 +1523,7 @@ def vcs_acls(session, eol=False):
     query = session.query(
         Package.name,  # 0
         PackageListingAcl.fas_name,  # 1
+        Collection.branchname,  # 2
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(
@@ -1543,6 +1544,7 @@ def vcs_acls(session, eol=False):
         PackageListingAcl.status == 'Approved'
     ).group_by(
         Package.name, PackageListingAcl.fas_name,
+        Collection.branchname,
     ).order_by(
         Package.name
     )
