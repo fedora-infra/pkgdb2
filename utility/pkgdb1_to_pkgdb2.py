@@ -139,7 +139,7 @@ def convert_collections(pkg1_sess, pkg2_sess):
             version=collect.version,
             status=STATUS[collect.statuscode],
             owner=collect.owner,
-            branchname=branch.branchname,
+            branchname=branch.gitbranchname or branch.branchname,
             dist_tag=branch.disttag,
             koji_name=collect.koji_name,
         )
