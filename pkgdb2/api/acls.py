@@ -29,8 +29,6 @@ API for ACL management.
 import itertools
 import flask
 
-from sqlalchemy.orm.exc import NoResultFound
-
 import pkgdb2
 import pkgdb2.forms as forms
 import pkgdb2.lib as pkgdblib
