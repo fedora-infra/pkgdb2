@@ -37,7 +37,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb2
 from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, create_package_acl,
-                    create_package_acl2, user_set)
+                   create_package_acl2, user_set)
 
 
 class FlaskApiPackagersTest(Modeltests):

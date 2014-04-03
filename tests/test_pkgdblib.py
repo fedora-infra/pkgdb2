@@ -236,7 +236,6 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'unknown')
         self.assertEqual(pkg_acl, [])
 
-
     def test_set_acl_package(self):
         """ Test the set_acl_package function. """
         self.test_add_package()
