@@ -124,15 +124,14 @@ def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
         version=version)
     output = []
     if out_format == 'json':
-        output = {'packages': [],
+        output = {'packages': {},
                   'eol': eol,
                   'name': name,
                   'version': version,
                   'title': 'Fedora Package Database -- Notification List'}
     for package in sorted(packages):
         if out_format == 'json':
-            output['packages'].append(
-                {package: packages[package].split(',')})
+            output['packages'][package] = packages[package].split(',')
         else:
             output.append('%s|%s\n' % (package, packages[package]))
     return output
