@@ -193,7 +193,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         expected = {
-            u'packages': [],
+            u'packages': {},
             u'title': u'Fedora Package Database -- Notification List',
             u'name': None,
             u'version': None,
@@ -233,10 +233,10 @@ guake|pingou
 
         expected = {
             u'title': u'Fedora Package Database -- Notification List',
-            u'packages': [
-                {u'geany': [u'group::gtk-sig']},
-                {u'guake': [u'pingou']},
-            ],
+            u'packages': {
+                'geany': [u'group::gtk-sig'],
+                'guake': [u'pingou'],
+            },
             u'name': None,
             u'version': None,
             u'eol': False
