@@ -1419,7 +1419,7 @@ class Log(BASE):
         session.flush()
 
 
-def notify(session, eol=False, name=None, version=None):
+def notify(session, eol=False, name=None, version=None, acls=None):
     """ Return the user that should be notify for each package.
 
     :arg session: the session to connect to the database with.
@@ -1427,8 +1427,22 @@ def notify(session, eol=False, name=None, version=None):
         Of Life releases or not.
     :kwarg name: restricts the output to a specific collection name.
     :kwarg version: restricts the output to a specific collection version.
+    :kwarg acls: a list of ACLs to filter the package/user to retrieve.
+        If no acls is specified it defaults to
+        ``['watchcommits', 'watchbugzilla', 'commit']`` which means that it
+        will return any person having one of these three acls for each
+        package in the database.
+        If the acls specified is ``all`` then all ACLs are used.
 
     """
+
+    if acls is None:
+        acls = ['watchcommits', 'watchbugzilla', 'commit']
+    elif acls == 'all':
+        acls = ['watchcommits', 'watchbugzilla', 'commit', 'approveacl']
+    elif isinstance(acls, basestring):
+        acls = [acls]
+
     query = session.query(
         Package.name,
         PackageListingAcl.fas_name
@@ -1446,8 +1460,7 @@ def notify(session, eol=False, name=None, version=None):
     ).filter(
         PackageListing.point_of_contact != 'orphan'
     ).filter(
-        PackageListingAcl.acl.in_(
-            ['watchcommits', 'watchbugzilla', 'commit'])
+        PackageListingAcl.acl.in_(acls)
     ).filter(
         PackageListingAcl.status == 'Approved'
     ).group_by(
