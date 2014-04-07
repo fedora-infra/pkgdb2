@@ -122,7 +122,8 @@ def _bz_notify_cache(
         session=SESSION,
         eol=eol,
         name=name,
-        version=version)
+        version=version,
+        acls=acls)
     output = []
     if out_format == 'json':
         output = {'packages': {},
