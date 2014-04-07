@@ -258,6 +258,89 @@ guake|pingou
 """
         self.assertEqual(output.data, expected)
 
+    def test_api_notify_all_empty(self):
+        """ Test the api_notify_all function with an empty database. """
+
+        # Empty DB
+        output = self.app.get('/api/notify/all')
+        self.assertEqual(output.status_code, 200)
+
+        expected = ""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/notify/all?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/notify/all?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        expected = {
+            u'packages': {},
+            u'title': u'Fedora Package Database -- Notification List',
+            u'name': None,
+            u'version': None,
+            u'eol': False
+        }
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/notify/all',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+    def test_api_notify_all_filled(self):
+        """ Test the api_notify_all function with a filled database. """
+        # Filled DB
+        create_package_acl(self.session)
+
+        output = self.app.get('/api/notify/all')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """geany|group::gtk-sig
+guake|pingou
+"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/notify/all?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/notify/all?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            u'title': u'Fedora Package Database -- Notification List',
+            u'packages': {
+                'geany': [u'group::gtk-sig'],
+                'guake': [u'pingou'],
+            },
+            u'name': None,
+            u'version': None,
+            u'eol': False
+        }
+        self.assertEqual(data, expected)
+
+        output = self.app.get('/api/notify/all?name=Fedora')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """geany|group::gtk-sig
+guake|pingou
+"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/notify/all?name=Fedora&version=18')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """guake|pingou
+"""
+        self.assertEqual(output.data, expected)
+
     def test_api_vcs_empty(self):
         """ Test the api_vcs function with an empty database. """
 
