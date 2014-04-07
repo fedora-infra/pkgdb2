@@ -281,6 +281,50 @@ Notification information
         )
 
 
+@API.route('/notify/all/')
+@API.route('/notify/all')
+def api_notify_all():
+    '''
+Notification information
+------------------------
+    List of usernames that should be notified of changes to a package.
+
+    ::
+
+        /api/notify/all
+
+    For the collections specified we want to retrieve all of the users,
+    having at least one ACL for each package.
+
+    :kwarg name: Set to a collection name to filter the results for that
+    :kwarg version: Set to a collection version to further filter results
+        for a single version
+    :kwarg eol: Set to True if you want to include end of life
+        distributions
+    :kwarg format: Specify if the output if text or json.
+    '''
+
+    name = flask.request.args.get('name', None)
+    version = flask.request.args.get('version', None)
+    eol = flask.request.args.get('eol', False)
+    out_format = flask.request.args.get('format', 'text')
+    if out_format not in ('text', 'json'):
+        out_format = 'text'
+
+    if request_wants_json():
+        out_format = 'json'
+
+    output = _bz_notify_cache(name, version, eol, out_format, acls='all')
+
+    if out_format == 'json':
+        return flask.jsonify(output)
+    else:
+        return flask.Response(
+            output,
+            content_type="text/plain;charset=UTF-8"
+        )
+
+
 @API.route('/vcs/')
 @API.route('/vcs')
 def api_vcs():
