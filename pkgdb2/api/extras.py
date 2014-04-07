@@ -104,7 +104,8 @@ def _bz_acls_cached(name=None, out_format='text'):
 
 
 #@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
-def _bz_notify_cache(name=None, version=None, eol=False, out_format='text'):
+def _bz_notify_cache(
+        name=None, version=None, eol=False, out_format='text', acls=None):
     '''List of usernames that should be notified of changes to a package.
 
     For the collections specified we want to retrieve all of the owners,
