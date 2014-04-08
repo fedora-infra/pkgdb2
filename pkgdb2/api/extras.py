@@ -244,16 +244,14 @@ def api_notify():
     '''
 Notification information
 ------------------------
-    List of usernames that have watchbugzilla, watchcommits or commit ACL
-    for each package.
+    List of usernames that have commit or approveacls ACL for each package.
 
     ::
 
         /api/notify
 
     For the collections specified retrieve all of the users having at least
-    one of the following ACLs for each package: watchbugzilla, watchcommits,
-    commit.
+    one of the following ACLs for each package: commit, approveacls.
 
     :kwarg name: Set to a collection name to filter the results for that
     :kwarg version: Set to a collection version to further filter results
