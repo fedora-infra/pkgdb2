@@ -273,7 +273,8 @@ Notification information
     if request_wants_json():
         out_format = 'json'
 
-    output = _bz_notify_cache(name, version, eol, out_format)
+    output = _bz_notify_cache(
+        name, version, eol, out_format, acls=['commit', 'approveacls'])
 
     if out_format == 'json':
         return flask.jsonify(output)
