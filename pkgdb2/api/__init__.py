@@ -107,6 +107,7 @@ def api():
     api_extras_bugzilla = load_doc(extras.api_bugzilla)
     api_extras_critpath = load_doc(extras.api_critpath)
     api_extras_notify = load_doc(extras.api_notify)
+    api_extras_notify_all = load_doc(extras.api_notify_all)
     api_extras_vcs = load_doc(extras.api_vcs)
 
     return flask.render_template(
@@ -128,7 +129,8 @@ def api():
             api_acl_update, api_acl_reassign,
         ],
         extras=[
-            api_extras_bugzilla, api_extras_critpath, api_extras_notify,
+            api_extras_bugzilla, api_extras_critpath,
+            api_extras_notify, api_extras_notify_all,
             api_extras_vcs
         ]
     )
