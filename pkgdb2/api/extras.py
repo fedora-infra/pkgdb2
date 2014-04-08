@@ -287,8 +287,8 @@ Notification information
 @API.route('/notify/all')
 def api_notify_all():
     '''
-Notification information
-------------------------
+Notification information 2
+--------------------------
     List of usernames that should be notified of changes to a package.
 
     ::
