@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        0.5
+Version:        0.6
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -94,6 +94,19 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_createdb.py
 %{python_sitelib}/%{name}*.egg-info
 
 %changelog
+* Tue Apr 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6-1
+- Update to 0.6
+- Update the api endpoint /api/notify to list only people with commit and
+  approveacls ACL
+- Fix the backward compatibility for this endpoint
+- Add api endpoint /api/notify/all to list all people having at least one ACLs
+  for each package
+- Change the branchname format from F-x to fx
+- Getride of the git_branch_name option in the collection table
+- Add `eol` argument in the api endpoint /api/vcs use to include as well data
+  for eol'd release
+- Document the extras api endpoints in the api documentation
+
 * Tue Mar 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.5-1
 - Update to 0.5
 - Add support for the ``poc`` argument in the packager endpoint of the API
