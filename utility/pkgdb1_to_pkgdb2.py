@@ -244,7 +244,7 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
             pkg2_sess.add(new_pkglistacl)
             pkg2_sess.commit()
         except sqlalchemy.exc.IntegrityError, err:
-            #print err
+            # print err
             pkg2_sess.rollback()
         cnt += 1
         pbar.update(cnt)
