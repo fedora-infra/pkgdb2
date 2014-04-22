@@ -28,6 +28,9 @@ specified collection.
 import argparse
 import os
 
+from sqlalchemy.exc import SQLAlchemyError
+
+
 if 'PKGDB2_CONFIG' not in os.environ \
         and os.path.exists('/etc/pkgdb2/pkgdb2.cfg'):
     print 'Using configuration file `/etc/pkgdb2/pkgdb2.cfg`'
@@ -111,6 +114,12 @@ def main():
             user=user,
         )
     except pkgdb2.lib.PkgdbException, err:
+        print err
+        return 1
+
+    try:
+        pkgdb2.SESSION.commit()
+    except SQLAlchemyError. err:
         print err
         return 1
 
