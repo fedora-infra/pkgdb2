@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        0.6
+Version:        0.7
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -97,7 +97,15 @@ install -m 644 pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_branch
 %{python_sitelib}/pkgdb2/
 %{python_sitelib}/%{name}*.egg-info
 
+
 %changelog
+* Tue Apr 22 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.7-1
+- Update to 0.7
+- Distinguish the two notify api endpoint
+- Add script to do branching in pkgdb2 (from one collection to another)
+- Fix the /api/bugzilla json output to be fully backward compatible
+- Install that script in /usr/share/pkgdb2
+
 * Tue Apr 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.6-1
 - Update to 0.6
 - Update the api endpoint /api/notify to list only people with commit and
