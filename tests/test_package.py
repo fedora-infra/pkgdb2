@@ -61,9 +61,10 @@ class Packagetests(Modeltests):
         create_package(self.session)
         package = model.Package.by_name(self.session, 'guake')
         package = package.to_json()
-        self.assertEqual(set(package.keys()), set(['status', 'upstream_url',
-                         'name', 'summary', 'acls', 'creation_date',
-                         'review_url', 'description']))
+        self.assertEqual(
+            set(package.keys()),
+            set(['status', 'upstream_url', 'name', 'summary', 'acls',
+                 'creation_date', 'review_url', 'description']))
 
     def test_search(self):
         """ Test the search function of Package. """
