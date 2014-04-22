@@ -85,8 +85,8 @@ def _bz_acls_cached(name=None, out_format='text'):
                 if poc.startswith('group::'):
                     poc = poc.replace('group::', '@')
                 if not clt in output['bugzillaAcls']:
-                    output['bugzillaAcls'][clt] = []
-                output['bugzillaAcls'][clt].append({pkg: {
+                    output['bugzillaAcls'][clt] = {}
+                output['bugzillaAcls'][clt][pkg] = {
                     'owner': poc,
                     'cclist': {
                         'groups': group,
@@ -94,7 +94,7 @@ def _bz_acls_cached(name=None, out_format='text'):
                     },
                     'qacontact': None,
                     'summary': packages[clt][pkg]['summary']
-                }})
+                }
             else:
                 output.append(
                     '%(collection)s|%(name)s|%(summary)s|%(poc)s|%(qa)s'
