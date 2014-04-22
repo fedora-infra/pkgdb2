@@ -45,8 +45,6 @@ except ImportError:
         0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
     import pkgdb2
 
-print pkgdb2.APP.config.get('DB_URL')
-
 import pkgdb2.lib
 
 
