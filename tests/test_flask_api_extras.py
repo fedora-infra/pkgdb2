@@ -121,44 +121,38 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
 
         expected = {
             u'bugzillaAcls': {
-                u'Fedora': [
-                    {
-                        "fedocal": {
-                            "owner": "pingou",
-                            "cclist": {
-                                "groups": [],
-                                "people": ["pingou", 'toshio']
-                            },
-                            "qacontact": None,
-                            "summary": "A web-based calendar for Fedora"
-                        }
+                'Fedora': {
+                    "fedocal": {
+                        "owner": "pingou",
+                        "cclist": {
+                            "groups": [],
+                            "people": ["pingou", 'toshio']
+                        },
+                        "qacontact": None,
+                        "summary": "A web-based calendar for Fedora"
                     },
-                    {
-                        u'geany': {
-                            u'owner': u'@gtk-sig',
-                            u'cclist': {
-                                u'groups': [],
-                                u'people': []
-                            },
-                            u'qacontact': None,
-                            u'summary': u'A fast and lightweight IDE using '
-                            'GTK2'
-                        }
+                    'geany': {
+                        'owner': '@gtk-sig',
+                        'cclist': {
+                            'groups': [],
+                            'people': []
+                        },
+                        'qacontact': None,
+                        'summary': 'A fast and lightweight IDE using '
+                        'GTK2'
                     },
-                    {
-                        u'guake': {
-                            u'owner': u'pingou',
-                            u'cclist': {
-                                u'groups': [],
-                                u'people': [u'spot']
-                            },
-                            u'qacontact': None,
-                            u'summary': u'Top down terminal for GNOME'
-                        }
-                    },
-                ]
+                    'guake': {
+                        'owner': 'pingou',
+                        'cclist': {
+                            'groups': [],
+                            'people': ['spot']
+                        },
+                        'qacontact': None,
+                        'summary': 'Top down terminal for GNOME'
+                    }
+                }
             },
-            u'title': u'Fedora Package Database -- Bugzilla ACLs'
+            'title': 'Fedora Package Database -- Bugzilla ACLs'
         }
 
         self.assertEqual(data, expected)
