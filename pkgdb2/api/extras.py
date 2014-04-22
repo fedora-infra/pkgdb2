@@ -84,7 +84,7 @@ def _bz_acls_cached(name=None, out_format='text'):
                 poc = packages[clt][pkg]['poc']
                 if poc.startswith('group::'):
                     poc = poc.replace('group::', '@')
-                if not clt in output['bugzillaAcls']:
+                if clt not in output['bugzillaAcls']:
                     output['bugzillaAcls'][clt] = {}
                 output['bugzillaAcls'][clt][pkg] = {
                     'owner': poc,
@@ -156,7 +156,7 @@ def _vcs_acls_cache(out_format='text', eol=False):
     for package in sorted(packages):
         for branch in sorted(packages[package]):
             if out_format == 'json':
-                if not package in output['packageAcls']:
+                if package not in output['packageAcls']:
                     output['packageAcls'][package] = {}
                 groups = []
                 if packages[package][branch]['group']:

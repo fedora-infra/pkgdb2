@@ -411,7 +411,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     # Is current PoC a group?
     if pkglisting.point_of_contact.startswith('group::'):
         group = pkglisting.point_of_contact.split('group::')[1]
-        if not group in user.groups:
+        if group not in user.groups:
             raise PkgdbException(
                 'You are not part of the group "%s", you are not allowed to'
                 ' change the point of contact.' % group)
@@ -1306,7 +1306,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
 
     pkg_listing = get_acl_package(session, pkg_name, pkg_branch)[0]
 
-    if not pkg_listing.status in ('Orphaned', 'Retired'):
+    if pkg_listing.status not in ('Orphaned', 'Retired'):
         raise PkgdbException(
             'Package "%s" is not orphaned on %s' % (pkg_name, pkg_branch))
 

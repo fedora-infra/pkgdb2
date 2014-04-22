@@ -135,7 +135,7 @@ def comaintain_package(package):
     '''
     # This is really wearing belt and suspenders, the decorator above
     # should take care of this
-    if not 'packager' in flask.g.fas_user.groups:  # pragma: no cover
+    if 'packager' not in flask.g.fas_user.groups:  # pragma: no cover
         flask.flash(
             'You must be a packager to apply to be a comaintainer',
             'errors')

@@ -805,7 +805,7 @@ List packages
         output['error'] = str(err)
         httpcode = 500
 
-    if not 'page_total' in output:
+    if 'page_total' not in output:
         output['page_total'] = 1
 
     jsonout = flask.jsonify(output)

@@ -1315,7 +1315,7 @@ class Package(BASE):
         _seen.append(cls)
 
         # Protect against infinite recursion
-        if acls and not PackageListing in _seen:
+        if acls and PackageListing not in _seen:
             if isinstance(collection, basestring):
                 collection = [collection]
             result['acls'] = []
