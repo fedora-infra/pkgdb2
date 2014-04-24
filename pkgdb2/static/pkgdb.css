@@ -194,6 +194,12 @@ a.fas {
 .inline h1 {
     display: inline-block;
 }
+
 .inline span {
     display: inline-block;
+}
+
+#options input[type="submit"][disabled] {
+    color: #8795a8;
+    cursor: default;
 }
