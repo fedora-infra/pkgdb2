@@ -185,8 +185,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "The point of contact of this package is not "
-                             "in the packager group",
+                    "error": "User \"mclasen\" is not in the packager group",
                     "output": "notok"
                 }
             )

@@ -216,9 +216,8 @@ class FlaskUiPackagesTest(Modeltests):
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">The point of contact of this package '
-                'is not in the packager group</li>'
-                in output.data)
+                'class="error">User &#34;limb&#34; is not in the packager '
+                'group</' in output.data)
 
         mock_func.get_packagers.return_value = ['spot']
         mock_func.log.return_value = ''

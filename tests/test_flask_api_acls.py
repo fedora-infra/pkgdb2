@@ -171,8 +171,7 @@ class FlaskApiAclsTest(Modeltests):
         user = FakeFasUser()
         with user_set(APP, user):
             exp = {
-                "error": "The point of contact of this package is not in "
-                         "the packager group",
+                "error": "User \"toshio\" is not in the packager group",
                 "output": "notok"
             }
             output = self.app.post('/api/package/acl/reassign/', data=data)
