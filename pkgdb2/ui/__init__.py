@@ -36,7 +36,7 @@ UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
 
 @UI.context_processor
 def inject_is_admin():
-    """ Inject whether the user is a nuancier admin or not in every page
+    """ Inject whether the user is a pkgdb2 admin or not in every page
     (every template).
     """
     return dict(is_admin=is_pkgdb_admin(flask.g.fas_user),
