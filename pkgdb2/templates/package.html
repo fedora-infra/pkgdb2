@@ -11,26 +11,28 @@
     <li>
         <a href="{{ url_for('.watch_package',
                  package=package.name) }}">
-            <input type="submit" value="Watch package"/>
+            <input type="submit" value="Watch package"
+                {% if has_watch %} disabled {% endif %} />
         </a>
     </li>
     <li>
         <a href="{{ url_for('.comaintain_package',
                  package=package.name) }}">
-            <input type="submit" value="Apply for co-maintainer"/>
+            <input type="submit" value="Apply for co-maintainer"
+                {% if has_commit %} disabled {% endif %} />
         </a>
     </li>
     <li>
         <a href="{{ url_for('.request_acl',
                  package=package.name) }}">
-            <input type="submit" value="Request ACLs"/>
+            <input type="submit" value="Request ACLs" />
         </a>
     </li>
     {% if is_admin or is_poc %}
     <li>
         <a href="{{ url_for('.package_give',
                  package=package.name) }}">
-            <input type="submit" value="Give package"/>
+            <input type="submit" value="Give package" />
         </a>
     </li>
     {% endif %}
