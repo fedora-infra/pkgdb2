@@ -34,6 +34,15 @@
     </li>
     {% if is_admin or is_poc %}
     <li>
+        <a href="{{ url_for('.package_give_acls',
+                 package=package.name) }}"
+                 title="Give ACLs to someone else">
+            <input type="submit" value="Give ACLs" />
+        </a>
+    </li>
+    {% endif %}
+    {% if is_admin or is_poc %}
+    <li>
         <a href="{{ url_for('.package_give',
                  package=package.name) }}"
                  title="Give the Point of Contact attribute to someone else">

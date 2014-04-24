@@ -92,6 +92,59 @@ def request_acl(package):
     )
 
 
+@UI.route('/acl/<package>/give/', methods=('GET', 'POST'))
+@fas_login_required
+def package_give_acls(package):
+    ''' Give acls to a specified user for a specific package. '''
+
+    collections = pkgdblib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
+    acls = pkgdblib.get_status(SESSION)
+
+    form = pkgdb2.forms.SetAclPackageForm(
+            collections_obj=collections,
+            pkg_acl=acls['pkg_acl'],
+            acl_status=acls['acl_status'],
+        )
+    form.pkgname.data = package
+    if form.validate_on_submit():
+        pkg_branchs = form.branches.data
+        pkg_acls = form.acl.data
+        pkg_user = form.user.data
+        acl_status = form.acl_status.data
+
+        try:
+            for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+                if acl in APP.config['AUTO_APPROVE']:
+                    acl_status = 'Approved'
+
+                print package, collec, pkg_user, acl, acl_status
+                pkgdblib.set_acl_package(
+                    SESSION,
+                    pkg_name=package,
+                    pkg_branch=collec,
+                    pkg_user=pkg_user,
+                    acl=acl,
+                    status=acl_status,
+                    user=flask.g.fas_user,
+                )
+            SESSION.commit()
+            flask.flash('ACLs updated')
+            return flask.redirect(
+                flask.url_for('.package_info',
+                              package=package))
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
+
+    return flask.render_template(
+        'acl_give.html',
+        form=form,
+        package=package,
+    )
+
+
 @UI.route('/acl/<package>/watch/', methods=('GET', 'POST'))
 @fas_login_required
 def watch_package(package):
