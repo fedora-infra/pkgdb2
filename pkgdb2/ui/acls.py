@@ -103,10 +103,10 @@ def package_give_acls(package):
     acls = pkgdblib.get_status(SESSION)
 
     form = pkgdb2.forms.SetAclPackageForm(
-            collections_obj=collections,
-            pkg_acl=acls['pkg_acl'],
-            acl_status=acls['acl_status'],
-        )
+        collections_obj=collections,
+        pkg_acl=acls['pkg_acl'],
+        acl_status=acls['acl_status'],
+    )
     form.pkgname.data = package
     if form.validate_on_submit():
         pkg_branchs = form.branches.data

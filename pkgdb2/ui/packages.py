@@ -172,9 +172,9 @@ def package_info(package):
     # This section checks if the user has watch*, commit and approveacls
     # ACLs on all branches, and according to the results the options on the
     # menu on the right side will be enabled or not (default to enabled).
-    has_watch=False
-    has_commit=False
-    has_all_acls=False
+    has_watch = False
+    has_commit = False
+    has_all_acls = False
     if is_authenticated():
         tmp_commit = []
         tmp_watchco = []
