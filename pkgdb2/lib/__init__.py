@@ -95,9 +95,7 @@ def _validate_poc(pkg_poc):
         packagers = pkgdb2.lib.utils.get_packagers()
         if pkg_poc not in packagers:
             raise PkgdbException(
-                'The point of contact of this package is not in the packager '
-                'group'
-            )
+                'User "%s" is not in the packager group' % pkg_poc)
 
 
 def create_session(db_url, debug=False, pool_recycle=3600):
