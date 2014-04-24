@@ -28,7 +28,8 @@
         <a href="{{ url_for('.request_acl',
                  package=package.name) }}"
                  title="Request specific ACLs on specific branches">
-            <input type="submit" value="Request ACLs" />
+            <input type="submit" value="Request ACLs"
+                {% if has_all_acls %} disabled {% endif %} />
         </a>
     </li>
     {% if is_admin or is_poc %}
