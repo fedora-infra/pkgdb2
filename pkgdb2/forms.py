@@ -216,6 +216,11 @@ class SetAclPackageForm(wtf.Form):
                 (collec, collec)
                 for collec in kwargs['collections']
             ]
+        if 'collections_obj' in kwargs:
+            self.branches.choices = [
+                (collec.branchname, collec.branchname)
+                for collec in kwargs['collections']
+            ]
         if 'acl_status' in kwargs:
             self.acl_status.choices = [
                 (status, status)
