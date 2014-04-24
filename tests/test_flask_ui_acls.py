@@ -373,6 +373,73 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.fas_login_required')
+    def test_package_give_acls(self, login_func, mock_func):
+        """ Test the package_give_acls function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+
+        user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/acl/guake/give/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h1>Give ACLs on package: guake</h1>' in output.data)
+            self.assertTrue(
+                '<input id="csrf_token" name="csrf_token"' in output.data)
+            self.assertTrue(
+                '<option value="approveacls">approveacls' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            data = {
+                'branches': 'devel',
+                'acl': 'watchbugzilla',
+                'user': 'kevin',
+                'acl_status': 'Approved',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/acl/guake/give/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<li class="message">ACLs updated</li>' in
+                            output.data)
+
+        user.username = 'Toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/acl/guake/give/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h1>Give ACLs on package: guake</h1>' in output.data)
+            self.assertTrue(
+                '<input id="csrf_token" name="csrf_token"' in output.data)
+            self.assertTrue(
+                '<option value="approveacls">approveacls' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            data = {
+                'branches': 'devel',
+                'acl': 'commit',
+                'user': 'kevin',
+                'acl_status': 'Approved',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/acl/guake/give/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                'class="error">You are not allowed to update ACLs of someone '
+                'else.</li>' in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiAclsTest)
