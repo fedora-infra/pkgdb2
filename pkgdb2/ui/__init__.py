@@ -118,10 +118,8 @@ def login():  # pragma: no cover
     """ Login mechanism for this application.
     """
     next_url = flask.url_for('ui_ns.index')
-    if 'next' in flask.request.args:
-        next_url = flask.request.args['next']
-    elif 'next' in flask.request.form:
-        next_url = flask.request.form['next']
+    if 'next' in flask.request.values:
+        next_url = flask.request.values['next']
 
     if next_url == flask.url_for('ui_ns.login'):
         next_url = flask.url_for('ui_ns.index')
@@ -138,10 +136,8 @@ def logout():
     Return to the index page at the end.
     """
     next_url = flask.url_for('ui_ns.index')
-    if 'next' in flask.request.args:  # pragma: no cover
-        next_url = flask.request.args['next']
-    elif 'next' in flask.request.form:  # pragma: no cover
-        next_url = flask.request.form['next']
+    if 'next' in flask.request.values:  # pragma: no cover
+        next_url = flask.request.values['next']
 
     if next_url == flask.url_for('ui_ns.login'):  # pragma: no cover
         next_url = flask.url_for('ui_ns.index')
