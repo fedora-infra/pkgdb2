@@ -95,6 +95,12 @@ import pkgdb2.lib as pkgdblib
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
 
+def is_authenticated():
+    """ Returns wether a user is authenticated or not.
+    """
+    return hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None
+
+
 def is_pkgdb_admin(user):
     """ Is the user a pkgdb admin.
     """
@@ -133,7 +139,7 @@ def fas_login_required(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
-        if flask.g.fas_user is None:
+        if not is_authenticated():
             return flask.redirect(flask.url_for(
                 'ui_ns.login', next=flask.request.url))
         return function(*args, **kwargs)
@@ -147,7 +153,7 @@ def packager_login_required(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
-        if flask.g.fas_user is None:
+        if not is_authenticated():
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
         elif not flask.g.fas_user.cla_done:
@@ -168,7 +174,7 @@ def is_admin(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
-        if flask.g.fas_user is None:
+        if not is_authenticated():
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
         elif not flask.g.fas_user.cla_done:
