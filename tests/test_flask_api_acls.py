@@ -111,8 +111,37 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertEqual(json_out, exp)
 
+            # Test that auto-approved ACL gets automatically Approved
+            data = {
+                'pkgname': 'guake',
+                'branches': 'devel',
+                'acl': 'watchcommits',
+                'acl_status': 'Awaiting Review',
+                'user': 'toshio',
+            }
+
+            exp = {
+                "messages": [
+                    "user: pingou set acl: watchcommits of package: guake "
+                    "from: Approved to: Approved on branch: devel"
+                ],
+                "output": "ok"
+            }
+            output = self.app.post('/api/package/acl/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(json_out, exp)
+
         # Check if it fails normally
         user.username = 'Ralph'
+
+        data = {
+            'pkgname': 'guake',
+            'branches': 'devel',
+            'acl': 'commit',
+            'acl_status': 'Approved',
+            'user': 'toshio',
+        }
 
         with user_set(APP, user):
             exp = {
