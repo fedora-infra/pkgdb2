@@ -30,7 +30,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin, \
-    is_pkg_admin, packager_login_required
+    is_pkg_admin, packager_login_required, is_authenticated
 from pkgdb2.ui import UI
 
 
@@ -171,12 +171,27 @@ def package_info(package):
     if package_acls:
         package_acls.insert(0, package_acls.pop())
 
+    has_watch=False
+    has_commit=False
+    if is_authenticated():
+        devel = package_acls[0]
+        if flask.g.fas_user.username in devel['acls']:
+            for acl in devel['acls'][flask.g.fas_user.username]:
+                if acl['acl'].startswith('watch') and \
+                        acl['status'] == 'Approved':
+                    has_watch = True
+                if acl['acl'] == 'commit' and acl['status'] == 'Approved':
+                    has_commit = True
+
+
     return flask.render_template(
         'package.html',
         package=package,
         package_acl=package_acls,
         branch_admin=branch_admin,
         is_poc=is_poc,
+        has_watch=has_watch,
+        has_commit=has_commit,
     )
 
 
