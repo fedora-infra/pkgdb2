@@ -344,6 +344,40 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        ## Working ones
+
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
+        self.assertEqual(pkg_acl[0].package.name, 'guake')
+        self.assertEqual(len(pkg_acl[0].acls), 4)
+
+        # Adding auto-approve ACL should work fine
+        user = FakeFasUser()
+        user.username='blahblah'
+        pkgdblib.set_acl_package(self.session,
+                                 pkg_name='guake',
+                                 pkg_branch='f18',
+                                 pkg_user='blahblah',
+                                 acl='watchbugzilla',
+                                 status='Approved',
+                                 user=user,
+                                 )
+        self.session.commit()
+
+        # Adding non-auto-approve ACL should not work fine
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.set_acl_package,
+            self.session,
+            pkg_name='guake',
+            pkg_branch='f18',
+            pkg_user='blahblah',
+            acl='approveacls',
+            status='Approved',
+            user=user,
+        )
+        self.session.commit()
+
         # You can ask for new ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
@@ -391,7 +425,7 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
-        self.assertEqual(len(pkg_acl[0].acls), 6)
+        self.assertEqual(len(pkg_acl[0].acls), 7)
 
     def test_update_pkg_poc(self):
         """ Test the update_pkg_poc function. """
