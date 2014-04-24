@@ -47,7 +47,8 @@ if 'PKGDB2_CONFIG' in os.environ:  # pragma: no cover
     APP.config.from_envvar('PKGDB2_CONFIG')
 
 if APP.config.get('LOGGER_CONFIG_FILE') \
-        and os.path.exists(APP.config['LOGGER_CONFIG_FILE']):
+        and os.path.exists(
+            APP.config['LOGGER_CONFIG_FILE']):  # pragma: no cover
     logging.config.fileConfig(APP.config['LOGGER_CONFIG_FILE'])
 
 # Set up FAS extension
@@ -137,7 +138,7 @@ def fas_login_required(function):
     """ Flask decorator to ensure that the user is logged in against FAS.
     """
     @wraps(function)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args, **kwargs):  # pragma: no cover
         """ Do the actual work of the decorator. """
         if not is_authenticated():
             return flask.redirect(flask.url_for(
@@ -153,10 +154,10 @@ def packager_login_required(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
-        if not is_authenticated():
+        if not is_authenticated():  # pragma: no cover
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
-        elif not flask.g.fas_user.cla_done:
+        elif not flask.g.fas_user.cla_done:  # pragma: no cover
             flask.flash('You must sign the CLA (Contributor License '
                         'Agreement to use pkgdb', 'errors')
             return flask.redirect(flask.url_for('ui_ns.index'))
@@ -174,10 +175,10 @@ def is_admin(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
-        if not is_authenticated():
+        if not is_authenticated():  # pragma: no cover
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
-        elif not flask.g.fas_user.cla_done:
+        elif not flask.g.fas_user.cla_done:  # pragma: no cover
             flask.flash('You must sign the CLA (Contributor License '
                         'Agreement to use pkgdb', 'errors')
             return flask.redirect(flask.url_for('ui_ns.index'))
