@@ -55,8 +55,9 @@ class FlaskApiAclsTest(Modeltests):
         pkgdb2.api.acls.SESSION = self.session
         self.app = pkgdb2.APP.test_client()
 
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_acl_update(self, login_func):
+    def test_acl_update(self, login_func, mock_func):
         """ Test the api_acl_update function.  """
         login_func.return_value = None
 
@@ -95,6 +96,7 @@ class FlaskApiAclsTest(Modeltests):
 
         # Check if it works authenticated
         user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'toshio']
 
         with user_set(APP, user):
             exp = {

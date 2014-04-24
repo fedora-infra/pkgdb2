@@ -397,6 +397,10 @@ class PkgdbLibtests(Modeltests):
         """ Test the update_pkg_poc function. """
         self.test_add_package()
 
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = [
+            'pingou', 'toshio', 'ralph']
+
         # Package must exists
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
@@ -418,10 +422,6 @@ class PkgdbLibtests(Modeltests):
                           pkg_poc='toshio',
                           )
         self.session.rollback()
-
-        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb2.lib.utils.get_packagers.return_value = [
-            'pingou', 'toshio', 'ralph']
 
         # User must be the actual Point of Contact (or an admin of course,
         # or part of the group)
@@ -963,6 +963,14 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[2].packagelist.collection.branchname, 'devel')
         self.assertEqual(acls[3].packagelist.collection.branchname, 'devel')
 
+        # Wrong page provided
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.get_acl_packager,
+            self.session,
+            'pingou',
+            page='a')
+
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls='commit')
         self.assertEqual(len(acls), 5)
@@ -1104,6 +1112,15 @@ class PkgdbLibtests(Modeltests):
         branches = set([pkg[0][1][0].branchname, pkg[0][1][1].branchname])
         self.assertEqual(branches.symmetric_difference(expected), set())
         self.assertEqual(len(pkg[0][1]), 2)
+
+        pkg = pkgdblib.get_package_watch(
+            self.session, 'pingou', branch='devel')
+        self.assertEqual(len(pkg), 1)
+        self.assertEqual(pkg[0][0].name, 'guake')
+        expected = set(['devel'])
+        branches = set([pkg[0][1][0].branchname])
+        self.assertEqual(branches.symmetric_difference(expected), set())
+        self.assertEqual(len(pkg[0][1]), 1)
 
         pkg = pkgdblib.get_package_watch(
             self.session, 'pingou', pkg_status='Awaiting Review')

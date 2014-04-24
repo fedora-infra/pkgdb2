@@ -330,6 +330,8 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
 
+        mock_func.get_packagers.return_value = ['test']
+
         data = {
             'pkgnames': 'guake',
             'branches': ['f18', 'devel'],
@@ -414,6 +416,8 @@ class FlaskApiPackagesTest(Modeltests):
                     "output": "notok"
                 }
             )
+
+        mock_func.get_packagers.return_value = ['pingou']
 
         # Unorphan the package
         data = {

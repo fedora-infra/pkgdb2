@@ -395,6 +395,7 @@ class FlaskUiPackagesTest(Modeltests):
     def test_package_take(self, login_func, mock_func):
         """ Test the package_take function. """
         login_func.return_value = None
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
         create_package_acl(self.session)
 
         user = FakeFasUser()

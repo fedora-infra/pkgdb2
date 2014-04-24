@@ -58,14 +58,17 @@ class FlaskUiAclsTest(Modeltests):
         pkgdb2.ui.packages.SESSION = self.session
         self.app = pkgdb2.APP.test_client()
 
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_request_acl(self, login_func):
+    def test_request_acl(self, login_func, mock_func):
         """ Test the request_acl function. """
         login_func.return_value = None
 
         create_package_acl(self.session)
 
         user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
         with user_set(pkgdb2.APP, user):
             output = self.app.get('/acl/guake/request/')
             self.assertEqual(output.status_code, 200)
@@ -148,14 +151,17 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="error">No package found by this name</li>'
                 in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_watch_package(self, login_func):
+    def test_watch_package(self, login_func, mock_func):
         """ Test the watch_package function. """
         login_func.return_value = None
 
         create_package_acl(self.session)
 
         user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
                 '/acl/guake/watch/', follow_redirects=True)
@@ -170,8 +176,9 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="error">No package found by this name</li>'
                 in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_comaintain_package(self, login_func):
+    def test_comaintain_package(self, login_func, mock_func):
         """ Test the comaintain_package function. """
         login_func.return_value = None
 
@@ -196,6 +203,8 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
         user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
         user.username = 'kevin'
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
@@ -221,14 +230,17 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="errors">You must be a packager</li>'
                 in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_update_acl(self, login_func):
+    def test_update_acl(self, login_func, mock_func):
         """ Test the update_acl function. """
         login_func.return_value = None
 
         create_package_acl(self.session)
 
         user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
                 '/acl/guake/update/pingou/', follow_redirects=True)
