@@ -171,18 +171,36 @@ def package_info(package):
     if package_acls:
         package_acls.insert(0, package_acls.pop())
 
+    # This section checks if the user has watch*, commit and approveacls
+    # ACLs on all branches, and according to the results the options on the
+    # menu on the right side will be enabled or not (default to enabled).
     has_watch=False
     has_commit=False
+    has_all_acls=False
     if is_authenticated():
-        devel = package_acls[0]
-        if flask.g.fas_user.username in devel['acls']:
-            for acl in devel['acls'][flask.g.fas_user.username]:
-                if acl['acl'].startswith('watch') and \
-                        acl['status'] == 'Approved':
-                    has_watch = True
-                if acl['acl'] == 'commit' and acl['status'] == 'Approved':
-                    has_commit = True
-
+        tmp_commit = []
+        tmp_watchco = []
+        tmp_watchbz = []
+        tmp_appro = []
+        username = flask.g.fas_user.username
+        for branch in package_acls:
+            if username in branch['acls']:
+                for acl in branch['acls'][username]:
+                    if acl['acl'] == 'commit':
+                        tmp_commit.append(acl['status'] == 'Approved')
+                    elif acl['acl'] == 'watchbugzilla':
+                        tmp_watchbz.append(acl['status'] == 'Approved')
+                    elif acl['acl'] == 'watchcommits':
+                        tmp_watchco.append(acl['status'] == 'Approved')
+                    elif acl['acl'] == 'approveacls':
+                        tmp_appro.append(acl['status'] == 'Approved')
+        if all(tmp_commit):
+            has_commit = True
+        if all(tmp_watchbz) and all(tmp_watchco):
+            has_watch = True
+        if all(tmp_commit) and all(tmp_watchbz) and all(tmp_watchco) \
+                and all(tmp_appro):
+            has_all_acls = True
 
     return flask.render_template(
         'package.html',
@@ -192,6 +210,7 @@ def package_info(package):
         is_poc=is_poc,
         has_watch=has_watch,
         has_commit=has_commit,
+        has_all_acls=has_all_acls,
     )
 
 
