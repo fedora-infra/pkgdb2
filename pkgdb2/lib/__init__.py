@@ -295,6 +295,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                 .. note:: groups cannot have 'approveacls' rights.
 
     """
+    _validate_poc(pkg_user)
+
     try:
         package = model.Package.by_name(session, pkg_name)
     except NoResultFound:
@@ -382,6 +384,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
                     said group.
 
     """
+    _validate_poc(pkg_poc)
+
     try:
         package = model.Package.by_name(session, pkg_name)
     except NoResultFound:
@@ -398,8 +402,6 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
                                                             collection.id)
 
     prev_poc = pkglisting.point_of_contact
-
-    _validate_poc(pkg_poc)
 
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
@@ -1294,6 +1296,8 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
                 packager.
 
     """
+    _validate_poc(pkg_user)
+
     try:
         package = model.Package.by_name(session, pkg_name)
     except NoResultFound:
