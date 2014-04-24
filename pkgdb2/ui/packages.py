@@ -151,10 +151,8 @@ def package_info(package):
             else:
                 acls[acl.fas_name] = [tmp2]
 
-        ## This list is a little hacky, but we would have to save ACLs
-        ## in their own table otherwise.
-        planned_acls = set(['approveacls', 'commit', 'watchbugzilla',
-                            'watchcommits'])
+        planned_acls = set(
+            pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl'])
 
         for fas_name in acls:
             seen_acls = set([acl['acl'] for acl in acls[fas_name]])
