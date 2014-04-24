@@ -94,6 +94,45 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue('<li class="message">ACLs updated</li>' in
                             output.data)
 
+        user.username = 'Toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/acl/guake/request/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<h1>Request ACLs on package: guake</h1>' in output.data)
+            self.assertTrue(
+                '<input id="csrf_token" name="csrf_token"' in output.data)
+            self.assertTrue(
+                '<option value="approveacls">approveacls' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            data = {
+                'branches': 'devel',
+                'acl': 'watchbugzilla',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/acl/guake/request/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<li class="message">ACLs updated</li>' in
+                            output.data)
+
+            data = {
+                'branches': 'devel',
+                'acl': 'commit',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/acl/guake/request/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                'class="error">User &#34;Toshio&#34; is not in the packager'
+                ' group</' in output.data)
+
         user = FakeFasUser()
         user.groups = ['gitr2spec']
         with user_set(pkgdb2.APP, user):
