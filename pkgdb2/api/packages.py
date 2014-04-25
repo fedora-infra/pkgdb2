@@ -40,6 +40,8 @@ from pkgdb2.api import API, get_limit
 ## Some of the object we use here have inherited methods which apparently
 ## pylint does not detect.
 # pylint: disable=E1101
+## Too many variables
+# pylint: disable=R0914
 
 
 ## Package

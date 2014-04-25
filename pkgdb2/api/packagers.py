@@ -38,8 +38,12 @@ from pkgdb2.api import API, get_limit
 ## Some of the object we use here have inherited methods which apparently
 ## pylint does not detect.
 # pylint: disable=E1101
-# pylint: disable=R0801 ## similar line
-# pylint: disable=R0401 ## cyclic import
+## similar line
+# pylint: disable=R0801
+## cyclic import
+# pylint: disable=R0401
+## Too many branches
+# pylint: disable=R0912
 
 
 ## Packagers

@@ -113,6 +113,12 @@ def list_retired(motif=None):
     return list_packages(motif=motif, status='Retired', origin='list_retired')
 
 
+## Too many branches
+# pylint: disable=R0912
+## Too many variables
+# pylint: disable=R0914
+## Too many statements
+# pylint: disable=R0915
 @UI.route('/package/<package>/')
 def package_info(package):
     ''' Display the information about the specified package. '''
