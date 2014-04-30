@@ -216,6 +216,31 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
     @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.fas_login_required')
+    def test_unwatch_package(self, login_func, mock_func):
+        """ Test the unwatch_package function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+
+        user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/acl/guake/unwatch/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">ACLs updated</li>' in output.data)
+
+            output = self.app.get(
+                '/acl/random/unwatch/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No package found by this name</li>'
+                in output.data)
+
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
     def test_comaintain_package(self, login_func, mock_func):
         """ Test the comaintain_package function. """
