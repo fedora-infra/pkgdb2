@@ -141,6 +141,7 @@ def package_info(package):
     watch_acls = {}
     branch_admin = {}
     branch_poc = {}
+    committers = []
     is_poc = False
 
     for pkg in package_acl:
@@ -171,6 +172,8 @@ def package_info(package):
 
             if acl.acl == 'commit':
                 dic = commit_acls
+                if acl.status == 'Approved':
+                    committers.append(acl.fas_name)
             elif acl.acl.startswith('watch') and acl.status == 'Approved':
                 dic = watch_acls
             else:
@@ -239,6 +242,7 @@ def package_info(package):
         branch_admin=branch_admin,
         branch_poc=branch_poc,
         branches=branches,
+        committers=committers,
         is_poc=is_poc,
         #has_watch=has_watch,
         #has_commit=has_commit,
