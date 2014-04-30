@@ -201,7 +201,8 @@
               {% endif %}
                 {% if acl in watch_acls[user][branch]
                     and watch_acls[user][branch][acl] == 'Approved' %}
-                  <img src="{{ url_for('static', filename='watch_20.png') }}" alt='Approved'/>
+                  <img src="{{ url_for('static', filename='watch_20.png') }}"
+                    alt="Approved" title="Approve"/>
                 {% endif %}
               </td>
             {% endfor %}
