@@ -273,6 +273,32 @@ div#pkg_admins {
     width: 100%
 }
 
+.inline{
+    display:inline;
+}
+
+.pkg_button_blue, .pkg_button_blue:visited, .pkg_button_blue:hover {
+    display:inline;
+    float: right;
+    border-radius: 5px 5px 5px 5px;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    margin: 0px 0px 0px 0px;
+    background: #3b6eb4;
+    border: 2px solid #58595b;
+    color: #fff;
+}
+
+.pkg_button_grey, .pkg_button_grey:visited, .pkg_button_grey:hover {
+    display:inline;
+    float: right;
+    border-radius: 5px 5px 5px 5px;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    margin: 0px 0px 0px 0px;
+    background: #60605b;
+    border: 2px solid #58595b;
+    color: #fff;
+}
+
 #pkg_watchers table{
     width: 100%;
 }
