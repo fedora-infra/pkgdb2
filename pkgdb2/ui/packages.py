@@ -171,7 +171,7 @@ def package_info(package):
 
             if acl.acl == 'commit':
                 dic = commit_acls
-            elif acl.acl.startswith('watch'):
+            elif acl.acl.startswith('watch') and acl.status == 'Approved':
                 dic = watch_acls
             else:
                 continue
