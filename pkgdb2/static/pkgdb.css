@@ -33,6 +33,15 @@ body#admin #mainNav li#adminTab a {
     width:74%px;
 }
 
+body#packages #options {
+    min-height: 150px;
+}
+
+#pkg_info{
+    width: 95%;
+    float: left;
+}
+
 #options {
     float:right;
     width:23%;
@@ -40,7 +49,7 @@ body#admin #mainNav li#adminTab a {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15) inset;
     border-radius: 10px 10px 10px 10px;
     position: absolute;
-    top:120px;
+    top:140px;
     right:0;
 }
 
@@ -59,6 +68,12 @@ body#admin #mainNav li#adminTab a {
 
 #options_content {
     margin: 5px;
+}
+
+#options_content th, #options_content td {
+    margin: 5px;
+    min-width: 0px;
+    padding-left: 5px;
 }
 
 #options_content ul {
@@ -117,11 +132,11 @@ a.fas {
 
 #metainfo th{
     text-align: left;
-    background: none repeat scroll 0 0 #DDDDDD;
+    /*background: none repeat scroll 0 0 #DDDDDD;*/
 }
 
 #metainfo th{
-    border: 1px solid #000000;
+    /*border: 1px solid #000000;*/
     padding: 0.6ex;
 }
 
@@ -202,4 +217,122 @@ a.fas {
 #options input[type="submit"][disabled] {
     color: #8795a8;
     cursor: default;
+}
+
+.h_line {
+    width:100%;
+    height: 1px;
+    background: #DCDEDF;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.username {
+    font-size: 110%;
+    font-weight: bold;
+}
+
+#pkg_ppl_table .branches {
+    font-size: 85%;
+    color: grey;
+    font-style: italic;
+}
+
+section#pkg_ppl_table {
+    display: table;
+}
+
+.pkg_ppl_row {
+    display: table-row;
+}
+
+.pkg_ppl_row h4 {
+    margin-top: 10px;
+}
+
+div#pkg_contacts {
+    display: table-cell;
+    width: 48%;
+}
+
+div#pkg_admins {
+    display: table-cell;
+    width: 48%;
+}
+
+#pkg_committers table th{
+    text-align: center;
+}
+
+#pkg_watchers table th{
+    min-width: 50px;
+    text-align: center;
+}
+
+#pkg_committers table {
+    width: 100%
+}
+
+#pkg_watchers table{
+    width: 100%;
+}
+
+#pkg_watchers .headings {
+    background-color: #A7A9AC;
+    color: #fff;
+}
+
+#pkg_watchers th, #pkg_watchers td{
+    min-width: 10px;
+}
+
+#pkg_committers td, #pkg_watchers td {
+    border-top: 1px solid #BBBBBB;
+    border-left: 1px solid #BBBBBB;
+    margin: 0;
+    color: #333333;
+    text-align: center;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    line-height: 13px;
+}
+
+#pkg_watchers td img{
+    padding: 0px;
+    margin: 0px;
+}
+
+#pkg_committers .users {
+    text-align: left;
+    padding-left: 15px;
+}
+
+#pkg_committers .dashed {
+    border-top: 1px solid #BBBBBB;
+    border-left: 1px dashed #BBBBBB !important;
+}
+
+#pkg_watchers .dashed {
+    border-top: 1px solid #BBBBBB;
+    border-left: 1px dashed #BBBBBB;
+}
+
+.lastcel {
+    border-right: 1px solid #BBBBBB;
+}
+
+.lastrow td {
+    border-bottom: 1px solid #BBBBBB;
+}
+
+#pkg_watchers .row_even {
+    background-color: #F0F7FB;
+}
+
+#pkg_watchers .col_odd {
+    background-color: #F6F7F9;
+}
+
+#pkg_watchers .row_even .col_odd {
+    background-color: #E7EFF5;
 }
