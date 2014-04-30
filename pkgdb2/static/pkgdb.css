@@ -282,7 +282,7 @@ div#pkg_admins {
     float: right;
     border-radius: 5px 5px 5px 5px;
     padding: 0.2em 0.5em 0.2em 0.5em;
-    margin: 0px 0px 0px 0px;
+    margin: 0px 0px 5px 0px;
     background: #3b6eb4;
     border: 2px solid #58595b;
     color: #fff;
@@ -293,7 +293,7 @@ div#pkg_admins {
     float: right;
     border-radius: 5px 5px 5px 5px;
     padding: 0.2em 0.5em 0.2em 0.5em;
-    margin: 0px 0px 0px 0px;
+    margin: 0px 0px 5px 0px;
     background: #60605b;
     border: 2px solid #58595b;
     color: #fff;
