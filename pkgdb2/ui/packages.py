@@ -133,88 +133,116 @@ def package_info(package):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    package_acls = []
-    branch_admin = []
+    planned_acls = set(
+        pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl'])
+
+    branches = set()
+    commit_acls = {}
+    watch_acls = {}
+    branch_admin = {}
+    branch_poc = {}
     is_poc = False
+
     for pkg in package_acl:
         if pkg.collection.status == 'EOL':  # pragma: no cover
             continue
-        tmp = {}
-        tmp['collection'] = '%s %s' % (pkg.collection.name,
-                                       pkg.collection.version)
-        tmp['branchname'] = pkg.collection.branchname
-        tmp['point_of_contact'] = pkg.point_of_contact
-        tmp['status'] = pkg.status
-        if hasattr(flask.g, 'fas_user') and flask.g.fas_user and \
+
+        collection_name = '%s %s' % (
+            pkg.collection.name, pkg.collection.version)
+
+        branches.add(collection_name)
+
+        if pkg.point_of_contact not in branch_poc:
+            branch_poc[pkg.point_of_contact] = set()
+        branch_poc[pkg.point_of_contact].add(collection_name)
+
+        if is_authenticated() and \
                 pkg.point_of_contact == flask.g.fas_user.username:
             is_poc = True
 
+
         acls = {}
         for acl in pkg.acls:
-            tmp2 = {'acl': acl.acl, 'status': acl.status}
-            if acl.fas_name in acls:
-                acls[acl.fas_name].append(tmp2)
+
+            if acl.acl == 'approveacls' and acl.status == 'Approved':
+                if acl.fas_name not in branch_admin:
+                    branch_admin[acl.fas_name] = set()
+                branch_admin[acl.fas_name].add(collection_name)
+
+            if acl.acl == 'commit':
+                dic = commit_acls
+            elif acl.acl.startswith('watch'):
+                dic = watch_acls
             else:
-                acls[acl.fas_name] = [tmp2]
+                continue
 
-        planned_acls = set(
-            pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl'])
+            if acl.fas_name not in dic:
+                dic[acl.fas_name] = {}
+            if collection_name not in dic[acl.fas_name]:
+                dic[acl.fas_name][collection_name] = {}
 
-        for fas_name in acls:
-            seen_acls = set([acl['acl'] for acl in acls[fas_name]])
-            for aclname in planned_acls - seen_acls:
-                acls[fas_name].append({'acl': aclname, 'status': ''})
-        tmp['acls'] = acls
+            dic[acl.fas_name][collection_name][acl.acl] = \
+                acl.status
 
-        package_acls.append(tmp)
-        if is_pkg_admin(SESSION, flask.g.fas_user, package.name,
-                        pkg.collection.branchname):
-            branch_admin.append(pkg.collection.branchname)
+        for aclname in planned_acls:
+            for user in commit_acls:
+                if collection_name in commit_acls[user] and \
+                        aclname not in commit_acls[user][collection_name]:
+                    commit_acls[user][collection_name][aclname] = None
 
-    package_acls.reverse()
-    if package_acls:
-        package_acls.insert(0, package_acls.pop())
+        for aclname in planned_acls:
+            for user in watch_acls:
+                if collection_name in watch_acls[user] and \
+                        aclname not in watch_acls[user][collection_name]:
+                    watch_acls[user][collection_name][aclname] = None
+
+    #package_acls.reverse()
+    #if package_acls:
+        #package_acls.insert(0, package_acls.pop())
 
     # This section checks if the user has watch*, commit and approveacls
     # ACLs on all branches, and according to the results the options on the
     # menu on the right side will be enabled or not (default to enabled).
-    has_watch = False
-    has_commit = False
-    has_all_acls = False
-    if is_authenticated():
-        tmp_commit = []
-        tmp_watchco = []
-        tmp_watchbz = []
-        tmp_appro = []
-        username = flask.g.fas_user.username
-        for branch in package_acls:
-            if username in branch['acls']:
-                for acl in branch['acls'][username]:
-                    if acl['acl'] == 'commit':
-                        tmp_commit.append(acl['status'] == 'Approved')
-                    elif acl['acl'] == 'watchbugzilla':
-                        tmp_watchbz.append(acl['status'] == 'Approved')
-                    elif acl['acl'] == 'watchcommits':
-                        tmp_watchco.append(acl['status'] == 'Approved')
-                    elif acl['acl'] == 'approveacls':
-                        tmp_appro.append(acl['status'] == 'Approved')
-        if all(tmp_commit):
-            has_commit = True
-        if all(tmp_watchbz) and all(tmp_watchco):
-            has_watch = True
-        if all(tmp_commit) and all(tmp_watchbz) and all(tmp_watchco) \
-                and all(tmp_appro):
-            has_all_acls = True
+    #has_watch = False
+    #has_commit = False
+    #has_all_acls = False
+    #if is_authenticated():
+        #tmp_commit = []
+        #tmp_watchco = []
+        #tmp_watchbz = []
+        #tmp_appro = []
+        #username = flask.g.fas_user.username
+        #for branch in package_acls:
+            #if username in branch['acls']:
+                #for acl in branch['acls'][username]:
+                    #if acl['acl'] == 'commit':
+                        #tmp_commit.append(acl['status'] == 'Approved')
+                    #elif acl['acl'] == 'watchbugzilla':
+                        #tmp_watchbz.append(acl['status'] == 'Approved')
+                    #elif acl['acl'] == 'watchcommits':
+                        #tmp_watchco.append(acl['status'] == 'Approved')
+                    #elif acl['acl'] == 'approveacls':
+                        #tmp_appro.append(acl['status'] == 'Approved')
+        #if all(tmp_commit):
+            #has_commit = True
+        #if all(tmp_watchbz) and all(tmp_watchco):
+            #has_watch = True
+        #if all(tmp_commit) and all(tmp_watchbz) and all(tmp_watchco) \
+                #and all(tmp_appro):
+            #has_all_acls = True
 
     return flask.render_template(
         'package.html',
         package=package,
-        package_acl=package_acls,
+        commit_acls=commit_acls,
+        watch_acls=watch_acls,
         branch_admin=branch_admin,
+        branch_poc=branch_poc,
+        branches=branches,
         is_poc=is_poc,
-        has_watch=has_watch,
-        has_commit=has_commit,
-        has_all_acls=has_all_acls,
+        #has_watch=has_watch,
+        #has_commit=has_commit,
+        #has_all_acls=has_all_acls,
     )
 
 
