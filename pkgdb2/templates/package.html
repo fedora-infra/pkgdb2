@@ -4,98 +4,9 @@
 
 {%block tag %}packages{% endblock %}
 
-{% if g.fas_user %}
 {% set options = True %}
+{% block options_title %}Package Status{% endblock %}
 {%block options %}
-<ul>
-    <li>
-        <a href="{{ url_for('.watch_package',
-                 package=package.name) }}"
-                 title="Request watch ACLs on all branches">
-            <input type="submit" value="Watch package"
-                {% if has_watch %} disabled {% endif %} />
-        </a>
-    </li>
-    <li>
-        <a href="{{ url_for('.comaintain_package',
-                 package=package.name) }}"
-                 title="Request watch and commit ACLs on all branches">
-            <input type="submit" value="Apply for co-maintainer"
-                {% if has_commit %} disabled {% endif %} />
-        </a>
-    </li>
-    <li>
-        <a href="{{ url_for('.request_acl',
-                 package=package.name) }}"
-                 title="Request specific ACLs on specific branches">
-            <input type="submit" value="Request ACLs"
-                {% if has_all_acls %} disabled {% endif %} />
-        </a>
-    </li>
-    {% if is_admin or is_poc %}
-    <li>
-        <a href="{{ url_for('.package_give_acls',
-                 package=package.name) }}"
-                 title="Give ACLs to someone else">
-            <input type="submit" value="Give ACLs" />
-        </a>
-    </li>
-    {% endif %}
-    {% if is_admin or is_poc %}
-    <li>
-        <a href="{{ url_for('.package_give',
-                 package=package.name) }}"
-                 title="Give the Point of Contact attribute to someone else">
-            <input type="submit" value="Give package" />
-        </a>
-    </li>
-    {% endif %}
-</ul>
-{% endblock %}
-{% endif %}
-
-{% block content %}
-
-<h1 property="doap:name">{{ package.name }}</h1>
-
-<p property="doap:shortdesc">{{ package.summary }}</p>
-
-{% if package.description %}
-<p id="description" property="doap:description">{{ package.description }}</p>
-{% endif %}
-
-<ul id="actions">
-    <li>
-        <a href="http://koji.fedoraproject.org/koji/search?type=package&match=glob&terms={{ package.name }}"
-        class="koji">
-        Builds status</a>
-    </li>
-    <li>
-        <a href="https://admin.fedoraproject.org/updates/{{ package.name }}"
-        class="bodhi">
-        Updates status</a>
-    </li>
-    <li>
-        <a href="http://pkgs.fedoraproject.org/cgit/{{ package.name }}.git/"
-        class="cvs">
-        Package source</a>
-    </li>
-    <li>
-        <a href="https://apps.fedoraproject.org/packages/{{ package.name }}/bugs"
-        class="bugz">
-        Bugs reports</a>
-    </li>
-    <li>
-    {% if package.review_url %}
-        <a href="{{ package.review_url }}" class="bugz">
-        Package review</a>
-    {% else %}
-        Package review unknown
-    {% endif %}
-    </li>
-
-</ul>
-
 <table id="metainfo">
     <tr>
         <th>Status</th>
@@ -106,106 +17,199 @@
         <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
     </tr>
 </table>
+{% endblock %}
 
-{% for pkg in package_acl %}
-    <h3>{{ pkg['collection'] }}</h3>
-    <p class="owner">
-        Point of contact:
-        <a href="{{ url_for('.packager_info',
-                            packager=pkg['point_of_contact']) }}">
-            {{ pkg['point_of_contact'] }}
-        </a>
-        {% if pkg['status'] == 'Retired' %}
-            -- Package retired
-        {% elif is_admin or pkg['status'] == 'orphan' or pkg['point_of_contact'] == g.fas_user.username  %}
-        --
-        {% if pkg['status'] == 'Orphaned' %}
-        <a href="{{ url_for('.package_take',
-                            package=package.name,
-                            collection=pkg['branchname']) }}">
-            request
-        <a href="{{ url_for('.package_retire',
-                            package=package.name,
-                            collection=pkg['branchname']) }}">
-            -- retire
-        </a>
-        {% elif is_admin or pkg['point_of_contact'] == g.fas_user.username %}
-        <a href="{{ url_for('.package_orphan',
-                            package=package.name,
-                            collection=pkg['branchname']) }}">
-            leave
-        </a>
-        {% endif %}
-        {% endif %}
-    </p>
-    <table class="acls">
-        {% for maintainer in pkg['acls'] %}
-        <tr>
-            <td>
-                <a href="{{ url_for('.packager_info',
-                                    packager=maintainer) }}">
-                {{ maintainer }}
+{% block content %}
+
+<section id="pkg_info">
+  <h1 property="doap:name">{{ package.name }}</h1>
+
+  <p property="doap:shortdesc">{{ package.summary }}</p>
+
+  {% if package.description %}
+  <p id="description" property="doap:description">{{ package.description }}</p>
+  {% endif %}
+
+  <ul id="actions">
+      <li>
+          <a href="http://koji.fedoraproject.org/koji/search?type=package&match=glob&terms={{ package.name }}"
+          class="koji">
+          Builds status</a>
+      </li>
+      <li>
+          <a href="https://admin.fedoraproject.org/updates/{{ package.name }}"
+          class="bodhi">
+          Updates status</a>
+      </li>
+      <li>
+          <a href="http://pkgs.fedoraproject.org/cgit/{{ package.name }}.git/"
+          class="cvs">
+          Package source</a>
+      </li>
+      <li>
+          <a href="https://apps.fedoraproject.org/packages/{{ package.name }}/bugs"
+          class="bugz">
+          Bugs reports</a>
+      </li>
+      <li>
+      {% if package.review_url %}
+          <a href="{{ package.review_url }}" class="bugz">
+          Package review</a>
+      {% else %}
+          Package review unknown
+      {% endif %}
+      </li>
+
+  </ul>
+
+  <div class="h_line"></div>
+
+  <section id="pkg_ppl_table">
+    <div class="pkg_ppl_row">
+      <div id="pkg_contacts">
+        <h4>Main Contact(s)</h4>
+          <p>
+            For general concerns about this package, these are the people to
+            contact.
+          </p>
+          <ul>
+            {% for user in branch_poc %}
+            <li>
+              <span class="username">
+                <a href="{{ url_for('.packager_info', packager=user) }}">
+                  {{ user }}
                 </a>
-            </td>
-            {% for acl in pkg['acls'][maintainer] | sort(reverse=True) %}
-                {% if acl['status'] %}
-                <td> {{ acl['acl'] }}</td>
-                <td>
-                    <img src="{{ url_for('static',
-                                         filename='%s.png' % acl['status']) }}"
-                     title="{{ acl['status'] }}" alt="{{ acl['status'] }}"/ >
-                </td>
-                {% else %}
-                <td></td>
-                <td></td>
-                {% endif %}
+              </span>
+              <span class="branches">({{ branch_poc[user] | sort | join(', ') }})</span>
+            </li>
             {% endfor %}
-            {% if maintainer == g.fas_user.username or
-                    pkg['branchname'] in branch_admin %}
-            {% if pkg['acls'][maintainer] %}
-                <td>
-                    <a href="{{ url_for('.update_acl',
-                        package=package.name,
-                        user=maintainer,
-                        branch=pkg['branchname']) }}">
-                        <input type="submit" value="Revise ACLs"/>
-                    </a>
-                </td>
-            {% endif %}
-            {% endif %}
-        </tr>
+          </ul>
+      </div>
+
+      <div id="pkg_admins">
+        <h4>Package Administrator(s)</h4>
+          <p>
+            These users can help you if you need commit privileges for this
+            package.
+          </p>
+          <ul>
+            {% for user in branch_poc %}
+            <li>
+              <span class="username">
+                <a href="{{ url_for('.packager_info', packager=user) }}">
+                  {{ user }}
+                </a>
+              </span>
+              <span class="branches">({{ branch_poc[user] | sort | join(', ') }})</span>
+            </li>
+            {% endfor %}
+          </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="h_line"></div>
+
+  <section id="pkg_committers">
+    <h3>Committer(s)</h3>
+
+    <table>
+      <tr>
+        <th></th>
+        {% for branch in branches | sort %}
+        <th>{{ branch }}</th>
         {% endfor %}
+      </tr>
+      {% for user in commit_acls | sort %}
+        {% if loop.last %}
+          <tr class="lastrow">
+        {% else %}
+          <tr>
+        {% endif %}
+          <td class="users">
+            <a href="{{ url_for('.packager_info', packager=user) }}" class="username">
+              {{ user }}
+            </a>
+          </td>
+          {% for branch in branches | sort %}
+            {% if not loop.last %}
+              <td class="dashed">
+            {% else %}
+              <td class="dashed lastcel">
+            {% endif %}
+              {% if 'commit' in commit_acls[user][branch]
+                  and commit_acls[user][branch]['commit'] %}
+                <img src="{{ url_for('static',
+                    filename='%s.png' % commit_acls[user][branch]['commit']) }}"
+                  title="ACL {{ commit_acls[user][branch]['commit'] }}"
+                  alt="{{ commit_acls[user][branch]['commit'] }}"/ >
+                {{ commit_acls[user][branch]['commit'] }}
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
     </table>
-{% endfor %}
+  </section>
 
+  <div class="h_line"></div>
 
-<table id="legend">
-    <tr>
-        <th>Approved:</th>
-        <td>
-            <img src="{{ url_for('static', filename='Approved.png') }}"
-                title="Approved" alt="Approved"/ >
-        </td>
-        <th>Awaiting Review:</th>
-        <td>
-            <img src="{{ url_for('static', filename='Awaiting Review.png') }}"
-                title="Awaiting Review" alt="Awaiting Review"/ >
-        </td>
-        <th>Denied:</th>
-        <td>
-            <img src="{{ url_for('static', filename='Denied.png') }}"
-                title="Denied" alt="Denied"/ >
-        </td>
-        <th>Obsolete:</th>
-        <td>
-            <img src="{{ url_for('static', filename='Obsolete.png') }}"
-                title="Obsolete" alt="Obsolete"/ >
-        </td>
-        <th>Removed:</th>
-        <td>
-            <img src="{{ url_for('static', filename='Removed.png') }}"
-                title="Removed" alt="Removed"/ >
-        </td>
-    </tr>
-</table>
+  <section id="pkg_watchers">
+    <h3>Watcher(s)</h3>
+
+    <table>
+      <tr>
+        <th></th>
+        {% for branch in branches | sort %}
+        <th colspan="2">{{ branch }}</th>
+        {% endfor %}
+      </tr>
+      <tr>
+        <th></th>
+        {% for branch in branches  %}
+          {% for acl in ['Bugs', 'Commits'] %}
+            <th class="headings ">{{ acl }}</th>
+          {% endfor %}
+        {% endfor %}
+      </tr>
+      {% for user in watch_acls | sort %}
+        {% if loop.last %}
+          <tr class="lastrow {{ loop.cycle('row_odd', 'row_even') }}">
+        {% else %}
+          <tr class="{{ loop.cycle('row_odd', 'row_even') }}">
+        {% endif %}
+          <td>
+            <a href="{{ url_for('.packager_info', packager=user) }}"
+              class="username">
+              {{ user }}
+            </a>
+          </td>
+          {% for branch in branches | sort %}
+            {% set coltype = loop.cycle('col_odd', 'col_even') %}
+            {% if loop.last %}
+              {% set last = True %}
+            {% else %}
+              {% set last = False %}
+            {% endif %}
+            {% for acl in ['watchbugzilla', 'watchcommits'] %}
+              {% if loop.first %}
+                <td class="{{ coltype }}">
+              {% elif last %}
+                <td class="dashed lastcel {{ coltype }}">
+              {% else %}
+                <td class="dashed {{ coltype }}">
+              {% endif %}
+                {% if acl in watch_acls[user][branch]
+                    and watch_acls[user][branch][acl] == 'Approved' %}
+                  <img src="{{ url_for('static', filename='watch_20.png') }}" alt='Approved'/>
+                {% endif %}
+              </td>
+            {% endfor %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </section>
+
+</section>
 {% endblock %}
