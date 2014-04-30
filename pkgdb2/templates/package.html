@@ -155,7 +155,20 @@
   <div class="h_line"></div>
 
   <section id="pkg_watchers">
-    <h3>Watcher(s)</h3>
+    <div>
+      <h3 class="inline">Watcher(s)</h3>
+      {% if g.fas_user and g.fas_user.username in watch_acls %}
+        <a class="bold pkg_button_grey inline"
+          href="{{ url_for('.unwatch_package',package=package.name) }}">
+          - Unwatch this package
+        </a>
+      {% elif g.fas_user %}
+        <a class="bold pkg_button_blue inline"
+          href="{{ url_for('.watch_package',package=package.name) }}">
+          + Watch this package
+        </a>
+      {% endif %}
+    </div>
 
     <table>
       <tr>
