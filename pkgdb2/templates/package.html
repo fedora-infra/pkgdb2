@@ -94,9 +94,15 @@
             href="{{ url_for('.package_give', package=package.name) }}">
             + Give Package
           </a>
-        {% elif g.fas_user and 'orphan' in pocs %}
+        {% endif %}
+        {% if g.fas_user and 'orphan' in pocs %}
+          <a class="bold pkg_button_grey inline"
+             href="{{ url_for('.package_retire',
+                            package=package.name, collection='devel') }}">
+            - Retire Package
+          </a>
           <a class="bold pkg_button_blue inline"
-            href="{{ url_for('.package_take', package=package.name) }}">
+             href="{{ url_for('.package_take', package=package.name) }}">
             + Take Package
           </a>
         {% endif %}
