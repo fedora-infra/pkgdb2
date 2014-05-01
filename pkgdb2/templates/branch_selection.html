@@ -1,14 +1,17 @@
 {% if full %}
   {% extends "master.html" %}
+  {% block title %} Select branches | PkgDB {% endblock %}
+  {%block tag %}packages{% endblock %}
 {% endif %}
 
 {% from "_formhelpers.html" import render_field_in_row %}
 
-{% block title %} Select branches | PkgDB {% endblock %}
 
-{%block tag %}packages{% endblock %}
 
 {% block content %}
+{% if not full %}
+<div title="{{ action.capitalize() }} package">
+{% endif %}
 
 <h1>
   Select branches of package:
@@ -33,4 +36,7 @@
   <p class="small">Use your mouse or the control key to select multiple
     ACLs or branch at once</p>
 </form>
+{% if not full %}
+</div>
+{% endif %}
 {% endblock %}
