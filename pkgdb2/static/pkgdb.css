@@ -306,8 +306,21 @@ div#pkg_admins {
     color: #fff;
 }
 
+.pkg_button_lightgrey, .pkg_button_lightgrey:visited, .pkg_button_lightgrey:hover {
+    display:inline;
+    float: right;
+    border-radius: 5px 5px 5px 5px;
+    padding: 0.2em 1.3em 0.2em 1.3em;
+    margin: 0px 0px 5px 0px;
+    background: #e7e8e9;
+    border: 1px solid #58595b;
+    color: #666662;
+}
+
 div#pkg_contacts .pkg_button_blue, div#pkg_contacts .pkg_button_grey,
-ul.nobullet .pkg_button_blue, ul.nobullet .pkg_button_grey {
+div#pkg_contacts .pkg_button_lightgrey,
+ul.nobullet .pkg_button_blue, ul.nobullet .pkg_button_grey,
+ul.nobullet .pkg_button_lightgrey {
     margin-left: 5px;
 }
 
@@ -316,7 +329,8 @@ button.pkg_button_blue, button.pkg_button_blue:hover{
     vertical-align: center;
 }
 
-#edit_acl .pkg_button_grey{
+#edit_acl .pkg_button_grey,
+#edit_acl .pkg_button_lightgrey {
     height: 18px;
     padding: 0.5em 1.3em 0em 1.3em;
 }
