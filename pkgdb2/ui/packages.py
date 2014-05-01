@@ -465,8 +465,6 @@ def package_take(package, collection=None):
     for acl in package_acl:
         if acl.collection.status not in ['Active', 'Under Development']:
             continue
-        if acl.point_of_contact != 'orphan':
-            continue
         if not collection or acl.collection.branchname == collection:
             try:
                 pkgdblib.unorphan_package(
