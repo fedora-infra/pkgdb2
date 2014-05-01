@@ -117,8 +117,7 @@ def request_acl_all_branch(package, acl):
         pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
     except IndexError:
         flask.flash('No package found by this name', 'error')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package))
+        return flask.render_template('msg.html')
 
     pkg_branchs = set([
         pkglist.collection.branchname
