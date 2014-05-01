@@ -311,7 +311,7 @@ ul.nobullet .pkg_button_blue, ul.nobullet .pkg_button_grey {
     margin-left: 5px;
 }
 
-button.pkg_button_blue{
+button.pkg_button_blue, button.pkg_button_blue:hover{
     padding: 0.1em 0.5em 0em 0.5em;
     vertical-align: center;
 }
