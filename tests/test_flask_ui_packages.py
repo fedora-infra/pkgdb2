@@ -290,17 +290,26 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/orphan', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/orphan', follow_redirects=True,
+                data={'branches': ['devel']})
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">You are not allowed to change the point '
-                'of contact.</li>' in output.data)
+                'class="errors">&#39;devel&#39; is not a valid choice for '
+                'this field</td>' in output.data)
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data = {
+            'branches': ['devel'],
+            'csrf_token': csrf_token,
+        }
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/orphan', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/orphan', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
@@ -308,16 +317,18 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/orphan', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/orphan', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
                 'branch: devel</li>' in output.data)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/random/devel/orphan', follow_redirects=True)
+            output = self.app.post(
+                '/package/random/orphan', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
@@ -330,43 +341,67 @@ class FlaskUiPackagesTest(Modeltests):
         login_func.return_value = None
         create_package_acl(self.session)
 
+        data = {
+            'branches': ['devel'],
+        }
+
         user = FakeFasUser()
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/retire', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/retire', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">This package has not been orphaned on '
-                'branch: devel</li>' in output.data)
+                'class="errors">&#39;devel&#39; is not a valid choice for '
+                'this field</td>' in output.data)
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data = {
+            'branches': ['devel'],
+            'csrf_token': csrf_token,
+        }
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/orphan', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/orphan', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
                 'branch: devel</li>' in output.data)
-            output = self.app.get(
-                '/package/guake/f18/orphan', follow_redirects=True)
+
+            data['branches'] = ['f18']
+            output = self.app.post(
+                '/package/guake/orphan', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
                 'branch: f18</li>' in output.data)
 
+        data = {
+            'branches': ['devel'],
+            'csrf_token': csrf_token,
+        }
+
         user = FakeFasUser()
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/retire', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/retire', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">This package has been retired on '
                 'branch: devel</li>' in output.data)
 
-            output = self.app.get(
-                '/package/guake/f18/retire', follow_redirects=True)
+            data['branches'] = ['f18']
+            output = self.app.post(
+                '/package/guake/retire', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">You are not allowed to retire the '
@@ -374,16 +409,18 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/f18/retire', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/retire', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">This package has been retired on '
                 'branch: f18</li>' in output.data)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/random/devel/retire', follow_redirects=True)
+            output = self.app.post(
+                '/package/random/retire', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
@@ -397,35 +434,47 @@ class FlaskUiPackagesTest(Modeltests):
         mock_func.get_packagers.return_value = ['pingou', 'toshio']
         create_package_acl(self.session)
 
+        data = {
+            'branches': ['devel'],
+        }
+
         user = FakeFasUser()
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/take', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/take', follow_redirects=True,
+                data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '"error">Package &#34;guake&#34; is not orphaned on devel</'
-                in output.data)
+                'class="errors">&#39;devel&#39; is not a valid choice for'
+                ' this field</td>' in output.data)
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data = {
+            'branches': ['devel'],
+            'csrf_token': csrf_token,
+        }
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/guake/devel/orphan', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/orphan', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
                 'branch: devel</li>' in output.data)
 
-            output = self.app.get(
-                '/package/guake/devel/take', follow_redirects=True)
+            output = self.app.post(
+                '/package/guake/take', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You have taken the package guake on '
                 'branch devel</li>' in output.data)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get(
-                '/package/random/devel/take', follow_redirects=True)
+            output = self.app.post(
+                '/package/random/take', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
