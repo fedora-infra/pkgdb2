@@ -306,7 +306,8 @@ div#pkg_admins {
     color: #fff;
 }
 
-div#pkg_contacts .pkg_button_blue, div#pkg_contacts .pkg_button_grey {
+div#pkg_contacts .pkg_button_blue, div#pkg_contacts .pkg_button_grey,
+ul.nobullet .pkg_button_blue, ul.nobullet .pkg_button_grey {
     margin-left: 5px;
 }
 
