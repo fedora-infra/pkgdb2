@@ -149,7 +149,8 @@
 
           {% if g.fas_user and (g.fas_user.username in admins
                or g.fas_user.username in pending_admins) %}
-            <a class="bold pkg_button_grey inline" title="Drop your approveacl ACL"
+            <a class="bold pkg_button_grey inline"
+              title="Drop your approveacl ACL on all branches"
               href="{{ url_for('.package_give', package=package.name) }}">
               - Give Up Admin Access
             </a>
