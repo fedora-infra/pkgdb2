@@ -94,6 +94,7 @@
               - Orphan Package
             </a>
             <a class="bold pkg_button_blue" title="Give the package to someone"
+              id="givebutton"
               href="{{ url_for('.package_give', package=package.name) }}">
               + Give Package
             </a>
@@ -303,6 +304,23 @@
 {{ super() }}
 <script type="text/javascript">
     $(function(){
+        $('#givebutton').click(function(){
+            var _url = "{{ url_for('.package_give', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+
+            return false;
+        });
         $('#orphanbutton').click(function(){
             var _url = "{{ url_for('.package_orphan', package=package.name, full=0) }}";
             $.ajax({
