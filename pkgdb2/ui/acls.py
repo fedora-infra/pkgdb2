@@ -103,7 +103,7 @@ def request_acl(package):
     )
 
 
-@UI.route('/acl/<package>/giveup/<acl>')
+@UI.route('/acl/<package>/giveup/<acl>/')
 @fas_login_required
 def giveup_acl(package, acl):
     ''' Request acls for a specific package. '''
