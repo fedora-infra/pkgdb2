@@ -378,3 +378,28 @@ ul.nobullet .pkg_button_blue, ul.nobullet .pkg_button_grey {
 .nobullet {
     list-style: none;
 }
+
+select#acls option[value="Awaiting Review"] {
+    padding-left: 20px;
+    background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Awaiting%20Review.png) 0 50% no-repeat;
+}
+
+select#acls option[value="Approved"] {
+    padding-left: 20px;
+    background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Approved.png) 0 50% no-repeat;
+}
+
+select#acls option[value="Obsolete"] {
+    padding-left: 20px;
+    background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Obsolete.png) 0 50% no-repeat;
+}
+
+select#acls option[value="Removed"] {
+    padding-left: 20px;
+    background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Removed.png) 0 50% no-repeat;
+}
+
+select#acls option[value="Denied"] {
+    padding-left: 20px;
+    background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Denied.png) 0 50% no-repeat;
+}
