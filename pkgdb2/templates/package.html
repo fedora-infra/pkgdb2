@@ -172,17 +172,29 @@
   <section id="pkg_committers">
     <div>
       <h3 class="inline">Committer(s)</h3>
-      {% if g.fas_user and g.fas_user.username in committers %}
-        <a class="bold pkg_button_grey inline" title="Drop your commit ACL on all branches"
-          href="">
-          - Give Up Commit Access
-        </a>
-      {% elif g.fas_user %}
-        <a class="bold pkg_button_blue inline" title="Request commit ACL on all branches"
-          href="{{ url_for('.comaintain_package',package=package.name) }}">
-          + Ask Commit Access
-        </a>
-      {% endif %}
+      <ul class="nobullet">
+        {% if g.fas_user and g.fas_user.username in committers %}
+          <li>
+          <a class="bold pkg_button_grey inline" title="Drop your commit ACL on all branches"
+            href="">
+            - Give Up Commit Access
+          </a>
+          </li>
+        {% elif g.fas_user %}
+          <li>
+          <a class="bold pkg_button_blue inline" title="Request commit ACL on all branches"
+            href="{{ url_for('.comaintain_package',package=package.name) }}">
+            + Ask Commit Access
+          </a>
+          </li>
+        {% endif %}
+        <li>
+          <a class="bold pkg_button_blue inline" title="Manage commit ACLs"
+            href="{{ url_for('.update_commit_acl',package=package.name) }}">
+            Manage the comitters
+          </a>
+        </li>
+      </ul>
     </div>
 
     <table>
