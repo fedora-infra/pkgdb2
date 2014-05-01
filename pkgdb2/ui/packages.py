@@ -616,12 +616,12 @@ def update_commit_acl(package):
         sub_users = flask.request.values.getlist('user')
         sub_branches = flask.request.values.getlist('branch')
 
-        if APP.debug:
+        if APP.debug:  # pragma: no cover
             print sub_acls
             print sub_users
             print sub_branches
 
-        if len(sub_acls) == (len(sub_users) * len(sub_branches)):
+        if sub_acls and len(sub_acls) == (len(sub_users) * len(sub_branches)):
             cnt = 0
             for cnt_u in range(len(sub_users)):
                 for cnt_b in range(len(sub_branches)):
@@ -629,7 +629,12 @@ def update_commit_acl(package):
                     lcl_user = sub_users[cnt_u]
                     lcl_branch = sub_branches[cnt_b]
 
-                    if APP.debug:
+                    if lcl_acl not in acl_status:
+                        flask.flash('Invalid ACL: %s' % lcl_acl, 'error')
+                        cnt += 1
+                        continue
+
+                    if APP.debug:  # pragma: no cover
                         print cnt_u, cnt_b, cnt
                         print lcl_user, lcl_branch, lcl_acl
                         print commit_acls[lcl_user][
@@ -639,7 +644,6 @@ def update_commit_acl(package):
                             branches_inv[lcl_branch]]['commit'] == lcl_acl:
                         cnt += 1
                         continue
-
 
                     try:
                         pkgdblib.set_acl_package(
@@ -651,13 +655,14 @@ def update_commit_acl(package):
                             status=lcl_acl,
                             user=flask.g.fas_user,
                         )
+                        flask.flash("%s's commit ACL updated on %s" % (
+                            lcl_user, lcl_branch))
                     except pkgdblib.PkgdbException, err:
                         SESSION.rollback()
                         flask.flash(str(err), 'error')
                     cnt += 1
 
             SESSION.commit()
-            flask.flash('Commit ACL updated')
             return flask.redirect(
                 flask.url_for('.package_info', package=package.name))
         else:
