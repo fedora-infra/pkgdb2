@@ -103,6 +103,66 @@ def request_acl(package):
     )
 
 
+@UI.route('/acl/<package>/request/<acl>/', methods=('GET', 'POST'))
+@fas_login_required
+def request_acl_all_branch(package, acl):
+    ''' Request the specified ACL on all branches of the specified package.
+    '''
+
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    collections = [aclobj.collection
+        for aclobj in package_acl
+        if aclobj.collection.status in ['Active', 'Under Development']
+    ]
+
+    pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
+
+    if acl not in pkg_acl:
+        flask.flash('Invalid ACL provided %s.' % acl, 'errors')
+        return flask.render_template('msg.html')
+
+    if 'packager' not in flask.g.fas_user.groups:
+        flask.flash(
+            'You must be a packager to apply to the ACL: %s on %s' % (
+                acl, collec), 'errors')
+        return flask.render_template('msg.html')
+
+    for pkglist in package_acl:
+        for aclobj in pkglist.acls:
+            if aclobj.acl == acl:
+                try:
+                    acl_status = 'Awaiting Review'
+                    if acl in APP.config['AUTO_APPROVE']:
+                        acl_status = 'Approved'
+
+                    pkgdblib.set_acl_package(
+                        SESSION,
+                        pkg_name=package,
+                        pkg_branch=pkglist.collection.branchname,
+                        pkg_user=flask.g.fas_user.username,
+                        acl=acl,
+                        status=acl_status,
+                        user=flask.g.fas_user,
+                    )
+                    flask.flash(
+                        'ACL %s requested on branch %s' % (
+                            acl, pkglist.collection.branchname))
+                    SESSION.commit()
+                    break
+                except pkgdblib.PkgdbException, err:
+                    SESSION.rollback()
+                    flask.flash(str(err), 'error')
+
+    return flask.redirect(
+        flask.url_for('.package_info', package=package))
+
+
 @UI.route('/acl/<package>/giveup/<acl>/')
 @fas_login_required
 def giveup_acl(package, acl):
