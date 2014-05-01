@@ -89,6 +89,7 @@
         {% if g.fas_user and g.fas_user.username in pocs %}
           <li>
             <a class="bold pkg_button_grey" title="Orphan the package"
+              id="orphanbutton"
               href="{{ url_for('.package_orphan', package=package.name) }}">
               - Orphan Package
             </a>
@@ -101,11 +102,13 @@
         {% if g.fas_user and 'orphan' in pocs %}
           <li>
             <a class="bold pkg_button_grey" title="This package is orphaned, retire it"
+               id="retirebutton"
                href="{{ url_for('.package_retire',
                               package=package.name, collection='devel') }}">
               - Retire Package
             </a>
             <a class="bold pkg_button_blue" title="This package is orphaned, take it!"
+               id="takebutton"
                href="{{ url_for('.package_take', package=package.name) }}">
               + Take Package
             </a>
@@ -292,4 +295,66 @@
   </section>
 
 </section>
+{% endblock %}
+
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript">
+    $(function(){
+        $('#orphanbutton').click(function(){
+            var _url = "{{ url_for('.package_orphan', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    var _height = $(window).height() * 0.8;
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+
+            return false;
+        });
+        $('#takebutton').click(function(){
+            var _url = "{{ url_for('.package_take', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+
+            return false;
+        });
+        $('#retirebutton').click(function(){
+            var _url = "{{ url_for('.package_retire', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    var _height = $(window).height() * 0.8;
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+
+            return false;
+        });
+    });
+</script>
 {% endblock %}
