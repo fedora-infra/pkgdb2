@@ -76,6 +76,12 @@
             Cancel
           </a>
         </li>
+        <li class="inline">
+          <a class="bold pkg_button_grey"
+            href="{{ url_for('.package_give_acls', package=package.name) }}">
+            Add someone
+          </a>
+        </li>
       </ul>
       {{ form.csrf_token }}
     </form>
