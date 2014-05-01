@@ -291,7 +291,7 @@ div#pkg_admins {
     padding: 0.2em 1.3em 0.2em 1.3em;
     margin: 0px 0px 5px 0px;
     background: #3b6eb4;
-    border: 2px solid #58595b;
+    border: 1px solid #58595b;
     color: #fff;
 }
 
@@ -302,7 +302,7 @@ div#pkg_admins {
     padding: 0.2em 1.3em 0.2em 1.3em;
     margin: 0px 0px 5px 0px;
     background: #60605b;
-    border: 2px solid #58595b;
+    border: 1px solid #58595b;
     color: #fff;
 }
 
