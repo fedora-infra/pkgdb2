@@ -186,6 +186,67 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
+    def test_request_acl_all_branch(self, login_func, mock_func):
+        """ Test the request_acl_all_branch function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+
+        user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/acl/guake/request/approveacls/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                'class="message">ACL approveacls requested on branch f18</li>'
+                in output.data)
+            self.assertTrue(
+                'class="message">ACL approveacls requested on branch devel</l'
+                in output.data)
+            self.assertEqual(
+                output.data.count('<a class="pending"'), 2)
+
+
+            output = self.app.get(
+                '/acl/guake/request/foobar/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">Invalid ACL provided foobar.</li>'
+                in output.data)
+
+            output = self.app.get(
+                '/acl/barfoo/request/commit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No package found by this name</li>'
+                in output.data)
+
+        user.username = 'toshio'
+        user.groups = []
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/acl/guake/request/commit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">You must be a packager to apply to the '
+                'ACL: commit on guake</li>'
+                in output.data)
+
+            output = self.app.get(
+                '/acl/guake/request/watchcommits/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">ACL watchcommits requested on branch '
+                'f18</li>' in output.data)
+            self.assertTrue(
+                '<li class="message">ACL watchcommits requested on branch '
+                'devel</li>' in output.data)
+
+
+    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.fas_login_required')
     def test_watch_package(self, login_func, mock_func):
         """ Test the watch_package function. """
         login_func.return_value = None
