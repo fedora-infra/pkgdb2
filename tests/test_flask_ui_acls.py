@@ -244,6 +244,54 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">ACL watchcommits requested on branch '
                 'devel</li>' in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.fas_login_required')
+    def test_giveup_acl(self, login_func, mock_func):
+        """ Test the giveup_acl function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+
+        user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/acl/guake/giveup/approveacls/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Your ACL approveacls is obsoleted on '
+                'branch f18 of package guake</li>' in output.data)
+            self.assertTrue(
+                '<li class="message">Your ACL approveacls is obsoleted on '
+                'branch devel of package guake</li>' in output.data)
+            self.assertEqual(
+                output.data.count('<a class="pending"'), 1)
+
+
+            output = self.app.get(
+                '/acl/guake/giveup/foobar/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">Invalid ACL provided foobar.</li>'
+                in output.data)
+
+            output = self.app.get(
+                '/acl/barfoo/giveup/commit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No package found by this name</li>'
+                in output.data)
+
+        user.username = 'toshio'
+        user.groups = []
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/acl/guake/giveup/commit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">User &#34;toshio&#34; is not in the '
+                'packager group</li>' in output.data)
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
