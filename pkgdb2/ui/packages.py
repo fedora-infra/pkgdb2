@@ -536,3 +536,84 @@ def package_take(package, full=True):
         form=form,
         action='take',
     )
+
+
+@UI.route('/package/<package>/acl/commit/', methods=('GET', 'POST'))
+@packager_login_required
+def update_commit_acl(package):
+    ''' Update the acls of a package. '''
+
+    packagename = package
+    package = None
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    statues = pkgdblib.get_status(SESSION)
+    planned_acls = set(statues['pkg_acl'])
+    acl_status = set(statues['acl_status'])
+
+    branches = set()
+    commit_acls = {}
+    admins = {}
+    committers = []
+
+    for pkg in package_acl:
+        if pkg.collection.status == 'EOL':  # pragma: no cover
+            continue
+
+        collection_name = '%s %s' % (
+            pkg.collection.name, pkg.collection.version)
+
+        branches.add(collection_name)
+
+        acls = {}
+        for acl in pkg.acls:
+
+            if acl.acl == 'approveacls' and acl.status == 'Approved':
+                if acl.fas_name not in admins:
+                    admins[acl.fas_name] = set()
+                admins[acl.fas_name].add(collection_name)
+
+            if acl.acl != 'commit':
+                continue
+
+            committers.append(acl.fas_name)
+            if acl.fas_name not in commit_acls:
+                commit_acls[acl.fas_name] = {}
+            if collection_name not in commit_acls[acl.fas_name]:
+                commit_acls[acl.fas_name][collection_name] = {}
+
+            commit_acls[acl.fas_name][collection_name][acl.acl] = \
+                acl.status
+
+        for aclname in planned_acls:
+            for user in commit_acls:
+                if collection_name in commit_acls[user] and \
+                        aclname not in commit_acls[user][collection_name]:
+                    commit_acls[user][collection_name][aclname] = None
+
+    if flask.g.fas_user.username not in admins:
+        flask.flash(
+            'You do not have `approveacls` on this package, you may not '
+            'review its ACLs', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    form = pkgdb2.forms.ConfirmationForm()
+
+    return flask.render_template(
+        'acl_commit.html',
+        acl='commit',
+        acl_status=acl_status,
+        package=package,
+        form=form,
+        branches=branches,
+        commit_acls=commit_acls,
+        admins=admins,
+        committers=committers,
+    )
