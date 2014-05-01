@@ -343,3 +343,8 @@ class BranchForm(wtf.Form):
                 (collec, collec)
                 for collec in kwargs['collections']
             ]
+
+
+class ConfirmationForm(wtf.Form):
+    """ The simplest form we can do but that ensures CSRF protection. """
+    pass
