@@ -350,138 +350,175 @@ def package_give(package):
 
 
 @UI.route('/package/<package>/orphan', methods=('GET', 'POST'))
-@UI.route('/package/<package>/<collection>/orphan', methods=('GET', 'POST'))
+@UI.route('/package/<package>/orphan/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_orphan(package, collection=None):
+def package_orphan(package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
 
-    packagename = package
-    package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    for acl in package_acl:
-        if acl.collection.status not in ['Active', 'Under Development']:
-            continue
-        if not collection or acl.collection.branchname == collection:
+    collections = [acl.collection.branchname
+        for acl in package_acl
+        if acl.collection.status in ['Active', 'Under Development']
+        and (is_pkgdb_admin(flask.g.fas_user)
+             or acl.point_of_contact == flask.g.fas_user.username)
+    ]
+
+    form = pkgdb2.forms.BranchForm(collections=collections)
+
+    if form.validate_on_submit():
+        for branch in form.branches.data:
             try:
                 pkgdblib.update_pkg_poc(
                     session=SESSION,
                     pkg_name=package.name,
-                    pkg_branch=acl.collection.branchname,
+                    pkg_branch=branch,
                     pkg_poc='orphan',
                     user=flask.g.fas_user
                 )
                 flask.flash(
                     'You are no longer point of contact on branch: %s'
-                    % acl.collection.branchname)
+                    % branch)
             except pkgdblib.PkgdbException, err:
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
-            if collection:
-                break
 
-    try:
-        SESSION.commit()
-    # Keep it in, but normally we shouldn't hit this
-    except pkgdblib.PkgdbException, err:  # pragma: no cover
-        SESSION.rollback()
-        flask.flash(str(err), 'error')
+        try:
+            SESSION.commit()
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
 
-    return flask.redirect(
-        flask.url_for('.package_info', package=package.name))
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    return flask.render_template(
+        'branch_selection.html',
+        full=full,
+        package=package,
+        form=form,
+        action='orphan',
+    )
 
 
-@UI.route('/package/<package>/<collection>/retire', methods=('GET', 'POST'))
+@UI.route('/package/<package>/retire', methods=('GET', 'POST'))
+@UI.route('/package/<package>/retire/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_retire(package, collection):
+def package_retire(package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
 
-    packagename = package
-    package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    for acl in package_acl:
-        if acl.collection.branchname == collection:
-            if acl.point_of_contact == 'orphan':
-                try:
-                    pkgdblib.update_pkg_status(
-                        session=SESSION,
-                        pkg_name=package.name,
-                        pkg_branch=acl.collection.branchname,
-                        status='Retired',
-                        user=flask.g.fas_user
-                    )
+    collections = [acl.collection.branchname
+        for acl in package_acl
+        if acl.collection.status in ['Active', 'Under Development']
+        and acl.point_of_contact == 'orphan'
+    ]
+
+    form = pkgdb2.forms.BranchForm(collections=collections)
+
+    if form.validate_on_submit():
+        for acl in package_acl:
+            if acl.collection.branchname in form.branches.data:
+                if acl.point_of_contact == 'orphan':
+                    try:
+                        pkgdblib.update_pkg_status(
+                            session=SESSION,
+                            pkg_name=package.name,
+                            pkg_branch=acl.collection.branchname,
+                            status='Retired',
+                            user=flask.g.fas_user
+                        )
+                        flask.flash(
+                            'This package has been retired on branch: %s'
+                            % collection)
+                    except pkgdblib.PkgdbException, err:
+                        flask.flash(str(err), 'error')
+                        SESSION.rollback()
+                    break
+                else:
                     flask.flash(
-                        'This package has been retired on branch: %s'
-                        % collection)
-                except pkgdblib.PkgdbException, err:
-                    flask.flash(str(err), 'error')
-                    SESSION.rollback()
-                break
-            else:
-                flask.flash(
-                    'This package has not been orphaned on '
-                    'branch: %s' % collection)
+                        'This package has not been orphaned on '
+                        'branch: %s' % collection)
 
-    try:
-        SESSION.commit()
-    # Keep it in, but normally we shouldn't hit this
-    except pkgdblib.PkgdbException, err:  # pragma: no cover
-        SESSION.rollback()
-        flask.flash(str(err), 'error')
+        try:
+            SESSION.commit()
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
 
-    return flask.redirect(
-        flask.url_for('.package_info', package=package.name))
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    return flask.render_template(
+        'branch_selection.html',
+        full=full,
+        package=package,
+        form=form,
+        action='retire',
+    )
 
 
 @UI.route('/package/<package>/take', methods=('GET', 'POST'))
-@UI.route('/package/<package>/<collection>/take', methods=('GET', 'POST'))
+@UI.route('/package/<package>/take/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_take(package, collection=None):
+def package_take(package, full=True):
     ''' Make someone Point of contact of an orphaned package. '''
 
-    packagename = package
-    package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    for acl in package_acl:
-        if acl.collection.status not in ['Active', 'Under Development']:
-            continue
-        if not collection or acl.collection.branchname == collection:
+    collections = [acl.collection.branchname
+        for acl in package_acl
+        if acl.collection.status in ['Active', 'Under Development']
+        and acl.point_of_contact == 'orphan'
+    ]
+
+    form = pkgdb2.forms.BranchForm(collections=collections)
+
+    if form.validate_on_submit():
+        for branch in form.branches.data:
             try:
                 pkgdblib.unorphan_package(
                     session=SESSION,
                     pkg_name=package.name,
-                    pkg_branch=acl.collection.branchname,
+                    pkg_branch=branch,
                     pkg_user=flask.g.fas_user.username,
                     user=flask.g.fas_user
                 )
                 SESSION.commit()
                 flask.flash('You have taken the package %s on branch %s' % (
-                    package.name, acl.collection.branchname))
+                    package.name, branch))
             except pkgdblib.PkgdbException, err:
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
-            if collection:
-                break
 
-    return flask.redirect(
-        flask.url_for('.package_info', package=package.name))
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    return flask.render_template(
+        'branch_selection.html',
+        full=full,
+        package=package,
+        form=form,
+        action='take',
+    )
