@@ -152,7 +152,7 @@
                or g.fas_user.username in pending_admins) %}
             <a class="bold pkg_button_grey inline"
               title="Drop your approveacl ACL on all branches"
-              href="{{ url_for('.package_give', package=package.name) }}">
+              href="{{ url_for('.giveup_acl', package=package.name, acl='approveacls') }}">
               - Give Up Admin Access
             </a>
           {% elif g.fas_user and g.fas_user.username not in admins
