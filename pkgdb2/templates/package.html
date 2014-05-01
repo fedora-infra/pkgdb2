@@ -73,14 +73,14 @@
             contact.
           </p>
           <ul>
-            {% for user in branch_poc %}
+            {% for user in pocs %}
             <li>
               <span class="username">
                 <a href="{{ url_for('.packager_info', packager=user) }}">
                   {{ user }}
                 </a>
               </span>
-              <span class="branches">({{ branch_poc[user] | sort | join(', ') }})</span>
+              <span class="branches">({{ pocs[user] | sort | join(', ') }})</span>
             </li>
             {% endfor %}
           </ul>
@@ -93,14 +93,25 @@
             package.
           </p>
           <ul>
-            {% for user in branch_poc %}
+            {% for user in admins %}
             <li>
               <span class="username">
                 <a href="{{ url_for('.packager_info', packager=user) }}">
                   {{ user }}
                 </a>
               </span>
-              <span class="branches">({{ branch_poc[user] | sort | join(', ') }})</span>
+              <span class="branches">({{ admins[user] | sort | join(', ') }})</span>
+            </li>
+            {% endfor %}
+            {% for user in pending_admins %}
+            <li>
+              <span class="username">
+                <a class="pending"
+                   href="{{ url_for('.packager_info', packager=user) }}">
+                  {{ user }}
+                </a>
+              </span>
+              <span class="branches">({{ pending_admins[user] | sort | join(', ') }})</span>
             </li>
             {% endfor %}
           </ul>
