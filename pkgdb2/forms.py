@@ -324,3 +324,22 @@ class GivePoCForm(wtf.Form):
                 (collec, collec)
                 for collec in kwargs['collections']
             ]
+
+
+class BranchForm(wtf.Form):
+    """ Form to perform an action on one or more branches of a package. """
+    branches = wtforms.SelectMultipleField(
+        'Branch',
+        [wtforms.validators.Required()],
+        choices=[('', '')])
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(BranchForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            self.branches.choices = [
+                (collec, collec)
+                for collec in kwargs['collections']
+            ]
