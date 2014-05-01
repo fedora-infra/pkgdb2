@@ -118,6 +118,11 @@ a.fas {
   background: url(https://fedoraproject.org/w/uploads/a/ac/Infra-icon_fas.png) 0 50% no-repeat;
 }
 
+a.pending {
+  padding-left: 20px;
+  background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Awaiting%20Review.png) 0 50% no-repeat;
+}
+
 #actions {
   line-height: 1;
   list-style: none;
