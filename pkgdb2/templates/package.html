@@ -85,31 +85,37 @@
           {% endfor %}
         </ul>
 
+        <ul class="nobullet">
         {% if g.fas_user and g.fas_user.username in pocs %}
-          <a class="bold pkg_button_grey inline"
-            href="{{ url_for('.package_orphan', package=package.name) }}">
-            - Orphan Package
-          </a>
-          <a class="bold pkg_button_blue inline"
-            href="{{ url_for('.package_give', package=package.name) }}">
-            + Give Package
-          </a>
+          <li>
+            <a class="bold pkg_button_grey"
+              href="{{ url_for('.package_orphan', package=package.name) }}">
+              - Orphan Package
+            </a>
+            <a class="bold pkg_button_blue"
+              href="{{ url_for('.package_give', package=package.name) }}">
+              + Give Package
+            </a>
+          </li>
         {% endif %}
         {% if g.fas_user and 'orphan' in pocs %}
-          <a class="bold pkg_button_grey inline"
-             href="{{ url_for('.package_retire',
-                            package=package.name, collection='devel') }}">
-            - Retire Package
-          </a>
-          <a class="bold pkg_button_blue inline"
-             href="{{ url_for('.package_take', package=package.name) }}">
-            + Take Package
-          </a>
+          <li>
+            <a class="bold pkg_button_grey"
+               href="{{ url_for('.package_retire',
+                              package=package.name, collection='devel') }}">
+              - Retire Package
+            </a>
+            <a class="bold pkg_button_blue"
+               href="{{ url_for('.package_take', package=package.name) }}">
+              + Take Package
+            </a>
+          </li>
         {% endif %}
+        </ul>
       </div>
 
       <div id="pkg_admins">
-        <h4 class="inline">Package Administrator(s)</h4>
+        <h4>Package Administrator(s)</h4>
           <p>
             These users can help you if you need commit privileges for this
             package.

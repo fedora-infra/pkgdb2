@@ -373,3 +373,7 @@ div#pkg_contacts .pkg_button_blue, div#pkg_contacts .pkg_button_grey {
 #pkg_watchers .row_even .col_odd {
     background-color: #E7EFF5;
 }
+
+.nobullet {
+    list-style: none;
+}
