@@ -311,6 +311,16 @@ ul.nobullet .pkg_button_blue, ul.nobullet .pkg_button_grey {
     margin-left: 5px;
 }
 
+button.pkg_button_blue{
+    padding: 0.1em 0.5em 0em 0.5em;
+    vertical-align: center;
+}
+
+#edit_acl .pkg_button_grey{
+    height: 18px;
+    padding: 0.5em 1.3em 0em 1.3em;
+}
+
 #pkg_watchers table{
     width: 100%;
 }
