@@ -38,7 +38,7 @@ body#packages #options {
 }
 
 #pkg_info{
-    width: 95%;
+    width: 93%;
     float: left;
 }
 
@@ -257,12 +257,14 @@ section#pkg_ppl_table {
 
 div#pkg_contacts {
     display: table-cell;
-    width: 48%;
+    width: 46%;
+    padding-right: 10px;
 }
 
 div#pkg_admins {
     display: table-cell;
-    width: 48%;
+    width: 46%;
+    padding-left: 10px;
 }
 
 #pkg_committers table th{
@@ -302,6 +304,10 @@ div#pkg_admins {
     background: #60605b;
     border: 2px solid #58595b;
     color: #fff;
+}
+
+div#pkg_contacts .pkg_button_blue, div#pkg_contacts .pkg_button_grey {
+    margin-left: 5px;
 }
 
 #pkg_watchers table{
