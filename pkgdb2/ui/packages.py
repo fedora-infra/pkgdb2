@@ -538,9 +538,9 @@ def package_take(package, full=True):
     )
 
 
-@UI.route('/package/<package>/acl/commit/', methods=('GET', 'POST'))
+@UI.route('/package/<package>/acl/<update_acl>/', methods=('GET', 'POST'))
 @packager_login_required
-def update_commit_acl(package):
+def update_acl(package, update_acl):
     ''' Update the acls of a package. '''
 
     packagename = package
@@ -556,6 +556,11 @@ def update_commit_acl(package):
     statues = pkgdblib.get_status(SESSION)
     planned_acls = set(statues['pkg_acl'])
     acl_status = set(statues['acl_status'])
+
+    if update_acl not in planned_acls:
+        flask.flash('Invalid ACL to update.', 'errors')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
 
     branches = {}
     branches_inv = {}
@@ -584,7 +589,7 @@ def update_commit_acl(package):
                     admins[acl.fas_name] = set()
                 admins[acl.fas_name].add(collection_name)
 
-            if acl.acl != 'commit':
+            if acl.acl != update_acl:
                 continue
 
             committers.append(acl.fas_name)
@@ -637,11 +642,12 @@ def update_commit_acl(package):
                     if APP.debug:  # pragma: no cover
                         print cnt_u, cnt_b, cnt
                         print lcl_user, lcl_branch, lcl_acl
-                        print commit_acls[lcl_user][
-                                branches_inv[lcl_branch]]['commit']
+                        print commit_acls[lcl_user], lcl_branch, branches_inv[lcl_branch]
 
-                    if commit_acls[lcl_user][
-                            branches_inv[lcl_branch]]['commit'] == lcl_acl:
+                    if branches_inv[lcl_branch] in commit_acls[lcl_user] and \
+                            commit_acls[lcl_user][
+                                branches_inv[lcl_branch]
+                            ][update_acl] == lcl_acl:
                         cnt += 1
                         continue
 
@@ -651,12 +657,12 @@ def update_commit_acl(package):
                             pkg_name=package.name,
                             pkg_branch=lcl_branch,
                             pkg_user=lcl_user,
-                            acl='commit',
+                            acl=update_acl,
                             status=lcl_acl,
                             user=flask.g.fas_user,
                         )
-                        flask.flash("%s's commit ACL updated on %s" % (
-                            lcl_user, lcl_branch))
+                        flask.flash("%s's %s ACL updated on %s" % (
+                            lcl_user, update_acl, lcl_branch))
                     except pkgdblib.PkgdbException, err:
                         SESSION.rollback()
                         flask.flash(str(err), 'error')
@@ -670,7 +676,7 @@ def update_commit_acl(package):
 
     return flask.render_template(
         'acl_commit.html',
-        acl='commit',
+        acl=update_acl,
         acl_status=acl_status,
         package=package,
         form=form,
