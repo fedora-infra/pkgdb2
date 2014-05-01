@@ -83,7 +83,7 @@ def get_packagers():
     """ Return a list containing the name of all the packagers. """
     output = []
     for user in __get_fas_grp_member('packager'):
-        if user.role_type in ('user', 'sponsor', 'admin'):
+        if user.role_type in ('user', 'sponsor', 'administrator'):
             output.append(user.username)
     return output
 
