@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<section id="pkg_info">
+<section id="edit_acl">
   <h1>
     <a property="doap:name" href="{{ url_for('.package_info', package=package.name) }}">
       {{ package.name }}
@@ -32,6 +32,7 @@
             <tr>
           {% endif %}
             <td class="users">
+              <input type="hidden" value="user" name="{{ user }}">
               <a href="{{ url_for('.packager_info', packager=user) }}" class="username">
                 {{ user }}
               </a>
@@ -61,11 +62,11 @@
 
       <ul class="nobullet">
         <li class="inline">
-          <a  title="Give the package to someone"
-            class="bold pkg_button_blue" type="submit"
-            href="{{ request.url }}">
-            Apply Changes
-          </a>
+          <button type="submit"
+            class="bold pkg_button_blue"
+            title="Give the package to someone">
+              Apply Changes
+          </button>
         </li>
         <li class="inline">
           <a class="bold pkg_button_grey"
@@ -74,6 +75,7 @@
           </a>
         </li>
       </ul>
+      {{ form.csrf_token }}
     </form>
   </section>
 
