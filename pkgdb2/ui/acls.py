@@ -44,9 +44,19 @@ from pkgdb2.ui import UI
 def request_acl(package):
     ''' Request acls for a specific package. '''
 
-    collections = pkgdblib.search_collection(
-        SESSION, '*', 'Under Development')
-    collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    collections = [acl.collection
+        for acl in package_acl
+        if acl.collection.status in ['Active', 'Under Development']
+    ]
+
     pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
 
     form = pkgdb2.forms.RequestAclPackageForm(
