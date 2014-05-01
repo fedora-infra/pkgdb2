@@ -25,6 +25,7 @@ ACLs management for the Flask application.
 
 import flask
 import itertools
+from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
@@ -90,6 +91,52 @@ def request_acl(package):
         form=form,
         package=package,
     )
+
+
+@UI.route('/acl/<package>/giveup/<acl>')
+@fas_login_required
+def giveup_acl(package, acl):
+    ''' Request acls for a specific package. '''
+
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    for pkglist in package_acl:
+        for aclobj in pkglist.acls:
+            if aclobj.acl == acl and aclobj.status == 'Approved':
+                try:
+                    pkgdblib.set_acl_package(
+                        SESSION,
+                        pkg_name=package.name,
+                        pkg_branch=pkglist.collection.branchname,
+                        pkg_user=flask.g.fas_user.username,
+                        acl=acl,
+                        status='Obsolete',
+                        user=flask.g.fas_user,
+                    )
+                    flask.flash(
+                        'Your ACL %s is obsoleted on branch %s of package %s'
+                        % (aclobj.acl, pkglist.collection.branchname,
+                           package.name))
+                except pkgdblib.PkgdbException, err:
+                    flask.flash(str(err), 'error')
+                    SESSION.rollback()
+                break
+
+        try:
+            SESSION.commit()
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
+
+    return flask.redirect(
+        flask.url_for('.package_info', package=package.name))
 
 
 @UI.route('/acl/<package>/give/', methods=('GET', 'POST'))
