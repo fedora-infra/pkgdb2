@@ -14,7 +14,7 @@
 
   <section id="pkg_committers">
     <div>
-      <h3 class="inline">Committer(s)</h3>
+      <h3 class="inline">User(s)</h3>
     </div>
 
     <form action="{{ request.url }}" method="POST">
@@ -48,7 +48,7 @@
                 <select name="acls" id="acls">
                   {% for status in acl_status %}
                     {% if 'commit' in commit_acls[user][branch] and
-                        status == commit_acls[user][branch]['commit'] %}
+                        status == commit_acls[user][branch][acl] %}
                       <option style selected="" value="{{ status }}">{{ status }}</option>
                     {% else %}
                       <option value="{{ status }}">{{ status }}</option>
