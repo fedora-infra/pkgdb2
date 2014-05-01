@@ -1,0 +1,81 @@
+{% extends "master.html" %}
+
+{% block title %} {{ package.name }} | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<section id="pkg_info">
+  <h1>
+    <a property="doap:name" href="{{ url_for('.package_info', package=package.name) }}">
+      {{ package.name }}
+    </a> > Edit {{ acl.capitalize() }} Access</h1>
+
+  <section id="pkg_committers">
+    <div>
+      <h3 class="inline">Committer(s)</h3>
+    </div>
+
+    <form action="{{ request.url }}" method="POST">
+      <table>
+        <tr>
+          <th></th>
+          {% for branch in branches | sort %}
+          <th>{{ branch }}</th>
+          {% endfor %}
+        </tr>
+        {% for user in commit_acls | sort %}
+          {% if loop.last %}
+            <tr class="lastrow">
+          {% else %}
+            <tr>
+          {% endif %}
+            <td class="users">
+              <a href="{{ url_for('.packager_info', packager=user) }}" class="username">
+                {{ user }}
+              </a>
+            </td>
+            {% for branch in branches | sort %}
+              {% if not loop.last %}
+                <td class="dashed">
+              {% else %}
+                <td class="dashed lastcel">
+              {% endif %}
+                <select name="acls" id="acls">
+                  {% for status in acl_status %}
+                    {% if 'commit' in commit_acls[user][branch] and
+                        status == commit_acls[user][branch]['commit'] %}
+                      <option style selected="" value="{{ status }}">{{ status }}</option>
+                    {% else %}
+                      <option value="{{ status }}">{{ status }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+
+      <ul class="nobullet">
+        <li class="inline">
+          <a  title="Give the package to someone"
+            class="bold pkg_button_blue" type="submit"
+            href="{{ request.url }}">
+            Apply Changes
+          </a>
+        </li>
+        <li class="inline">
+          <a class="bold pkg_button_grey"
+            href="{{ url_for('.package_info', package=package.name) }}">
+            Cancel
+          </a>
+        </li>
+      </ul>
+    </form>
+  </section>
+
+</section>
+{% endblock %}
