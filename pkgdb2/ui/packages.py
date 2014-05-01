@@ -349,9 +349,10 @@ def package_give(package):
     )
 
 
+@UI.route('/package/<package>/orphan', methods=('GET', 'POST'))
 @UI.route('/package/<package>/<collection>/orphan', methods=('GET', 'POST'))
 @packager_login_required
-def package_orphan(package, collection):
+def package_orphan(package, collection=None):
     ''' Gives the possibility to orphan or take a package. '''
 
     packagename = package
@@ -365,7 +366,7 @@ def package_orphan(package, collection):
         return flask.render_template('msg.html')
 
     for acl in package_acl:
-        if acl.collection.branchname == collection:
+        if not collection or acl.collection.branchname == collection:
             try:
                 pkgdblib.update_pkg_poc(
                     session=SESSION,
@@ -376,11 +377,12 @@ def package_orphan(package, collection):
                 )
                 flask.flash(
                     'You are no longer point of contact on branch: %s'
-                    % collection)
+                    % acl.collection.branchname)
             except pkgdblib.PkgdbException, err:
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
-            break
+            if collection:
+                break
 
     try:
         SESSION.commit()
