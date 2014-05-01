@@ -355,6 +355,9 @@ def package_give(package):
 def package_orphan(package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
 
+    if not bool(full) or full in ['0', 'False']:
+        full = False
+
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, package)
         package = pkgdblib.search_package(SESSION, package, limit=1)[0]
@@ -413,6 +416,9 @@ def package_orphan(package, full=True):
 @packager_login_required
 def package_retire(package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
+
+    if not bool(full) or full in ['0', 'False']:
+        full = False
 
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, package)
@@ -478,6 +484,9 @@ def package_retire(package, full=True):
 @packager_login_required
 def package_take(package, full=True):
     ''' Make someone Point of contact of an orphaned package. '''
+
+    if not bool(full) or full in ['0', 'False']:
+        full = False
 
     try:
         package_acl = pkgdblib.get_acl_package(SESSION, package)
