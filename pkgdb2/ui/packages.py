@@ -446,25 +446,44 @@ def package_retire(package, collection):
         flask.url_for('.package_info', package=package.name))
 
 
+@UI.route('/package/<package>/take', methods=('GET', 'POST'))
 @UI.route('/package/<package>/<collection>/take', methods=('GET', 'POST'))
 @packager_login_required
-def package_take(package, collection):
+def package_take(package, collection=None):
     ''' Make someone Point of contact of an orphaned package. '''
 
+    packagename = package
+    package = None
     try:
-        pkgdblib.unorphan_package(
-            session=SESSION,
-            pkg_name=package,
-            pkg_branch=collection,
-            pkg_user=flask.g.fas_user.username,
-            user=flask.g.fas_user
-        )
-        SESSION.commit()
-        flask.flash('You have taken the package %s on branch %s' % (
-            package, collection))
-    except pkgdblib.PkgdbException, err:
+        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except (NoResultFound, IndexError):
         SESSION.rollback()
-        flask.flash(str(err), 'error')
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    for acl in package_acl:
+        if acl.collection.status not in ['Active', 'Under Development']:
+            continue
+        if acl.point_of_contact != 'orphan':
+            continue
+        if not collection or acl.collection.branchname == collection:
+            try:
+                pkgdblib.unorphan_package(
+                    session=SESSION,
+                    pkg_name=package.name,
+                    pkg_branch=acl.collection.branchname,
+                    pkg_user=flask.g.fas_user.username,
+                    user=flask.g.fas_user
+                )
+                SESSION.commit()
+                flask.flash('You have taken the package %s on branch %s' % (
+                    package.name, acl.collection.branchname))
+            except pkgdblib.PkgdbException, err:
+                flask.flash(str(err), 'error')
+                SESSION.rollback()
+            if collection:
+                break
 
     return flask.redirect(
-        flask.url_for('.package_info', package=package))
+        flask.url_for('.package_info', package=package.name))
