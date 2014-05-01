@@ -1045,16 +1045,16 @@ class PkgdbLibtests(Modeltests):
 
         create_package_acl(self.session)
 
-        pending_acls = pkgdblib.get_pending_acl_user(
-            self.session, 'pingou')
+        pending_acls = sorted(pkgdblib.get_pending_acl_user(
+            self.session, 'pingou'))
         self.assertEqual(len(pending_acls), 2)
         self.assertEqual(pending_acls[0]['package'], 'guake')
         self.assertEqual(pending_acls[0]['collection'], 'devel')
-        self.assertEqual(pending_acls[0]['acl'], 'commit')
+        self.assertEqual(pending_acls[0]['acl'], 'approveacls')
         self.assertEqual(pending_acls[0]['status'], 'Awaiting Review')
         self.assertEqual(pending_acls[1]['package'], 'guake')
         self.assertEqual(pending_acls[1]['collection'], 'devel')
-        self.assertEqual(pending_acls[1]['acl'], 'approveacls')
+        self.assertEqual(pending_acls[1]['acl'], 'commit')
         self.assertEqual(pending_acls[1]['status'], 'Awaiting Review')
 
     def test_get_acl_user_package(self):
