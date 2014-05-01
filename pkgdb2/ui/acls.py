@@ -124,18 +124,16 @@ def request_acl_all_branch(package, acl):
         for pkglist in pkg.listings
         if pkglist.collection.status in ['Active', 'Under Development']])
 
-    if 'packager' not in flask.g.fas_user.groups:
-        flask.flash(
-            'You must be a packager to apply to the ACL: %s on %s' % (
-                acl, collec), 'errors')
-        return flask.render_template('msg.html')
-
     for branch in pkg_branchs:
         acl_status = 'Awaiting Review'
         if acl in APP.config['AUTO_APPROVE']:
             acl_status = 'Approved'
-        try:
+        elif 'packager' not in flask.g.fas_user.groups:
+            flask.flash(
+                'You must be a packager to apply to the ACL: %s on %s' % (
+                acl, package), 'error')
 
+        try:
             pkgdblib.set_acl_package(
                 SESSION,
                 pkg_name=package,
