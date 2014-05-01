@@ -234,7 +234,6 @@ def package_give_acls(package):
                 if acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
 
-                print package, collec, pkg_user, acl, acl_status
                 pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
