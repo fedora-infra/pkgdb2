@@ -47,7 +47,7 @@
               {% endif %}
                 <select name="acls" id="acls">
                   {% for status in acl_status %}
-                    {% if 'commit' in commit_acls[user][branch] and
+                    {% if acl in commit_acls[user][branch] and
                         status == commit_acls[user][branch][acl] %}
                       <option style selected="" value="{{ status }}">{{ status }}</option>
                     {% else %}
