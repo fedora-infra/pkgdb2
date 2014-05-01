@@ -139,8 +139,9 @@ def package_info(package):
     branches = set()
     commit_acls = {}
     watch_acls = {}
-    branch_admin = {}
-    branch_poc = {}
+    admins = {}
+    pending_admins = {}
+    pocs = {}
     committers = []
     is_poc = False
 
@@ -153,9 +154,9 @@ def package_info(package):
 
         branches.add(collection_name)
 
-        if pkg.point_of_contact not in branch_poc:
-            branch_poc[pkg.point_of_contact] = set()
-        branch_poc[pkg.point_of_contact].add(collection_name)
+        if pkg.point_of_contact not in pocs:
+            pocs[pkg.point_of_contact] = set()
+        pocs[pkg.point_of_contact].add(collection_name)
 
         if is_authenticated() and \
                 pkg.point_of_contact == flask.g.fas_user.username:
@@ -166,9 +167,13 @@ def package_info(package):
         for acl in pkg.acls:
 
             if acl.acl == 'approveacls' and acl.status == 'Approved':
-                if acl.fas_name not in branch_admin:
-                    branch_admin[acl.fas_name] = set()
-                branch_admin[acl.fas_name].add(collection_name)
+                if acl.fas_name not in admins:
+                    admins[acl.fas_name] = set()
+                admins[acl.fas_name].add(collection_name)
+            elif acl.acl == 'approveacls' and acl.status == 'Awaiting Review':
+                if acl.fas_name not in pending_admins:
+                    pending_admins[acl.fas_name] = set()
+                pending_admins[acl.fas_name].add(collection_name)
 
             if acl.acl == 'commit':
                 dic = commit_acls
@@ -239,8 +244,9 @@ def package_info(package):
         package=package,
         commit_acls=commit_acls,
         watch_acls=watch_acls,
-        branch_admin=branch_admin,
-        branch_poc=branch_poc,
+        pocs=pocs,
+        admins=admins,
+        pending_admins=pending_admins,
         branches=branches,
         committers=committers,
         is_poc=is_poc,
