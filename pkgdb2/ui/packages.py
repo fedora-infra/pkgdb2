@@ -385,7 +385,7 @@ def package_orphan(package, full=True):
                 flask.flash(
                     'You are no longer point of contact on branch: %s'
                     % branch)
-            except pkgdblib.PkgdbException, err:
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
 
@@ -449,7 +449,7 @@ def package_retire(package, full=True):
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
                     break
-                else:
+                else:  # pragma: no cover
                     flask.flash(
                         'This package has not been orphaned on '
                         'branch: %s' % collection)
@@ -508,7 +508,7 @@ def package_take(package, full=True):
                 SESSION.commit()
                 flask.flash('You have taken the package %s on branch %s' % (
                     package.name, branch))
-            except pkgdblib.PkgdbException, err:
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
 
