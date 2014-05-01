@@ -80,7 +80,7 @@ def request_acl(package):
 
                 pkgdblib.set_acl_package(
                     SESSION,
-                    pkg_name=package,
+                    pkg_name=package.name,
                     pkg_branch=collec,
                     pkg_user=flask.g.fas_user.username,
                     acl=acl,
@@ -91,7 +91,7 @@ def request_acl(package):
             flask.flash('ACLs updated')
             return flask.redirect(
                 flask.url_for('.package_info',
-                              package=package))
+                              package=package.name))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(str(err), 'error')
@@ -99,7 +99,7 @@ def request_acl(package):
     return flask.render_template(
         'acl_request.html',
         form=form,
-        package=package,
+        package=package.name,
     )
 
 
