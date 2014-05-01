@@ -68,26 +68,42 @@
     <div class="pkg_ppl_row">
       <div id="pkg_contacts">
         <h4>Main Contact(s)</h4>
-          <p>
-            For general concerns about this package, these are the people to
-            contact.
-          </p>
-          <ul>
-            {% for user in pocs %}
-            <li>
-              <span class="username">
-                <a href="{{ url_for('.packager_info', packager=user) }}">
-                  {{ user }}
-                </a>
-              </span>
-              <span class="branches">({{ pocs[user] | sort | join(', ') }})</span>
-            </li>
-            {% endfor %}
-          </ul>
+        <p>
+          For general concerns about this package, these are the people to
+          contact.
+        </p>
+        <ul>
+          {% for user in pocs %}
+          <li>
+            <span class="username">
+              <a href="{{ url_for('.packager_info', packager=user) }}">
+                {{ user }}
+              </a>
+            </span>
+            <span class="branches">({{ pocs[user] | sort | join(', ') }})</span>
+          </li>
+          {% endfor %}
+        </ul>
+
+        {% if g.fas_user and g.fas_user.username in pocs %}
+          <a class="bold pkg_button_grey inline"
+            href="{{ url_for('.package_orphan', package=package.name) }}">
+            - Orphan Package
+          </a>
+          <a class="bold pkg_button_blue inline"
+            href="{{ url_for('.package_give', package=package.name) }}">
+            + Give Package
+          </a>
+        {% elif g.fas_user and 'orphan' in pocs %}
+          <a class="bold pkg_button_blue inline"
+            href="{{ url_for('.package_take', package=package.name) }}">
+            + Take Package
+          </a>
+        {% endif %}
       </div>
 
       <div id="pkg_admins">
-        <h4>Package Administrator(s)</h4>
+        <h4 class="inline">Package Administrator(s)</h4>
           <p>
             These users can help you if you need commit privileges for this
             package.
@@ -115,6 +131,20 @@
             </li>
             {% endfor %}
           </ul>
+
+          {% if g.fas_user and (g.fas_user.username in admins
+               or g.fas_user.username in pending_admins) %}
+            <a class="bold pkg_button_grey inline"
+              href="{{ url_for('.package_give', package=package.name) }}">
+              - Give Up Admin Access
+            </a>
+          {% elif g.fas_user and g.fas_user.username not in admins
+               and g.fas_user.username not in pending_admins %}
+            <a class="bold pkg_button_blue inline"
+              href="{{ url_for('.package_give', package=package.name) }}">
+              + Request Admin Access
+            </a>
+          {% endif %}
       </div>
     </div>
   </section>
