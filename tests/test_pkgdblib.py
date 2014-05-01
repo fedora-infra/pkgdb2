@@ -1047,11 +1047,15 @@ class PkgdbLibtests(Modeltests):
 
         pending_acls = pkgdblib.get_pending_acl_user(
             self.session, 'pingou')
-        self.assertEqual(len(pending_acls), 1)
+        self.assertEqual(len(pending_acls), 2)
         self.assertEqual(pending_acls[0]['package'], 'guake')
         self.assertEqual(pending_acls[0]['collection'], 'devel')
         self.assertEqual(pending_acls[0]['acl'], 'commit')
         self.assertEqual(pending_acls[0]['status'], 'Awaiting Review')
+        self.assertEqual(pending_acls[1]['package'], 'guake')
+        self.assertEqual(pending_acls[1]['collection'], 'devel')
+        self.assertEqual(pending_acls[1]['acl'], 'approveacls')
+        self.assertEqual(pending_acls[1]['status'], 'Awaiting Review')
 
     def test_get_acl_user_package(self):
         """ Test the get_acl_user_package function. """
@@ -1481,9 +1485,9 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
         self.assertEqual(len(pkg_acl[0].acls), 2)
         self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
-        self.assertEqual(len(pkg_acl[1].acls), 4)
+        self.assertEqual(len(pkg_acl[1].acls), 5)
         self.assertEqual(pkg_acl[2].collection.branchname, 'f19')
-        self.assertEqual(len(pkg_acl[2].acls), 4)
+        self.assertEqual(len(pkg_acl[2].acls), 5)
 
     def test_get_critpath_packages(self):
         """ Test the get_critpath_packages method of pkgdblib. """

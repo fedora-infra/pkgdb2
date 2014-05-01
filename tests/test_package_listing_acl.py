@@ -43,7 +43,7 @@ class PackageListingAcltests(Modeltests):
     def test_init_package(self):
         """ Test the __init__ function of PackageListingAcl. """
         create_package_acl(self.session)
-        self.assertEqual(7,
+        self.assertEqual(8,
                          len(model.PackageListingAcl.all(self.session))
                          )
 

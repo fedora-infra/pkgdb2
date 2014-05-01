@@ -205,7 +205,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual(pkg_list[0].collection.branchname, 'f18')
         self.assertEqual(len(pkg_list[0].acls), 2)
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
-        self.assertEqual(len(pkg_list[1].acls), 4)
+        self.assertEqual(len(pkg_list[1].acls), 5)
 
         # Create a new collection
         new_collection = model.Collection(
@@ -227,9 +227,9 @@ class PackageListingtests(Modeltests):
         self.assertEqual(len(pkg_list), 3)
         self.assertEqual(pkg_list[0].collection.branchname, 'f18')
         self.assertEqual(pkg_list[1].collection.branchname, 'devel')
-        self.assertEqual(len(pkg_list[1].acls), 4)
+        self.assertEqual(len(pkg_list[1].acls), 5)
         self.assertEqual(pkg_list[2].collection.branchname, 'f19')
-        self.assertEqual(len(pkg_list[2].acls), 4)
+        self.assertEqual(len(pkg_list[2].acls), 5)
 
     def test_get_critpath_packages(self):
         """ Test the get_critpath_packages method of PackageListing. """
