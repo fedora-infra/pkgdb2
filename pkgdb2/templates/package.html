@@ -158,7 +158,8 @@
           {% elif g.fas_user and g.fas_user.username not in admins
                and g.fas_user.username not in pending_admins %}
             <a class="bold pkg_button_blue inline"
-              href="{{ url_for('.package_give', package=package.name) }}">
+              href="{{ url_for('.request_acl_all_branch',
+                        package=package.name, acl='approveacls') }}">
               + Request Admin Access
             </a>
           {% endif %}
