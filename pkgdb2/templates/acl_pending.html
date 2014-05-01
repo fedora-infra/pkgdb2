@@ -33,8 +33,8 @@
         <td>{{ pending_acl['status'] }}</td>
         <td>
             <a href="{{ url_for('.update_acl',
-                     package=pending_acl['package'],
-                     user=pending_acl['user']) }}">
+                    package=pending_acl['package'],
+                    update_acl=pending_acl['acl']) }}">
                 <input type="submit" value="Update"/>
             </a>
         </td>
