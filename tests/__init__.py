@@ -410,6 +410,14 @@ def create_package_acl(session):
     session.add(packager)
 
     packager = model.PackageListingAcl(
+        fas_name='ralph',
+        packagelisting_id=pklist_guake_devel.id,
+        acl='approveacls',
+        status='Awaiting Review',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
         fas_name='group::gtk-sig',
         packagelisting_id=pkglist_geany_devel.id,
         acl='commit',
