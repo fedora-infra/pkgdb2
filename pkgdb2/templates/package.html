@@ -148,21 +148,36 @@
             {% endfor %}
           </ul>
 
+          <ul class="nobullet">
           {% if g.fas_user and (g.fas_user.username in admins
                or g.fas_user.username in pending_admins) %}
-            <a class="bold pkg_button_grey inline"
-              title="Drop your approveacl ACL on all branches"
-              href="{{ url_for('.giveup_acl', package=package.name, acl='approveacls') }}">
-              - Give Up Admin Access
-            </a>
+            <li class="inline">
+              <a class="bold pkg_button_grey inline"
+                title="Drop your approveacl ACL on all branches"
+                href="{{ url_for('.giveup_acl', package=package.name, acl='approveacls') }}">
+                - Give Up Admin Access
+              </a>
+            </li>
+            {% if pending_admins %}
+              <li">
+                <a class="bold pkg_button_blue inline" title="Manage commit ACLs"
+                    href="{{ url_for('.update_acl',package=package.name,
+                         update_acl='approveacls') }}">
+                  Manage the admins
+                </a>
+              </li>
+            {% endif %}
           {% elif g.fas_user and g.fas_user.username not in admins
                and g.fas_user.username not in pending_admins %}
-            <a class="bold pkg_button_blue inline"
-              href="{{ url_for('.request_acl_all_branch',
+            <li>
+              <a class="bold pkg_button_blue inline"
+                href="{{ url_for('.request_acl_all_branch',
                         package=package.name, acl='approveacls') }}">
-              + Request Admin Access
-            </a>
+                + Request Admin Access
+              </a>
+            </li>
           {% endif %}
+          </ul>
       </div>
     </div>
   </section>
@@ -190,7 +205,8 @@
         {% endif %}
         <li>
           <a class="bold pkg_button_blue inline" title="Manage commit ACLs"
-            href="{{ url_for('.update_commit_acl',package=package.name) }}">
+            href="{{ url_for('.update_acl',package=package.name,
+                     update_acl='commit') }}">
             Manage the comitters
           </a>
         </li>
