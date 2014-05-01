@@ -444,7 +444,7 @@ def package_retire(package, full=True):
                         )
                         flask.flash(
                             'This package has been retired on branch: %s'
-                            % collection)
+                            % acl.collection.branchname)
                     except pkgdblib.PkgdbException, err:
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
