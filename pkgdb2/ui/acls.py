@@ -108,24 +108,22 @@ def request_acl(package):
 def request_acl_all_branch(package, acl):
     ''' Request the specified ACL on all branches of the specified package.
     '''
-
-    try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-    except (NoResultFound, IndexError):
-        SESSION.rollback()
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
-
-    collections = [aclobj.collection
-        for aclobj in package_acl
-        if aclobj.collection.status in ['Active', 'Under Development']
-    ]
-
     pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
-
     if acl not in pkg_acl:
         flask.flash('Invalid ACL provided %s.' % acl, 'errors')
         return flask.render_template('msg.html')
+
+    try:
+        pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+    except IndexError:
+        flask.flash('No package found by this name', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package))
+
+    pkg_branchs = set([
+        pkglist.collection.branchname
+        for pkglist in pkg.listings
+        if pkglist.collection.status in ['Active', 'Under Development']])
 
     if 'packager' not in flask.g.fas_user.groups:
         flask.flash(
@@ -133,31 +131,26 @@ def request_acl_all_branch(package, acl):
                 acl, collec), 'errors')
         return flask.render_template('msg.html')
 
-    for pkglist in package_acl:
-        for aclobj in pkglist.acls:
-            if aclobj.acl == acl:
-                try:
-                    acl_status = 'Awaiting Review'
-                    if acl in APP.config['AUTO_APPROVE']:
-                        acl_status = 'Approved'
+    for branch in pkg_branchs:
+        acl_status = 'Awaiting Review'
+        if acl in APP.config['AUTO_APPROVE']:
+            acl_status = 'Approved'
+        try:
 
-                    pkgdblib.set_acl_package(
-                        SESSION,
-                        pkg_name=package,
-                        pkg_branch=pkglist.collection.branchname,
-                        pkg_user=flask.g.fas_user.username,
-                        acl=acl,
-                        status=acl_status,
-                        user=flask.g.fas_user,
-                    )
-                    flask.flash(
-                        'ACL %s requested on branch %s' % (
-                            acl, pkglist.collection.branchname))
-                    SESSION.commit()
-                    break
-                except pkgdblib.PkgdbException, err:
-                    SESSION.rollback()
-                    flask.flash(str(err), 'error')
+            pkgdblib.set_acl_package(
+                SESSION,
+                pkg_name=package,
+                pkg_branch=branch,
+                pkg_user=flask.g.fas_user.username,
+                acl=acl,
+                status=acl_status,
+                user=flask.g.fas_user,
+            )
+            flask.flash('ACL %s requested on branch %s' % (acl, branch))
+            SESSION.commit()
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
 
     return flask.redirect(
         flask.url_for('.package_info', package=package))
@@ -168,45 +161,50 @@ def request_acl_all_branch(package, acl):
 def giveup_acl(package, acl):
     ''' Request acls for a specific package. '''
 
-    try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
-    except (NoResultFound, IndexError):
-        SESSION.rollback()
-        flask.flash('No package of this name found.', 'errors')
+    pkg_acl = pkgdblib.get_status(SESSION, 'pkg_acl')['pkg_acl']
+    if acl not in pkg_acl:
+        flask.flash('Invalid ACL provided %s.' % acl, 'errors')
         return flask.render_template('msg.html')
 
-    for pkglist in package_acl:
-        for aclobj in pkglist.acls:
-            if aclobj.acl == acl and aclobj.status == 'Approved':
-                try:
-                    pkgdblib.set_acl_package(
-                        SESSION,
-                        pkg_name=package.name,
-                        pkg_branch=pkglist.collection.branchname,
-                        pkg_user=flask.g.fas_user.username,
-                        acl=acl,
-                        status='Obsolete',
-                        user=flask.g.fas_user,
-                    )
-                    flask.flash(
-                        'Your ACL %s is obsoleted on branch %s of package %s'
-                        % (aclobj.acl, pkglist.collection.branchname,
-                           package.name))
-                except pkgdblib.PkgdbException, err:
-                    flask.flash(str(err), 'error')
-                    SESSION.rollback()
-                break
+    try:
+        pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+    except IndexError:
+        flask.flash('No package found by this name', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package))
 
+    pkg_branchs = set([
+        pkglist.collection.branchname
+        for pkglist in pkg.listings
+        if pkglist.collection.status in ['Active', 'Under Development']])
+
+    for branch in pkg_branchs:
         try:
-            SESSION.commit()
-        # Keep it in, but normally we shouldn't hit this
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
-            SESSION.rollback()
+            pkgdblib.set_acl_package(
+                SESSION,
+                pkg_name=package,
+                pkg_branch=branch,
+                pkg_user=flask.g.fas_user.username,
+                acl=acl,
+                status='Obsolete',
+                user=flask.g.fas_user,
+            )
+            flask.flash(
+                'Your ACL %s is obsoleted on branch %s of package %s'
+                % (acl, branch, package))
+        except pkgdblib.PkgdbException, err:
             flask.flash(str(err), 'error')
+            SESSION.rollback()
+
+    try:
+        SESSION.commit()
+    # Keep it in, but normally we shouldn't hit this
+    except pkgdblib.PkgdbException, err:  # pragma: no cover
+        SESSION.rollback()
+        flask.flash(str(err), 'error')
 
     return flask.redirect(
-        flask.url_for('.package_info', package=package.name))
+        flask.url_for('.package_info', package=package))
 
 
 @UI.route('/acl/<package>/give/', methods=('GET', 'POST'))
@@ -276,7 +274,10 @@ def watch_package(package):
             flask.url_for('.package_info', package=package))
 
     pkg_acls = ['watchcommits', 'watchbugzilla']
-    pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
+    pkg_branchs = set([
+        pkglist.collection.branchname
+        for pkglist in pkg.listings
+        if pkglist.collection.status in ['Active', 'Under Development']])
     try:
         for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
             pkgdblib.set_acl_package(
@@ -311,7 +312,10 @@ def unwatch_package(package):
             flask.url_for('.package_info', package=package))
 
     pkg_acls = ['watchcommits', 'watchbugzilla']
-    pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
+    pkg_branchs = set([
+        pkglist.collection.branchname
+        for pkglist in pkg.listings
+        if pkglist.collection.status in ['Active', 'Under Development']])
     try:
         for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
             pkgdblib.set_acl_package(
@@ -355,7 +359,10 @@ def comaintain_package(package):
             flask.url_for('.package_info', package=package))
 
     pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
-    pkg_branchs = [pkglist.collection.branchname for pkglist in pkg.listings]
+    pkg_branchs = set([
+        pkglist.collection.branchname
+        for pkglist in pkg.listings
+        if pkglist.collection.status in ['Active', 'Under Development']])
 
     # Make sure the requester does not already have commit
     pkg_branchs2 = []
