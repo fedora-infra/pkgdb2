@@ -366,6 +366,8 @@ def package_orphan(package, collection=None):
         return flask.render_template('msg.html')
 
     for acl in package_acl:
+        if acl.collection.status not in ['Active', 'Under Development']:
+            continue
         if not collection or acl.collection.branchname == collection:
             try:
                 pkgdblib.update_pkg_poc(
