@@ -399,8 +399,8 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_update_commit_acl(self, login_func, mock_func):
-        """ Test the update_commit_acl function. """
+    def test_update_acl(self, login_func, mock_func):
+        """ Test the update_acl function. """
         login_func.return_value = None
 
         create_package_acl(self.session)
@@ -425,6 +425,13 @@ class FlaskUiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
+                in output.data)
+
+            output = self.app.get(
+                '/package/guake/acl/foobar/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">Invalid ACL to update.</li>'
                 in output.data)
 
             output = self.app.get(
