@@ -611,6 +611,58 @@ def update_commit_acl(package):
 
     form = pkgdb2.forms.ConfirmationForm()
 
+    if form.validate_on_submit():
+        sub_acls = flask.request.values.getlist('acls')
+        sub_users = flask.request.values.getlist('user')
+        sub_branches = flask.request.values.getlist('branch')
+
+        if APP.debug:
+            print sub_acls
+            print sub_users
+            print sub_branches
+
+        if len(sub_acls) == (len(sub_users) * len(sub_branches)):
+            cnt = 0
+            for cnt_u in range(len(sub_users)):
+                for cnt_b in range(len(sub_branches)):
+                    lcl_acl = sub_acls[cnt]
+                    lcl_user = sub_users[cnt_u]
+                    lcl_branch = sub_branches[cnt_b]
+
+                    if APP.debug:
+                        print cnt_u, cnt_b, cnt
+                        print lcl_user, lcl_branch, lcl_acl
+                        print commit_acls[lcl_user][
+                                branches_inv[lcl_branch]]['commit']
+
+                    if commit_acls[lcl_user][
+                            branches_inv[lcl_branch]]['commit'] == lcl_acl:
+                        cnt += 1
+                        continue
+
+
+                    try:
+                        pkgdblib.set_acl_package(
+                            SESSION,
+                            pkg_name=package.name,
+                            pkg_branch=lcl_branch,
+                            pkg_user=lcl_user,
+                            acl='commit',
+                            status=lcl_acl,
+                            user=flask.g.fas_user,
+                        )
+                    except pkgdblib.PkgdbException, err:
+                        SESSION.rollback()
+                        flask.flash(str(err), 'error')
+                    cnt += 1
+
+            SESSION.commit()
+            flask.flash('Commit ACL updated')
+            return flask.redirect(
+                flask.url_for('.package_info', package=package.name))
+        else:
+            flask.flash('Invalid input submitted', 'error')
+
     return flask.render_template(
         'acl_commit.html',
         acl='commit',
