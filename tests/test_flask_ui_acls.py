@@ -168,14 +168,8 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/acl/test/request/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h1>Request ACLs on package: test</h1>' in output.data)
-            self.assertTrue(
-                '<input id="csrf_token" name="csrf_token"' in output.data)
-            self.assertTrue(
-                '<option value="approveacls">approveacls' in output.data)
-
-            csrf_token = output.data.split(
-                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+                '<li class="errors">No package of this name found.</li>'
+                in output.data)
 
             data = {
                 'branches': 'devel',
@@ -187,7 +181,7 @@ class FlaskUiAclsTest(Modeltests):
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">No package found by this name</li>'
+                '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
     @patch('pkgdb2.lib.utils.get_packagers')
