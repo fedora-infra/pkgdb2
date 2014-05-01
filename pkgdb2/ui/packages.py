@@ -271,9 +271,13 @@ def package_new():
 
 
 @UI.route('/package/<package>/give', methods=('GET', 'POST'))
+@UI.route('/package/<package>/give/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_give(package):
+def package_give(package, full=True):
     ''' Gives the PoC of a package to someone else. '''
+
+    if not bool(full) or full in ['0', 'False']:
+        full = False
 
     packagename = package
     package = None
@@ -344,6 +348,7 @@ def package_give(package):
 
     return flask.render_template(
         'package_give.html',
+        full=full,
         form=form,
         packagename=packagename,
     )
