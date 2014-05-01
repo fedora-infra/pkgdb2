@@ -557,7 +557,8 @@ def update_commit_acl(package):
     planned_acls = set(statues['pkg_acl'])
     acl_status = set(statues['acl_status'])
 
-    branches = set()
+    branches = {}
+    branches_inv = {}
     commit_acls = {}
     admins = {}
     committers = []
@@ -569,7 +570,11 @@ def update_commit_acl(package):
         collection_name = '%s %s' % (
             pkg.collection.name, pkg.collection.version)
 
-        branches.add(collection_name)
+        if collection_name not in branches:
+            branches[collection_name] = pkg.collection.branchname
+
+        if pkg.collection.branchname not in branches_inv:
+            branches_inv[pkg.collection.branchname] = collection_name
 
         acls = {}
         for acl in pkg.acls:
