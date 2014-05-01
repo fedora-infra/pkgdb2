@@ -1,11 +1,17 @@
-{% extends "master.html" %}
+{% if full %}
+  {% extends "master.html" %}
+  {% block title %} Give package | PkgDB {% endblock %}
+  {%block tag %}packages{% endblock %}
+{% endif %}
+
 {% from "_formhelpers.html" import render_field_in_row %}
 
-{% block title %} Give package | PkgDB {% endblock %}
-
-{%block tag %}packages{% endblock %}
 
 {% block content %}
+{% if not full %}
+<div title="Give package">
+{% endif %}
+
 
 <h1>Give Point of Contact of package: {{packagename}}</h1>
 
@@ -22,4 +28,7 @@
   </p>
     <p class="small">Use your mouse or the control key to select multiple ACLs at once</p>
 </form>
+{% if not full %}
+</div>
+{% endif %}
 {% endblock %}
