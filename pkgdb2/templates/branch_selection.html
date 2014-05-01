@@ -1,0 +1,36 @@
+{% if full %}
+  {% extends "master.html" %}
+{% endif %}
+
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %} Select branches | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>
+  Select branches of package:
+  <a href="{{ url_for('.package_info', package=package.name) }}">
+    {{ package.name }}
+  </a>
+  to {{ action }}
+</h1>
+
+
+<form action="{{ request.url }}" method="post">
+  <table>
+    {{ render_field_in_row(form.branches) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Select">
+    {% if full %}
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {% endif %}
+    {{ form.csrf_token }}
+  </p>
+  <p class="small">Use your mouse or the control key to select multiple
+    ACLs or branch at once</p>
+</form>
+{% endblock %}
