@@ -22,7 +22,9 @@
         <tr>
           <th></th>
           {% for branch in branches | sort %}
-          <th>{{ branch }}</th>
+          <th>
+            <input type="hidden" value="{{ branches[branch] }}" name="branch" />
+            {{ branch }}</th>
           {% endfor %}
         </tr>
         {% for user in commit_acls | sort %}
@@ -32,7 +34,7 @@
             <tr>
           {% endif %}
             <td class="users">
-              <input type="hidden" value="user" name="{{ user }}">
+              <input type="hidden" value="{{ user }}" name="user" />
               <a href="{{ url_for('.packager_info', packager=user) }}" class="username">
                 {{ user }}
               </a>
