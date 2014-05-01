@@ -264,44 +264,6 @@ class RequestAclPackageForm(wtf.Form):
             ]
 
 
-class UpdateAclPackageForm(wtf.Form):
-    """ Form to update ACLs on a package. """
-    branches = wtforms.SelectMultipleField(
-        'Branch',
-        [wtforms.validators.Required()],
-        choices=[('', '')])
-    acl = wtforms.SelectMultipleField(
-        'ACL',
-        [wtforms.validators.Required()],
-        choices=[(item, item) for item in []]
-    )
-    acl_status = wtforms.SelectField(
-        'Status',
-        [wtforms.validators.Required()],
-        choices=[(item, item) for item in []]
-    )
-
-    def __init__(self, *args, **kwargs):
-        """ Calls the default constructor with the normal arguments.
-        Fill the SelectField using the additionnal arguments provided.
-        """
-        super(UpdateAclPackageForm, self).__init__(*args, **kwargs)
-        if 'collections' in kwargs:
-            self.branches.choices = [
-                (collec, collec)
-                for collec in kwargs['collections']
-            ]
-        if 'acl_status' in kwargs:
-            self.acl_status.choices = [
-                (status, status)
-                for status in kwargs['acl_status']
-            ]
-        if 'pkg_acl_list' in kwargs:
-            self.acl.choices = [
-                (status, status)
-                for status in kwargs['pkg_acl_list']
-            ]
-
 
 class GivePoCForm(wtf.Form):
     """ Form to change the Point of Contact of a package. """
