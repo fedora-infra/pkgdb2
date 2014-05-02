@@ -158,15 +158,6 @@
                 - Give Up Admin Access
               </a>
             </li>
-            {% if pending_admins %}
-              <li">
-                <a class="bold pkg_button_blue inline" title="Manage commit ACLs"
-                    href="{{ url_for('.update_acl',package=package.name,
-                         update_acl='approveacls') }}">
-                  Manage the admins
-                </a>
-              </li>
-            {% endif %}
           {% elif g.fas_user and g.fas_user.username not in admins
                and g.fas_user.username not in pending_admins %}
             <li>
@@ -177,6 +168,13 @@
               </a>
             </li>
           {% endif %}
+            <li">
+              <a class="bold pkg_button_blue inline" title="Manage commit ACLs"
+                  href="{{ url_for('.update_acl',package=package.name,
+                       update_acl='approveacls') }}">
+                Manage the admins
+              </a>
+            </li>
           </ul>
       </div>
     </div>
