@@ -366,6 +366,10 @@ button.pkg_button_blue, button.pkg_button_blue:hover{
     line-height: 13px;
 }
 
+#edit_acl #pkg_committers td{
+    border-left: 0px;
+}
+
 #pkg_watchers td img{
     padding: 0px;
     margin: 0px;
@@ -410,27 +414,48 @@ button.pkg_button_blue, button.pkg_button_blue:hover{
     list-style: none;
 }
 
-select#acls option[value="Awaiting Review"] {
+select#acls option[value="Awaiting Review"],
+select.Awaiting_Review {
     padding-left: 20px;
     background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Awaiting%20Review.png) 0 50% no-repeat;
 }
 
-select#acls option[value="Approved"] {
+select#acls option[value="Approved"],
+select.Approved {
     padding-left: 20px;
     background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Approved.png) 0 50% no-repeat;
 }
 
-select#acls option[value="Obsolete"] {
+select#acls option[value="Obsolete"],
+select.Obsolete {
     padding-left: 20px;
     background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Obsolete.png) 0 50% no-repeat;
 }
 
-select#acls option[value="Removed"] {
+select#acls option[value="Removed"],
+select.Removed {
     padding-left: 20px;
     background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Removed.png) 0 50% no-repeat;
 }
 
-select#acls option[value="Denied"] {
+select#acls option[value="Denied"],
+select.Denied {
     padding-left: 20px;
     background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Denied.png) 0 50% no-repeat;
+}
+
+#edit_acl table td {
+    background-color: #f7f8f8;
+    text-align:center;
+}
+
+#edit_acl table .col_odd {
+    background-color: #eaebeb;
+}
+
+#edit_acl select {
+    background-color: #fff;
+    border: 1px solid #BBBBBB;
+    margin-left: 5px;
+    margin-right: 5px;
 }
