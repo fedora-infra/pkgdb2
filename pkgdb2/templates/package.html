@@ -169,7 +169,8 @@
             </li>
           {% endif %}
             <li">
-              <a class="bold pkg_button_blue inline" title="Manage commit ACLs"
+              <a class="bold pkg_button_blue inline wheel"
+                  title="Manage commit ACLs"
                   href="{{ url_for('.update_acl',package=package.name,
                        update_acl='approveacls') }}">
                 Manage the admins
@@ -202,7 +203,7 @@
           </li>
         {% endif %}
         <li>
-          <a class="bold pkg_button_blue inline" title="Manage commit ACLs"
+          <a class="bold pkg_button_blue inline wheel" title="Manage commit ACLs"
             href="{{ url_for('.update_acl',package=package.name,
                      update_acl='commit') }}">
             Manage the comitters
