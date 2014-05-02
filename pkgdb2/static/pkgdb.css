@@ -123,6 +123,13 @@ a.pending {
   background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Awaiting%20Review.png) 0 50% no-repeat;
 }
 
+a.wheel {
+  padding-left: 20px;
+  background-image: url(/static/wheel.png) !important;
+  background-repeat: no-repeat;
+  background-position: 3px 50%;
+}
+
 #actions {
   line-height: 1;
   list-style: none;
