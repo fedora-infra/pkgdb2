@@ -615,6 +615,8 @@ def update_acl(package, update_acl):
         if username in commit_acls:
             tmp = {username : commit_acls[username]}
         commit_acls = tmp
+        for acl in ['Approved', 'Denied']:
+            acl_status.remove(acl)
 
     form = pkgdb2.forms.ConfirmationForm()
 
