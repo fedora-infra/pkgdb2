@@ -625,11 +625,6 @@ def update_acl(package, update_acl):
         sub_users = flask.request.values.getlist('user')
         sub_branches = flask.request.values.getlist('branch')
 
-        if APP.debug:  # pragma: no cover
-            print sub_acls
-            print sub_users
-            print sub_branches
-
         if sub_acls and len(sub_acls) == (len(sub_users) * len(sub_branches)):
             cnt = 0
             for cnt_u in range(len(sub_users)):
@@ -642,11 +637,6 @@ def update_acl(package, update_acl):
                         flask.flash('Invalid ACL: %s' % lcl_acl, 'error')
                         cnt += 1
                         continue
-
-                    if APP.debug:  # pragma: no cover
-                        print cnt_u, cnt_b, cnt
-                        print lcl_user, lcl_branch, lcl_acl
-                        print commit_acls[lcl_user], lcl_branch, branches_inv[lcl_branch]
 
                     if branches_inv[lcl_branch] in commit_acls[lcl_user] \
                             and commit_acls[lcl_user][
