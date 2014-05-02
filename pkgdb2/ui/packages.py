@@ -555,7 +555,8 @@ def update_acl(package, update_acl):
 
     statues = pkgdblib.get_status(SESSION)
     planned_acls = set(statues['pkg_acl'])
-    acl_status = set(statues['acl_status'])
+    acl_status = list(set(statues['acl_status']))
+    acl_status.insert(0, '')
 
     if update_acl not in planned_acls:
         flask.flash('Invalid ACL to update.', 'errors')
@@ -645,12 +646,23 @@ def update_acl(package, update_acl):
                         print lcl_user, lcl_branch, lcl_acl
                         print commit_acls[lcl_user], lcl_branch, branches_inv[lcl_branch]
 
-                    if branches_inv[lcl_branch] in commit_acls[lcl_user] and \
-                            commit_acls[lcl_user][
+                    if branches_inv[lcl_branch] in commit_acls[lcl_user] \
+                            and commit_acls[lcl_user][
                                 branches_inv[lcl_branch]
                             ][update_acl] == lcl_acl:
                         cnt += 1
                         continue
+
+                    if not lcl_acl:
+                        if branches_inv[lcl_branch] not in commit_acls[lcl_user]:
+                            cnt += 1
+                            continue
+                        elif branches_inv[lcl_branch] in commit_acls[lcl_user] \
+                                and username != lcl_user:
+                            flask.flash(
+                                'Only the user can remove his/her ACL', 'error')
+                            cnt += 1
+                            continue
 
                     try:
                         pkgdblib.set_acl_package(
