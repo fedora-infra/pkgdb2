@@ -345,7 +345,10 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                                                       acl=acl,
                                                       status=status)
     prev_status = personpkg.status
-    personpkg.status = status
+    if not status:
+        session.delete(personpkg)
+    else:
+        personpkg.status = status
     session.flush()
     return pkgdb2.lib.utils.log(session, package, 'acl.update', dict(
         agent=user.username,
