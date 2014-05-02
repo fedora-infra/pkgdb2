@@ -675,7 +675,7 @@ def update_acl(package, update_acl):
             flask.flash('Invalid input submitted', 'error')
 
     return flask.render_template(
-        'acl_commit.html',
+        'acl_update.html',
         acl=update_acl,
         acl_status=acl_status,
         package=package,
