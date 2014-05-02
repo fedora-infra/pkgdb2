@@ -607,12 +607,13 @@ def update_acl(package, update_acl):
                         aclname not in commit_acls[user][collection_name]:
                     commit_acls[user][collection_name][aclname] = None
 
-    if flask.g.fas_user.username not in admins:
-        flask.flash(
-            'You do not have `approveacls` on this package, you may not '
-            'review its ACLs', 'error')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+    # If the user is not an admin, he/she can only access his/her ACLs
+    username = flask.g.fas_user.username
+    if username not in admins:
+        tmp = {username: []}
+        if username in commit_acls:
+            tmp = {username : commit_acls[username]}
+        commit_acls = tmp
 
     form = pkgdb2.forms.ConfirmationForm()
 
