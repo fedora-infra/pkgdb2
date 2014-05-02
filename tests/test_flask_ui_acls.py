@@ -413,9 +413,8 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get(
                 '/package/guake/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                '<li class="error">You do not have `approveacls` on this '
-                'package, you may not review its ACLs</li>' in output.data)
+            self.assertEqual(
+                output.data.count('<td class="users">'), 1)
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
