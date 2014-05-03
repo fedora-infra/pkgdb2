@@ -27,6 +27,7 @@ import logging
 import logging.handlers
 import os
 import sys
+import urlparse
 
 import flask
 import dogpile.cache
@@ -100,6 +101,17 @@ def is_authenticated():
     """ Returns wether a user is authenticated or not.
     """
     return hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None
+
+
+def is_safe_url(target):
+    """ Checks that the target url is safe and sending to the current
+    website not some other malicious one.
+    """
+    ref_url = urlparse.urlparse(flask.request.host_url)
+    test_url = urlparse.urlparse(
+        urlparse.urljoin(flask.request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+        ref_url.netloc == test_url.netloc
 
 
 def is_pkgdb_admin(user):
