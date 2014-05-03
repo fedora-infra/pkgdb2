@@ -28,7 +28,7 @@ import flask
 from urlparse import urlparse
 
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION, FAS, is_pkgdb_admin, __version__
+from pkgdb2 import SESSION, FAS, is_pkgdb_admin, __version__, is_safe_url
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
@@ -119,7 +119,8 @@ def login():  # pragma: no cover
     """
     next_url = flask.url_for('ui_ns.index')
     if 'next' in flask.request.values:
-        next_url = flask.request.values['next']
+        if is_safe_url(flask.request.values['next']):
+            next_url = flask.request.values['next']
 
     if next_url == flask.url_for('ui_ns.login'):
         next_url = flask.url_for('ui_ns.index')
