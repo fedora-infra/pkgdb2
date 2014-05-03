@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        0.7
+Version:        0.8
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -99,6 +99,12 @@ install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb
 
 
 %changelog
+* Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.8-1
+- Update to 0.8
+- Rewrite of the ACL overview page
+- Rewrite of the update ACL mechanism
+- Fix redirect issue
+
 * Tue Apr 22 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.7-1
 - Update to 0.7
 - Distinguish the two notify api endpoint
