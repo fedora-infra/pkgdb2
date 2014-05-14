@@ -274,3 +274,14 @@ if __name__ == '__main__':
         sys.exit(1)
 
     main(DB_URL_PKGDB1, DB_URL_PKGDB2)
+
+
+"""
+-- Queries to run to finish the conversion
+
+-- Reset all the sequences
+SELECT setval('"Collection_id_seq"', (SELECT MAX(id) FROM "Collection"));
+SELECT setval('"Package_id_seq"', (SELECT MAX(id) FROM "Package"));
+SELECT setval('"PackageListing_id_seq"', (SELECT MAX(id) FROM "PackageListing"));
+SELECT setval('"PackageListingAcl_id_seq"', (SELECT MAX(id) FROM "PackageListingAcl"));
+"""
