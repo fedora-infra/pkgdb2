@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.0
+Version:        1.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -99,6 +99,12 @@ install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb
 
 
 %changelog
+* Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.1-1
+- Bump to 1.1
+- Add a critpath filter in the list packages method of the API (for bodhi
+  consumption)
+- Fix bug in the pending ACLs to return them only on non-EOL collections
+
 * Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.0-1
 - Bump to release 1.0
 - Add helping queries in the upgrade script
