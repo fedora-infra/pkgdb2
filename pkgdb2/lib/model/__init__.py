@@ -714,7 +714,7 @@ class PackageListing(BASE):
                    self.id, self.point_of_contact, self.status,
                    self.package_id, self.collection_id)
 
-    def to_json(self, _seen=None, package=True):
+    def to_json(self, _seen=None, package=True, not_provenpackager=None):
         """ Return a dictionary representation of this object. """
         _seen = _seen or []
         _seen.append(type(self))
@@ -734,6 +734,14 @@ class PackageListing(BASE):
             tmp = []
             for acl in self.acls:
                 tmp.append(acl.to_json(_seen + [type(self)]))
+            if not_provenpackager and self.package.name not in not_provenpackager:
+                tmp.append(
+                    {
+                        "status": "Approved",
+                        "fas_name": "group::provenpackager",
+                        "acl": "commit"
+                    }
+                )
             if tmp:
                 result['acls'] = tmp
 

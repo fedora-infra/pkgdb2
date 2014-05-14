@@ -75,3 +75,6 @@ PKGDB2_EMAIL_FROM = 'nobody@fedoraproject.org'
 PKGDB2_EMAIL_SMTP_SERVER = 'localhost'
 
 MAIL_ADMIN = 'pingou@pingoured.fr'
+
+# List the packages that are not accessible to the provenpackager group
+PKGS_NOT_PROVENPACKAGER = ['firefox', 'thunderbird', 'xulrunner']

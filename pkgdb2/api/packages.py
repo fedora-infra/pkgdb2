@@ -33,7 +33,7 @@ from math import ceil
 from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION, forms, is_admin, packager_login_required
+from pkgdb2 import APP, SESSION, forms, is_admin, packager_login_required
 from pkgdb2.api import API, get_limit
 
 
@@ -557,6 +557,11 @@ Package information
                   "status": "Obsolete",
                   "fas_name": "maxamillion",
                   "acl": "watchbugzilla"
+                },
+                {
+                  "acl": "commit",
+                  "fas_name": "group::provenpackager",
+                  "status": "Approved"
                 }
               ],
               "status_change": 1385366044.0
@@ -587,7 +592,10 @@ Package information
             httpcode = 404
         else:
             output['output'] = 'ok'
-            output['packages'] = [pkg.to_json() for pkg in packages]
+            output['packages'] = [
+                pkg.to_json(not_provenpackager=APP.config.get(
+                    'PKGS_NOT_PROVENPACKAGER'))
+                for pkg in packages]
     except NoResultFound:
         output['output'] = 'notok'
         output['error'] = 'Package: %s not found' % pkg_name
