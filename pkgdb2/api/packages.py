@@ -627,6 +627,7 @@ List packages
         packages will be searched.
     :arg poc: String of the user name to to which restrict the search.
     :arg orphaned: Boolean to retrict the search to orphaned packages.
+    :arg critpath: Boolean to retrict the search to critpath packages.
     :arg status: Allows to filter packages based on their status: Approved,
         Orphaned, Retired, Removed.
     :arg acls: Boolean use to retrieve the acls in addition of the package
@@ -721,6 +722,11 @@ List packages
     branches = flask.request.args.getlist('branches', None)
     poc = flask.request.args.get('poc', None)
     orphaned = bool(flask.request.args.get('orphaned', False))
+    critpath = flask.request.args.get('critpath', None)
+    if not critpath or str(critpath).lower() in ['0', 'false']:
+        critpath = False
+    else:
+        critpath = True
     acls = bool(flask.request.args.get('acls', False))
     statuses = flask.request.args.getlist('status', None)
     eol = flask.request.args.get('eol', False)
@@ -744,6 +750,7 @@ List packages
                     pkg_branch=branch,
                     pkg_poc=poc,
                     orphaned=orphaned,
+                    critpath=critpath,
                     status=status,
                     eol=eol,
                     page=page,
@@ -767,6 +774,7 @@ List packages
                         pkg_branch=branch,
                         pkg_poc=poc,
                         orphaned=orphaned,
+                        critpath=critpath,
                         status=status,
                         eol=eol,
                         page=page,
@@ -780,6 +788,7 @@ List packages
                     pkg_branch=branch,
                     pkg_poc=poc,
                     orphaned=orphaned,
+                    critpath=critpath,
                     status=status,
                     eol=eol,
                     page=page,
@@ -808,6 +817,7 @@ List packages
         httpcode = 500
 
     if 'page_total' not in output:
+        output['page'] = 1
         output['page_total'] = 1
 
     jsonout = flask.jsonify(output)

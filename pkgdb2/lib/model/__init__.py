@@ -1058,7 +1058,7 @@ class Package(BASE):
 
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               pkg_branch=None, orphaned=None, eol=False,
+               pkg_branch=None, orphaned=None, critpath=None, eol=False,
                offset=None, limit=None, count=False):
         """ Search the Packages for the one fitting the given pattern.
 
@@ -1069,6 +1069,7 @@ class Package(BASE):
         :kwarg pkg_branch: branchname of the collection to search.
         :kwarg orphaned: a boolean specifying if the search should be
             restricted to only orphaned or not-orphaned packages.
+        :kwarg critpath: Boolean to retrict the search to critpath packages.
         :kwarg eol: a boolean to specify whether to include results for
             EOL collections or not. Defaults to False.
             If True, it will return results for all collections
@@ -1138,6 +1139,18 @@ class Package(BASE):
                 ).filter(
                     PackageListing.status != 'Orphaned'
                 )
+            subquery = subquery.subquery()
+
+            query = query.filter(
+                Package.id.in_(subquery)
+            )
+
+        if critpath is not None:
+            subquery = session.query(
+                PackageListing.package_id
+            ).filter(
+                PackageListing.critpath == critpath
+            )
             subquery = subquery.subquery()
 
             query = query.filter(

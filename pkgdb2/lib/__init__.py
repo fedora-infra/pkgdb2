@@ -553,8 +553,8 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
-                   orphaned=None, status=None, eol=False, page=None,
-                   limit=None, count=False):
+                   orphaned=None, critpath=None, status=None, eol=False,
+                   page=None, limit=None, count=False):
     """ Return the list of packages matching the given criteria.
 
     :arg session: session with which to connect to the database.
@@ -562,6 +562,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
     :kwarg pkg_branch: branchname of the collection to search.
     :kwarg pkg_poc: point of contact of the packages searched.
     :kwarg orphaned: boolean to restrict search to orphaned packages.
+    :kwarg critpath: Boolean to retrict the search to critpath packages.
     :kwarg status: allows filtering the packages by their status:
         Approved, Retired, Removed, Orphaned.
     :kwarg eol: a boolean to specify whether to include results for
@@ -609,6 +610,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
         pkg_status=status,
         pkg_branch=pkg_branch,
         orphaned=orphaned,
+        critpath=critpath,
         eol=eol,
         offset=page,
         limit=limit,
