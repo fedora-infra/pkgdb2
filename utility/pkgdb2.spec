@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.2
+Version:        1.3
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -99,6 +99,10 @@ install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb
 
 
 %changelog
+* Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.3-1
+- Bump to 1.3
+- Add the possibility to Cc one or more email addresses to every emails sent
+
 * Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.2-1
 - Bump to 1.2
 - Fix the API to return provenpackagers where needed (should allow
