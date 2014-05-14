@@ -41,6 +41,7 @@ def fedmsg_publish(*args, **kwargs):  # pragma: no cover
     # pylint: disable=W0703
     ## Ignore message about fedmsg import
     # pylint: disable=F0401
+    kwargs['modname'] = 'pkgdb'
     try:
         import fedmsg
         fedmsg.publish(*args, **kwargs)
