@@ -996,6 +996,15 @@ class Package(BASE):
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
 
+    @property
+    def sorted_listings(self):
+        """ Return associated listings reverse sorted by collection name """
+        def comparator(a, b):
+            b, a = a.collection, b.collection
+            return cmp(a.name + a.version, b.name + b.version)
+
+        return sorted(self.listings, cmp=comparator)
+
     @classmethod
     def by_name(cls, session, pkgname):
         """ Return the package associated to the given name.

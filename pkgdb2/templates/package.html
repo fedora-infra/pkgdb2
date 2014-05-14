@@ -8,14 +8,29 @@
 {% block options_title %}Package Status{% endblock %}
 {%block options %}
 <table id="metainfo">
+<!--
+This is commented out for now after the initial deployment to prod.
+
+In the future we may use that for things like "Under review", "Reviewed", etc.
+But for now  it'll be approved for any package that's in the pkgdb (and it's
+confusing what the difference is between that status an the per-branch status)
     <tr>
         <th>Status</th>
         <td>{{ package.status }}</td>
     </tr>
+-->
     <tr>
         <th>Created on</th>
         <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
     </tr>
+    {% for listing in package.sorted_listings %}
+    {% if listing.collection.status != 'EOL' %}
+    <tr>
+        <th>{{ listing.collection.branchname }}</th>
+        <td>{{ listing.status }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
 </table>
 {% endblock %}
 
