@@ -481,8 +481,14 @@ class PackageListingAcl(BASE):
             pending ACLs.
 
         """
-        stmt = session.query(PackageListing.id).filter(
+        stmt = session.query(
+            PackageListing.id
+        ).filter(
             PackageListing.point_of_contact == user
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Collection.status != 'EOL'
         ).subquery()
 
         # Match the other criteria
