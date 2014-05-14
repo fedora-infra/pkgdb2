@@ -76,6 +76,8 @@ class PackageListingAcltests(Modeltests):
                     'version': u'18',
                     'name': u'Fedora',
                     'status': u'Active',
+                    'koji_name': None,
+                    'dist_tag': u'.fc18',
                 },
                 'package': {
                     'upstream_url': u'http://guake.org',

@@ -594,7 +594,9 @@ class Collection(BASE):
             name=self.name,
             version=self.version,
             branchname=self.branchname,
-            status=self.status
+            status=self.status,
+            koji_name=self.koji_name,
+            dist_tag=self.dist_tag,
         )
 
     @classmethod

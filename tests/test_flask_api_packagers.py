@@ -116,7 +116,8 @@ class FlaskApiPackagersTest(Modeltests):
                  u'description']))
         self.assertEqual(
             set(output['acls'][0]['packagelist']['collection'].keys()),
-            set([u'branchname', u'version', u'name', u'status']))
+            set([u'branchname', u'version', u'name', u'status',
+                 u'dist_tag', u'koji_name']))
         self.assertEqual(
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
