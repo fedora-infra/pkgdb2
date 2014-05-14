@@ -17,7 +17,7 @@
       <h3 class="inline">User(s)</h3>
     </div>
 
-    <form action="{{ request.url }}" method="POST">
+    <form action="{{ url_for('update_acl', package=package.name, update_acl=acl) }}" method="POST">
       <table>
         <tr>
           <th></th>
