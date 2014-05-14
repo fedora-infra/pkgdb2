@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.1
+Version:        1.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -99,6 +99,17 @@ install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb
 
 
 %changelog
+* Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.2-1
+- Bump to 1.2
+- Fix the API to return provenpackagers where needed (should allow
+  provenpackagers to create update for packages they do not own)
+- Few layout bug and typos fixes
+- Allow to not check the SSL cert for FAS
+- Fix updating ACLs for @kevin
+- Add koji_tag and dist_tag to the jsoin output of the Collections
+- Let pkgdb admin review ACLs
+- Show package status per branch
+
 * Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.1-1
 - Bump to 1.1
 - Add a critpath filter in the list packages method of the API (for bodhi
