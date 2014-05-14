@@ -610,7 +610,7 @@ def update_acl(package, update_acl):
 
     # If the user is not an admin, he/she can only access his/her ACLs
     username = flask.g.fas_user.username
-    if username not in admins:
+    if username not in admins and not is_pkgdb_admin(flask.g.fas_user):
         tmp = {username: []}
         if username in commit_acls:
             tmp = {username : commit_acls[username]}
