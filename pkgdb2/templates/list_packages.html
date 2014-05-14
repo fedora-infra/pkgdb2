@@ -9,7 +9,7 @@
 {% set options = True %}
 {%block options %}
 <form action="{{ url_for('.%s' % origin) }}" method="get">
-    Restrict to branch: <input type="text" name="branches" />
+    Restrict to branch: <input type="text" name="branches" /> <br />
     {% if origin == 'list_packages' %}
     Restrict to status: <input type="text" name="status" value="Approved" /> <br />
     {% elif origin == 'list_orphaned' %}
@@ -17,7 +17,7 @@
     {% elif origin == 'list_retired' %}
     Restrict to status: <input type="text" name="status" value="Retired" /> <br />
     {% endif %}
-    Restrict to owner: <input type="text" name="owner" />
+    Restrict to owner: <input type="text" name="owner" /> <br />
     <input type="submit" class="submit positive button" value="filter">
 </form>
 {% if is_admin %}
