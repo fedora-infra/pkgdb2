@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        0.8
+Version:        1.0
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -99,6 +99,11 @@ install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb
 
 
 %changelog
+* Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.0-1
+- Bump to release 1.0
+- Add helping queries in the upgrade script
+- Adjust the forms to show the mandatory fields
+
 * Sat May 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.8-1
 - Update to 0.8
 - Rewrite of the ACL overview page
