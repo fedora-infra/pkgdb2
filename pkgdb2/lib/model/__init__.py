@@ -32,6 +32,7 @@ import time
 
 import sqlalchemy as sa
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.declarative import declarative_base
@@ -125,21 +126,35 @@ def create_status(session):
     for acl in ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']:
         obj = PkgAcls(acl)
         session.add(obj)
+        try:
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
 
     for status in ['Approved', 'Awaiting Review', 'Denied', 'Obsolete',
                    'Removed']:
         obj = AclStatus(status)
         session.add(obj)
+        try:
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
 
     for status in ['EOL', 'Active', 'Under Development']:
         obj = CollecStatus(status)
         session.add(obj)
+        try:
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
 
     for status in ['Approved', 'Removed', 'Retired', 'Orphaned']:
         obj = PkgStatus(status)
         session.add(obj)
-
-    session.commit()
+        try:
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
 
 
 class PkgAcls(BASE):
