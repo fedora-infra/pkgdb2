@@ -11,11 +11,11 @@
 <form action="{{ url_for('.%s' % origin) }}" method="get">
     Restrict to branch: <input type="text" name="branches" />
     {% if origin == 'list_packages' %}
-    Restrict to status: <input type="text" name="status" value="Approved" />
+    Restrict to status: <input type="text" name="status" value="Approved" /> <br />
     {% elif origin == 'list_orphaned' %}
-    Restrict to status: <input type="text" name="status" value="Orphaned" />
+    Restrict to status: <input type="text" name="status" value="Orphaned" /> <br />
     {% elif origin == 'list_retired' %}
-    Restrict to status: <input type="text" name="status" value="Retired" />
+    Restrict to status: <input type="text" name="status" value="Retired" /> <br />
     {% endif %}
     Restrict to owner: <input type="text" name="owner" />
     <input type="submit" class="submit positive button" value="filter">
