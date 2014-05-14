@@ -68,9 +68,15 @@ def email_publish(user, package, message):  # pragma: no cover
     if cc_email:
         msg['Cc'] = cc_email
 
+    if isinstance(cc_email, basestring):
+        cc_email = [cc_email]
+    if isinstance(to_email, basestring):
+        to_email = [to_email]
+    to_email.extend(cc_email)
+
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
     smtp = smtplib.SMTP(pkgdb2.APP.config.get(
         'PKGDB2_EMAIL_SMTP_SERVER', 'localhost'))
-    smtp.sendmail(from_email, [to_email], msg.as_string())
+    smtp.sendmail(from_email, to_email, msg.as_string())
     smtp.quit()
