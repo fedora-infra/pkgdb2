@@ -41,7 +41,7 @@ from pkgdb2 import lib as pkgdblib
 from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_collection, create_package, create_package_acl,
-                   user_set)
+                   create_package_critpath, user_set)
 
 
 class FlaskApiPackagesTest(Modeltests):
@@ -697,11 +697,13 @@ class FlaskApiPackagesTest(Modeltests):
                 "error": "No packages found for these parameters",
                 "packages": [],
                 "output": "notok",
-                "page_total": 1
+                "page_total": 1,
+                "page": 1,
             }
         )
 
         create_package_acl(self.session)
+        create_package_critpath(self.session)
 
         output = self.app.get('/api/packages/guake/')
         self.assertEqual(output.status_code, 200)
@@ -764,6 +766,34 @@ class FlaskApiPackagesTest(Modeltests):
             data['packages'][1]['name'], 'guake')
         self.assertEqual(
             data['packages'][1]['status'], 'Approved')
+
+        output = self.app.get('/api/packages/g*/?critpath=1')
+        self.assertEqual(output.status_code, 404)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['error', 'output', 'packages', 'page', 'page_total'])
+        self.assertEqual(len(data['packages']), 0)
+        self.assertEqual(data['output'], 'notok')
+
+        output = self.app.get('/api/packages/k*/?critpath=1')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
+        self.assertEqual(len(data['packages']), 1)
+        self.assertEqual(data['packages'][0]['name'], 'kernel')
+        self.assertEqual(data['output'], 'ok')
+
+        output = self.app.get('/api/packages/g*/?critpath=0')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['output'], 'ok')
 
 
 if __name__ == '__main__':
