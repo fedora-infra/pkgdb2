@@ -65,8 +65,12 @@ def get_fas():  # pragma: no cover
         raise pkgdb2.lib.PkgdbException(
             'No PKGDB2_FAS_PASSWORD configured')
 
+    fas_insecure = pkgdb2.APP.config.get('PKGDB2_FAS_INSECURE', False)
+
     _FAS = AccountSystem(
-        fas_url, username=fas_user, password=fas_pass, cache_session=False)
+        fas_url, username=fas_user, password=fas_pass, cache_session=False,
+        insecure=fas_insecure)
+
     return _FAS
 
 
