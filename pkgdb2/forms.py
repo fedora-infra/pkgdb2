@@ -264,7 +264,6 @@ class RequestAclPackageForm(wtf.Form):
             ]
 
 
-
 class GivePoCForm(wtf.Form):
     """ Form to change the Point of Contact of a package. """
     branches = wtforms.SelectMultipleField(
