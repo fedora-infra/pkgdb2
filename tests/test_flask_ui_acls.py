@@ -399,6 +399,32 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
+    def test_dropcommit_package(self, login_func, mock_func):
+        """ Test the dropcommit_package function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+
+        user = FakeFasUser()
+        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/acl/guake/dropcommit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">ACLs updated</li>' in output.data)
+
+            output = self.app.get(
+                '/acl/random/dropcommit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No package found by this name</li>'
+                in output.data)
+
+
+    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.fas_login_required')
     def test_update_acl(self, login_func, mock_func):
         """ Test the update_acl function. """
         login_func.return_value = None
