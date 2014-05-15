@@ -1115,104 +1115,87 @@ class Package(BASE):
         """
 
         query = session.query(
-            Package
+            sa.func.distinct(Package.id)
         ).filter(
             Package.name.like(pkg_name)
-        ).order_by(
-            Package.name
         )
 
         if pkg_poc:
-            query = query.join(
-                PackageListing, Collection
+            query = query.filter(
+                PackageListing.package_id == Package.id
             ).filter(
                 PackageListing.point_of_contact == pkg_poc
             ).filter(
                 Collection.status != 'EOL'
-            ).distinct()
+            )
 
         if pkg_status:
-            subquery = session.query(
-                PackageListing.package_id
-            ).join(
-                Collection
+            query = query.filter(
+                PackageListing.package_id == Package.id
             ).filter(
                 PackageListing.status == pkg_status
             ).filter(
+                PackageListing.collection_id == Collection.id
+            ).filter(
                 Collection.status != 'EOL'
-            )
-            if pkg_branch:
-                subquery = subquery.filter(
-                    Collection.branchname == pkg_branch
-                )
-            subquery = subquery.subquery()
-
-            query = query.filter(
-                Package.id.in_(subquery)
             )
 
         if pkg_branch:
-            if not pkg_poc:
-                query = query.join(PackageListing, Collection)
             query = query.filter(
+                PackageListing.package_id == Package.id
+            ).filter(
+                PackageListing.collection_id == Collection.id
+            ).filter(
                 Collection.branchname == pkg_branch
             )
 
         if orphaned is not None:
             if orphaned is True:
-                subquery = session.query(
-                    PackageListing.package_id
+                query = query.filter(
+                    PackageListing.package_id == Package.id
                 ).filter(
                     PackageListing.status == 'Orphaned'
                 )
             else:
-                subquery = session.query(
-                    PackageListing.package_id
+                query = query.filter(
+                    PackageListing.package_id == Package.id
                 ).filter(
                     PackageListing.status != 'Orphaned'
                 )
-            subquery = subquery.subquery()
-
-            query = query.filter(
-                Package.id.in_(subquery)
-            )
 
         if critpath is not None:
-            subquery = session.query(
-                PackageListing.package_id
+            query = query.filter(
+                PackageListing.package_id == Package.id
             ).filter(
                 PackageListing.critpath == critpath
             )
-            subquery = subquery.subquery()
-
-            query = query.filter(
-                Package.id.in_(subquery)
-            )
 
         if not eol:
-            subquery = session.query(
-                PackageListing.package_id
-            ).join(
-                Collection
+            query = query.filter(
+                PackageListing.package_id == Package.id
             ).filter(
                 PackageListing.collection_id == Collection.id
             ).filter(
                 Collection.status != 'EOL'
-            ).subquery()
-
-            query = query.filter(
-                Package.id.in_(subquery)
             )
 
+        final_query = session.query(
+            Package
+        ).filter(
+            Package.id.in_(query.subquery())
+        ).order_by(
+            Package.name
+        )
+
         if count:
-            return query.count()
+            return final_query.count()
 
         if offset:
-            query = query.offset(offset)
+            final_query = final_query.offset(offset)
         if limit:
-            query = query.limit(limit)
+            final_query = final_query.limit(limit)
 
-        return query.all()
+        return final_query.all()
 
     @classmethod
     def count_collection(cls, session):
