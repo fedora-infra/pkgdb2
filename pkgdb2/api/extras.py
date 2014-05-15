@@ -411,7 +411,6 @@ Critical path packages
                 pkgdblib.search_collection(SESSION, branch)
             )
 
-
     for collection in active_collections:
         if collection.name != 'Fedora':
             continue

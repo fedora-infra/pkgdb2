@@ -282,6 +282,8 @@ if __name__ == '__main__':
 -- Reset all the sequences
 SELECT setval('"Collection_id_seq"', (SELECT MAX(id) FROM "Collection"));
 SELECT setval('"Package_id_seq"', (SELECT MAX(id) FROM "Package"));
-SELECT setval('"PackageListing_id_seq"', (SELECT MAX(id) FROM "PackageListing"));
-SELECT setval('"PackageListingAcl_id_seq"', (SELECT MAX(id) FROM "PackageListingAcl"));
+SELECT setval('"PackageListing_id_seq"', (
+    SELECT MAX(id) FROM "PackageListing"));
+SELECT setval('"PackageListingAcl_id_seq"', (
+    SELECT MAX(id) FROM "PackageListingAcl"));
 """

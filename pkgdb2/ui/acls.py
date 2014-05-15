@@ -398,6 +398,7 @@ def comaintain_package(package):
         flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for('.package_info', package=package))
 
+
 @UI.route('/acl/<package>/dropcommit/', methods=('GET', 'POST'))
 @fas_login_required
 def dropcommit_package(package):
@@ -434,6 +435,7 @@ def dropcommit_package(package):
         SESSION.rollback()
         flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for('.package_info', package=package))
+
 
 @UI.route('/acl/pending/')
 @packager_login_required

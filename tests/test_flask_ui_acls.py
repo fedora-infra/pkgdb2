@@ -208,7 +208,6 @@ class FlaskUiAclsTest(Modeltests):
             self.assertEqual(
                 output.data.count('<a class="pending"'), 2)
 
-
             output = self.app.get(
                 '/acl/guake/request/foobar/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
@@ -267,7 +266,6 @@ class FlaskUiAclsTest(Modeltests):
                 'branch devel of package guake</li>' in output.data)
             self.assertEqual(
                 output.data.count('<a class="pending"'), 1)
-
 
             output = self.app.get(
                 '/acl/guake/giveup/foobar/', follow_redirects=True)
@@ -422,7 +420,6 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="error">No package found by this name</li>'
                 in output.data)
 
-
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
     def test_update_acl(self, login_func, mock_func):
@@ -480,11 +477,12 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/',data=data,
+                '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">Invalid input submitted</li>' in output.data)
+                '<li class="error">Invalid input submitted</li>'
+                in output.data)
 
             data = {
                 'branch': 'devel',
@@ -494,7 +492,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/',data=data,
+                '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -510,7 +508,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/',data=data,
+                '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -524,7 +522,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/',data=data,
+                '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -538,7 +536,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/',data=data,
+                '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(

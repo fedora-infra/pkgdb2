@@ -353,7 +353,7 @@ class PkgdbLibtests(Modeltests):
 
         # Adding auto-approve ACL should work fine
         user = FakeFasUser()
-        user.username='blahblah'
+        user.username = 'blahblah'
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
                                  pkg_branch='f18',

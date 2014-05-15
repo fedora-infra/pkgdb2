@@ -33,6 +33,7 @@ from pkgdb2 import APP, SESSION, FAS, is_pkgdb_admin, __version__, is_safe_url
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
 
+
 @APP.template_filter('sort_branches')
 def branches_filter(branches):
     """ Template filter sorting the given branches, Fedora first then EPEL,
