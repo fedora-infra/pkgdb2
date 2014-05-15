@@ -21,7 +21,7 @@
       <table>
         <tr>
           <th></th>
-          {% for branch in branches | sort %}
+          {% for branch in branches | sort_branches %}
           <th>
             <input type="hidden" value="{{ branches[branch] }}" name="branch" />
             {{ branch }}</th>
@@ -39,7 +39,7 @@
                 {{ user }}
               </a>
             </td>
-            {% for branch in branches | sort %}
+            {% for branch in branches | sort_branches %}
                 {% set coltype = loop.cycle('col_odd', 'col_even') %}
                 {% if acl in commit_acls[user][branch] %}
                   {% set select_cl = commit_acls[user][branch][acl].replace(' ', '_') %}
