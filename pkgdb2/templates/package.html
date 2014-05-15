@@ -205,7 +205,7 @@ confusing what the difference is between that status an the per-branch status)
         {% if g.fas_user and g.fas_user.username in committers %}
           <li>
           <a class="bold pkg_button_grey inline" title="Drop your commit ACL on all branches"
-            href="">
+            href="{{ url_for('.dropcommit_package',package=package.name) }}">
             - Give Up Commit Access
           </a>
           </li>
