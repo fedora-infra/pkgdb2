@@ -634,10 +634,33 @@ class PkgdbLibtests(Modeltests):
                                        orphaned=None,
                                        status=None,
                                        limit=1,
+                                       page=1
+                                       )
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0].name, 'geany')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       pkg_branch='f18',
+                                       pkg_poc=None,
+                                       orphaned=None,
+                                       status=None,
+                                       limit=1,
                                        page=2
                                        )
         self.assertEqual(len(pkgs), 1)
         self.assertEqual(pkgs[0].name, 'guake')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       pkg_branch='f18',
+                                       pkg_poc=None,
+                                       orphaned=None,
+                                       status=None,
+                                       limit=2,
+                                       page=2
+                                       )
+        self.assertEqual(len(pkgs), 0)
 
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
