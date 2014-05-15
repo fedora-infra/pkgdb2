@@ -398,6 +398,42 @@ def comaintain_package(package):
         flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for('.package_info', package=package))
 
+@UI.route('/acl/<package>/dropcommit/', methods=('GET', 'POST'))
+@fas_login_required
+def dropcommit_package(package):
+    ''' Obsolete commit ACLs on a package.
+    This method can only be used for the user itself.
+    '''
+    try:
+        pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+    except IndexError:
+        flask.flash('No package found by this name', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package))
+
+    pkg_acls = ['commit']
+    pkg_branchs = set([
+        pkglist.collection.branchname
+        for pkglist in pkg.listings
+        if pkglist.collection.status in ['Active', 'Under Development']])
+    try:
+        for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
+            pkgdblib.set_acl_package(
+                SESSION,
+                pkg_name=package,
+                pkg_branch=collec,
+                pkg_user=flask.g.fas_user.username,
+                acl=acl,
+                status='Obsolete',
+                user=flask.g.fas_user,
+            )
+        SESSION.commit()
+        flask.flash('ACLs updated')
+    # Let's keep this in although we should never see it
+    except pkgdblib.PkgdbException, err:  # pragma: no cover
+        SESSION.rollback()
+        flask.flash(str(err), 'error')
+    return flask.redirect(flask.url_for('.package_info', package=package))
 
 @UI.route('/acl/pending/')
 @packager_login_required
