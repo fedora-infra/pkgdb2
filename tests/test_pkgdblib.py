@@ -1309,21 +1309,22 @@ class PkgdbLibtests(Modeltests):
                          "package: guake on branch: f18 for point of "
                          "contact: ralph")
         self.assertEqual(logs[22].user, "admin")
-        self.assertEqual(logs[19].description, "user: admin set acl: "
-                         "watchcommits of package: guake from: Approved to:"
-                         " Approved on branch: f18")
+        self.assertEqual(logs[19].description, "user: admin set for ralph "
+                         "acl: watchcommits of package: guake from: "
+                         "Approved to: Approved on branch: f18")
 
         logs = pkgdblib.search_logs(self.session, limit=3, page=2)
 
         self.assertEqual(len(logs), 3)
-        self.assertEqual(logs[0].description, "user: admin set acl: "
-                         "watchcommits of package: fedocal from: Approved "
-                         "to: Approved on branch: devel")
+        self.assertEqual(logs[0].description, "user: admin set for "
+                         "group::infra-sig acl: watchcommits of package: "
+                         "fedocal from: Approved to: Approved on branch: "
+                         "devel")
         self.assertEqual(logs[0].user, "admin")
 
-        exp = "Log(user=u'admin', description=u'user: admin set acl: " \
-              "watchcommits of package: fedocal from: Approved to:" \
-              " Approved on branch: devel"
+        exp = "Log(user=u'admin', description=u'user: admin set for "\
+              "group::infra-sig acl: watchcommits of package: fedocal from:"\
+              " Approved to: Approved on branch: devel"
         self.assertTrue(logs[0].__repr__().startswith(exp))
 
         logs = pkgdblib.search_logs(self.session, count=True)

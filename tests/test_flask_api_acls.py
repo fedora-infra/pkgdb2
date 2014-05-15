@@ -101,8 +101,9 @@ class FlaskApiAclsTest(Modeltests):
         with user_set(APP, user):
             exp = {
                 "messages": [
-                    "user: pingou set acl: commit of package: guake from: "
-                    "Awaiting Review to: Approved on branch: devel"
+                    "user: pingou set for toshio acl: commit of package: "
+                    "guake from: Awaiting Review to: Approved on branch: "
+                    "devel"
                 ],
                 "output": "ok"
             }
@@ -122,8 +123,9 @@ class FlaskApiAclsTest(Modeltests):
 
             exp = {
                 "messages": [
-                    "user: pingou set acl: watchcommits of package: guake "
-                    "from: Approved to: Approved on branch: devel"
+                    "user: pingou set for toshio acl: watchcommits of "
+                    "package: guake from: Approved to: Approved on branch: "
+                    "devel"
                 ],
                 "output": "ok"
             }
@@ -159,8 +161,8 @@ class FlaskApiAclsTest(Modeltests):
         with user_set(APP, user):
             exp = {
                 "messages": [
-                    "user: admin set acl: commit of package: guake from: "
-                    "Approved to: Approved on branch: devel"
+                    "user: admin set for toshio acl: commit of package: "
+                    "guake from: Approved to: Approved on branch: devel"
                 ],
                 "output": "ok"
             }
