@@ -52,7 +52,8 @@ def request_acl(package):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    collections = [acl.collection
+    collections = [
+        acl.collection
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
     ]
@@ -131,7 +132,7 @@ def request_acl_all_branch(package, acl):
         elif 'packager' not in flask.g.fas_user.groups:
             flask.flash(
                 'You must be a packager to apply to the ACL: %s on %s' % (
-                acl, package), 'error')
+                    acl, package), 'error')
 
         try:
             pkgdblib.set_acl_package(
