@@ -734,7 +734,8 @@ class PackageListing(BASE):
             tmp = []
             for acl in self.acls:
                 tmp.append(acl.to_json(_seen + [type(self)]))
-            if not_provenpackager and self.package.name not in not_provenpackager:
+            if not_provenpackager \
+                    and self.package.name not in not_provenpackager:
                 tmp.append(
                     {
                         "status": "Approved",
