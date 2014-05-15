@@ -206,7 +206,7 @@ def log(session, package, topic, message):
                       '%(previous_status)s to: '
                       '%(status)s on branch: '
                       '%(package_listing.collection.branchname)s',
-        'owner.update': 'user: %(agent)s changed poc of package: '
+        'owner.update': 'user: %(agent)s changed point of contact of package: '
                         '%(package_name)s from: '
                         '%(previous_owner)s to: '
                         '%(username)s on branch: '
@@ -219,8 +219,8 @@ def log(session, package, topic, message):
                            '%(collection_to.branchname)s',
         'package.new': 'user: %(agent)s created package: '
                        '%(package_name)s on branch: '
-                       '%(package_listing.collection.branchname)s for poc: '
-                       '%(package_listing.point_of_contact)s',
+                       '%(package_listing.collection.branchname)s for point'
+                       ' of contact: %(package_listing.point_of_contact)s',
         'package.update': 'user: %(agent)s updated package: '
                           '%(package.name)s',
         'package.update.status': 'user: %(agent)s updated package: '

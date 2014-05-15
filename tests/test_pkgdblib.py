@@ -1306,7 +1306,8 @@ class PkgdbLibtests(Modeltests):
 
         self.assertEqual(len(logs), 23)
         self.assertEqual(logs[22].description, "user: admin created "
-                         "package: guake on branch: f18 for poc: ralph")
+                         "package: guake on branch: f18 for point of "
+                         "contact: ralph")
         self.assertEqual(logs[22].user, "admin")
         self.assertEqual(logs[19].description, "user: admin set acl: "
                          "watchcommits of package: guake from: Approved to:"
