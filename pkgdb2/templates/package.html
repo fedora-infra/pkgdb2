@@ -27,7 +27,7 @@ confusing what the difference is between that status an the per-branch status)
     {% if listing.collection.status != 'EOL' %}
     <tr>
         <th>{{ listing.collection.branchname }}</th>
-        <td>{{ listing.status }}</td>
+        <td>{{ listing.status }} {% if listing.critpath %} -- critpatch {% endif %}</td>
     </tr>
     {% endif %}
     {% endfor %}
