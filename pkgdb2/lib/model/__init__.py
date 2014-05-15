@@ -1009,8 +1009,14 @@ class Package(BASE):
 
     @property
     def sorted_listings(self):
-        """ Return associated listings reverse sorted by collection name """
+        """ Return associated listings reverse sorted by collection name.
+
+        """
         def comparator(a, b):
+            """ Compare two collections and return the result of the
+            comparison relying on collection name and version.
+
+            """
             b, a = a.collection, b.collection
             return cmp(a.name + a.version, b.name + b.version)
 
