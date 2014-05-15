@@ -375,18 +375,22 @@ def api_critpath():
     '''
 Critical path packages
 ----------------------
-    Return the list of package marked as critpath for all active release
-    of fedora.
+    Return the list of package marked as critpath for some or all active
+    releases of fedora.
 
     ::
 
         /api/critpath
 
+    :kwarg branches: Return the list of packages marked as critpath in the
+        specified branch(es).
     :kwarg format: Specify if the output if text or json.
 
     '''
 
     out_format = flask.request.args.get('format', 'text')
+    branches = flask.request.args.getlist('branches')
+
     if out_format not in ('text', 'json'):
         out_format = 'text'
 
@@ -395,10 +399,18 @@ Critical path packages
 
     output = {}
 
-    active_collections = pkgdblib.search_collection(
-        SESSION, '*', status='Under Development')
-    active_collections.extend(
-        pkgdblib.search_collection(SESSION, '*', status='Active'))
+    if not branches:
+        active_collections = pkgdblib.search_collection(
+            SESSION, '*', status='Under Development')
+        active_collections.extend(
+            pkgdblib.search_collection(SESSION, '*', status='Active'))
+    else:
+        active_collections = []
+        for branch in branches:
+            active_collections.extend(
+                pkgdblib.search_collection(SESSION, branch)
+            )
+
 
     for collection in active_collections:
         if collection.name != 'Fedora':
