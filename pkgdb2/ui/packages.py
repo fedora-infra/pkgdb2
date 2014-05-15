@@ -582,7 +582,6 @@ def update_acl(package, update_acl):
         if pkg.collection.branchname not in branches_inv:
             branches_inv[pkg.collection.branchname] = collection_name
 
-        acls = {}
         for acl in pkg.acls:
 
             if acl.acl == 'approveacls' and acl.status == 'Approved':
