@@ -53,12 +53,12 @@ def admin_log():
     page = flask.request.args.get('page', 1)
 
     try:
-        page = int(page)
+        page = abs(int(page))
     except ValueError:
         page = 1
 
     try:
-        int(limit)
+        limit = abs(int(limit))
     except ValueError:
         limit = APP.config['ITEMS_PER_PAGE']
         flask.flash('Incorrect limit provided, using default', 'errors')

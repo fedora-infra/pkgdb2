@@ -587,13 +587,13 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
 
     if limit is not None:
         try:
-            limit = int(limit)
+            limit = abs(int(limit))
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            page = int(page)
+            page = abs(int(page))
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
@@ -639,13 +639,13 @@ def search_collection(session, pattern, status=None, page=None,
 
     if limit is not None:
         try:
-            limit = int(limit)
+            limit = abs(int(limit))
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            page = int(page)
+            page = abs(int(page))
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
@@ -688,13 +688,13 @@ def search_packagers(session, pattern, eol=False, page=None, limit=None,
 
     if limit is not None:
         try:
-            limit = int(limit)
+            limit = abs(int(limit))
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            page = int(page)
+            page = abs(int(page))
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
@@ -735,13 +735,13 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
     """
     if limit is not None:
         try:
-            limit = int(limit)
+            limit = abs(int(limit))
         except ValueError:
             raise PkgdbException('Wrong limit provided')
 
     if page is not None:
         try:
-            page = int(page)
+            page = abs(int(page))
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
@@ -801,7 +801,7 @@ def get_acl_packager(
 
     if page is not None:
         try:
-            page = int(page)
+            page = abs(int(page))
         except ValueError:
             raise PkgdbException('Wrong page provided')
 

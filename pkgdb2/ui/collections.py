@@ -48,7 +48,7 @@ def list_collections(motif=None, page=1):
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
 
     try:
-        int(limit)
+        limit = abs(int(limit))
     except ValueError:
         limit = APP.config['ITEMS_PER_PAGE']
         flask.flash('Incorrect limit provided, using default', 'errors')
