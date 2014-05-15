@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.3
+Version:        1.4
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -99,6 +99,18 @@ install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb
 
 
 %changelog
+* Thu May 15 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.4-1
+- Bump to 1.4
+- Fix http link when editing ACLs
+  https://fedorahosted.org/fedora-infrastructure/ticket/4362
+- Fix ordering the branches in the ACL overview and editing page
+  https://github.com/fedora-infra/pkgdb2/issues/36
+- Speed up Package.search should reflect a bit everywhere including the API
+- Enhance the critpath API to allow restricting for only one or more branches
+  and let it return only Approved package
+- More unit-tests
+- Code cleaning
+
 * Wed May 14 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.3-1
 - Bump to 1.3
 - Add the possibility to Cc one or more email addresses to every emails sent
