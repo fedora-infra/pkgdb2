@@ -462,7 +462,7 @@ def package_retire(package, full=True):
                 else:  # pragma: no cover
                     flask.flash(
                         'This package has not been orphaned on '
-                        'branch: %s' % collection)
+                        'branch: %s' % acl.collection.branchname)
 
         try:
             SESSION.commit()
