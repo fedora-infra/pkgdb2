@@ -239,9 +239,6 @@ def get_acl_package(session, pkg_name, pkg_clt=None, eol=False):
         If False, it will return results only for non-EOL collections.
     :returns: a list of ``PackageListing``.
     :rtype: list(PackageListing)
-    :raises pkgdb2.lib.PkgdbException: when user restricted the acl to a
-        specific branch using ``pkg_clt`` and this branch could not be
-        found associated with this package.
     :raises sqlalchemy.orm.exc.NoResultFound: when there is no package
         found in the database with the name ``pkg_name``.
 
