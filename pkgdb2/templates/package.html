@@ -95,7 +95,7 @@ confusing what the difference is between that status an the per-branch status)
                 {{ user }}
               </a>
             </span>
-            <span class="branches">({{ pocs[user] | sort | join(', ') }})</span>
+            <span class="branches">({{ pocs[user] | sort_branches | join(', ') }})</span>
           </li>
           {% endfor %}
         </ul>
@@ -147,7 +147,7 @@ confusing what the difference is between that status an the per-branch status)
                   {{ user }}
                 </a>
               </span>
-              <span class="branches">({{ admins[user] | sort | join(', ') }})</span>
+              <span class="branches">({{ admins[user] | sort_branches | join(', ') }})</span>
             </li>
             {% endfor %}
             {% for user in pending_admins %}
@@ -158,7 +158,7 @@ confusing what the difference is between that status an the per-branch status)
                   {{ user }}
                 </a>
               </span>
-              <span class="branches">({{ pending_admins[user] | sort | join(', ') }})</span>
+              <span class="branches">({{ pending_admins[user] | sort_branches | join(', ') }})</span>
             </li>
             {% endfor %}
           </ul>
