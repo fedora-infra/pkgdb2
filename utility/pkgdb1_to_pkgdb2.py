@@ -162,7 +162,6 @@ def convert_packages(pkg1_sess, pkg2_sess):
             summary=pkg.summary,
             description=pkg.description,
             status=STATUS[pkg.statuscode],
-            shouldopen=pkg.shouldopen,
             review_url=pkg.reviewurl,
             upstream_url=pkg.upstreamurl,
         )
