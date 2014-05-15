@@ -66,7 +66,6 @@ New package
     :arg review_url: the URL of the package review on the bugzilla.
     :arg status: status of the package can be one of: 'Approved',
         'Awaiting Review', 'Denied', 'Obsolete', 'Removed'
-    :arg shouldopen: boolean specifying if this package should open
     :arg branches: one or more branch names of the collection in which
         this package is added.
     :arg poc: FAS username of the point of contact
@@ -107,7 +106,6 @@ New package
         pkg_description = form.description.data
         pkg_review_url = form.review_url.data
         pkg_status = form.status.data
-        pkg_shouldopen = form.shouldopen.data
         pkg_collection = form.branches.data
         pkg_poc = form.poc.data
         pkg_upstream_url = form.upstream_url.data
@@ -121,7 +119,6 @@ New package
                 pkg_description=pkg_description,
                 pkg_review_url=pkg_review_url,
                 pkg_status=pkg_status,
-                pkg_shouldopen=pkg_shouldopen,
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
                 pkg_upstream_url=pkg_upstream_url,

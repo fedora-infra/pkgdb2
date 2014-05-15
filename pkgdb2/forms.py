@@ -139,10 +139,6 @@ class AddPackageForm(wtf.Form):
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
-    shouldopen = wtforms.BooleanField(
-        'Should open',
-        default=True
-    )
     critpath = wtforms.BooleanField(
         'Package in critpath',
         default=False

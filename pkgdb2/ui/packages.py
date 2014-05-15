@@ -230,7 +230,6 @@ def package_new():
         pkg_description = form.description.data
         pkg_review_url = form.review_url.data
         pkg_status = form.status.data
-        pkg_shouldopen = form.shouldopen.data
         pkg_critpath = form.critpath.data
         pkg_collection = form.branches.data
         pkg_poc = form.poc.data
@@ -244,7 +243,6 @@ def package_new():
                 pkg_description=pkg_description,
                 pkg_review_url=pkg_review_url,
                 pkg_status=pkg_status,
-                pkg_shouldopen=pkg_shouldopen,
                 pkg_critpath=pkg_critpath,
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,

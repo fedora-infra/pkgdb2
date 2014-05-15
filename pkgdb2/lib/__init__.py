@@ -119,8 +119,7 @@ def create_session(db_url, debug=False, pool_recycle=3600):
 
 def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
                 pkg_collection, pkg_poc, user, pkg_review_url=None,
-                pkg_shouldopen=None, pkg_upstream_url=None,
-                pkg_critpath=False):
+                pkg_upstream_url=None, pkg_critpath=False):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
 
@@ -133,7 +132,6 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
     :arg pkg_poc: the point of contact for this package in this collection
     :arg user: the user performing the action
     :kwarg pkg_review_url: the url of the review-request on the bugzilla
-    :kwarg pkg_shouldopen: a boolean
     :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
         being in critpath.
@@ -168,7 +166,6 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
                             description=pkg_description,
                             status=pkg_status,
                             review_url=pkg_review_url,
-                            shouldopen=pkg_shouldopen,
                             upstream_url=pkg_upstream_url
                             )
     session.add(package)

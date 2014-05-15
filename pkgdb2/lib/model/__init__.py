@@ -1002,7 +1002,6 @@ class Package(BASE):
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
         nullable=False)
-    shouldopen = sa.Column(sa.Boolean, nullable=False, default=True)
 
     listings = relation(PackageListing)
 
@@ -1033,14 +1032,13 @@ class Package(BASE):
         """
         return session.query(cls).filter(Package.name == pkgname).one()
 
-    def __init__(self, name, summary, description, status, shouldopen=None,
+    def __init__(self, name, summary, description, status,
                  review_url=None, upstream_url=None):
         self.name = name
         self.summary = summary
         self.description = description
         self.status = status
         self.review_url = review_url
-        self.shouldopen = shouldopen
         self.upstream_url = upstream_url
 
     def __hash__(self):
@@ -1052,10 +1050,9 @@ class Package(BASE):
         """ The string representation of this object.
 
         """
-        return 'Package(%r, %r, %r, ' \
-            'upstreamurl=%r, reviewurl=%r, shouldopen=%r)' % (
+        return 'Package(%r, %r, %r, upstreamurl=%r, reviewurl=%r)' % (
                 self.name, self.summary, self.status,
-                self.upstream_url, self.review_url, self.shouldopen)
+                self.upstream_url, self.review_url)
 
     def create_listing(self, collection, point_of_contact, statusname,
                        critpath=False):
