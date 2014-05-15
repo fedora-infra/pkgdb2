@@ -14,9 +14,9 @@
 {% set options = True %}
 {%block options %}
 <form action="{{ url_for('.admin_log') }}" method="get">
-    Restrict to package: <input type="text" name="package" />
-    From date: <input id="from_date" type="text" name="from_date" />
-    Auto-refresh: <input id="refresh" type="checkbox" name="refresh" />
+    Restrict to package: <input type="text" name="package" /> <br />
+    From date: <input id="from_date" type="text" name="from_date" /> <br />
+    Auto-refresh: <input id="refresh" type="checkbox" name="refresh" /> <br />
     <input type="submit" class="submit positive button" value="filter">
 </form>
 {% endblock %}
