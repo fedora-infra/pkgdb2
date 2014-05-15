@@ -230,7 +230,7 @@ confusing what the difference is between that status an the per-branch status)
     <table>
       <tr>
         <th></th>
-        {% for branch in branches | sort %}
+        {% for branch in branches | sort_branches %}
         <th>{{ branch }}</th>
         {% endfor %}
       </tr>
@@ -245,7 +245,7 @@ confusing what the difference is between that status an the per-branch status)
               {{ user }}
             </a>
           </td>
-          {% for branch in branches | sort %}
+          {% for branch in branches | sort_branches %}
             {% if not loop.last %}
               <td class="dashed">
             {% else %}
@@ -287,7 +287,7 @@ confusing what the difference is between that status an the per-branch status)
     <table>
       <tr>
         <th></th>
-        {% for branch in branches | sort %}
+        {% for branch in branches | sort_branches %}
         <th colspan="2">{{ branch }}</th>
         {% endfor %}
       </tr>
@@ -311,7 +311,7 @@ confusing what the difference is between that status an the per-branch status)
               {{ user }}
             </a>
           </td>
-          {% for branch in branches | sort %}
+          {% for branch in branches | sort_branches %}
             {% set coltype = loop.cycle('col_odd', 'col_even') %}
             {% if loop.last %}
               {% set last = True %}

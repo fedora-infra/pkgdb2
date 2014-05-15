@@ -28,10 +28,32 @@ import flask
 from urlparse import urlparse
 
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION, FAS, is_pkgdb_admin, __version__, is_safe_url
+from pkgdb2 import APP, SESSION, FAS, is_pkgdb_admin, __version__, is_safe_url
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
+
+@APP.template_filter('sort_branches')
+def branches_filter(branches):
+    """ Template filter sorting the given branches, Fedora first then EPEL,
+    then whatever is left.
+    """
+    data = {}
+    for branch in branches:
+        key = branch.rsplit(' ', 1)[0]
+        if key not in data:
+            data[key] = []
+        data[key].append(branch)
+
+    output = []
+    kkeys = ['Fedora', 'Fedora EPEL']
+    for key in kkeys:
+        if key in data:
+            output.extend(sorted(data[key], reverse=True))
+    for key in data:
+        if key not in kkeys:
+            output.extend(sorted(data[key], reverse=True))
+    return output
 
 
 @UI.context_processor
