@@ -157,11 +157,6 @@ def package_info(package):
             pocs[pkg.point_of_contact] = set()
         pocs[pkg.point_of_contact].add(collection_name)
 
-        if is_authenticated() and \
-                pkg.point_of_contact == flask.g.fas_user.username:
-            is_poc = True
-
-        acls = {}
         for acl in pkg.acls:
 
             if acl.acl == 'approveacls' and acl.status == 'Approved':
