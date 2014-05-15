@@ -965,14 +965,16 @@ class PackageListing(BASE):
         query = session.query(
             cls
         ).filter(
+            cls.status == 'Approved'
+        ).filter(
             cls.critpath == True
         ).order_by(
             cls.package_id,
             cls.collection_id
         )
         if branch is not None:
-            query = query.join(
-                Collection
+            query = query.filter(
+                cls.collection_id == Collection.id
             ).filter(
                 Collection.branchname == branch
             )
