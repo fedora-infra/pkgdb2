@@ -803,6 +803,15 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(len(data['packages']), 2)
         self.assertEqual(data['output'], 'ok')
 
+        output = self.app.get('/api/packages/g*/?page=abc')
+        self.assertEqual(output.status_code, 500)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['error', 'output', 'page', 'page_total'])
+        self.assertEqual(data['error'], 'Wrong page provided')
+        self.assertEqual(data['output'], 'notok')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiPackagesTest)
