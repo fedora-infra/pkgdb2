@@ -20,8 +20,8 @@
   to {{ action }}
 </h1>
 
-
-<form action="{{ request.url }}" method="post">
+<form action="{{ url_for(
+    '.package_%s' % action, package=package.name, full=full) }}" method="post">
   <table>
     {{ render_field_in_row(form.branches) }}
   </table>
