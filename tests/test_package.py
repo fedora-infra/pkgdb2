@@ -52,8 +52,7 @@ class Packagetests(Modeltests):
         self.assertEqual("Package(u'guake', u'Top down terminal for GNOME', "
                          "u'Approved', "
                          "upstreamurl=u'http://guake.org', "
-                         "reviewurl=u'https://bugzilla.redhat.com/450189', "
-                         "shouldopen=True)",
+                         "reviewurl=u'https://bugzilla.redhat.com/450189')",
                          packages[0].__repr__())
 
     def test_to_json(self):

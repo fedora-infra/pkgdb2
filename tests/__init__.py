@@ -200,7 +200,6 @@ def create_package(session):
         description='Top down terminal...',
         status='Approved',
         review_url='https://bugzilla.redhat.com/450189',
-        shouldopen=None,
         upstream_url='http://guake.org',
     )
     session.add(package)
@@ -211,7 +210,6 @@ def create_package(session):
         description='Web calendar ...',
         status='Approved',
         review_url='https://bugzilla.redhat.com/915074',
-        shouldopen=None,
         upstream_url='http://fedorahosted.org/fedocal',
     )
     session.add(package)
@@ -222,7 +220,6 @@ def create_package(session):
         description='Lightweight GNOME IDE...',
         status='Approved',
         review_url=None,
-        shouldopen=None,
         upstream_url=None,
     )
     session.add(package)
@@ -313,7 +310,6 @@ def create_package_critpath(session):
         description='The kernel',
         status='Approved',
         review_url='https://bugzilla.redhat.com/123',
-        shouldopen=None,
         upstream_url='http://www.kernel.org/',
     )
     session.add(package)

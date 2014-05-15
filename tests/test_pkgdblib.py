@@ -65,7 +65,6 @@ class PkgdbLibtests(Modeltests):
                           pkg_collection='f18',
                           pkg_poc='ralph',
                           pkg_review_url=None,
-                          pkg_shouldopen=None,
                           pkg_upstream_url='http://example.org',
                           user=FakeFasUser()
                           )
@@ -81,7 +80,6 @@ class PkgdbLibtests(Modeltests):
                           pkg_collection='f18',
                           pkg_poc='group::tests',
                           pkg_review_url=None,
-                          pkg_shouldopen=None,
                           pkg_upstream_url='http://example.org',
                           user=FakeFasUserAdmin()
                           )
@@ -101,7 +99,6 @@ class PkgdbLibtests(Modeltests):
                           pkg_collection='f18',
                           pkg_poc='ralph',
                           pkg_review_url=None,
-                          pkg_shouldopen=None,
                           pkg_upstream_url='http://guake.org',
                           user=FakeFasUserAdmin())
 
@@ -119,7 +116,6 @@ class PkgdbLibtests(Modeltests):
                           pkg_collection='f18',
                           pkg_poc='ralph',
                           pkg_review_url=None,
-                          pkg_shouldopen=None,
                           pkg_upstream_url='http://guake.org',
                           user=FakeFasUserAdmin())
 
@@ -137,7 +133,6 @@ class PkgdbLibtests(Modeltests):
                           pkg_collection='devel, f18',
                           pkg_poc='group::infra-sig',
                           pkg_review_url=None,
-                          pkg_shouldopen=None,
                           pkg_upstream_url=None,
                           user=FakeFasUserAdmin())
 
@@ -152,7 +147,6 @@ class PkgdbLibtests(Modeltests):
                                    pkg_collection='f18',
                                    pkg_poc='ralph',
                                    pkg_review_url=None,
-                                   pkg_shouldopen=None,
                                    pkg_upstream_url='http://guake.org',
                                    user=FakeFasUserAdmin())
         self.assertEqual(msg, 'Package created')
@@ -169,7 +163,6 @@ class PkgdbLibtests(Modeltests):
                              pkg_collection='devel, f18',
                              pkg_poc='ralph',
                              pkg_review_url=None,
-                             pkg_shouldopen=None,
                              pkg_upstream_url=None,
                              user=FakeFasUserAdmin())
         self.session.commit()
@@ -189,7 +182,6 @@ class PkgdbLibtests(Modeltests):
                              pkg_collection='devel, f18',
                              pkg_poc='group::infra-sig',
                              pkg_review_url=None,
-                             pkg_shouldopen=None,
                              pkg_upstream_url=None,
                              user=FakeFasUserAdmin())
         self.session.commit()

@@ -97,7 +97,6 @@ class FlaskApiPackagesTest(Modeltests):
             'description': 'Terminal for GNOME...',
             'review_url': 'http://bugzilla.redhat.com/1234',
             'status': '',
-            'shouldopen': '',
             'critpath': '',
             'branches': '',
             'poc': '',
@@ -118,7 +117,6 @@ class FlaskApiPackagesTest(Modeltests):
                         "poc: This field is required.",
                         "branches: '' is not a valid choice for this field",
                         "critpath: This field is required.",
-                        "shouldopen: This field is required."
                     ],
                     "output": "notok"
                 }
@@ -141,7 +139,6 @@ class FlaskApiPackagesTest(Modeltests):
             'description': 'Terminal for GNOME...',
             'review_url': 'http://bugzilla.redhat.com/1234',
             'status': 'Approved',
-            'shouldopen': True,
             'branches': 'devel',
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
@@ -172,7 +169,6 @@ class FlaskApiPackagesTest(Modeltests):
             'description': 'Terminal for GNOME...',
             'review_url': 'http://bugzilla.redhat.com/1234',
             'status': 'Approved',
-            'shouldopen': True,
             'branches': 'devel',
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
@@ -199,7 +195,6 @@ class FlaskApiPackagesTest(Modeltests):
             'description': 'Terminal for GNOME...',
             'review_url': 'http://bugzilla.redhat.com/1234',
             'status': 'Approved',
-            'shouldopen': True,
             'branches': 'devel',
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
