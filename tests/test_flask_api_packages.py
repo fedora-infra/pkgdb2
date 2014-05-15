@@ -728,6 +728,11 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(
             data['packages'][0]['summary'], 'Top down terminal for GNOME')
 
+        output = self.app.get('/api/packages/g*/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(len(data['packages']), 2)
+
         output = self.app.get('/api/packages/g*/?count=True')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
