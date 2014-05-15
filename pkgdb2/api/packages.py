@@ -600,11 +600,6 @@ Package information
         output['output'] = 'notok'
         output['error'] = 'Package: %s not found' % pkg_name
         httpcode = 404
-    except pkgdblib.PkgdbException, err:
-        SESSION.rollback()
-        output['output'] = 'notok'
-        output['error'] = str(err)
-        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
