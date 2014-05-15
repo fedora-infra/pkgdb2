@@ -520,6 +520,20 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
 
         self.assertEqual(data, expected)
 
+        output = self.app.get('/api/critpath/?format=json&branches=devel')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            u'pkgs': {
+                u'devel': [
+                    u"kernel"
+                ]
+            },
+        }
+
+        self.assertEqual(data, expected)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiExtrasTest)
