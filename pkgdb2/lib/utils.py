@@ -201,8 +201,8 @@ def log(session, package, topic, message):
 
     # A big lookup of fedmsg topics to model.Log template strings.
     templates = {
-        'acl.update': 'user: %(agent)s set acl: %(acl)s of package: '
-                      '%(package_name)s from: '
+        'acl.update': 'user: %(agent)s set for %(username)s acl: %(acl)s of'
+                      ' package: %(package_name)s from: '
                       '%(previous_status)s to: '
                       '%(status)s on branch: '
                       '%(package_listing.collection.branchname)s',
