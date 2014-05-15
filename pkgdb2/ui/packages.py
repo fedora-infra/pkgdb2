@@ -366,11 +366,14 @@ def package_orphan(package, full=True):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    collections = [acl.collection.branchname
+    collections = [
+        acl.collection.branchname
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
-        and (is_pkgdb_admin(flask.g.fas_user)
-             or acl.point_of_contact == flask.g.fas_user.username)
+        and (
+            is_pkgdb_admin(flask.g.fas_user)
+            or acl.point_of_contact == flask.g.fas_user.username
+        )
     ]
 
     form = pkgdb2.forms.BranchForm(collections=collections)
@@ -428,7 +431,8 @@ def package_retire(package, full=True):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    collections = [acl.collection.branchname
+    collections = [
+        acl.collection.branchname
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
         and acl.point_of_contact == 'orphan'
@@ -496,7 +500,8 @@ def package_take(package, full=True):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    collections = [acl.collection.branchname
+    collections = [
+        acl.collection.branchname
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
         and acl.point_of_contact == 'orphan'
@@ -608,7 +613,7 @@ def update_acl(package, update_acl):
     if username not in admins and not is_pkgdb_admin(flask.g.fas_user):
         tmp = {username: []}
         if username in commit_acls:
-            tmp = {username : commit_acls[username]}
+            tmp = {username: commit_acls[username]}
         commit_acls = tmp
 
     form = pkgdb2.forms.ConfirmationForm()
@@ -639,13 +644,15 @@ def update_acl(package, update_acl):
                         continue
 
                     if not lcl_acl:
-                        if branches_inv[lcl_branch] not in commit_acls[lcl_user]:
+                        if branches_inv[lcl_branch] \
+                                not in commit_acls[lcl_user]:
                             cnt += 1
                             continue
                         elif branches_inv[lcl_branch] in commit_acls[lcl_user] \
                                 and username != lcl_user:
                             flask.flash(
-                                'Only the user can remove his/her ACL', 'error')
+                                'Only the user can remove his/her ACL',
+                                'error')
                             cnt += 1
                             continue
 
