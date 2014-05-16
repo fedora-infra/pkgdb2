@@ -123,6 +123,11 @@ a.pending {
   background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Awaiting%20Review.png) 0 50% no-repeat;
 }
 
+a.community {
+  padding-left: 20px;
+  background: url(https://apps.fedoraproject.org/tagger/images/favicons/16_beefy.png) 0 50% no-repeat;
+}
+
 a.wheel, a.wheel:hover {
   padding-left: 20px;
   background-image: url(/static/wheel.png) !important;
