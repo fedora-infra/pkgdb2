@@ -484,7 +484,7 @@ Package information
 
         /api/package/<pkg_name>/
 
-        /api/package/?pattern=<pkg_name>
+        /api/package/?pkgname=<pkg_name>
 
     Accept GET queries only
 
