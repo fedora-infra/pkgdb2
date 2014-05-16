@@ -27,10 +27,18 @@
           <img src="{{ url_for('static', filename='packagedb-logo.png') }}" alt="PackageDB Logo" id="kojiLogo"/>
           <form action="{{url_for('ui_ns.search')}}" id="headerSearch">
             <select name="type">
-              <option value="package">Packages</option>
-              <option value="packager">Packagers</option>
-              <option value="orphaned">Orphaned</option>
-              <option value="retired">Retired</option>
+              <option value="package"
+                {% if select=='packages' %} selected {% endif %}>
+                  Packages</option>
+              <option value="packager"
+                {% if select=='packagers' %} selected {% endif %}>
+                  Packagers</option>
+              <option value="orphaned"
+              {% if select=='orphaned' %} selected {% endif %}>
+                  Orphaned</option>
+              <option value="retired"
+              {% if select=='retired' %} selected {% endif %}>
+                  Retired</option>
             </select>
             <input type="text" name="term"/>
             <input type="submit" value="Search"/>

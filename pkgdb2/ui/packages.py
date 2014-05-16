@@ -87,9 +87,12 @@ def list_packages(motif=None, orphaned=False, status='Approved',
     )
     total_page = int(ceil(packages_count / float(limit)))
 
+    select= origin.replace('list_', '')
+
     return flask.render_template(
         'list_packages.html',
         origin=origin,
+        select=select,
         packages=packages,
         motif=motif,
         total_page=total_page,

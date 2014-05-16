@@ -70,6 +70,7 @@ def list_packagers(motif=None):
 
     return flask.render_template(
         'list_packagers.html',
+        select='packagers',
         packagers=[pkg[0] for pkg in packagers],
         motif=motif,
         total_page=total_page,
