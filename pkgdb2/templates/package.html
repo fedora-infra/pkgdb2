@@ -42,9 +42,11 @@ confusing what the difference is between that status an the per-branch status)
 
   <p property="doap:shortdesc">{{ package.summary }}</p>
 
+  <p id="description" property="doap:description">
   {% if package.description %}
-  <p id="description" property="doap:description">{{ package.description }}</p>
+    {{ package.description }}
   {% endif %}
+  </p>
 
   <ul id="actions">
       <li>
@@ -83,7 +85,7 @@ confusing what the difference is between that status an the per-branch status)
 
   </ul>
 
-  <div class="h_line"></div>
+  <div class="h_line" style="width:80%"></div>
 
   <section id="pkg_ppl_table">
     <div class="pkg_ppl_row">
