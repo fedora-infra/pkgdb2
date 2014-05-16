@@ -210,6 +210,13 @@ def giveup_acl(package, acl):
 def package_give_acls(package):
     ''' Give acls to a specified user for a specific package. '''
 
+    try:
+        pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+    except IndexError:
+        flask.flash('No package found by this name', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package))
+
     collections = [pkglist.collection
         for pkglist in pkg.listings if pkglist.collection.status != 'EOL']
 
