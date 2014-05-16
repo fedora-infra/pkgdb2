@@ -37,7 +37,8 @@ confusing what the difference is between that status an the per-branch status)
 {% block content %}
 
 <section id="pkg_info">
-  <h1 property="doap:name">{{ package.name }}</h1>
+  <h1 class="inline" property="doap:name">{{ package.name }}</h1>{% if package.upstream_url
+      %} (<a class="inline" href="{{ package.upstream_url }}">upstream</a>){% endif %}
 
   <p property="doap:shortdesc">{{ package.summary }}</p>
 
