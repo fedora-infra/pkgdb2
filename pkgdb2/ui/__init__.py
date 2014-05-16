@@ -110,7 +110,7 @@ def search():
     ''' Redirect to the correct url to perform the appropriate search.
     '''
     search_type = flask.request.args.get('type', 'package')
-    search_term = flask.request.args.get('term', 'a*') or 'a*'
+    search_term = flask.request.args.get('term', '*') or '*'
 
     if not search_term.endswith('*'):
         search_term += '*'
