@@ -482,7 +482,6 @@ class PackageListingAcl(BASE):
 
         """
 
-
         # Match the other criteria
         query = session.query(
             cls
@@ -1056,8 +1055,8 @@ class Package(BASE):
 
         """
         return 'Package(%r, %r, %r, upstreamurl=%r, reviewurl=%r)' % (
-                self.name, self.summary, self.status,
-                self.upstream_url, self.review_url)
+            self.name, self.summary, self.status,
+            self.upstream_url, self.review_url)
 
     def create_listing(self, collection, point_of_contact, statusname,
                        critpath=False):

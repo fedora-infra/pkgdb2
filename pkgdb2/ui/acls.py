@@ -217,8 +217,10 @@ def package_give_acls(package):
         return flask.redirect(
             flask.url_for('.package_info', package=package))
 
-    collections = [pkglist.collection
-        for pkglist in pkg.listings if pkglist.collection.status != 'EOL']
+    collections = [
+        pkglist.collection
+        for pkglist in pkg.listings
+        if pkglist.collection.status != 'EOL']
 
     acls = pkgdblib.get_status(SESSION)
 
