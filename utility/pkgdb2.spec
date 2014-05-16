@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.5
+Version:        1.6
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -105,6 +105,16 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri May 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.6-1
+- Bump to 1.6
+- Layout fixes
+- When giving a package only allow existing branches
+- Typo in the API doc
+- Link to upstream website and the packages application
+- Fix the category settings when doing a search
+- Default search is '*' (instead of 'a*')
+- Rewrite the get_pending_acl and order the results
+
 * Fri May 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.5-1
 - Bump to 1.5
 - Drop the shouldopen field of the Package table
