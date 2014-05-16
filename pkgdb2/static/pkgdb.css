@@ -120,7 +120,7 @@ a.fas {
 
 a.pending {
   padding-left: 20px;
-  background: url(https://admin.stg.fedoraproject.org/pkgdb/static/Awaiting%20Review.png) 0 50% no-repeat;
+  background: url(https://admin.fedoraproject.org/pkgdb/static/Awaiting%20Review.png) 0 50% no-repeat;
 }
 
 a.community {
