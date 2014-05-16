@@ -210,9 +210,9 @@ def giveup_acl(package, acl):
 def package_give_acls(package):
     ''' Give acls to a specified user for a specific package. '''
 
-    collections = pkgdblib.search_collection(
-        SESSION, '*', 'Under Development')
-    collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
+    collections = [pkglist.collection
+        for pkglist in pkg.listings if pkglist.collection.status != 'EOL']
+
     acls = pkgdblib.get_status(SESSION)
 
     form = pkgdb2.forms.SetAclPackageForm(
