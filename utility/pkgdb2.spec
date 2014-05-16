@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.4
+Version:        1.5
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -77,8 +77,9 @@ install -m 644 utility/pkgdb2.conf $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/p
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2
 install -m 644 utility/pkgdb2.cfg.sample $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/pkgdb2.cfg
 
-# Install WSGI file
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/pkgdb2
+
+# Install WSGI file
 install -m 644 utility/pkgdb2.wsgi $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2.wsgi
 
 # Install the createdb script
@@ -87,11 +88,16 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_createdb.py
 # Install the pkgdb2_branch script
 install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_branch.py
 
+# Install the alembic files
+cp -r alembic $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/
+install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic.ini
+
 
 %files
 %doc README.rst COPYING doc/
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/pkgdb2.conf
 %config(noreplace) %{_sysconfdir}/pkgdb2/pkgdb2.cfg
+%config(noreplace) %{_sysconfdir}/pkgdb2/alembic.ini
 %dir %{_sysconfdir}/pkgdb2/
 %{_datadir}/pkgdb2/
 %{python_sitelib}/pkgdb2/
@@ -99,6 +105,15 @@ install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb
 
 
 %changelog
+* Fri May 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.5-1
+- Bump to 1.5
+- Drop the shouldopen field of the Package table
+- Fix the message in the logs/emails to say to whom the acl was updated for
+- s/poc/point of contact in the logs/emails
+- Ensure that page and limit cannot be negative
+- Make the 'Give Up Commit Access' link working
+- Add alembic to get DB schema change working
+
 * Thu May 15 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.4-1
 - Bump to 1.4
 - Fix http link when editing ACLs
