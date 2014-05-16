@@ -130,7 +130,7 @@ a.community {
 
 a.wheel, a.wheel:hover {
   padding-left: 20px;
-  background-image: url(/static/wheel.png) !important;
+  background-image: url(https://admin.fedoraproject.org/pkgdb/static/wheel.png) !important;
   background-repeat: no-repeat;
   background-position: 3px 50%;
 }
