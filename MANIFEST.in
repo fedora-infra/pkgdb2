@@ -3,5 +3,6 @@ include runtests.sh createdb.py nosetests
 recursive-include pkgdb2 *
 recursive-include tests *
 recursive-include utility *
+recursive-include alembic *
 include doc/*
 
