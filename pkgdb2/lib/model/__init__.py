@@ -481,22 +481,27 @@ class PackageListingAcl(BASE):
             pending ACLs.
 
         """
-        stmt = session.query(
-            PackageListing.id
+
+
+        # Match the other criteria
+        query = session.query(
+            cls
+        ).filter(
+            cls.status == 'Awaiting Review'
+        ).filter(
+            cls.packagelisting_id == PackageListing.id
         ).filter(
             PackageListing.point_of_contact == user
+        ).filter(
+            PackageListing.package_id == Package.id
         ).filter(
             PackageListing.collection_id == Collection.id
         ).filter(
             Collection.status != 'EOL'
-        ).subquery()
-
-        # Match the other criteria
-        query = session.query(cls).filter(
-            cls.packagelisting_id.in_(stmt)
-        ).filter(
-            cls.status == 'Awaiting Review'
+        ).order_by(
+            Package.name, Collection.branchname, cls.fas_name, cls.acl
         )
+
         return query.all()
 
     def __init__(self, fas_name, packagelisting_id, acl, status):
