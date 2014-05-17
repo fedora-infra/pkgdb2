@@ -204,7 +204,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/package/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
-            data={'csrf_token': csrf_token}
+            data = {'csrf_token': csrf_token}
 
             output = self.app.post(
                 '/acl/guake/request/approveacls/',
@@ -278,7 +278,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/package/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
-            data={'csrf_token': csrf_token}
+            data = {'csrf_token': csrf_token}
 
             output = self.app.post(
                 '/acl/guake/giveup/approveacls/',
@@ -340,7 +340,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/package/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
-            data={'csrf_token': csrf_token}
+            data = {'csrf_token': csrf_token}
 
             output = self.app.post(
                 '/acl/guake/watch/', data=data, follow_redirects=True)
@@ -375,7 +375,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/package/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
-            data={'csrf_token': csrf_token}
+            data = {'csrf_token': csrf_token}
 
             output = self.app.post(
                 '/acl/guake/unwatch/', data=data, follow_redirects=True)
@@ -384,7 +384,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">ACLs updated</li>' in output.data)
 
             output = self.app.post(
-                '/acl/random/unwatch/',data=data, follow_redirects=True)
+                '/acl/random/unwatch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">No package found by this name</li>'
@@ -408,7 +408,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/package/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
-            data={'csrf_token': csrf_token}
+            data = {'csrf_token': csrf_token}
 
             output = self.app.post(
                 '/acl/guake/comaintain/',
@@ -479,7 +479,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/package/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
-            data={'csrf_token': csrf_token}
+            data = {'csrf_token': csrf_token}
 
             output = self.app.post(
                 '/acl/guake/dropcommit/',
