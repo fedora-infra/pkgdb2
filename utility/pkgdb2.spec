@@ -39,6 +39,7 @@ BuildRequires:  python-sqlalchemy > 0.5
 Requires:  python-sqlalchemy > 0.5
 %endif
 
+Requires:  python-alembic
 Requires:  python-flask
 Requires:  python-flask-wtf
 Requires:  python-wtforms
