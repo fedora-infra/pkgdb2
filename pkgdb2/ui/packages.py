@@ -463,7 +463,6 @@ def package_retire(package, full=True):
                     except pkgdblib.PkgdbException, err:
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
-                    break
                 else:  # pragma: no cover
                     flask.flash(
                         'This package has not been orphaned on '
