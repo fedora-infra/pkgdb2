@@ -264,7 +264,7 @@ User's stats
             "co-maintainer": 8,
             "point of contact": 12
           },
-          "devel": {
+          "master": {
             "co-maintainer": 12,
             "point of contact": 60
           },
@@ -287,7 +287,7 @@ User's stats
             "co-maintainer": 0,
             "point of contact": 0
           },
-          "devel": {
+          "master": {
             "co-maintainer": 0,
             "point of contact": 0
           },

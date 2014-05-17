@@ -520,7 +520,7 @@ Package information
               },
               "collection": {
                 "status": "Under Development",
-                "branchname": "devel",
+                "branchname": "master",
                 "version": "devel",
                 "name": "Fedora"
               },
