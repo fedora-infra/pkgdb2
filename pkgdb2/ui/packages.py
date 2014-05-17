@@ -210,6 +210,7 @@ def package_info(package):
         pending_admins=pending_admins,
         branches=branches,
         committers=committers,
+        form=pkgdb2.forms.ConfirmationForm(),
     )
 
 

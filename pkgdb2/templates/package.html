@@ -111,16 +111,21 @@ confusing what the difference is between that status an the per-branch status)
         <ul class="nobullet">
         {% if g.fas_user and g.fas_user.username in pocs %}
           <li>
+            <form >
             <a class="bold pkg_button_grey" title="Orphan the package"
               id="orphanbutton"
+              onclick="return confirm('You sure you want to delete this admin?');"
               href="{{ url_for('.package_orphan', package=package.name) }}">
               - Orphan Package
             </a>
+            </form>
+            <form>
             <a class="bold pkg_button_blue" title="Give the package to someone"
               id="givebutton"
               href="{{ url_for('.package_give', package=package.name) }}">
               + Give Package
             </a>
+            </form>
           </li>
         {% endif %}
         {% if g.fas_user and 'orphan' in pocs %}
@@ -175,29 +180,35 @@ confusing what the difference is between that status an the per-branch status)
           {% if g.fas_user and (g.fas_user.username in admins
                or g.fas_user.username in pending_admins) %}
             <li class="inline">
-              <a class="bold pkg_button_grey inline"
-                title="Drop your approveacl ACL on all branches"
-                href="{{ url_for('.giveup_acl', package=package.name, acl='approveacls') }}">
-                - Give Up Admin Access
-              </a>
+              <form action="{{ url_for('.giveup_acl',
+                package=package.name, acl='approveacls') }}" method="POST">
+                <button class="bold pkg_button_grey inline" type="submit"
+                  title="Drop your approveacl ACL on all branches">
+                  - Give Up Admin Access
+                </button>
+                {{ form.csrf_token }}
+              </form>
             </li>
           {% elif g.fas_user and g.fas_user.username not in admins
                and g.fas_user.username not in pending_admins %}
             <li>
-              <a class="bold pkg_button_blue inline"
-                href="{{ url_for('.request_acl_all_branch',
-                        package=package.name, acl='approveacls') }}">
-                + Request Admin Access
-              </a>
+              <form action="{{ url_for('.request_acl_all_branch',package=package.name,
+                              acl='approveacls') }}" method="POST">
+                <button class="bold pkg_button_blue inline" type="submit"
+                    title="Request approveacls on all branches">
+                  + Request Admin Access
+                </button>
+                {{ form.csrf_token }}
+              </form>
             </li>
           {% endif %}
-            <li">
-              <a class="bold pkg_button_blue inline wheel"
-                  title="Manage commit ACLs"
-                  href="{{ url_for('.update_acl',package=package.name,
-                       update_acl='approveacls') }}">
+            <li>
+              <a href="{{ url_for('.update_acl',package=package.name,
+                       update_acl='approveacls') }}"
+                class="bold pkg_button_blue inline wheel"
+                title="Manage commit ACLs">
                 Manage the admins
-              </a>
+                </a
             </li>
           </ul>
       </div>
@@ -212,24 +223,33 @@ confusing what the difference is between that status an the per-branch status)
       <ul class="nobullet">
         {% if g.fas_user and g.fas_user.username in committers %}
           <li>
-          <a class="bold pkg_button_grey inline" title="Drop your commit ACL on all branches"
-            href="{{ url_for('.dropcommit_package',package=package.name) }}">
-            - Give Up Commit Access
-          </a>
+            <form action="{{ url_for('.dropcommit_package',package=package.name) }}"
+              method="POST">
+              <button class="bold pkg_button_grey inline" type="submit"
+                title="Drop your commit ACL on all branches">
+                - Give Up Commit Access
+              </button>
+              {{ form.csrf_token }}
+            </form>
           </li>
         {% elif g.fas_user %}
           <li>
-          <a class="bold pkg_button_blue inline" title="Request commit ACL on all branches"
-            href="{{ url_for('.comaintain_package',package=package.name) }}">
-            + Request Commit Access
-          </a>
+            <form action="{{ url_for('.comaintain_package',package=package.name) }}"
+             method="POST">
+              <button class="bold pkg_button_blue inline" type="submit"
+                title="Request commit ACL on all branches">
+                + Request Commit Access
+              </button>
+             {{ form.csrf_token }}
+            </form>
           </li>
         {% endif %}
         <li>
-          <a class="bold pkg_button_blue inline wheel" title="Manage commit ACLs"
-            href="{{ url_for('.update_acl',package=package.name,
-                     update_acl='commit') }}">
-            Manage the committers
+          <a href="{{ url_for('.update_acl',package=package.name,
+                                update_acl='commit') }}"
+            class="bold pkg_button_blue inline wheel"
+            title="Manage commit ACLs">
+              Manage the committers
           </a>
         </li>
       </ul>
@@ -280,15 +300,23 @@ confusing what the difference is between that status an the per-branch status)
     <div>
       <h3 class="inline">Watcher(s)</h3>
       {% if g.fas_user and g.fas_user.username in watch_acls %}
-        <a class="bold pkg_button_grey inline" title="Drop your watch* ACL on all branches"
-          href="{{ url_for('.unwatch_package',package=package.name) }}">
-          - Unwatch this package
-        </a>
+        <form action="{{ url_for('.unwatch_package',package=package.name) }}"
+            method="POST">
+          <button class="bold pkg_button_grey inline" type="submit"
+            title="Drop your watch* ACL on all branches">
+            - Unwatch this package
+          </button>
+          {{ form.csrf_token }}
+        </form>
       {% elif g.fas_user %}
-        <a class="bold pkg_button_blue inline" title="Request watch* ACL on all branches"
-          href="{{ url_for('.watch_package',package=package.name) }}">
-          + Watch this package
-        </a>
+        <form action="{{ url_for('.watch_package',package=package.name) }}"
+            method="POST">
+          <button class="bold pkg_button_blue inline" type="submit"
+            title="Request watch* ACL on all branches">
+            + Watch this package
+          </button>
+          {{ form.csrf_token }}
+        </form>
       {% endif %}
     </div>
 
