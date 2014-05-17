@@ -74,7 +74,7 @@ class FlaskUiCollectionsTest(Modeltests):
         """ Test the collection_info function. """
         create_package_acl(self.session)
 
-        output = self.app.get('/collection/devel/')
+        output = self.app.get('/collection/master/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Fedora devel</h1>' in output.data)
 
@@ -159,12 +159,12 @@ class FlaskUiCollectionsTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/collection/devel/edit')
+            output = self.app.get('/collection/master/edit')
             self.assertEqual(output.status_code, 302)
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/collection/devel/edit')
+            output = self.app.get('/collection/master/edit')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Edit collection</h1>' in output.data)

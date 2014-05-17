@@ -83,7 +83,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'watchbugzilla',
                 'csrf_token': csrf_token,
             }
@@ -109,7 +109,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'watchbugzilla',
                 'csrf_token': csrf_token,
             }
@@ -121,7 +121,7 @@ class FlaskUiAclsTest(Modeltests):
                             output.data)
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'commit',
                 'csrf_token': csrf_token,
             }
@@ -149,7 +149,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'commit',
                 'csrf_token': csrf_token,
             }
@@ -161,7 +161,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">ACLs updated</li>' in output.data)
             self.assertTrue(
                 '<li class="errors">You must be a packager to apply to the '
-                'ACL: commit on devel</li>' in output.data)
+                'ACL: commit on master</li>' in output.data)
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
@@ -172,7 +172,7 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'commit',
                 'csrf_token': csrf_token,
             }
@@ -214,7 +214,7 @@ class FlaskUiAclsTest(Modeltests):
                 'class="message">ACL approveacls requested on branch f18</li>'
                 in output.data)
             self.assertTrue(
-                'class="message">ACL approveacls requested on branch devel</l'
+                'class="message">ACL approveacls requested on branch master</l'
                 in output.data)
             self.assertEqual(
                 output.data.count('<a class="pending"'), 2)
@@ -256,7 +256,7 @@ class FlaskUiAclsTest(Modeltests):
                 'f18</li>' in output.data)
             self.assertTrue(
                 '<li class="message">ACL watchcommits requested on branch '
-                'devel</li>' in output.data)
+                'master</li>' in output.data)
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
@@ -289,7 +289,7 @@ class FlaskUiAclsTest(Modeltests):
                 'branch f18 of package guake</li>' in output.data)
             self.assertTrue(
                 '<li class="message">Your ACL approveacls is obsoleted on '
-                'branch devel of package guake</li>' in output.data)
+                'branch master of package guake</li>' in output.data)
             self.assertEqual(
                 output.data.count('<a class="pending"'), 1)
 
@@ -546,7 +546,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'commit',
                 'acl_status': 'Approved',
                 'csrf_token': csrf_token,
@@ -561,7 +561,7 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
             data = {
-                'branch': 'devel',
+                'branch': 'master',
                 'acls': 'Approved',
                 'user': 'toshio',
                 'csrf_token': csrf_token,
@@ -577,7 +577,7 @@ class FlaskUiAclsTest(Modeltests):
 
             mock_func.return_value = ['pingou', 'ralph', 'toshio']
             data = {
-                'branch': 'devel',
+                'branch': 'master',
                 'acls': 'foobar',
                 'user': 'toshio',
                 'csrf_token': csrf_token,
@@ -591,7 +591,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="error">Invalid ACL: foobar</li>' in output.data)
 
             data = {
-                'branch': 'devel',
+                'branch': 'master',
                 'acls': 'Awaiting Review',
                 'user': 'toshio',
                 'csrf_token': csrf_token,
@@ -605,7 +605,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<h4>Package Administrator(s)</h4>' in output.data)
 
             data = {
-                'branch': 'devel',
+                'branch': 'master',
                 'acls': 'Approved',
                 'user': 'toshio',
                 'csrf_token': csrf_token,
@@ -617,7 +617,7 @@ class FlaskUiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">toshio&#39;s commit ACL updated on '
-                'devel</li>' in output.data)
+                'master</li>' in output.data)
 
     @patch('pkgdb2.packager_login_required')
     def test_pending_acl(self, login_func):
@@ -660,7 +660,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'watchbugzilla',
                 'user': 'kevin',
                 'acl_status': 'Approved',
@@ -688,7 +688,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'commit',
                 'user': 'kevin',
                 'acl_status': 'Approved',

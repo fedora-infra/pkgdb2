@@ -144,7 +144,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'description': 'Terminal for GNOME...',
                 'review_url': 'http://bugzilla.redhat.com/1234',
                 'status': 'Approved',
-                'branches': 'devel',
+                'branches': 'master',
                 'poc': 'mclasen',
                 'upstream_url': '',
                 'critpath': False,
@@ -207,7 +207,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'poc': 'limb',
                 'csrf_token': csrf_token,
             }
@@ -235,7 +235,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'poc': 'spot',
                 'csrf_token': csrf_token,
             }
@@ -269,7 +269,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
-                'branches': 'devel',
+                'branches': 'master',
                 'poc': 'spot',
                 'csrf_token': csrf_token,
             }
@@ -293,16 +293,16 @@ class FlaskUiPackagesTest(Modeltests):
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
                 '/package/guake/orphan', follow_redirects=True,
-                data={'branches': ['devel']})
+                data={'branches': ['master']})
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="errors">&#39;devel&#39; is not a valid choice for '
+                'class="errors">&#39;master&#39; is not a valid choice for '
                 'this field</td>' in output.data)
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
         data = {
-            'branches': ['devel'],
+            'branches': ['master'],
             'csrf_token': csrf_token,
         }
 
@@ -314,7 +314,7 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
-                'branch: devel</li>' in output.data)
+                'branch: master</li>' in output.data)
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
@@ -324,7 +324,7 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
-                'branch: devel</li>' in output.data)
+                'branch: master</li>' in output.data)
 
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
@@ -343,7 +343,7 @@ class FlaskUiPackagesTest(Modeltests):
         create_package_acl(self.session)
 
         data = {
-            'branches': ['devel'],
+            'branches': ['foobar'],
         }
 
         user = FakeFasUser()
@@ -354,13 +354,13 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="errors">&#39;devel&#39; is not a valid choice for '
+                'class="errors">&#39;foobar&#39; is not a valid choice for '
                 'this field</td>' in output.data)
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
         data = {
-            'branches': ['devel'],
+            'branches': ['master'],
             'csrf_token': csrf_token,
         }
 
@@ -372,7 +372,7 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
-                'branch: devel</li>' in output.data)
+                'branch: master</li>' in output.data)
 
             data['branches'] = ['f18']
             output = self.app.post(
@@ -384,7 +384,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'branch: f18</li>' in output.data)
 
         data = {
-            'branches': ['devel'],
+            'branches': ['master'],
             'csrf_token': csrf_token,
         }
 
@@ -397,7 +397,7 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">This package has been retired on '
-                'branch: devel</li>' in output.data)
+                'branch: master</li>' in output.data)
 
             data['branches'] = ['f18']
             output = self.app.post(
@@ -405,8 +405,8 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">You are not allowed to retire the '
-                'package: guake on branch f18.</li>' in output.data)
+                '<td class="errors">&#39;f18&#39; is not a valid choice '
+                'for this field</td>' in output.data)
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
@@ -436,7 +436,7 @@ class FlaskUiPackagesTest(Modeltests):
         create_package_acl(self.session)
 
         data = {
-            'branches': ['devel'],
+            'branches': ['master'],
         }
 
         user = FakeFasUser()
@@ -447,13 +447,13 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="errors">&#39;devel&#39; is not a valid choice for'
+                'class="errors">&#39;master&#39; is not a valid choice for'
                 ' this field</td>' in output.data)
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
         data = {
-            'branches': ['devel'],
+            'branches': ['master'],
             'csrf_token': csrf_token,
         }
 
@@ -464,14 +464,14 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
-                'branch: devel</li>' in output.data)
+                'branch: master</li>' in output.data)
 
             output = self.app.post(
                 '/package/guake/take', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You have taken the package guake on '
-                'branch devel</li>' in output.data)
+                'branch master</li>' in output.data)
 
         with user_set(pkgdb2.APP, user):
             output = self.app.post(

@@ -174,7 +174,7 @@ def create_collection(session):
         version='devel',
         status='Under Development',
         owner='kevin',
-        branchname='devel',
+        branchname='master',
         dist_tag='devel',
     )
     session.add(collection)
@@ -238,7 +238,7 @@ def create_package_listing(session):
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')
-    devel_collec = model.Collection.by_name(session, 'devel')
+    devel_collec = model.Collection.by_name(session, 'master')
 
     # Pkg: guake - Collection: F18 - Approved
     pkgltg = model.PackageListing(
@@ -315,7 +315,7 @@ def create_package_critpath(session):
     session.add(package)
 
     f18_collec = model.Collection.by_name(session, 'f18')
-    devel_collec = model.Collection.by_name(session, 'devel')
+    devel_collec = model.Collection.by_name(session, 'master')
 
     # Pkg: geany - Collection: F18 - Approved
     pkgltg = model.PackageListing(
@@ -348,7 +348,7 @@ def create_package_acl(session):
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
     f18_collec = model.Collection.by_name(session, 'f18')
-    devel_collec = model.Collection.by_name(session, 'devel')
+    devel_collec = model.Collection.by_name(session, 'master')
 
     pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, f18_collec.id)
@@ -434,7 +434,7 @@ def create_package_acl2(session):
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')
-    devel_collec = model.Collection.by_name(session, 'devel')
+    devel_collec = model.Collection.by_name(session, 'master')
 
     pklist_guake_f18 = model.PackageListing.by_pkgid_collectionid(
         session, guake_pkg.id, f18_collec.id)

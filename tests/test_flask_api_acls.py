@@ -88,7 +88,7 @@ class FlaskApiAclsTest(Modeltests):
 
         data = {
             'pkgname': 'guake',
-            'branches': 'devel',
+            'branches': 'master',
             'acl': 'commit',
             'acl_status': 'Approved',
             'user': 'toshio',
@@ -103,7 +103,7 @@ class FlaskApiAclsTest(Modeltests):
                 "messages": [
                     "user: pingou set for toshio acl: commit of package: "
                     "guake from: Awaiting Review to: Approved on branch: "
-                    "devel"
+                    "master"
                 ],
                 "output": "ok"
             }
@@ -115,7 +115,7 @@ class FlaskApiAclsTest(Modeltests):
             # Test that auto-approved ACL gets automatically Approved
             data = {
                 'pkgname': 'guake',
-                'branches': 'devel',
+                'branches': 'master',
                 'acl': 'watchcommits',
                 'acl_status': 'Awaiting Review',
                 'user': 'toshio',
@@ -125,7 +125,7 @@ class FlaskApiAclsTest(Modeltests):
                 "messages": [
                     "user: pingou set for toshio acl: watchcommits of "
                     "package: guake from: Approved to: Approved on branch: "
-                    "devel"
+                    "master"
                 ],
                 "output": "ok"
             }
@@ -139,7 +139,7 @@ class FlaskApiAclsTest(Modeltests):
 
         data = {
             'pkgname': 'guake',
-            'branches': 'devel',
+            'branches': 'master',
             'acl': 'commit',
             'acl_status': 'Approved',
             'user': 'toshio',
@@ -162,7 +162,7 @@ class FlaskApiAclsTest(Modeltests):
             exp = {
                 "messages": [
                     "user: admin set for toshio acl: commit of package: "
-                    "guake from: Approved to: Approved on branch: devel"
+                    "guake from: Approved to: Approved on branch: master"
                 ],
                 "output": "ok"
             }
@@ -194,7 +194,7 @@ class FlaskApiAclsTest(Modeltests):
 
         data = {
             'pkgnames': ['guake', 'geany'],
-            'branches': 'devel',
+            'branches': 'master',
             'poc': 'toshio',
         }
 

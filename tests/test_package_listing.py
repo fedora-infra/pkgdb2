@@ -188,11 +188,11 @@ class PackageListingtests(Modeltests):
         self.assertEqual(pkg_list[1].collection.branchname, 'f18')
         self.assertEqual(pkg_list[2].collection.branchname, 'f18')
 
-        # Collection 3 == devel
+        # Collection 3 == master
         pkg_list = model.PackageListing.by_collectionid(self.session, 3)
         self.assertEqual(len(pkg_list), 3)
-        self.assertEqual(pkg_list[0].collection.branchname, 'devel')
-        self.assertEqual(pkg_list[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_list[0].collection.branchname, 'master')
+        self.assertEqual(pkg_list[1].collection.branchname, 'master')
 
     def test_branch(self):
         """ Test the branch method of PackageListing. """
@@ -204,7 +204,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual(len(pkg_list), 2)
         self.assertEqual(pkg_list[0].collection.branchname, 'f18')
         self.assertEqual(len(pkg_list[0].acls), 2)
-        self.assertEqual(pkg_list[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_list[1].collection.branchname, 'master')
         self.assertEqual(len(pkg_list[1].acls), 5)
 
         # Create a new collection
@@ -219,14 +219,14 @@ class PackageListingtests(Modeltests):
         self.session.add(new_collection)
         self.session.commit()
 
-        # Branch guake from devel to f19
+        # Branch guake from master to f19
         pkg_list[1].branch(self.session, new_collection)
 
         pkg_list = model.PackageListing.by_package_id(
             self.session, pkg.id)
         self.assertEqual(len(pkg_list), 3)
         self.assertEqual(pkg_list[0].collection.branchname, 'f18')
-        self.assertEqual(pkg_list[1].collection.branchname, 'devel')
+        self.assertEqual(pkg_list[1].collection.branchname, 'master')
         self.assertEqual(len(pkg_list[1].acls), 5)
         self.assertEqual(pkg_list[2].collection.branchname, 'f19')
         self.assertEqual(len(pkg_list[2].acls), 5)
@@ -239,7 +239,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual(pkg_list, [])
 
         pkg_list = model.PackageListing.get_critpath_packages(
-            self.session, branch='devel')
+            self.session, branch='master')
         self.assertEqual(pkg_list, [])
 
         create_package_critpath(self.session)
@@ -253,15 +253,15 @@ class PackageListingtests(Modeltests):
         self.assertEqual(
             pkg_list[1].point_of_contact, "group::kernel-maint")
         self.assertEqual(
-            pkg_list[1].collection.branchname, "devel")
+            pkg_list[1].collection.branchname, "master")
 
         pkg_list = model.PackageListing.get_critpath_packages(
-            self.session, branch='devel')
+            self.session, branch='master')
         self.assertEqual(len(pkg_list), 1)
         self.assertEqual(
             pkg_list[0].point_of_contact, "group::kernel-maint")
         self.assertEqual(
-            pkg_list[0].collection.branchname, "devel")
+            pkg_list[0].collection.branchname, "master")
 
 
 if __name__ == '__main__':

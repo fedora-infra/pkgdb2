@@ -114,7 +114,7 @@ class Packagetests(Modeltests):
         self.assertEqual(len(packages), 2)
         self.assertEqual(packages[0][0].name, 'guake')
 
-        expected = set(['devel', 'f18'])
+        expected = set(['master', 'f18'])
         branches = set([packages[0][1].branchname,
                         packages[1][1].branchname])
         self.assertEqual(branches.symmetric_difference(expected), set())
@@ -141,7 +141,7 @@ class Packagetests(Modeltests):
         self.assertEqual(len(packages), 2)
         self.assertEqual(packages[0][0].name, 'guake')
 
-        expected = set(['devel', 'f18'])
+        expected = set(['master', 'f18'])
         branches = set([packages[0][1].branchname,
                         packages[1][1].branchname])
         self.assertEqual(branches.symmetric_difference(expected), set())

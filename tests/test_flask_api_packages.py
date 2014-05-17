@@ -139,7 +139,7 @@ class FlaskApiPackagesTest(Modeltests):
             'description': 'Terminal for GNOME...',
             'review_url': 'http://bugzilla.redhat.com/1234',
             'status': 'Approved',
-            'branches': 'devel',
+            'branches': 'master',
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
             'critpath': False,
@@ -153,7 +153,7 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "branches: 'devel' is not a valid choice for this "
+                        "branches: 'master' is not a valid choice for this "
                         "field"
                     ],
                     "output": "notok"
@@ -169,7 +169,7 @@ class FlaskApiPackagesTest(Modeltests):
             'description': 'Terminal for GNOME...',
             'review_url': 'http://bugzilla.redhat.com/1234',
             'status': 'Approved',
-            'branches': 'devel',
+            'branches': 'master',
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
             'critpath': False,
@@ -195,7 +195,7 @@ class FlaskApiPackagesTest(Modeltests):
             'description': 'Terminal for GNOME...',
             'review_url': 'http://bugzilla.redhat.com/1234',
             'status': 'Approved',
-            'branches': 'devel',
+            'branches': 'master',
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
             'critpath': False,
@@ -247,7 +247,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -267,7 +267,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -287,7 +287,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
             self.assertEqual(pkg_acl[0].status, 'Orphaned')
 
-            self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+            self.assertEqual(pkg_acl[1].collection.branchname, 'master')
             self.assertEqual(pkg_acl[1].package.name, 'guake')
             self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
             self.assertEqual(pkg_acl[1].status, 'Orphaned')
@@ -328,7 +328,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -349,7 +349,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan a not-orphaned package
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -367,7 +367,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Orphan the package
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -387,7 +387,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
             self.assertEqual(pkg_acl[0].status, 'Orphaned')
 
-            self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+            self.assertEqual(pkg_acl[1].collection.branchname, 'master')
             self.assertEqual(pkg_acl[1].package.name, 'guake')
             self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
             self.assertEqual(pkg_acl[1].status, 'Orphaned')
@@ -395,7 +395,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan the package for someone else
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -416,7 +416,7 @@ class FlaskApiPackagesTest(Modeltests):
         # Unorphan the package
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'pingou',
         }
         with user_set(pkgdb2.APP, user):
@@ -428,7 +428,7 @@ class FlaskApiPackagesTest(Modeltests):
                 {
                     "messages": [
                         "Package guake has been unorphaned on f18 by pingou",
-                        "Package guake has been unorphaned on devel by pingou"
+                        "Package guake has been unorphaned on master by pingou"
                     ],
                     "output": "ok"
                 }
@@ -440,7 +440,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
             self.assertEqual(pkg_acl[0].status, 'Approved')
 
-            self.assertEqual(pkg_acl[1].collection.branchname, 'devel')
+            self.assertEqual(pkg_acl[1].collection.branchname, 'master')
             self.assertEqual(pkg_acl[1].package.name, 'guake')
             self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
             self.assertEqual(pkg_acl[1].status, 'Approved')
@@ -478,7 +478,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -499,7 +499,7 @@ class FlaskApiPackagesTest(Modeltests):
         # User is not an admin
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -519,7 +519,7 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/retire/', data=data)
@@ -566,7 +566,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
@@ -587,7 +587,7 @@ class FlaskApiPackagesTest(Modeltests):
         # User is not an admin
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -607,7 +607,7 @@ class FlaskApiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'devel'],
+            'branches': ['f18', 'master'],
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/', data=data)
@@ -650,13 +650,13 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['packages'][0]['package']['name'],
                          'guake')
         self.assertEqual(data['packages'][1]['collection']['branchname'],
-                         'devel')
+                         'master')
         self.assertEqual(data['packages'][1]['point_of_contact'],
                          'pingou')
         self.assertEqual(data['packages'][1]['package']['name'],
                          'guake')
 
-        output = self.app.get('/api/package/?pkgname=guake&branches=devel')
+        output = self.app.get('/api/package/?pkgname=guake&branches=master')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         self.assertEqual(data.keys(), ['output', 'packages'])
@@ -671,7 +671,7 @@ class FlaskApiPackagesTest(Modeltests):
             ['pingou', 'pingou', 'pingou', 'toshio', 'ralph',
              'group::provenpackager'])
         self.assertEqual(data['packages'][0]['collection']['branchname'],
-                         'devel')
+                         'master')
         self.assertEqual(data['packages'][0]['point_of_contact'],
                          'pingou')
         self.assertEqual(data['packages'][0]['package']['name'],

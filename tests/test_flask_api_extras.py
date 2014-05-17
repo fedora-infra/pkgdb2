@@ -385,12 +385,12 @@ guake|pingou
         expected = """# VCS ACLs
 # avail|@groups,users|rpms/Package/branch
 
-avail | @provenpackager,pingou,toshio | rpms/fedocal/devel
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
-avail | @provenpackager,@gtk-sig, | rpms/geany/devel
-avail | @provenpackager,pingou,spot | rpms/guake/devel
-avail | @provenpackager,pingou | rpms/guake/f18"""
+avail | @provenpackager,pingou,toshio | rpms/fedocal/master
+avail | @provenpackager,@gtk-sig, | rpms/geany/master
+avail | @provenpackager,pingou | rpms/guake/f18
+avail | @provenpackager,pingou,spot | rpms/guake/master"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/vcs/?eol=True')
@@ -414,7 +414,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
                             u'people': [u'pingou']
                         }
                     },
-                    u'devel': {
+                    u'master': {
                         u'commit': {
                             u'groups': [u'provenpackager'],
                             u'people': [u'pingou', u'spot']
@@ -422,7 +422,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
                     }
                 },
                 u'geany': {
-                    u'devel': {
+                    u'master': {
                         u'commit': {
                             u'groups': [u'provenpackager', u'gtk-sig'],
                             u'people': []
@@ -436,7 +436,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
                             "people": ["pingou"]
                         }
                     },
-                    "devel": {
+                    "master": {
                         "commit": {
                             "groups": ["provenpackager"],
                             "people": ["pingou", "toshio"]
@@ -492,7 +492,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
         output = self.app.get('/api/critpath/')
         self.assertEqual(output.status_code, 200)
 
-        expected = """== devel ==
+        expected = """== master ==
 * kernel
 == f18 ==
 * kernel
@@ -512,7 +512,7 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
                 u'f18': [
                     u"kernel"
                 ],
-                u'devel': [
+                u'master': [
                     u"kernel"
                 ]
             },
@@ -520,13 +520,13 @@ avail | @provenpackager,pingou | rpms/guake/f18"""
 
         self.assertEqual(data, expected)
 
-        output = self.app.get('/api/critpath/?format=json&branches=devel')
+        output = self.app.get('/api/critpath/?format=json&branches=master')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
 
         expected = {
             u'pkgs': {
-                u'devel': [
+                u'master': [
                     u"kernel"
                 ]
             },
