@@ -433,12 +433,15 @@ def package_retire(package, full=True):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    collections = [
-        acl.collection.branchname
-        for acl in package_acl
-        if acl.collection.status in ['Active', 'Under Development']
-        and acl.point_of_contact == 'orphan'
-    ]
+    if is_pkgdb_admin(flask.g.fas_user):
+        collections = [
+            acl.collection.branchname
+            for acl in package_acl
+            if acl.collection.status in ['Active', 'Under Development']
+            and acl.point_of_contact == 'orphan'
+        ]
+    else:
+        collections = ['master']
 
     form = pkgdb2.forms.BranchForm(collections=collections)
 
