@@ -285,7 +285,8 @@ def watch_package(package):
 
     if form.validate_on_submit():
         try:
-            pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+            pkg = pkgdblib.search_package(
+                SESSION, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
             return flask.redirect(
@@ -326,7 +327,8 @@ def unwatch_package(package):
 
     if form.validate_on_submit():
         try:
-            pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+            pkg = pkgdblib.search_package(
+                SESSION, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
             return flask.redirect(
@@ -376,7 +378,8 @@ def comaintain_package(package):
                 '.package_info', package=package))
 
         try:
-            pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+            pkg = pkgdblib.search_package(
+                SESSION, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
             return flask.redirect(
@@ -401,7 +404,8 @@ def comaintain_package(package):
         pkg_branchs = pkg_branchs2
 
         if not pkg_branchs:
-            return flask.redirect(flask.url_for('.package_info', package=package))
+            return flask.redirect(
+                flask.url_for('.package_info', package=package))
 
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
@@ -436,7 +440,8 @@ def dropcommit_package(package):
 
     if form.validate_on_submit():
         try:
-            pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+            pkg = pkgdblib.search_package(
+                SESSION, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
             return flask.redirect(
@@ -446,7 +451,7 @@ def dropcommit_package(package):
         pkg_branchs = set()
         for pkglist in pkg.listings:
             if pkglist.collection.status in [
-                'Active', 'Under Development']:
+                    'Active', 'Under Development']:
                 for acl in pkglist.acls:
                     if acl.fas_name == flask.g.fas_user.username and \
                             acl.acl == 'commit' and acl.status == 'Approved':
