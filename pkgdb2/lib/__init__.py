@@ -1495,20 +1495,36 @@ def bugzilla(session, name=None):
     """
     output = {}
     pkgs = model.bugzilla(session=session, name=name)
+
+    # 0  Collection.name
+    # 1  Collection.version
+    # 2  Package.name
+    # 3  Package.summary
+    # 4  PackageListing.point_of_contact
+    # 5  PackageListingAcl.fas_name
+    # 6  Collection.branchname
+
     for pkg in pkgs:
+        version = pkg[1]
+        if pkg[1] == 'devel':
+            if pkg[4] != 'orphan':
+                version = 10000
+            else:
+                version = 0
+
         if pkg[0] in output:
             if pkg[2] in output[pkg[0]]:
                 # Check poc
                 if pkg[4] == 'orphan':
                     pass
-                elif pkg[6] == 'devel':
+                elif output[pkg[0]][pkg[2]]['poc'] == 'orphan':
                     output[pkg[0]][pkg[2]]['poc'] = pkg[4]
-                elif pkg[6] > output[
-                        pkg[0]][pkg[2]]['version']:  # pragma: no cover
-                    ## TODO: check this logic w/ Toshio
+                    output[pkg[0]][pkg[2]]['version'] = version
+                elif int(version) > int(output[pkg[0]][pkg[2]]['version']):
                     output[pkg[0]][pkg[2]]['poc'] = pkg[4]
+                    output[pkg[0]][pkg[2]]['version'] = version
                 # If #5 is not poc, add it to cc
-                if not pkg[5] == 'orphan' \
+                if pkg[5] != 'orphan' \
                         and pkg[5] != output[pkg[0]][pkg[2]]['poc'] \
                         and pkg[5] not in output[pkg[0]][pkg[2]]['cc']:
                     if output[pkg[0]][pkg[2]]['cc']:
@@ -1525,7 +1541,7 @@ def bugzilla(session, name=None):
                     'poc': pkg[4],
                     'qa': '',
                     'cc': cc,
-                    'version': pkg[6],
+                    'version': version,
                 }
         else:
             cc = ''
@@ -1539,7 +1555,7 @@ def bugzilla(session, name=None):
                     'poc': pkg[4],
                     'qa': '',
                     'cc': cc,
-                    'version': pkg[6],
+                    'version': version,
                 }
             }
 
