@@ -128,8 +128,8 @@ a.community {
   background: url(https://apps.fedoraproject.org/tagger/images/favicons/16_beefy.png) 0 50% no-repeat;
 }
 
-a.wheel, a.wheel:hover {
-  padding-left: 20px;
+a.wheel, a.wheel:hover, button.wheel, button.wheel:hover {
+  padding-left: 20px !important;
   background-image: url(https://admin.fedoraproject.org/pkgdb/static/wheel.png) !important;
   background-repeat: no-repeat;
   background-position: 3px 50%;
@@ -237,6 +237,10 @@ a.wheel, a.wheel:hover {
     cursor: default;
 }
 
+button:hover {
+    cursor: pointer;
+}
+
 .h_line {
     width:100%;
     height: 1px;
@@ -337,7 +341,9 @@ ul.nobullet .pkg_button_lightgrey {
     margin-left: 5px;
 }
 
-button.pkg_button_blue, button.pkg_button_blue:hover{
+button.pkg_button_blue, button.pkg_button_blue:hover,
+button.pkg_button_grey, button.pkg_button_grey:hover,
+button.pkg_button_lightgrey, button.pkg_button_lightgrey:hover{
     padding: 0.1em 0.5em 0em 0.5em;
     vertical-align: center;
 }
