@@ -594,7 +594,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
-    if page is not None and limit is not None and limit != 0:
+    if page is not None and page > 0 and limit is not None and limit > 0:
         page = (page - 1) * limit
 
     return model.Package.search(
@@ -646,7 +646,7 @@ def search_collection(session, pattern, status=None, page=None,
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
-    if page is not None and limit is not None and limit != 0:
+    if page is not None and page > 0 and limit is not None and limit > 0:
         page = (page - 1) * limit
 
     return model.Collection.search(session,
@@ -695,7 +695,7 @@ def search_packagers(session, pattern, eol=False, page=None, limit=None,
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
-    if page is not None and limit is not None and limit != 0:
+    if page is not None and page > 0 and limit is not None and limit > 0:
         page = (page - 1) * limit
 
     packagers = model.PackageListing.search_packagers(
@@ -750,7 +750,7 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
         else:
             package_id = package[0].id
 
-    if page is not None and limit is not None and limit != 0:
+    if page is not None and page > 0 and limit is not None and limit > 0:
         page = (page - 1) * limit
 
     if from_date:
@@ -802,7 +802,7 @@ def get_acl_packager(
         except ValueError:
             raise PkgdbException('Wrong page provided')
 
-    if page is not None and limit is not None and limit != 0:
+    if page is not None and page > 0 and limit is not None and limit > 0:
         page = (page - 1) * limit
 
     return model.PackageListingAcl.get_acl_packager(
