@@ -131,8 +131,7 @@ confusing what the difference is between that status an the per-branch status)
           <li>
             <a title="This package is orphaned, retire it"
                id="retirebutton"
-               href="{{ url_for('.package_retire',
-                              package=package.name, collection='devel') }}">
+               href="{{ url_for('.package_retire', package=package.name) }}">
               <button class="bold pkg_button_grey">
                 - Retire Package
               </button>
