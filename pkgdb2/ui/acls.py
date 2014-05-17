@@ -422,10 +422,15 @@ def dropcommit_package(package):
             flask.url_for('.package_info', package=package))
 
     pkg_acls = ['commit']
-    pkg_branchs = set([
-        pkglist.collection.branchname
-        for pkglist in pkg.listings
-        if pkglist.collection.status in ['Active', 'Under Development']])
+    pkg_branchs = set()
+    for pkglist in pkg.listings:
+        if pkglist.collection.status in [
+            'Active', 'Under Development']:
+            for acl in pkglist.acls:
+                if acl.fas_name == flask.g.fas_user.username and \
+                        acl.acl == 'commit' and acl.status == 'Approved':
+                    pkg_branchs.add(pkglist.collection.branchname)
+
     try:
         for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
             pkgdblib.set_acl_package(
