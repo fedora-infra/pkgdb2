@@ -183,6 +183,7 @@ confusing what the difference is between that status an the per-branch status)
               <form action="{{ url_for('.giveup_acl',
                 package=package.name, acl='approveacls') }}" method="POST">
                 <button class="bold pkg_button_grey inline" type="submit"
+                  onclick="return confirm('Are you sure to drop your `approveacl` ACL on all branches?');"
                   title="Drop your approveacl ACL on all branches">
                   - Give Up Admin Access
                 </button>
@@ -195,7 +196,8 @@ confusing what the difference is between that status an the per-branch status)
               <form action="{{ url_for('.request_acl_all_branch',package=package.name,
                               acl='approveacls') }}" method="POST">
                 <button class="bold pkg_button_blue inline" type="submit"
-                    title="Request approveacls on all branches">
+                  onclick="return confirm('Are you sure to request the `approveacl` ACL on all branches?');"
+                  title="Request approveacls on all branches">
                   + Request Admin Access
                 </button>
                 {{ form.csrf_token }}
@@ -226,6 +228,7 @@ confusing what the difference is between that status an the per-branch status)
             <form action="{{ url_for('.dropcommit_package',package=package.name) }}"
               method="POST">
               <button class="bold pkg_button_grey inline" type="submit"
+                onclick="return confirm('Are you sure to drop your `commit` ACL on all branches?');"
                 title="Drop your commit ACL on all branches">
                 - Give Up Commit Access
               </button>
@@ -237,6 +240,7 @@ confusing what the difference is between that status an the per-branch status)
             <form action="{{ url_for('.comaintain_package',package=package.name) }}"
              method="POST">
               <button class="bold pkg_button_blue inline" type="submit"
+                onclick="return confirm('Are you sure to request the `commit` ACL on all branches?');"
                 title="Request commit ACL on all branches">
                 + Request Commit Access
               </button>
@@ -303,6 +307,7 @@ confusing what the difference is between that status an the per-branch status)
         <form action="{{ url_for('.unwatch_package',package=package.name) }}"
             method="POST">
           <button class="bold pkg_button_grey inline" type="submit"
+            onclick="return confirm('Are you sure to drop your `watch*` ACLs on all branches?');"
             title="Drop your watch* ACL on all branches">
             - Unwatch this package
           </button>
@@ -312,6 +317,7 @@ confusing what the difference is between that status an the per-branch status)
         <form action="{{ url_for('.watch_package',package=package.name) }}"
             method="POST">
           <button class="bold pkg_button_blue inline" type="submit"
+            onclick="return confirm('Are you sure to request the `watch*` ACLs on all branches?');"
             title="Request watch* ACL on all branches">
             + Watch this package
           </button>
