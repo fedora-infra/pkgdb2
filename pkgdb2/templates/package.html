@@ -111,35 +111,38 @@ confusing what the difference is between that status an the per-branch status)
         <ul class="nobullet">
         {% if g.fas_user and g.fas_user.username in pocs %}
           <li>
-            <form >
-            <a class="bold pkg_button_grey" title="Orphan the package"
+            <a title="Orphan the package"
               id="orphanbutton"
-              onclick="return confirm('You sure you want to delete this admin?');"
               href="{{ url_for('.package_orphan', package=package.name) }}">
+              <button  class="bold pkg_button_grey">
               - Orphan Package
+              </button>
             </a>
-            </form>
-            <form>
-            <a class="bold pkg_button_blue" title="Give the package to someone"
+            <a title="Give the package to someone"
               id="givebutton"
               href="{{ url_for('.package_give', package=package.name) }}">
+              <button  class="bold pkg_button_blue">
               + Give Package
+              </button>
             </a>
-            </form>
           </li>
         {% endif %}
         {% if g.fas_user and 'orphan' in pocs %}
           <li>
-            <a class="bold pkg_button_grey" title="This package is orphaned, retire it"
+            <a title="This package is orphaned, retire it"
                id="retirebutton"
                href="{{ url_for('.package_retire',
                               package=package.name, collection='devel') }}">
-              - Retire Package
+              <button class="bold pkg_button_grey">
+                - Retire Package
+              </button>
             </a>
-            <a class="bold pkg_button_blue" title="This package is orphaned, take it!"
+            <a title="This package is orphaned, take it!"
                id="takebutton"
                href="{{ url_for('.package_take', package=package.name) }}">
-              + Take Package
+              <button class="bold pkg_button_blue">
+                + Take Package
+              </button>
             </a>
           </li>
         {% endif %}
@@ -207,10 +210,11 @@ confusing what the difference is between that status an the per-branch status)
             <li>
               <a href="{{ url_for('.update_acl',package=package.name,
                        update_acl='approveacls') }}"
-                class="bold pkg_button_blue inline wheel"
                 title="Manage commit ACLs">
-                Manage the admins
-                </a
+                <button class="bold pkg_button_blue inline wheel">
+                  Manage the admins
+                </button>
+                </a>
             </li>
           </ul>
       </div>
@@ -251,9 +255,10 @@ confusing what the difference is between that status an the per-branch status)
         <li>
           <a href="{{ url_for('.update_acl',package=package.name,
                                 update_acl='commit') }}"
-            class="bold pkg_button_blue inline wheel"
             title="Manage commit ACLs">
+            <button class="bold pkg_button_blue inline wheel">
               Manage the committers
+            </button>
           </a>
         </li>
       </ul>
