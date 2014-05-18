@@ -548,7 +548,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
                    orphaned=None, critpath=None, status=None, eol=False,
-                   page=None, limit=None, count=False):
+                   page=None, limit=None, count=False, case_sensitive=True):
     """ Return the list of packages matching the given criteria.
 
     :arg session: session with which to connect to the database.
@@ -566,7 +566,9 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
-            if true, returns the data if false (default).
+       if true, returns the data if false (default).
+    :kwarg case_sensitive: a boolean to specify doing a case insensitive
+        search. Defaults to True.
     :returns: a list of ``Package`` entry corresponding to the given
         criterias.
     :rtype: list(Package)
@@ -608,7 +610,9 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
         eol=eol,
         offset=page,
         limit=limit,
-        count=count)
+        count=count,
+        case_sensitive=case_sensitive,
+    )
 
 
 def search_collection(session, pattern, status=None, page=None,
