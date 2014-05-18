@@ -1094,7 +1094,8 @@ class Package(BASE):
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
                pkg_branch=None, orphaned=None, critpath=None, eol=False,
-               offset=None, limit=None, count=False):
+               offset=None, limit=None, count=False,
+               case_sensitive=True):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database
@@ -1114,14 +1115,22 @@ class Package(BASE):
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
+        :kwarg case_sensitive: a boolean to specify doing a case insensitive
+            search. Defaults to True.
 
         """
 
         query = session.query(
             sa.func.distinct(Package.id)
-        ).filter(
-            Package.name.like(pkg_name)
         )
+        if case_sensitive:
+            query = query.filter(
+                Package.name.like(pkg_name)
+            )
+        else:
+            query = query.filter(
+                Package.name.ilike(pkg_name)
+            )
 
         if pkg_poc:
             query = query.filter(
