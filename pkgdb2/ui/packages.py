@@ -52,6 +52,7 @@ def list_packages(motif=None, orphaned=False, status='Approved',
     status = flask.request.args.get('status', status)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
     page = flask.request.args.get('page', 1)
+    case_sensitive = flask.request.args.get('case_sensitive', False)
 
     try:
         page = abs(int(page))
