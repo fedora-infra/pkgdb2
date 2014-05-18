@@ -42,7 +42,7 @@ from pkgdb2.ui import UI
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
 def list_packages(motif=None, orphaned=False, status='Approved',
-                  origin='list_packages'):
+                  origin='list_packages', case_sensitive=False):
     ''' Display the list of packages corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
@@ -73,6 +73,7 @@ def list_packages(motif=None, orphaned=False, status='Approved',
         status=status,
         page=page,
         limit=limit,
+        case_sensitive=case_sensitive,
     )
     packages_count = pkgdblib.search_package(
         SESSION,
@@ -83,7 +84,8 @@ def list_packages(motif=None, orphaned=False, status='Approved',
         status=status,
         page=page,
         limit=limit,
-        count=True
+        count=True,
+        case_sensitive=case_sensitive,
     )
     total_page = int(ceil(packages_count / float(limit)))
 
