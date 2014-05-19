@@ -5,20 +5,21 @@
     <ShortName>Fedora PkgDB2: {{ shortname }}</ShortName>
     <Description>Search Fedora Package Database</Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image height="16" width="16" type="image/png">{{
-        url_for('static', filename='packagedb-logo.png') }}</Image>
+    <Image height="16" width="16" type="image/png">
+        {{ config.get('SITE_URL') }}{{
+            url_for('static', filename='packagedb-logo.png') }}</Image>
     <Contact>pingou@pingoured.fr</Contact>
     <Url type="text/html"
-        template="{{ url_for('.search') }}">
-        <Param name="term" value="*{{ searchTerms }}*"/>
+        template="{{ config.get('SITE_URL') }}{{ url_for('.search') }}">
+        <Param name="term" value="*{searchTerms}*"/>
         <Param name="type" value="{{ shortname }}"/>
     </Url>
     <Url type="applications/x-suggestions+json"
-        template="{{ url_for('.list_packages', motif=example) }}"/>
+        template="{{ config.get('SITE_URL') }}{{ url_for('.list_packages', motif=example) }}"/>
     <Url type="application/opensearchdescription+xml"
         rel="self"
-        template="{{ url_for('.opensearch', xmlfile='pkgdb_%s.xml' % shortname) }}" />
-    <SearchForm>{{ url_for('.index') }}</SearchForm>
+        template="{{ config.get('SITE_URL') }}{{ url_for('.opensearch', xmlfile='pkgdb_%s.xml' % shortname) }}" />
+    <SearchForm>{{ config.get('SITE_URL') }}{{ url_for('.index') }}</SearchForm>
     <LongName>Fedora-pkgdb Web Search</LongName>
     <Query role="example" searchTerms="{{ example }}" />
     <Developer>Adam Miller</Developer>

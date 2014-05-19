@@ -28,6 +28,10 @@ from datetime import timedelta
 # Set the time after which the session expires
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
+# Full URL to the website hosting the pkgdb2 instance. This is required
+# to make the opensearch fully working.
+SITE_URL = 'http://127.0.0.1:5000'
+
 # url to the database server:
 DB_URL = 'sqlite:////var/tmp/pkgdb2_dev.sqlite'
 
