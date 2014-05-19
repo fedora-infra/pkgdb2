@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.6
+Version:        1.7
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,22 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon May 19 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.7-1
+- Update to 1.7
+- Fix the pagination in the log viewer
+- Allow to filters the logs per user/packager
+- Update the logic for the API/bugzilla endpoint
+- Allow admin to retire package on multiple branches
+- Only show the branches people are allowed to retire package in in the UI
+- Have a pop-up for the main buttons (Watch/Unwatch, Request/Drop) for
+  confirmation
+- Use forms/POST requests for the main buttons allowing CSRF protection
+  fixes https://fedorahosted.org/fedora-infrastructure/ticket/4368
+- Only give up commit ACL on branches where the user had them
+- Add python-alembic as Requires
+- Make sure the page is always greater than 0, otherwise we end up with a
+  negative offset
+
 * Fri May 16 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.6-1
 - Bump to 1.6
 - Layout fixes
