@@ -49,14 +49,18 @@ def fedmsg_publish(*args, **kwargs):  # pragma: no cover
         warnings.warn(str(err))
 
 
-def email_publish(user, package, message):  # pragma: no cover
+def email_publish(user, package, message, subject=None):  # pragma: no cover
     ''' Send notification by email. '''
 
     if not package:
         return
 
     msg = MIMEText(message)
-    msg['Subject'] = '[PkgDB] {0} updated {1}'.format(user, package.name)
+    if subject:
+        msg['Subject'] = '[PkgDB] %s' % subject
+    else:
+        msg['Subject'] = '[PkgDB] {0} updated {1}'.format(
+            user, package.name)
     from_email = pkgdb2.APP.config.get(
         'PKGDB2_EMAIL_FROM', 'nobody@fedoraproject.org')
     email_to_template = pkgdb2.APP.config.get(
