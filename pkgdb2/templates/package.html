@@ -256,7 +256,13 @@ confusing what the difference is between that status an the per-branch status)
                                 update_acl='commit') }}"
             title="Manage commit ACLs">
             <button class="bold pkg_button_blue inline wheel">
-              Manage/Request commit ACLs
+              {% if g.fas_user.username in admins or is_admin%}
+              Manage the committers
+              {% elif g.fas_user.username in committers %}
+              Manage Your Commit ACLs
+              {% else %}
+              Request Commit ACLs
+              {% endif %}
             </button>
           </a>
         </li>
