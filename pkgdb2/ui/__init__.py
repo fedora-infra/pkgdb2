@@ -141,6 +141,14 @@ def opensearch(xmlfile):
         )
         return flask.Response(xml, mimetype='text/xml')
 
+    if xmlfile == 'pkgdb_packager.xml':
+        xml =  flask.render_template(
+            'opensearch.html',
+            shortname='packager',
+            example='spot'
+        )
+        return flask.Response(xml, mimetype='text/xml')
+
     return flask.redirect(flask.url_for('index'))
 
 
