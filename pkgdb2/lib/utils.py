@@ -241,5 +241,8 @@ def log(session, package, topic, message):
     if pkgdb2.APP.config.get('PKGDB2_FEDMSG_NOTIFICATION', True):
         fedmsg_publish(topic, message)
     if pkgdb2.APP.config.get('PKGDB2_EMAIL_NOTIFICATION', False):
+        final_msg += '\n\nTo make changes to this package see:\n' \
+            '{0}/package/{1}'.format(pkgdb2.APP.config.get(
+                'SITE_URL'), package.name)
         email_publish(message['agent'], package, final_msg)
     return final_msg
