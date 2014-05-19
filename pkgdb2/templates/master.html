@@ -17,10 +17,10 @@
 
     <link title="Fedora PkgDB2: Packages"
         rel="search" type="application/opensearchdescription+xml"
-        href="{{ url_for('.opensearch', xmlfile='pkgdb_packages.xml') }}" />
+        href="{{ url_for('ui_ns.opensearch', xmlfile='pkgdb_packages.xml') }}" />
     <link title="Fedora PkgDB2: Packagers"
         rel="search" type="application/opensearchdescription+xml"
-        href="{{ url_for('.opensearch', xmlfile='pkgdb_packager.xml') }}" />
+        href="{{ url_for('ui_ns.opensearch', xmlfile='pkgdb_packager.xml') }}" />
 
   </head>
   <body id="{% block tag %}{% endblock %}"
