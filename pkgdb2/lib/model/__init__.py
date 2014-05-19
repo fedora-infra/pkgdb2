@@ -1427,9 +1427,11 @@ class Log(BASE):
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
+        :kwarg package: retrict the logs to a certain package.
+        :kwarg packager: restrict the logs to a certain user/packager.
+        :kwarg from_date: a date from which to retrieve the logs.
         :kwarg limit: limit the result to X row
         :kwarg offset: start the result at row X
-        :kwarg from_date: the date from which to give the entries
         :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
 
