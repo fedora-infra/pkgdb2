@@ -333,11 +333,17 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         session.add(pkglisting)
         session.flush()
 
+    create = False
     personpkg = model.PackageListingAcl.get(
         session, pkg_user, pkglisting.id, acl=acl)
     if not personpkg:
         personpkg = model.PackageListingAcl.create(
             session, pkg_user, pkglisting.id, acl=acl, status=status)
+        create = True
+
+    if not create:
+        if personpkg.status == status:
+            return
 
     prev_status = personpkg.status
     if not status:
