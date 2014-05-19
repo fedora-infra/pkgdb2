@@ -6,8 +6,7 @@
     <Description>Search Fedora Package Database</Description>
     <InputEncoding>UTF-8</InputEncoding>
     <Image height="16" width="16" type="image/png">
-        {{ config.get('SITE_URL') }}{{
-            url_for('static', filename='packagedb-logo.png') }}</Image>
+        https://fedoraproject.org/static/images/icons/fedora-infra-icon_pkgdb.png</Image>
     <Contact>pingou@pingoured.fr</Contact>
     <Url type="text/html"
         template="{{ config.get('SITE_URL') }}{{ url_for('.search') }}">
