@@ -48,6 +48,7 @@ def admin_log():
 
     from_date = flask.request.args.get('from_date', None)
     package = flask.request.args.get('package', None)
+    packager = flask.request.args.get('packager', None)
     refresh = flask.request.args.get('refresh', False)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
     page = flask.request.args.get('page', 1)
@@ -81,6 +82,7 @@ def admin_log():
         logs = pkgdblib.search_logs(
             SESSION,
             package=package or None,
+            packager=packager or None,
             from_date=from_date,
             page=page,
             limit=limit,
