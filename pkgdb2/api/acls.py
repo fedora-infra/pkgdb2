@@ -131,7 +131,7 @@ Update package ACL
                 else:
                     messages.append(
                         'Nothing to update on branch: %s for acl: %s' %
-                            (branch, acl))
+                        (branch, acl))
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = messages

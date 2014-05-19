@@ -1354,7 +1354,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
 
     for acl in acls:
         personpkg = model.PackageListingAcl.get(
-                session, pkg_user, pkg_listing.id, acl=acl)
+            session, pkg_user, pkg_listing.id, acl=acl)
         if not personpkg:
             personpkg = model.PackageListingAcl.create(
                 session, pkg_user, pkg_listing.id, acl=acl, status=status)
