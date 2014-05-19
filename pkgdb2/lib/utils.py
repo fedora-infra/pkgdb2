@@ -244,9 +244,6 @@ def log(session, package, topic, message):
                         '%(package_name)s to: '
                         '%(username)s ['
                         '%(package_listing.collection.branchname)s]',
-        'branch.complete': '%(agent)s branched %(package_name) from '
-                           '%(collection_from.branchname)s to '
-                           '%(collection_to.branchname)s',
         'package.update': '%(agent)s updated package: '
                           '%(package.name)s',
         'package.update.status': '%(agent)s updated package: '
@@ -261,6 +258,7 @@ def log(session, package, topic, message):
         subject = subject_templates[topic] % substitutions
 
     model.Log.insert(session, message['agent'], package, final_msg)
+
     if pkgdb2.APP.config.get('PKGDB2_EMAIL_NOTIFICATION', False):
         body_email = '{0}\n\nTo make changes to this package see:\n' \
             '{1}/package/{2}'.format(
