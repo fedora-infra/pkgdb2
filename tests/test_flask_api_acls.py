@@ -155,6 +155,38 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 500)
             self.assertEqual(json_out, exp)
 
+        data = {
+            'pkgname': 'guake',
+            'branches': 'master',
+            'acl': 'commit',
+            'acl_status': 'Awaiting Review',
+            'user': 'toshio',
+        }
+
+        user = FakeFasUser()
+        with user_set(APP, user):
+            # Revert it back to Awaiting Review
+            exp = {
+                "messages": [
+                    "user: pingou set for toshio acl: commit of package: "
+                    "guake from: Approved to: Awaiting Review on branch: "
+                    "master"
+                ],
+                "output": "ok"
+            }
+            output = self.app.post('/api/package/acl/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(json_out, exp)
+
+        data = {
+            'pkgname': 'guake',
+            'branches': 'master',
+            'acl': 'commit',
+            'acl_status': 'Approved',
+            'user': 'toshio',
+        }
+
         # Check if it works for admins
         user = FakeFasUserAdmin()
 
@@ -162,7 +194,19 @@ class FlaskApiAclsTest(Modeltests):
             exp = {
                 "messages": [
                     "user: admin set for toshio acl: commit of package: "
-                    "guake from: Approved to: Approved on branch: master"
+                    "guake from: Awaiting Review to: Approved on branch: "
+                    "master"
+                ],
+                "output": "ok"
+            }
+            output = self.app.post('/api/package/acl/', data=data)
+            json_out = json.loads(output.data)
+            self.assertEqual(output.status_code, 200)
+            self.assertEqual(json_out, exp)
+
+            exp = {
+                "messages": [
+                    "Nothing to update on branch: master for acl: commit"
                 ],
                 "output": "ok"
             }
