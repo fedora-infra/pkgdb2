@@ -713,12 +713,14 @@ def search_packagers(session, pattern, eol=False, page=None, limit=None,
     return packagers
 
 
-def search_logs(session, package=None, from_date=None, page=None, limit=None,
-                count=False):
+def search_logs(session, package=None, packager=None,
+                from_date=None, page=None,
+                limit=None, count=False):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database.
     :kwarg package: retrict the logs to a certain package.
+    :kwarg packager: restrict the logs to a certain user/packager.
     :kwarg from_date: a date from which to retrieve the logs.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
@@ -763,6 +765,7 @@ def search_logs(session, package=None, from_date=None, page=None, limit=None,
 
     return model.Log.search(session,
                             package_id=package_id,
+                            packager=packager,
                             from_date=from_date,
                             offset=page,
                             limit=limit,
