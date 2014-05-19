@@ -333,11 +333,12 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         session.add(pkglisting)
         session.flush()
 
-    personpkg = model.PackageListingAcl.get_or_create(session,
-                                                      pkg_user,
-                                                      pkglisting.id,
-                                                      acl=acl,
-                                                      status=status)
+    personpkg = model.PackageListingAcl.get(
+        session, pkg_user, pkglisting.id, acl=acl)
+    if not personpkg:
+        personpkg = model.PackageListingAcl.create(
+            session, pkg_user, pkglisting.id, acl=acl, status=status)
+
     prev_status = personpkg.status
     if not status:
         session.delete(personpkg)
@@ -1346,11 +1347,12 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 
     for acl in acls:
-        personpkg = model.PackageListingAcl.get_or_create(session,
-                                                          pkg_user,
-                                                          pkg_listing.id,
-                                                          acl=acl,
-                                                          status=status)
+        personpkg = model.PackageListingAcl.get(
+                session, pkg_user, pkg_listing.id, acl=acl)
+        if not personpkg:
+            personpkg = model.PackageListingAcl.create(
+                session, pkg_user, pkg_listing.id, acl=acl, status=status)
+
         prev_status = personpkg.status
         personpkg.status = status
         session.add(personpkg)

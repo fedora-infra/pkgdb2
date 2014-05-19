@@ -436,7 +436,7 @@ class PackageListingAcl(BASE):
         return query.all()
 
     @classmethod
-    def get_or_create(cls, session, user, packagelisting_id, acl, status):
+    def get(cls, session, user, packagelisting_id, acl):
         """ Retrieve the PersonPackageListing which associates a person
         with a package in a certain collection.
 
@@ -449,24 +449,37 @@ class PackageListingAcl(BASE):
         :arg status: the status of the ACL
 
         """
-        try:
-            personpkg = session.query(
-                PackageListingAcl
-            ).filter(
-                PackageListingAcl.fas_name == user
-            ).filter(
-                PackageListingAcl.packagelisting_id == packagelisting_id
-            ).filter(
-                PackageListingAcl.acl == acl
-            ).one()
-        except NoResultFound:
-            personpkg = PackageListingAcl(
-                fas_name=user,
-                packagelisting_id=packagelisting_id,
-                acl=acl,
-                status=status)
-            session.add(personpkg)
-            session.flush()
+        return session.query(
+            PackageListingAcl
+        ).filter(
+            PackageListingAcl.fas_name == user
+        ).filter(
+            PackageListingAcl.packagelisting_id == packagelisting_id
+        ).filter(
+            PackageListingAcl.acl == acl
+        ).first()
+
+    @classmethod
+    def create(cls, session, user, packagelisting_id, acl, status):
+        """ Creates the PersonPackageListing which associates a person
+        with a package in a certain collection.
+
+        :arg session: the database session used to connect to the
+            database
+        :arg user: the username
+        :arg packagelisting_id: the identifier of the PackageListing
+            entry.
+        :arg acl: the ACL that person has on that package
+        :arg status: the status of the ACL
+
+        """
+        personpkg = PackageListingAcl(
+            fas_name=user,
+            packagelisting_id=packagelisting_id,
+            acl=acl,
+            status=status)
+        session.add(personpkg)
+        session.flush()
 
         return personpkg
 
