@@ -44,8 +44,6 @@ def admin():
 @is_admin
 def admin_log():
     """ Return the logs as requested by the user. """
-    cnt_logs = pkgdblib.search_logs(SESSION, count=True)
-
     from_date = flask.request.args.get('from_date', None)
     package = flask.request.args.get('package', None)
     packager = flask.request.args.get('packager', None)
@@ -86,6 +84,13 @@ def admin_log():
             from_date=from_date,
             page=page,
             limit=limit,
+        )
+        cnt_logs = pkgdblib.search_logs(
+            SESSION,
+            package=package or None,
+            packager=packager or None,
+            from_date=from_date,
+            count=True
         )
     except pkgdblib.PkgdbException, err:
         flask.flash(err, 'errors')
