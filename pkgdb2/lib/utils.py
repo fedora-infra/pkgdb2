@@ -199,6 +199,9 @@ def log(session, package, topic, message):
     import pkgdb2.lib.model as model
     from pkgdb2.lib.notifications import fedmsg_publish, email_publish
 
+    if pkgdb2.APP.config.get('PKGDB2_FEDMSG_NOTIFICATION', True):
+        fedmsg_publish(topic, message)
+
     # A big lookup of fedmsg topics to model.Log template strings.
     templates = {
         'acl.update': 'user: %(agent)s set for %(username)s acl: %(acl)s of'
@@ -233,16 +236,37 @@ def log(session, package, topic, message):
         'collection.update': 'user: %(agent)s edited collection: '
                              '%(collection.name)s',
     }
+    subject_templates = {
+        'acl.update': '%(agent)s set %(status)s on %(acl)s of'
+                      ' package: %(package_name)s ['
+                      '%(package_listing.collection.branchname)s]',
+        'owner.update': 'user: %(agent)s set point of contact of '
+                        '%(package_name)s to: '
+                        '%(username)s ['
+                        '%(package_listing.collection.branchname)s]',
+        'branch.complete': '%(agent)s branched %(package_name) from '
+                           '%(collection_from.branchname)s to '
+                           '%(collection_to.branchname)s',
+        'package.update': '%(agent)s updated package: '
+                          '%(package.name)s',
+        'package.update.status': '%(agent)s updated package: '
+                          '%(package_name)s status to '
+                          '%(status)s ['
+                          '%(package_listing.collection.branchname)s]',
+    }
     substitutions = _construct_substitutions(message)
     final_msg = templates[topic] % substitutions
+    subject = None
+    if topic in subject_templates:
+        subject = subject_templates[topic] % substitutions
 
     model.Log.insert(session, message['agent'], package, final_msg)
-
-    if pkgdb2.APP.config.get('PKGDB2_FEDMSG_NOTIFICATION', True):
-        fedmsg_publish(topic, message)
     if pkgdb2.APP.config.get('PKGDB2_EMAIL_NOTIFICATION', False):
-        final_msg += '\n\nTo make changes to this package see:\n' \
-            '{0}/package/{1}'.format(pkgdb2.APP.config.get(
-                'SITE_URL'), package.name)
-        email_publish(message['agent'], package, final_msg)
+        body_email = '{0}\n\nTo make changes to this package see:\n' \
+            '{1}/package/{2}'.format(
+                final_msg, pkgdb2.APP.config.get('SITE_URL'),
+                package.name)
+        email_publish(
+            message['agent'], package, body_email, subject=subject)
+
     return final_msg
