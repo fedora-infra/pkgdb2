@@ -424,6 +424,10 @@ def comaintain_package(package):
                 )
                 if msg:
                     msgs.append(msg)
+                else:
+                    msgs.append(
+                        'Nothing to update on branch: %s for acl: %s' %
+                            (collec, acl))
 
             SESSION.commit()
             if msgs:

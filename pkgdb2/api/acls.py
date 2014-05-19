@@ -126,7 +126,12 @@ Update package ACL
                     pkg_user=pkg_user,
                     user=flask.g.fas_user,
                 )
-                messages.append(message)
+                if message:
+                    messages.append(message)
+                else:
+                    messages.append(
+                        'Nothing to update on branch: %s for acl: %s' %
+                            (branch, acl))
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = messages
