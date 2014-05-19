@@ -408,11 +408,12 @@ def comaintain_package(package):
                 flask.url_for('.package_info', package=package))
 
         try:
+            msgs = []
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
                 acl_status = 'Awaiting Review'
                 if acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
-                pkgdblib.set_acl_package(
+                msg = pkgdblib.set_acl_package(
                     SESSION,
                     pkg_name=package,
                     pkg_branch=collec,
@@ -421,8 +422,14 @@ def comaintain_package(package):
                     status=acl_status,
                     user=flask.g.fas_user,
                 )
+                if msg:
+                    msgs.append(msg)
+
             SESSION.commit()
-            flask.flash('ACLs updated')
+            if msgs:
+                flask.flash('ACLs updated')
+            else:
+                flask.flash('Nothing to update')
         # Let's keep this in although we should never see it
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
