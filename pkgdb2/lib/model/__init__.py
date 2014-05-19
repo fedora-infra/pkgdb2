@@ -1420,7 +1420,8 @@ class Log(BASE):
             self.change_time.strftime('%Y-%m-%d %H:%M:%S'))
 
     @classmethod
-    def search(cls, session, package_id=None, from_date=None, limit=None,
+    def search(cls, session, package_id=None, packager=None,
+               from_date=None, limit=None,
                offset=None, count=False):
         """ Return the list of the last Log entries present in the database.
 
@@ -1442,6 +1443,9 @@ class Log(BASE):
 
         if package_id:
             query = query.filter(cls.package_id == package_id)
+
+        if packager:
+            query = query.filter(cls.user == packager)
 
         if from_date:
             query = query.filter(cls.change_time <= from_date)
