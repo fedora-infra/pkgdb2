@@ -1440,9 +1440,6 @@ class Log(BASE):
             cls
         )
 
-        if count:
-            return query.count()
-
         if package_id:
             query = query.filter(cls.package_id == package_id)
 
@@ -1453,6 +1450,9 @@ class Log(BASE):
             query = query.filter(cls.change_time <= from_date)
 
         query = query.order_by(cls.change_time.desc())
+
+        if count:
+            return query.count()
 
         if offset:
             query = query.offset(offset)
