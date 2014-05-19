@@ -76,6 +76,7 @@ def admin_log():
         from_date = from_date.date()
 
     logs = []
+    cnt_logs = 0
     try:
         logs = pkgdblib.search_logs(
             SESSION,
