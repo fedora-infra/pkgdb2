@@ -129,6 +129,22 @@ def search():
                                             motif=search_term))
 
 
+@UI.route('/opensearch/<xmlfile>')
+def opensearch(xmlfile):
+    ''' Offers an opensearch provider.
+    '''
+    if xmlfile == 'pkgdb_packages.xml':
+        xml =  flask.render_template(
+            'opensearch.html',
+            shortname='packages',
+            example='kernel'
+        )
+        return flask.Response(xml, mimetype='text/xml')
+
+    return flask.redirect(flask.url_for('index'))
+
+
+
 @UI.route('/msg/')
 def msg():
     """ Page used to display error messages

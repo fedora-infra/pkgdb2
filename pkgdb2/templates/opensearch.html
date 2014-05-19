@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
+                        xmlns:moz="http://www.mozilla.org/2006/browser/search/"
+                        xmlns:py="http://genshi.edgewall.org/">
+    <ShortName>Fedora PkgDB2: {{ shortname }}</ShortName>
+    <Description>Search Fedora Package Database</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Image height="16" width="16" type="image/png">{{
+        url_for('static', filename='packagedb-logo.png') }}</Image>
+    <Contact>pingou@pingoured.fr</Contact>
+    <Url type="text/html"
+        template="{{ url_for('.search') }}">
+        <Param name="term" value="*{{ searchTerms }}*"/>
+        <Param name="type" value="{{ shortname }}"/>
+    </Url>
+    <Url type="applications/x-suggestions+json"
+        template="{{ url_for('.list_packages', motif=example) }}"/>
+    <Url type="application/opensearchdescription+xml"
+        rel="self"
+        template="{{ url_for('.opensearch', xmlfile='pkgdb_%s.xml' % shortname) }}" />
+    <SearchForm>{{ url_for('.index') }}</SearchForm>
+    <LongName>Fedora-pkgdb Web Search</LongName>
+    <Query role="example" searchTerms="{{ example }}" />
+    <Developer>Adam Miller</Developer>
+    <Developer>Pierre-Yves Chibon</Developer>
+</OpenSearchDescription>

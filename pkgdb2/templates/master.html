@@ -14,6 +14,11 @@
         href="{{ url_for('static',
             filename='jquery-ui-1.9.2.custom.css')}}" />
     {% block header %}{% endblock %}
+
+    <link title="Fedora PkgDB2: Packages"
+        rel="search" type="application/opensearchdescription+xml"
+        href="{{ url_for('.opensearch', xmlfile='pkgdb_packages.xml') }}" />
+
   </head>
   <body id="{% block tag %}{% endblock %}"
         prefix="doap: http://usefulinc.com/ns/doap#"
