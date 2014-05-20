@@ -48,7 +48,7 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
 
 <p>{{ packages_count }} packages found</p>
 
-{% if total_page > 1 %}
+{% if total_page and total_page > 1 %}
 <table>
     <tr>
         <td>
