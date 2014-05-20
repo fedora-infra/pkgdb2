@@ -106,6 +106,7 @@ User's ACL
               "fas_name": "pingou",
               "packagelist": {
                 "point_of_contact": "pingou",
+                "critpath": False,
                 "collection": {
                   "status": "EOL",
                   "branchname": "f16",
@@ -130,6 +131,7 @@ User's ACL
               "fas_name": "pingou",
               "packagelist": {
                 "point_of_contact": "pingou",
+                "critpath": False,
                 "collection": {
                   "status": "EOL",
                   "branchname": "f16",

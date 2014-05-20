@@ -506,6 +506,7 @@ Package information
             {
               "status": "Approved",
               "point_of_contact": "pingou",
+              "critpath": False,
               "package": {
                 "status": "Approved",
                 "upstream_url": null,
