@@ -354,8 +354,8 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="errors">&#39;foobar&#39; is not a valid choice for '
-                'this field</td>' in output.data)
+                'class="errors">Only Admins are allowed to retire package '
+                'here, you should use `fedpkg retire`.</li>' in output.data)
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
@@ -396,20 +396,22 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">This package has been retired on '
-                'branch: master</li>' in output.data)
+                'class="errors">Only Admins are allowed to retire package '
+                'here, you should use `fedpkg retire`.</li>' in output.data)
 
-            data['branches'] = ['f18']
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+
+            data['branches'] = ['foobar']
             output = self.app.post(
                 '/package/guake/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<td class="errors">&#39;f18&#39; is not a valid choice '
+                '<td class="errors">&#39;foobar&#39; is not a valid choice '
                 'for this field</td>' in output.data)
 
-        user = FakeFasUserAdmin()
-        with user_set(pkgdb2.APP, user):
+            data['branches'] = ['f18']
             output = self.app.post(
                 '/package/guake/retire', follow_redirects=True,
                 data=data)
