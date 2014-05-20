@@ -436,15 +436,19 @@ def package_retire(package, full=True):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    if is_pkgdb_admin(flask.g.fas_user):
-        collections = [
-            acl.collection.branchname
-            for acl in package_acl
-            if acl.collection.status in ['Active', 'Under Development']
-            and acl.point_of_contact == 'orphan'
-        ]
-    else:
-        collections = ['master']
+    if not is_pkgdb_admin(flask.g.fas_user):
+        flask.flash(
+            'Only Admins are allowed to retire package here, '
+            'you should use `fedpkg retire`.', 'errors')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    collections = [
+        acl.collection.branchname
+        for acl in package_acl
+        if acl.collection.status in ['Active', 'Under Development']
+        and acl.point_of_contact == 'orphan'
+    ]
 
     form = pkgdb2.forms.BranchForm(collections=collections)
 
