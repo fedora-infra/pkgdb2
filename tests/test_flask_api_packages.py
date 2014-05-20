@@ -663,9 +663,9 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(len(data['packages']), 1)
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(
-            data['packages'][0].keys(),
-            ['status', 'point_of_contact', 'package', 'collection', 'acls',
-             'status_change'])
+            set(data['packages'][0].keys()),
+            set(['status', 'point_of_contact', 'package', 'collection', 'acls',
+             'status_change', 'critpath']))
         self.assertEqual(
             [acl['fas_name'] for acl in data['packages'][0]['acls']],
             ['pingou', 'pingou', 'pingou', 'toshio', 'ralph',

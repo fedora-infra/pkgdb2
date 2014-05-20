@@ -71,6 +71,7 @@ class PackageListingAcltests(Modeltests):
             'packagelist': {
                 'status': u'Approved',
                 'point_of_contact': u'pingou',
+                'critpath': False,
                 'collection': {
                     'branchname': u'f18',
                     'version': u'18',
