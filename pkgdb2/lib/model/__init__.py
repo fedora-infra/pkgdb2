@@ -737,6 +737,7 @@ class PackageListing(BASE):
         _seen.append(type(self))
         result = dict(
             point_of_contact=self.point_of_contact,
+            critpath=self.critpath,
             status=self.status,
             status_change=time.mktime(self.status_change.timetuple()),
         )
