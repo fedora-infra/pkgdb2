@@ -12,6 +12,7 @@
     Restrict to branch: <input type="text" name="branches"/> <br />
     Restrict to status:
     <select name="status">
+      <option value="" {% if not status %} selected {% endif %}>All</option>
       <option value="Approved" {% if status == 'Approved' %} selected {% endif %}>Approved</option>
       <option value="Orphaned" {% if status == 'Orphaned' %} selected {% endif %}>Orphaned</option>
       <option value="Retired" {% if status == 'Retired' %} selected {% endif %}>Retired</option>
