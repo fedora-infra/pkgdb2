@@ -41,7 +41,7 @@ from pkgdb2.ui import UI
 
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
-def list_packages(motif=None, orphaned=False, status='Approved',
+def list_packages(motif=None, orphaned=False, status=None,
                   origin='list_packages', case_sensitive=False):
     ''' Display the list of packages corresponding to the motif. '''
 
@@ -100,7 +100,8 @@ def list_packages(motif=None, orphaned=False, status='Approved',
         motif=motif,
         total_page=total_page,
         packages_count=packages_count,
-        page=page
+        page=page,
+        status=status,
     )
 
 
