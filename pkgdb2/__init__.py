@@ -92,6 +92,9 @@ LOG = APP.logger
 
 
 import pkgdb2.lib as pkgdblib
+import pkgdb2.proxy
+
+APP.wsgi_app = pkgdb2.proxy.ReverseProxied(APP.wsgi_app)
 
 
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
