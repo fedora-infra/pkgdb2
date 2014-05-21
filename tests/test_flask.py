@@ -249,8 +249,7 @@ engineers need to create packages and spin them into a distribution."""
 
         output = self.app.get('/logout/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Fedora Package Database -- Version'
-                        in output.data)
+        self.assertTrue('<h1>Fedora Package Database' in output.data)
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
@@ -259,8 +258,7 @@ engineers need to create packages and spin them into a distribution."""
             self.assertTrue(
                 '<li class="message">You are no longer logged-in</li>'
                 in output.data)
-            self.assertTrue('<h1>Fedora Package Database -- Version'
-                            in output.data)
+            self.assertTrue('<h1>Fedora Package Database' in output.data)
 
     def test_api(self):
         """ Test the api function. """
