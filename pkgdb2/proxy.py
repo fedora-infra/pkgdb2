@@ -26,6 +26,7 @@ redirects are using ``https``.
 Source: http://flask.pocoo.org/snippets/35/ by Peter Hansen
 '''
 
+
 class ReverseProxied(object):
     '''Wrap the application in this middleware and configure the
     front-end server to add these headers, to let you quietly bind
@@ -58,4 +59,3 @@ class ReverseProxied(object):
         if scheme:
             environ['wsgi.url_scheme'] = scheme
         return self.app(environ, start_response)
-

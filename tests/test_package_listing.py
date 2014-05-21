@@ -150,7 +150,7 @@ class PackageListingtests(Modeltests):
         self.assertEqual(
             set(package.keys()),
             set(['status', 'package', 'status_change', 'collection',
-             'point_of_contact', 'critpath']))
+                 'point_of_contact', 'critpath']))
 
     def test_search_packagers(self):
         """ Test the search_packagers function of PackageListing. """
