@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.7
+Version:        1.8
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,22 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed May 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.8-1
+- Update to 1.8
+- Return the critpath status of a package in a collection in the API
+- Drop the version from the front page
+- Search all packages by default and set a drop-down list to filter by their
+  status
+- Fix the https redirection by setting pkgdb2 as a reverse proxied application
+- Add browser opensearch extension
+- Restrict retiring package from the UI to pkgdb admins
+- Do not show the pagination block if there is only one page
+  (Thanks to Michael Haynes)
+- Improve the subject of the emails sent
+- Do not update ACL if the ACL already has this status
+- Add link to the package's page at the bottom of the emails sent
+- Adjust the label of the 'Manage the committers' per person
+
 * Mon May 19 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.7-1
 - Update to 1.7
 - Fix the pagination in the log viewer
