@@ -9,16 +9,16 @@
         https://fedoraproject.org/static/images/icons/fedora-infra-icon_pkgdb.png</Image>
     <Contact>pingou@pingoured.fr</Contact>
     <Url type="text/html"
-        template="{{ config.get('SITE_URL') }}{{ url_for('.search') }}">
+        template="{{ config.get('SITE_ROOT') }}{{ url_for('.search') }}">
         <Param name="term" value="*{searchTerms}*"/>
         <Param name="type" value="{{ shortname }}"/>
     </Url>
     <Url type="applications/x-suggestions+json"
-        template="{{ config.get('SITE_URL') }}{{ url_for('.list_packages', motif=example) }}"/>
+        template="{{ config.get('SITE_ROOT') }}{{ url_for('.list_packages', motif=example) }}"/>
     <Url type="application/opensearchdescription+xml"
         rel="self"
-        template="{{ config.get('SITE_URL') }}{{ url_for('.opensearch', xmlfile='pkgdb_%s.xml' % shortname) }}" />
-    <SearchForm>{{ config.get('SITE_URL') }}{{ url_for('.index') }}</SearchForm>
+        template="{{ config.get('SITE_ROOT') }}{{ url_for('.opensearch', xmlfile='pkgdb_%s.xml' % shortname) }}" />
+    <SearchForm>{{ config.get('SITE_ROOT') }}{{ url_for('.index') }}</SearchForm>
     <LongName>Fedora-pkgdb Web Search</LongName>
     <Query role="example" searchTerms="{{ example }}" />
     <Developer>Adam Miller</Developer>
