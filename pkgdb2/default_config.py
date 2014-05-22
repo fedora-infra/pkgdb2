@@ -28,9 +28,14 @@ from datetime import timedelta
 # Set the time after which the session expires
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
+# Root of the website url, so for example if you have it running at
+#    http://project/pkgdb
+# SITE_ROOT is http://project
+# SITE_URL is http://project/pkgdb
+SITE_ROOT = 'http://127.0.0.1:5000'
 # Full URL to the website hosting the pkgdb2 instance. This is required
 # to make the opensearch fully working.
-SITE_URL = 'http://127.0.0.1:5000'
+SITE_URL = SITE_ROOT
 
 # url to the database server:
 DB_URL = 'sqlite:////var/tmp/pkgdb2_dev.sqlite'
