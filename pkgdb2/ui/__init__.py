@@ -149,7 +149,7 @@ def opensearch(xmlfile):
         )
         return flask.Response(xml, mimetype='text/xml')
 
-    return flask.redirect(flask.url_for('index'))
+    return flask.redirect(flask.url_for('.index'))
 
 
 @UI.route('/msg/')
