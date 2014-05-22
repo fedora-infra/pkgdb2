@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.8.1
+Version:        1.8.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,11 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu May 22 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.8.2-1
+- Update to 1.8.2
+- Fix redirection if someone calls an opensearch endpoints that does not exist
+- Fix the link in the email sent
+
 * Wed May 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.8.1-1
 - Update 1.8.1
 - Fix the reverse proxy
