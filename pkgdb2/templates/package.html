@@ -170,7 +170,7 @@ confusing what the difference is between that status an the per-branch status)
             {% for user in pending_admins %}
             <li>
               <span class="username">
-                <a class="pending"
+                <a class="pending" title="Admin rights awaiting review"
                    href="{{ url_for('.packager_info', packager=user) }}">
                   {{ user }}
                 </a>
