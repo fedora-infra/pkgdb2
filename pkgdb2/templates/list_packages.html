@@ -81,7 +81,8 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
             {{ pkg.name }}</a>
     -- {{ pkg.summary }}
     (
-    {% for listing in pkg.listings %} {% if listing.collection.status != 'EOL' %}
+    {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
+        %} {% if listing.collection.status != 'EOL' %}
         {% if origin == 'list_packages' and listing.status == 'Approved' %}
             {{ listing.collection.branchname }}
         {% elif origin == 'list_retired' and listing.status == 'Retired' %}
