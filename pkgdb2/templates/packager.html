@@ -36,7 +36,7 @@
             {{ info[0].name }}</a>
         -- {{ info[0].summary }}
         (
-        {% for clt in info[1] %}
+        {% for clt in info[1] | sort(attribute='branchname', reverse=True) %}
             {{ clt.branchname }}
         {% endfor %}
         )
@@ -54,7 +54,7 @@
             {{ info[0].name }}</a>
         -- {{ info[0].summary }}
         (
-        {% for clt in info[1] %}
+        {% for clt in info[1] | sort(attribute='branchname', reverse=True) %}
             {{ clt.branchname }}
         {% endfor %}
         )
@@ -72,7 +72,7 @@
             {{ info[0].name }}</a>
         -- {{ info[0].summary }}
         (
-        {% for clt in info[1] %}
+        {% for clt in info[1] | sort(attribute='branchname', reverse=True) %}
             {{ clt.branchname }}
         {% endfor %}
         )
