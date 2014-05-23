@@ -677,6 +677,7 @@ def update_acl(package, update_acl):
                             status=lcl_acl,
                             user=flask.g.fas_user,
                         )
+                        SESSION.commit()
                         flask.flash("%s's %s ACL updated on %s" % (
                             lcl_user, update_acl, lcl_branch))
                     except pkgdblib.PkgdbException, err:
