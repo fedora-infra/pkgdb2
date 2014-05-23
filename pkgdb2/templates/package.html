@@ -208,6 +208,7 @@ confusing what the difference is between that status an the per-branch status)
               </form>
             </li>
           {% endif %}
+          {% if g.fas_user.username in admins or is_admin %}
             <li>
               <a href="{{ url_for('.update_acl',package=package.name,
                        update_acl='approveacls') }}"
@@ -217,6 +218,7 @@ confusing what the difference is between that status an the per-branch status)
                 </button>
                 </a>
             </li>
+          {% endif %}
           </ul>
       </div>
     </div>
