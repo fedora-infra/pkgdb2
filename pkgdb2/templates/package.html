@@ -254,22 +254,22 @@ confusing what the difference is between that status an the per-branch status)
              {{ form.csrf_token }}
             </form>
           </li>
+          <li>
+            <a href="{{ url_for('.update_acl',package=package.name,
+                                  update_acl='commit') }}"
+              title="Manage commit ACLs">
+              <button class="bold pkg_button_blue inline wheel">
+                {% if g.fas_user.username in admins or is_admin%}
+                Manage the committers
+                {% elif g.fas_user.username in committers %}
+                Manage Your Commit ACLs
+                {% else %}
+                Request Commit ACLs
+                {% endif %}
+              </button>
+            </a>
+          </li>
         {% endif %}
-        <li>
-          <a href="{{ url_for('.update_acl',package=package.name,
-                                update_acl='commit') }}"
-            title="Manage commit ACLs">
-            <button class="bold pkg_button_blue inline wheel">
-              {% if g.fas_user.username in admins or is_admin%}
-              Manage the committers
-              {% elif g.fas_user.username in committers %}
-              Manage Your Commit ACLs
-              {% else %}
-              Request Commit ACLs
-              {% endif %}
-            </button>
-          </a>
-        </li>
       </ul>
     </div>
 
