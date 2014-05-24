@@ -38,7 +38,6 @@ from pkgdb2.ui import UI
 ## pylint does not detect.
 # pylint: disable=E1101
 
-
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
 def list_packages(motif=None, orphaned=False, status=None,
@@ -118,6 +117,12 @@ def list_orphaned(motif=None):
 def list_retired(motif=None):
     ''' Display the list of retired packages corresponding to the motif.'''
     return list_packages(motif=motif, status='Retired', origin='list_retired')
+
+
+@UI.route('/acls/name/<package>')
+@UI.route('/acls/name/<package>/')
+def old_package(package):
+    return flask.redirect(flask.url_for('package_info', package=package))
 
 
 ## Too many branches
