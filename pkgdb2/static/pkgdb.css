@@ -461,7 +461,8 @@ select.Denied {
     text-align:center;
 }
 
-table .col_odd {
+table .col_odd,
+#edit_acl table .col_odd {
     background-color: #eaebeb;
 }
 
