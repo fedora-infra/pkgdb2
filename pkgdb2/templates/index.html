@@ -9,15 +9,28 @@
 <h1>Fedora Package Database</h1>
 
 <h3>Overview</h3>
+
+<p>
 The Package Database is a central repository of package information in
 Fedora. You will eventually be able to find and change all the
 metainformation about a package by searching the database. The current
 implementation is focused on the data that package developers and release
 engineers need to create packages and spin them into a distribution.
+</p>
 
-<table>
+<h3>Recent packages added</h3>
+<table id="recent_package">
+    <tr>
+        <th>Package</th>
+        <th>Summary</th>
+    </tr>
     {% for pkg in latest_pkgs %}
-    <tr><td>{{ pkg.name }}</td></tr>
+    <tr class="{{ loop.cycle('col_odd', 'col_even') }}">
+        <td><a href="{{url_for('.package_info', package=pkg.name)}}">
+            {{ pkg.name }}</a>
+        </td>
+        <td>{{ pkg.summary }}</td>
+    </tr>
     {% endfor %}
 </table>
 

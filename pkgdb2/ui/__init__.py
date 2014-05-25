@@ -69,7 +69,8 @@ def inject_is_admin():
 @UI.route('/')
 def index():
     ''' Display the index package DB page. '''
-    return flask.render_template('index.html')
+    packages = pkgdblib.get_latest_package(SESSION, 10)
+    return flask.render_template('index.html', latest_pkgs=packages)
 
 
 @UI.route('/stats/')
