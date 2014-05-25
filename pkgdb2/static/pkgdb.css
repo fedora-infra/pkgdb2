@@ -461,7 +461,7 @@ select.Denied {
     text-align:center;
 }
 
-#edit_acl table .col_odd {
+table .col_odd {
     background-color: #eaebeb;
 }
 
@@ -470,4 +470,9 @@ select.Denied {
     border: 1px solid #BBBBBB;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+#recent_package th {
+    text-align: left;
+    padding-left: 7px;
 }
