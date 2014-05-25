@@ -23,6 +23,7 @@ engineers need to create packages and spin them into a distribution.
     <tr>
         <th>Package</th>
         <th>Summary</th>
+        <th>Branches</th>
     </tr>
     {% for pkg in latest_pkgs %}
     <tr class="{{ loop.cycle('col_odd', 'col_even') }}">
@@ -30,6 +31,18 @@ engineers need to create packages and spin them into a distribution.
             {{ pkg.name }}</a>
         </td>
         <td>{{ pkg.summary }}</td>
+        <td>
+            {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
+            %} {% if listing.collection.status != 'EOL' %}
+            {% if origin == 'list_packages' and listing.status == 'Approved' %}
+                {{ listing.collection.branchname }}
+            {% elif origin == 'list_retired' and listing.status == 'Retired' %}
+                {{ listing.collection.branchname }}
+            {% elif origin == 'list_orphaned' and listing.status == 'Orphaned' %}
+                {{ listing.collection.branchname }}
+            {% endif %}
+    {% endif %}{% endfor %}
+        </td>
     </tr>
     {% endfor %}
 </table>
