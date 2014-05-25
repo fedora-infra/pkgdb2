@@ -254,6 +254,8 @@ confusing what the difference is between that status an the per-branch status)
              {{ form.csrf_token }}
             </form>
           </li>
+        {% endif %}
+        {% if g.fas_user %}
           <li>
             <a href="{{ url_for('.update_acl',package=package.name,
                                   update_acl='commit') }}"
