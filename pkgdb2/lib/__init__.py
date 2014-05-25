@@ -843,6 +843,20 @@ def get_critpath_packages(session, branch=None):
         session, branch=branch)
 
 
+def get_latest_package(session, limit=10):
+    """ Return the list of the most recent packages added to the database.
+
+    :arg session: session with which to connect to the database.
+    :kwarg limit: the number of packages to return.
+    :returns: a list of ``Package`` ordered from the most recently added
+        to the oldest.
+    :rtype: list(Package)
+
+    """
+    return model.Package.get_latest_package(
+        session, limit=limit)
+
+
 def get_package_maintained(session, packager, poc=True, branch=None):
     """ Return all the packages and branches where given packager has
     commit acl.
