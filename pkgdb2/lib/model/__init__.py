@@ -1106,6 +1106,26 @@ class Package(BASE):
         return session.query(cls).all()
 
     @classmethod
+    def get_latest_package(cls, session, limit=10):
+        """ Return the list of the most recent packages added to the
+        database.
+
+        :arg session: session with which to connect to the database.
+        :kwarg limit: the number of packages to return.
+        :returns: a list of ``Package`` ordered from the most recently
+            added to the oldest.
+        :rtype: list(Package)
+
+        """
+        query = session.query(
+            Package
+        ).order_by(
+            Package.date_created
+        ).limit(limit)
+
+        return query.all()
+
+    @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
                pkg_branch=None, orphaned=None, critpath=None, eol=False,
                offset=None, limit=None, count=False,
