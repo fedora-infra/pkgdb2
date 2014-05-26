@@ -346,6 +346,9 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             return
 
     prev_status = personpkg.status
+    if create:
+        prev_status = ''
+
     if not status:
         session.delete(personpkg)
     else:
