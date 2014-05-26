@@ -167,18 +167,24 @@ confusing what the difference is between that status an the per-branch status)
               <span class="branches">({{ admins[user] | sort_branches | join(', ') }})</span>
             </li>
             {% endfor %}
-            {% for user in pending_admins %}
-            <li>
-              <span class="username">
-                <a class="pending" title="Admin rights awaiting review"
-                   href="{{ url_for('.packager_info', packager=user) }}">
-                  {{ user }}
-                </a>
-              </span>
-              <span class="branches">({{ pending_admins[user] | sort_branches | join(', ') }})</span>
-            </li>
-            {% endfor %}
-          </ul>
+        </ul>
+        {% if pending_admins %}
+        <div class="small_h_line"></div>
+        <p>Users whose admin rights are awaiting review.</p>
+        <ul>
+          {% for user in pending_admins %}
+          <li>
+            <span class="username">
+              <a class="pending" title="Admin rights awaiting review"
+                 href="{{ url_for('.packager_info', packager=user) }}">
+                {{ user }}
+              </a>
+            </span>
+            <span class="branches">({{ pending_admins[user] | sort_branches | join(', ') }})</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
 
           <ul class="nobullet">
           {% if g.fas_user and (g.fas_user.username in admins
