@@ -1303,20 +1303,20 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(logs[22].user, "admin")
         self.assertEqual(logs[19].description, "user: admin set for ralph "
                          "acl: watchcommits of package: guake from: "
-                         "Approved to: Approved on branch: f18")
+                         " to: Approved on branch: f18")
 
         logs = pkgdblib.search_logs(self.session, limit=3, page=2)
 
         self.assertEqual(len(logs), 3)
         self.assertEqual(logs[0].description, "user: admin set for "
                          "group::infra-sig acl: watchcommits of package: "
-                         "fedocal from: Approved to: Approved on branch: "
+                         "fedocal from:  to: Approved on branch: "
                          "master")
         self.assertEqual(logs[0].user, "admin")
 
         exp = "Log(user=u'admin', description=u'user: admin set for "\
               "group::infra-sig acl: watchcommits of package: fedocal from:"\
-              " Approved to: Approved on branch: master"
+              "  to: Approved on branch: master"
         self.assertTrue(logs[0].__repr__().startswith(exp))
 
         logs = pkgdblib.search_logs(self.session, count=True)
