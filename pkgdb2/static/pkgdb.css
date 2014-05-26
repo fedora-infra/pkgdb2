@@ -249,6 +249,15 @@ button:hover {
     margin-bottom: 20px;
 }
 
+.small_h_line {
+    width:50%;
+    margin: auto;
+    height: 1px;
+    background: #DCDEDF;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
 .username {
     font-size: 110%;
     font-weight: bold;
