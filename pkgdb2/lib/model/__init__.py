@@ -700,7 +700,8 @@ class PackageListing(BASE):
         index=True)
     critpath = sa.Column(sa.Boolean, default=False, nullable=False)
     status_change = sa.Column(sa.DateTime, nullable=False,
-                              default=datetime.datetime.utcnow)
+                              default=datetime.datetime.utcnow,
+                              onupdate=sa.func.now())
     __table_args__ = (
         sa.UniqueConstraint('package_id', 'collection_id'),
     )
