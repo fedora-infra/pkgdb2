@@ -124,7 +124,7 @@ class FlaskApiAclsTest(Modeltests):
             exp = {
                 "messages": [
                     "user: pingou set for toshio acl: watchcommits of "
-                    "package: guake from: Approved to: Approved on branch: "
+                    "package: guake from:  to: Approved on branch: "
                     "master"
                 ],
                 "output": "ok"
