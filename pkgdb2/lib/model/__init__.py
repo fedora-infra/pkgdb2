@@ -1301,7 +1301,8 @@ class Package(BASE):
         return query.all()
 
     @classmethod
-    def get_package_of_user(cls, session, user, pkg_status=None, poc=True):
+    def get_package_of_user(
+            cls, session, user, pkg_status=None, poc=True, eol=False):
         """ Return the list of packages on which a given user has commit
         rights and is poc (unless specified otherwise).
 
@@ -1311,6 +1312,8 @@ class Package(BASE):
         :kwarg poc: boolean to specify if the results should be restricted
             to packages where ``user`` is the point of contact or packages
             where ``user`` is not the point of contact.
+        :kwarg eol: a boolean to specify wether the output should include
+            End Of Life releases or not.
 
         """
         query = session.query(
@@ -1322,8 +1325,6 @@ class Package(BASE):
             PackageListing.id == PackageListingAcl.packagelisting_id
         ).filter(
             PackageListing.collection_id == Collection.id
-        ).filter(
-            Collection.status != 'EOL'
         ).filter(
             PackageListing.status == 'Approved'
         ).filter(
@@ -1336,6 +1337,9 @@ class Package(BASE):
             Package.name, Collection.branchname
         )
 
+        if eol is False:
+            query = query.filter(Collection.status != 'EOL')
+
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
 
@@ -1347,12 +1351,15 @@ class Package(BASE):
         return query.all()
 
     @classmethod
-    def get_package_watch_by_user(cls, session, user, pkg_status=None):
+    def get_package_watch_by_user(
+            cls, session, user, pkg_status=None, eol=False):
         """ Return the list of packages watch by a given user.
 
         :arg session: session with which to connect to the database.
         :arg user: the FAS username of the user of interest.
         :kwarg pkg_status: the status of the packages considered.
+        :kwarg eol: a boolean to specify wether the output should include
+            End Of Life releases or not.
 
         """
 
@@ -1366,8 +1373,6 @@ class Package(BASE):
         ).filter(
             PackageListing.collection_id == Collection.id
         ).filter(
-            Collection.status != 'EOL'
-        ).filter(
             PackageListing.status == 'Approved'
         ).filter(
             PackageListingAcl.fas_name == user
@@ -1378,6 +1383,9 @@ class Package(BASE):
         ).order_by(
             Package.name, Collection.branchname
         )
+
+        if eol is False:
+            query = query.filter(Collection.status != 'EOL')
 
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
