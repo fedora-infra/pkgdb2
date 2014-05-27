@@ -1604,7 +1604,7 @@ def bugzilla(session, name=None):
         Collection.status != 'EOL'
     ).filter(
         PackageListingAcl.acl.in_(
-            ['watchcommits', 'watchbugzilla', 'commit'])
+            ['watchbugzilla', 'commit'])
     ).filter(
         PackageListingAcl.status == 'Approved'
     ).group_by(
