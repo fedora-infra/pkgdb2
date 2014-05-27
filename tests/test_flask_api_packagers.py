@@ -103,7 +103,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['page_total'], 1)
-        self.assertEqual(len(output['acls']), 7)
+        self.assertEqual(len(output['acls']), 10)
         self.assertEqual(
             set(output['acls'][0].keys()),
             set(['status', 'fas_name', 'packagelist', 'acl']))
@@ -133,7 +133,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['page_total'], 1)
-        self.assertEqual(len(output['acls']), 7)
+        self.assertEqual(len(output['acls']), 10)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(
