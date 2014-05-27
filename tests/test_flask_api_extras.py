@@ -106,7 +106,7 @@ class FlaskApiExtrasTest(Modeltests):
 # Collection|Package|Description|Owner|Initial QA|Initial CCList
 # Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
 
-Fedora|fedocal|A web-based calendar for Fedora|pingou||pingou,toshio
+Fedora|fedocal|A web-based calendar for Fedora|pingou||pingou
 Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig||
 Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         self.assertEqual(output.data, expected)
@@ -126,7 +126,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
                         "owner": "pingou",
                         "cclist": {
                             "groups": [],
-                            "people": ["pingou", 'toshio']
+                            "people": ["pingou"]
                         },
                         "qacontact": None,
                         "summary": "A web-based calendar for Fedora"
