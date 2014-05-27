@@ -237,13 +237,9 @@ def log(session, package, topic, message):
                              '%(collection.name)s',
     }
     subject_templates = {
-        'acl.update': '%(agent)s set %(status)s on %(acl)s of'
-                      ' package: %(package_name)s ['
-                      '%(package_listing.collection.branchname)s]',
-        'owner.update': 'user: %(agent)s set point of contact of '
-                        '%(package_name)s to: '
-                        '%(username)s ['
-                        '%(package_listing.collection.branchname)s]',
+        'acl.update': '%(agent)s:%(package_name)s %(acl)s  set to %(status)s',
+        'owner.update': '%(agent)s:%(package_name)s set point of contact to: '
+                        '%(username)s',
         'package.update': '%(agent)s updated package: '
                           '%(package.name)s',
         'package.update.status': '%(agent)s updated package: '
