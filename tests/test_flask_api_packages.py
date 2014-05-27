@@ -76,19 +76,25 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
             self.assertEqual(
-                data,
-                {
-                    "error": "Invalid input submitted",
-                    "error_detail": [
-                        "status: Not a valid choice",
-                        "branches: This field is required.",
-                        "summary: This field is required.",
-                        "pkgname: This field is required.",
-                        "review_url: This field is required.",
-                        "poc: This field is required.",
-                    ],
-                    "output": "notok"
-                }
+                sorted(data),
+                ['error', 'error_detail', 'output']
+            )
+            self.assertEqual(
+                data['error'], "Invalid input submitted")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+            self.assertEqual(
+                sorted(data['error_detail']),
+                [
+                    "branches: This field is required.",
+                    "pkgname: This field is required.",
+                    "poc: This field is required.",
+                    "review_url: This field is required.",
+                    "status: Not a valid choice",
+                    "summary: This field is required.",
+                ]
             )
 
         data = {

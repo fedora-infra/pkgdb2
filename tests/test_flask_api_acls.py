@@ -70,18 +70,24 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
             self.assertEqual(
-                data,
-                {
-                    "output": "notok",
-                    "error_detail": [
-                        "pkgname: This field is required.",
-                        "acl_status: Not a valid choice",
-                        "branches: This field is required.",
-                        "user: This field is required.",
-                        "acl: This field is required."
-                    ],
-                    "error": "Invalid input submitted",
-                }
+                sorted(data),
+                ['error', 'error_detail', 'output']
+            )
+            self.assertEqual(
+                data['error'], "Invalid input submitted")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+            self.assertEqual(
+                sorted(data['error_detail']),
+                [
+                    "acl: This field is required.",
+                    "acl_status: Not a valid choice",
+                    "branches: This field is required.",
+                    "pkgname: This field is required.",
+                    "user: This field is required.",
+                ]
             )
 
         create_package_acl(self.session)

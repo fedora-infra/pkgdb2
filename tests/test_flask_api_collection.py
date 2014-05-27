@@ -73,15 +73,21 @@ class FlaskApiCollectionTest(Modeltests):
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
             self.assertEqual(
-                data,
-                {
-                    "output": "notok",
-                    "error_detail": [
-                        "branch: This field is required.",
-                        "clt_status: Not a valid choice",
-                    ],
-                    "error": "Invalid input submitted",
-                }
+                sorted(data),
+                ['error', 'error_detail', 'output']
+            )
+            self.assertEqual(
+                data['error'], "Invalid input submitted")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+            self.assertEqual(
+                sorted(data['error_detail']),
+                [
+                    "branch: This field is required.",
+                    "clt_status: Not a valid choice",
+                ]
             )
 
         data = {'branch': 'f18',
