@@ -81,22 +81,26 @@ def list_packagers(motif=None):
 @UI.route('/packager/<packager>/')
 def packager_info(packager):
     ''' Display the information about the specified packager. '''
+    eol = flask.request.args.get('eol', False)
 
     packages_co = pkgdblib.get_package_maintained(
         SESSION,
         packager=packager,
         poc=False,
+        eol=eol,
     )
 
     packages = pkgdblib.get_package_maintained(
         SESSION,
         packager=packager,
         poc=True,
+        eol=eol,
     )
 
     packages_watch = pkgdblib.get_package_watch(
         SESSION,
         packager=packager,
+        eol=eol,
     )
 
     # Filter out from the watch list packaged where user has commit rights
