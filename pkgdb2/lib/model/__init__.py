@@ -1121,7 +1121,7 @@ class Package(BASE):
         query = session.query(
             Package
         ).order_by(
-            Package.date_created
+            Package.date_created.desc()
         ).limit(limit)
 
         return query.all()
