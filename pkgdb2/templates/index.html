@@ -34,14 +34,8 @@ engineers need to create packages and spin them into a distribution.
         <td>
             {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
             %} {% if listing.collection.status != 'EOL' %}
-            {% if origin == 'list_packages' and listing.status == 'Approved' %}
                 {{ listing.collection.branchname }}
-            {% elif origin == 'list_retired' and listing.status == 'Retired' %}
-                {{ listing.collection.branchname }}
-            {% elif origin == 'list_orphaned' and listing.status == 'Orphaned' %}
-                {{ listing.collection.branchname }}
-            {% endif %}
-    {% endif %}{% endfor %}
+            {% endif %}{% endfor %}
         </td>
     </tr>
     {% endfor %}
