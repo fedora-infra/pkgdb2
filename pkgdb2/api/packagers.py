@@ -254,6 +254,11 @@ User's stats
     Accept GET queries only.
 
     :arg packagername: String of the packager name.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If ``True``, it will return results for all collections (including
+        EOL).
+        If ``False``, it will return results only for non-EOL collections.
 
     Sample response:
 
@@ -310,12 +315,17 @@ User's stats
     output = {}
 
     packagername = flask.request.args.get('packagername', None) or packagername
+    eol = flask.request.args.get('eol', False)
 
     if packagername:
-        collections = pkgdblib.search_collection(
-            SESSION, '*', status='Active')
-        collections.extend(pkgdblib.search_collection(
-            SESSION, '*', status='Under Development'))
+        if not eol:
+            collections = pkgdblib.search_collection(
+                SESSION, '*', status='Active')
+            collections.extend(pkgdblib.search_collection(
+                SESSION, '*', status='Under Development'))
+        else:
+            collections = pkgdblib.search_collection(SESSION, '*')
+
         for collection in collections:
             packages_co = pkgdblib.get_package_maintained(
                 SESSION,
