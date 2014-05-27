@@ -860,22 +860,25 @@ def get_latest_package(session, limit=10):
         session, limit=limit)
 
 
-def get_package_maintained(session, packager, poc=True, branch=None):
+def get_package_maintained(
+        session, packager, poc=True, branch=None, eol=False):
     """ Return all the packages and branches where given packager has
     commit acl.
 
     :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
     :kwarg poc: boolean to specify if the results should be restricted
-            to packages where ``user`` is the point of contact or packages
-            where ``user`` is not the point of contact.
+        to packages where ``user`` is the point of contact or packages
+        where ``user`` is not the point of contact.
+    :kwarg eol: a boolean to specify wether the output should include
+        End Of Life releases or not.
     :returns: a list of ``Package`` associated to the specified user.
     :rtype: list(Package, [Collection])
 
     """
     output = {}
     for pkg, clt in model.Package.get_package_of_user(
-            session, packager, poc=poc):
+            session, packager, poc=poc, eol=eol):
         if branch is not None:
             if clt.branchname != branch:
                 continue
@@ -886,20 +889,23 @@ def get_package_maintained(session, packager, poc=True, branch=None):
     return [output[key] for key in sorted(output)]
 
 
-def get_package_watch(session, packager, branch=None, pkg_status=None):
+def get_package_watch(
+        session, packager, branch=None, pkg_status=None, eol=False):
     """ Return all the packages and branches that the given packager
     watches.
 
     :arg session: session with which to connect to the database.
     :arg packager: the name of the packager to retrieve the ACLs for.
     :kwarg pkg_status: the status of the packages considered.
+    :kwarg eol: a boolean to specify wether the output should include
+        End Of Life releases or not.
     :returns: a list of ``Package`` associated to the specified user.
     :rtype: list(Package, [Collection])
 
     """
     output = {}
     for pkg, clt in model.Package.get_package_watch_by_user(
-            session, packager, pkg_status=pkg_status):
+            session, packager, pkg_status=pkg_status, eol=eol):
 
         if branch is not None:
             if clt.branchname != branch:
