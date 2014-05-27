@@ -484,6 +484,14 @@ def create_package_acl2(session):
     session.add(packager)
 
     packager = model.PackageListingAcl(
+        fas_name='pingou',
+        packagelisting_id=pklist_guake_devel.id,
+        acl='watchbugzilla',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
         fas_name='toshio',
         packagelisting_id=pklist_guake_devel.id,
         acl='commit',
@@ -500,9 +508,25 @@ def create_package_acl2(session):
     session.add(packager)
 
     packager = model.PackageListingAcl(
+        fas_name='spot',
+        packagelisting_id=pklist_guake_devel.id,
+        acl='watchbugzilla',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
         fas_name='group::gtk-sig',
         packagelisting_id=pkglist_geany_devel.id,
         acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='group::gtk-sig',
+        packagelisting_id=pkglist_geany_devel.id,
+        acl='watchbugzilla',
         status='Approved',
     )
     session.add(packager)
@@ -533,8 +557,24 @@ def create_package_acl2(session):
 
     packager = model.PackageListingAcl(
         fas_name='pingou',
+        packagelisting_id=pkglist_fedocal_f18.id,
+        acl='watchbugzilla',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
         packagelisting_id=pkglist_fedocal_f17.id,
         acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
+        packagelisting_id=pkglist_fedocal_f17.id,
+        acl='watchbugzilla',
         status='Approved',
     )
     session.add(packager)
