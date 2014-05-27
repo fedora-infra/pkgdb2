@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.8.2
+Version:        1.9
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,21 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue May 27 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.9-1
+- Update to 1.9
+- Fix ordering of the branches in the packager view
+- Fix ordering of the branches in the list packages view/search
+- When updating multiple ACLs, do not fail the whole transaction if one fails
+- Do not show the ``Manage the admins`` button if you are not an admin
+- Do not show the ``Request Commit ACLs`` button if you are not logged in
+- Split up the approved and pending admins
+- Put the most recent packages added on the front page of the application
+- Update the status_change field upon entry update
+- Ensure there are no: user X change ACL Y from Z to Z
+- Remove watchcommits and commit ACL owners from the bugzilla CC list
+- Add possibility to see someone's ACL on EOL'd releases
+- Adjust the title of the email sent
+
 * Thu May 22 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.8.2-1
 - Update to 1.8.2
 - Fix redirection if someone calls an opensearch endpoints that does not exist
