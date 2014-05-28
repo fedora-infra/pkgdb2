@@ -722,7 +722,9 @@ List packages
     pattern = flask.request.args.get('pattern', pattern) or '*'
     branches = flask.request.args.getlist('branches', None)
     poc = flask.request.args.get('poc', None)
-    orphaned = bool(flask.request.args.get('orphaned', False))
+    orphaned = flask.request.args.get('orphaned', None)
+    if not orphaned and str(orphaned).lower() in ['0', 'false']:
+        orphaned = False
     critpath = flask.request.args.get('critpath', None)
     if not critpath or str(critpath).lower() in ['0', 'false']:
         critpath = False
