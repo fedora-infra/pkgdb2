@@ -1413,10 +1413,10 @@ class Package(BASE):
         _seen.append(cls)
 
         # Protect against infinite recursion
+        result['acls'] = []
         if acls and PackageListing not in _seen:
             if isinstance(collection, basestring):
                 collection = [collection]
-            result['acls'] = []
             for pkg in self.listings:
                 if collection:
                     if pkg.collection.branchname in collection:
