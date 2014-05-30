@@ -519,6 +519,11 @@ def package_take(package, full=True):
         and acl.point_of_contact == 'orphan'
     ]
 
+    if not collections:
+        flask.flash('No branches orphaned found', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
     form = pkgdb2.forms.BranchForm(collections=collections)
 
     if form.validate_on_submit():
