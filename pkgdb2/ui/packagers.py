@@ -109,7 +109,7 @@ def packager_info(packager):
     packages_watch = [
         it for it in packages_watch if it[0] not in packages_obj]
 
-    if not packages and not packages_co:
+    if not packages and not packages_co and not packages_watch:
         flask.flash('No packager of this name found.', 'errors')
         return flask.render_template('msg.html')
 
