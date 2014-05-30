@@ -496,6 +496,10 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
     prev_status = pkglisting.status
     if status == 'Retired':
+        if prev_status != 'Orphaned':
+            raise PkgdbException(
+                'The package: %s is not orphaned on branch %s.' % (
+                    package.name, collection.branchname))
         # Admins can deprecate everything
         # Users can deprecate Fedora devel and EPEL branches
         if pkgdb2.is_pkgdb_admin(user) \
