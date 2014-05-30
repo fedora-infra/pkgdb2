@@ -515,7 +515,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "The package: guake is not orphaned on "
-                        "branch f18.",
+                    "branch f18.",
                     "output": "notok"
                 }
 
@@ -553,7 +553,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to retire the package: "
-                        "guake on branch f18.",
+                    "guake on branch f18.",
                     "output": "notok"
                 }
 
