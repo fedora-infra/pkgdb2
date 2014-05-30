@@ -64,7 +64,7 @@
 {% endif %}
 
 {% if packages_watch %}
-<h3>Package watched: </h3>
+<h3>Package{% if len(packages_watch) > 1 %}s{%endif%} watched: </h3>
 <ul>
 {% for info in packages_watch %}
     <li>
