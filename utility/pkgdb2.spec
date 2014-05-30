@@ -106,6 +106,17 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+
+- Update to 1.10
+- Search for all packages on /api/packages just like it is in the UI
+- Always include `acls` on the package representation even if the list is
+  empty
+- Redirect the user trying to take a package if no branches are orphaned
+- Redirect the user that tries to drop some ACLs if that user does not have
+  this acl on this branch or any branch
+- Prevent anyone except pkgdb admins to retire a non-orphaned package
+- Show packagers that are only watching packages (ie: pseudo-user)
+
 * Tue May 27 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.9.2-1
 - Update to 1.9.2
 - Fix displaying the most recent package in the front page
