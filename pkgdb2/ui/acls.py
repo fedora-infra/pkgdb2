@@ -185,6 +185,12 @@ def giveup_acl(package, acl):
             if pkglist.collection.status in
             ['Active', 'Under Development']])
 
+        if not pkg_branchs:
+            flask.flash(
+                'No branches found for you for the ACL: %s' % acl, 'error')
+            return flask.redirect(
+                flask.url_for('.package_info', package=package.name))
+
         for branch in pkg_branchs:
             try:
                 pkgdblib.set_acl_package(
