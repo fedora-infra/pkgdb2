@@ -38,7 +38,7 @@ body#packages #options {
 }
 
 #pkg_info{
-    width: 93%;
+    width: 930px;
     float: left;
 }
 
@@ -271,7 +271,7 @@ button:hover {
 
 section#pkg_ppl_table {
     display: table;
-    width: 85%;
+    width: 800px;
 }
 
 .pkg_ppl_row {
@@ -284,7 +284,7 @@ section#pkg_ppl_table {
 
 div#pkg_contacts {
     display: table-cell;
-    width: 46%;
+    width: 44%;
     padding-right: 10px;
 }
 
