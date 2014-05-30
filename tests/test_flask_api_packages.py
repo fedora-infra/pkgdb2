@@ -502,7 +502,7 @@ class FlaskApiPackagesTest(Modeltests):
         create_package_acl(self.session)
         mock_func.log.return_value = ''
 
-        # User is not an admin
+        # Package not orphaned
         data = {
             'pkgnames': 'guake',
             'branches': ['f18', 'master'],
@@ -514,8 +514,46 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
+                    "error": "The package: guake is not orphaned on "
+                        "branch f18.",
+                    "output": "notok"
+                }
+
+            )
+
+        # Orphan the package
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['f18', 'master'],
+            'poc': 'test',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/orphan/', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "messages": ["", ""],
+                    "output": "ok"
+                }
+            )
+
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['f18', 'master'],
+            'poc': 'test',
+        }
+        # User is not an admin
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/retire/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
                     "error": "You are not allowed to retire the package: "
-                             "guake on branch f18.",
+                        "guake on branch f18.",
                     "output": "notok"
                 }
 
