@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.10
+Version:        1.10.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri May 30 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.10.1-1
+- Update to 1.10.1
+- CSS fixes on the package's page (min resolution: 1024x768)
+
 * Fri May 30 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.10-1
 - Update to 1.10
 - Search for all packages on /api/packages just like it is in the UI
