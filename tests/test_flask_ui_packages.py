@@ -468,6 +468,30 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="message">You are no longer point of contact on '
                 'branch: master</li>' in output.data)
 
+        data = {
+            'branches': ['foo'],
+        }
+
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/take', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">&#39;foo&#39; is not a valid choice '
+                'for this field</td>' in output.data)
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data = {
+            'branches': ['master'],
+            'csrf_token': csrf_token,
+        }
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
             output = self.app.post(
                 '/package/guake/take', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
