@@ -449,8 +449,8 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                'class="errors">&#39;master&#39; is not a valid choice for'
-                ' this field</td>' in output.data)
+                '<li class="error">No branches orphaned found</li>'
+                in output.data)
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
