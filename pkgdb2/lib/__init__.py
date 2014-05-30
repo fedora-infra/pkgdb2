@@ -496,7 +496,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
     prev_status = pkglisting.status
     if status == 'Retired':
-        if prev_status != 'Orphaned':
+        if prev_status != 'Orphaned' and not pkgdb2.is_pkgdb_admin(user):
             raise PkgdbException(
                 'The package: %s is not orphaned on branch %s.' % (
                     package.name, collection.branchname))
