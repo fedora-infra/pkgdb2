@@ -723,8 +723,11 @@ List packages
     branches = flask.request.args.getlist('branches', None)
     poc = flask.request.args.get('poc', None)
     orphaned = flask.request.args.get('orphaned', None)
-    if not orphaned and str(orphaned).lower() in ['0', 'false']:
+    if str(orphaned).lower() in ['0', 'false']:
         orphaned = False
+    elif orphaned is not None:
+        orphaned = bool(orphaned)
+
     critpath = flask.request.args.get('critpath', None)
     if not critpath or str(critpath).lower() in ['0', 'false']:
         critpath = False
@@ -736,7 +739,6 @@ List packages
     page = flask.request.args.get('page', 1)
     limit = get_limit()
     count = flask.request.args.get('count', False)
-
     try:
         if not branches:
             branches = [None]
