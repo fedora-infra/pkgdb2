@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.9.2
+Version:        1.10
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,7 +106,7 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
-
+* Fri May 30 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.10-1
 - Update to 1.10
 - Search for all packages on /api/packages just like it is in the UI
 - Always include `acls` on the package representation even if the list is
@@ -116,6 +116,7 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
   this acl on this branch or any branch
 - Prevent anyone except pkgdb admins to retire a non-orphaned package
 - Show packagers that are only watching packages (ie: pseudo-user)
+- Fix the admins table in the package's page
 
 * Tue May 27 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.9.2-1
 - Update to 1.9.2
