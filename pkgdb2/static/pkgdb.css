@@ -271,6 +271,7 @@ button:hover {
 
 section#pkg_ppl_table {
     display: table;
+    width: 85%;
 }
 
 .pkg_ppl_row {
