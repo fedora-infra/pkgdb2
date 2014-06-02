@@ -551,7 +551,7 @@ class FlaskUiAclsTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-
+            # Invalid package name
             output = self.app.get(
                 '/package/foobar/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
@@ -559,6 +559,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
+            # Invalid ACL name
             output = self.app.get(
                 '/package/guake/acl/foobar/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
@@ -566,6 +567,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="errors">Invalid ACL to update.</li>'
                 in output.data)
 
+            # GET works
             output = self.app.get(
                 '/package/guake/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
@@ -588,6 +590,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
+            # No user provided, so we don't know for who to update the ACLs
             output = self.app.post(
                 '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
