@@ -196,7 +196,7 @@ class PkgdbLibtests(Modeltests):
         create_package_acl(self.session)
 
         packages = pkgdblib.model.Package.all(self.session)
-        self.assertEqual(3, len(packages))
+        self.assertEqual(4, len(packages))
         self.assertEqual('guake', packages[0].name)
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')

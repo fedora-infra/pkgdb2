@@ -43,7 +43,7 @@ class Packagetests(Modeltests):
     def test_init_package(self):
         """ Test the __init__ function of Package. """
         create_package(self.session)
-        self.assertEqual(3, len(model.Package.all(self.session)))
+        self.assertEqual(4, len(model.Package.all(self.session)))
 
     def test_repr_package(self):
         """ Test the __repr__ function of Package. """

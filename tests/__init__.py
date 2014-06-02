@@ -234,6 +234,16 @@ def create_package(session):
     )
     session.add(package)
 
+    package = model.Package(
+        name='offlineimap',
+        summary='Powerful IMAP/Maildir synchronization and reader support',
+        description='Powerful IMAP/Maildir synchronization...',
+        status='Approved',
+        review_url=None,
+        upstream_url=None,
+    )
+    session.add(package)
+
     session.commit()
 
 
@@ -245,10 +255,12 @@ def create_package_listing(session):
     guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
+    offlineimap_pkg = model.Package.by_name(session, 'offlineimap')
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')
     devel_collec = model.Collection.by_name(session, 'master')
+    el4_collec = model.Collection.by_name(session, 'el4')
 
     # Pkg: guake - Collection: F18 - Approved
     pkgltg = model.PackageListing(
@@ -309,6 +321,15 @@ def create_package_listing(session):
     )
     session.add(pkgltg)
 
+    # Pkg: offlineimap - Collection: el4 - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='dodji',
+        status='Approved',
+        package_id=offlineimap_pkg.id,
+        collection_id=el4_collec.id,
+    )
+    session.add(pkgltg)
+
     session.commit()
 
 
@@ -357,6 +378,9 @@ def create_package_acl(session):
     guake_pkg = model.Package.by_name(session, 'guake')
     fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
+    offlineimap_pkg = model.Package.by_name(session, 'offlineimap')
+
+    el4_collec = model.Collection.by_name(session, 'el4')
     f18_collec = model.Collection.by_name(session, 'f18')
     devel_collec = model.Collection.by_name(session, 'master')
 
@@ -366,6 +390,8 @@ def create_package_acl(session):
         session, guake_pkg.id, devel_collec.id)
     pkglist_geany_devel = model.PackageListing.by_pkgid_collectionid(
         session, geany_pkg.id, devel_collec.id)
+    pkglist_offlineimap_el4 = model.PackageListing.by_pkgid_collectionid(
+        session, offlineimap_pkg.id, el4_collec.id)
 
     packager = model.PackageListingAcl(
         fas_name='pingou',
@@ -450,6 +476,31 @@ def create_package_acl(session):
     packager = model.PackageListingAcl(
         fas_name='josef',
         packagelisting_id=pkglist_geany_devel.id,
+        acl='watchcommits',
+        status='Approved',
+    )
+    session.add(packager)
+
+    # offlineimap - EL4
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_offlineimap_el4.id,
+        status='Approved',
+        acl='commit',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_offlineimap_el4.id,
+        acl='approveacls',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_offlineimap_el4.id,
         acl='watchcommits',
         status='Approved',
     )
