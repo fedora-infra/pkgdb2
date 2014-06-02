@@ -758,6 +758,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="error">Only the user can remove his/her '
                 'ACL</li>' in output.data)
 
+            # package admin grants commit to Toshio on master
             data = {
                 'branch': 'master',
                 'acls': 'Approved',
