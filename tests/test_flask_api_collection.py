@@ -160,7 +160,7 @@ class FlaskApiCollectionTest(Modeltests):
         output = json.loads(output.data)
         self.assertEqual(sorted(output.keys()),
                          ['collections', 'output'])
-        self.assertEqual(len(output['collections']), 4)
+        self.assertEqual(len(output['collections']), 5)
         self.assertEqual(set(output['collections'][0].keys()),
                          set(['branchname', 'version', 'name', 'status',
                               'dist_tag', 'koji_name']))

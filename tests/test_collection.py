@@ -43,17 +43,18 @@ class Collectiontests(Modeltests):
     def test_init_collection(self):
         """ Test the __init__ function of Collection. """
         create_collection(self.session)
-        self.assertEqual(4, len(model.Collection.all(self.session)))
+        self.assertEqual(5, len(model.Collection.all(self.session)))
 
     def test_repr_collection(self):
         """ Test the __repr__ function of Collection. """
         create_collection(self.session)
         collections = model.Collection.all(self.session)
-        self.assertEqual(collections[0].branchname, 'el6')
+        self.assertEqual(collections[0].branchname, 'el4')
+        self.assertEqual(collections[1].branchname, 'el6')
         self.assertEqual("Collection(u'Fedora', u'17', u'Active', "
                          "owner:u'toshio')",
-                         collections[1].__repr__())
-        self.assertEqual(collections[2].branchname, 'f18')
+                         collections[2].__repr__())
+        self.assertEqual(collections[3].branchname, 'f18')
 
     def test_search(self):
         """ Test the search function of Collection. """
