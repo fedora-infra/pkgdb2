@@ -472,9 +472,11 @@ def package_retire(package, full=True):
                         flask.flash(
                             'This package has been retired on branch: %s'
                             % acl.collection.branchname)
-                    except pkgdblib.PkgdbException, err:
+                    except pkgdblib.PkgdbException, err:  # pragma: no cover
+                        # We should never hit this
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
+                        APP.logger.exception(err)
                 else:  # pragma: no cover
                     flask.flash(
                         'This package has not been orphaned on '
@@ -484,7 +486,9 @@ def package_retire(package, full=True):
             SESSION.commit()
         # Keep it in, but normally we shouldn't hit this
         except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We should never hit this
             SESSION.rollback()
+            APP.logger.exception(err)
             flask.flash(str(err), 'error')
 
         return flask.redirect(
