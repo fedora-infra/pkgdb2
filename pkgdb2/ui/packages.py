@@ -184,7 +184,8 @@ def package_info(package):
                     committers.append(acl.fas_name)
             elif acl.acl.startswith('watch') and acl.status == 'Approved':
                 dic = watch_acls
-            else:
+            else:  # pragma: no cover  -- pass isn't `covered` by coverage
+                # We managed approveacls earlier
                 continue
 
             if acl.fas_name not in dic:
