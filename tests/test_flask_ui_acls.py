@@ -599,6 +599,32 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="error">Invalid input submitted</li>'
                 in output.data)
 
+        mock_func.return_value = ['pingou', 'ralph', 'toshio']
+
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            # Get works
+            output = self.app.get(
+                '/package/guake/acl/commit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '</a> > Edit Commit Access</h1>' in output.data)
+            self.assertTrue(
+                '<input id="csrf_token" name="csrf_token"' in output.data)
+            self.assertTrue(
+                '<option value="Approved">Approved' in output.data)
+            self.assertEqual(
+                output.data.count('class="username">'), 1)
+
+            # Only 2 approved ACLs
+            output = self.app.get(
+                '/package/guake/', follow_redirects=True)
+            self.assertEqual(output.data.count('title="ACL Approved"'), 2)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
             data = {
                 'branch': 'master',
                 'acls': 'Approved',
