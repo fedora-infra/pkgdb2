@@ -287,6 +287,9 @@ engineers need to create packages and spin them into a distribution."""
 """
         self.assertTrue(expected in output.data)
 
+    def test_is_pkg_admin(self):
+        """ Test the is_pkg_admin function. """
+        self.assertFalse(pkgdb2.is_pkg_admin(None, None, None, None))
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskTest)
