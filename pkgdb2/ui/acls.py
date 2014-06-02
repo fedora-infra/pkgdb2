@@ -189,9 +189,10 @@ def giveup_acl(package, acl):
 
         if not pkg_branchs:
             flask.flash(
-                'No branches found for you for the ACL: %s' % acl, 'error')
+                'No active branches found for you for the ACL: %s' % acl,
+                'error')
             return flask.redirect(
-                flask.url_for('.package_info', package=package.name))
+                flask.url_for('.package_info', package=package))
 
         for branch in pkg_branchs:
             try:
