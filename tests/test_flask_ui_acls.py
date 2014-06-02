@@ -695,6 +695,23 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">toshio&#39;s commit ACL updated on '
                 'master</li>' in output.data)
 
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            # Invalid branch
+            data = {
+                'branch': 'foo',
+                'acls': '',
+                'user': 'toshio',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/package/guake/acl/commit/', data=data,
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Nothing to update' in output.data)
+
             data = {
                 'branch': 'master',
                 'acls': 'Approved',
