@@ -25,6 +25,7 @@ UI namespace for the Flask application.
 
 import flask
 from math import ceil
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb2.forms
@@ -707,3 +708,48 @@ def update_acl(package, update_acl):
         admins=admins,
         committers=committers,
     )
+
+
+@UI.route('/package/<package>/delete/', methods=['POST'])
+@is_admin
+def delete_package(package):
+    ''' Delete the specified package.
+    '''
+    form = pkgdb2.forms.ConfirmationForm()
+
+    if not form.validate_on_submit():
+        flask.flash('Invalid input', 'error')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package))
+
+    packagename = package
+    package = None
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    for pkglist in package.listings:
+        for acl in pkglist.acls:
+            SESSION.delete(acl)
+        SESSION.delete(pkglist)
+
+    SESSION.delete(package)
+
+    try:
+        SESSION.commit()
+    except SQLAlchemyError, err:
+        SESSION.rollback()
+        flask.flash(
+            'An error occured while trying to delete the package %s'
+            % packagename, 'error')
+        APP.logger.debug('Could not delete package: %s', packagename)
+        APP.logger.exception(err)
+        return flask.redirect(
+                flask.url_for('.package_info', package=package.name))
+
+    return flask.redirect(
+        flask.url_for('.list_packages'))
