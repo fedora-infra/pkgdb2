@@ -189,6 +189,16 @@ def create_collection(session):
     )
     session.add(collection)
 
+    collection = model.Collection(
+        name='EPEL',
+        version='4',
+        status='EOL',
+        owner='kevin',
+        branchname='el4',
+        dist_tag='.el4',
+    )
+    session.add(collection)
+
     session.commit()
 
 
