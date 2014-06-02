@@ -190,9 +190,11 @@ class PackageListingtests(Modeltests):
 
         # Collection 3 == master
         pkg_list = model.PackageListing.by_collectionid(self.session, 3)
-        self.assertEqual(len(pkg_list), 3)
+        self.assertEqual(len(pkg_list), 4)
         self.assertEqual(pkg_list[0].collection.branchname, 'master')
         self.assertEqual(pkg_list[1].collection.branchname, 'master')
+        self.assertEqual(pkg_list[2].collection.branchname, 'master')
+        self.assertEqual(pkg_list[3].collection.branchname, 'master')
 
     def test_branch(self):
         """ Test the branch method of PackageListing. """
