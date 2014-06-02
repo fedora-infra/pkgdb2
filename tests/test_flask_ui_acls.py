@@ -516,6 +516,21 @@ class FlaskUiAclsTest(Modeltests):
                 output.data.count('<td class="users">'), 1)
 
         user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/package/guake/acl/commit/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '</a> > Edit Commit Access</h1>' in output.data)
+            self.assertTrue(
+                '<input id="csrf_token" name="csrf_token"' in output.data)
+            self.assertTrue(
+                '<option value="Approved">Approved' in output.data)
+            self.assertEqual(
+                output.data.count('class="username">'), 1)
+
+        user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
 
             output = self.app.get(
@@ -541,6 +556,8 @@ class FlaskUiAclsTest(Modeltests):
                 '<input id="csrf_token" name="csrf_token"' in output.data)
             self.assertTrue(
                 '<option value="Approved">Approved' in output.data)
+            self.assertEqual(
+                output.data.count('class="username">'), 2)
 
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
