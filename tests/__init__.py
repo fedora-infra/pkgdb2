@@ -330,6 +330,15 @@ def create_package_listing(session):
     )
     session.add(pkgltg)
 
+    # Pkg: offlineimap - Collection: devel - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='josef',
+        status='Approved',
+        package_id=offlineimap_pkg.id,
+        collection_id=devel_collec.id,
+    )
+    session.add(pkgltg)
+
     session.commit()
 
 
@@ -392,6 +401,8 @@ def create_package_acl(session):
         session, geany_pkg.id, devel_collec.id)
     pkglist_offlineimap_el4 = model.PackageListing.by_pkgid_collectionid(
         session, offlineimap_pkg.id, el4_collec.id)
+    pkglist_offlineimap_devel = model.PackageListing.by_pkgid_collectionid(
+        session, offlineimap_pkg.id, devel_collec.id)
 
     packager = model.PackageListingAcl(
         fas_name='pingou',
@@ -481,9 +492,9 @@ def create_package_acl(session):
     )
     session.add(packager)
 
-    # offlineimap - EL4
+    # offlineimap
     packager = model.PackageListingAcl(
-        fas_name='josef',
+        fas_name='dodji',
         packagelisting_id=pkglist_offlineimap_el4.id,
         status='Approved',
         acl='commit',
@@ -491,7 +502,7 @@ def create_package_acl(session):
     session.add(packager)
 
     packager = model.PackageListingAcl(
-        fas_name='josef',
+        fas_name='dodji',
         packagelisting_id=pkglist_offlineimap_el4.id,
         acl='approveacls',
         status='Approved',
@@ -499,7 +510,7 @@ def create_package_acl(session):
     session.add(packager)
 
     packager = model.PackageListingAcl(
-        fas_name='josef',
+        fas_name='dodji',
         packagelisting_id=pkglist_offlineimap_el4.id,
         acl='watchcommits',
         status='Approved',
