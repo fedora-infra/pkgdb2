@@ -712,6 +712,36 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<li class="message">Nothing to update' in output.data)
 
+            # Nothing to change
+            data = {
+                'branch': 'master',
+                'acls': 'Awaiting Review',
+                'user': 'toshio',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/package/guake/acl/commit/', data=data,
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Nothing to update' in output.data)
+
+            # Nothing to change (2)
+            data = {
+                'branch': 'f18',
+                'acls': '',
+                'user': 'toshio',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/package/guake/acl/commit/', data=data,
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Nothing to update' in output.data)
+
             data = {
                 'branch': 'master',
                 'acls': 'Approved',
