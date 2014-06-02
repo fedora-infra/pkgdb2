@@ -456,6 +456,14 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<li class="message">ACLs updated</li>' in output.data)
 
+            # Nothing to update the second time
+            output = self.app.post(
+                '/acl/guake/comaintain/',
+                data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Nothing to update</li>' in output.data)
+
             output = self.app.post(
                 '/acl/random/comaintain/',
                 data=data, follow_redirects=True)
