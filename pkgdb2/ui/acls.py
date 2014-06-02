@@ -233,7 +233,7 @@ def package_give_acls(package):
     except IndexError:
         flask.flash('No package found by this name', 'error')
         return flask.redirect(
-            flask.url_for('.package_info', package=package))
+            flask.url_for('.list_packages'))
 
     collections = [
         pkglist.collection
