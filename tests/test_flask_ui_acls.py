@@ -627,18 +627,19 @@ class FlaskUiAclsTest(Modeltests):
 
             data = {
                 'branch': 'master',
-                'acls': 'Approved',
+                'acls': '',
                 'user': 'toshio',
                 'csrf_token': csrf_token,
             }
 
+            # Toshio drops his ACL request on master
             output = self.app.post(
                 '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="error">User &#34;toshio&#34; is not in the '
-                'packager group</li>' in output.data)
+                '<li class="message">toshio&#39;s commit ACL updated on '
+                'master</li>' in output.data)
 
             mock_func.return_value = ['pingou', 'ralph', 'toshio']
             data = {
