@@ -306,7 +306,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
         elif user.username == pkg_user and status not in \
-                ('Awaiting Review', 'Removed', 'Obsolete') \
+                ('Awaiting Review', 'Removed', 'Obsolete', '') \
                 and acl not in pkgdb2.APP.config['AUTO_APPROVE']:
             raise PkgdbException(
                 'You are not allowed to approve or deny '
