@@ -661,6 +661,11 @@ def update_acl(package, update_acl):
                         cnt += 1
                         continue
 
+                    if lcl_user not in commit_acls:
+                        flask.flash('Invalid user: %s' % lcl_user, 'error')
+                        cnt += 1
+                        continue
+
                     if branches_inv[lcl_branch] in commit_acls[lcl_user] \
                             and commit_acls[lcl_user][
                                 branches_inv[lcl_branch]
