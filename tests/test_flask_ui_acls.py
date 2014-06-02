@@ -515,6 +515,7 @@ class FlaskUiAclsTest(Modeltests):
             self.assertEqual(
                 output.data.count('<td class="users">'), 1)
 
+        # Fails `toshio` is not a packager
         user = FakeFasUser()
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
@@ -529,6 +530,24 @@ class FlaskUiAclsTest(Modeltests):
                 '<option value="Approved">Approved' in output.data)
             self.assertEqual(
                 output.data.count('class="username">'), 1)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            data = {
+                'branch': 'master',
+                'acls': '',
+                'user': 'toshio',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post(
+                '/package/guake/acl/commit/', data=data,
+                follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">User &#34;toshio&#34; is not in the '
+                'packager group</li>' in output.data)
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
