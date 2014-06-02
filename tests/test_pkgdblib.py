@@ -1260,7 +1260,8 @@ class PkgdbLibtests(Modeltests):
         create_package_acl(self.session)
 
         top = pkgdblib.get_top_maintainers(self.session)
-        self.assertEqual(top, [(u'group::gtk-sig', 1), (u'pingou', 1)])
+        self.assertEqual(
+            top, [(u'group::gtk-sig', 1), (u'josef', 1), (u'pingou', 1)])
 
     def test_get_top_poc(self):
         """ Test the get_top_poc function. """

@@ -212,7 +212,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         output = self.app.get('/api/notify/')
         self.assertEqual(output.status_code, 200)
 
-        expected = """geany|group::gtk-sig
+        expected = """geany|group::gtk-sig,josef
 guake|pingou
 """
         self.assertEqual(output.data, expected)
@@ -228,7 +228,7 @@ guake|pingou
         expected = {
             u'title': u'Fedora Package Database -- Notification List',
             u'packages': {
-                'geany': [u'group::gtk-sig'],
+                'geany': [u'group::gtk-sig', 'josef'],
                 'guake': [u'pingou'],
             },
             u'name': None,
@@ -240,7 +240,7 @@ guake|pingou
         output = self.app.get('/api/notify/?name=Fedora')
         self.assertEqual(output.status_code, 200)
 
-        expected = """geany|group::gtk-sig
+        expected = """geany|group::gtk-sig,josef
 guake|pingou
 """
         self.assertEqual(output.data, expected)
@@ -295,7 +295,7 @@ guake|pingou
         output = self.app.get('/api/notify/all')
         self.assertEqual(output.status_code, 200)
 
-        expected = """geany|group::gtk-sig
+        expected = """geany|group::gtk-sig,josef
 guake|pingou
 """
         self.assertEqual(output.data, expected)
@@ -311,7 +311,7 @@ guake|pingou
         expected = {
             u'title': u'Fedora Package Database -- Notification List',
             u'packages': {
-                'geany': [u'group::gtk-sig'],
+                'geany': [u'group::gtk-sig', 'josef'],
                 'guake': [u'pingou'],
             },
             u'name': None,
@@ -323,7 +323,7 @@ guake|pingou
         output = self.app.get('/api/notify/all?name=Fedora')
         self.assertEqual(output.status_code, 200)
 
-        expected = """geany|group::gtk-sig
+        expected = """geany|group::gtk-sig,josef
 guake|pingou
 """
         self.assertEqual(output.data, expected)
