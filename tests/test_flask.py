@@ -291,6 +291,21 @@ engineers need to create packages and spin them into a distribution."""
         """ Test the is_pkg_admin function. """
         self.assertFalse(pkgdb2.is_pkg_admin(None, None, None, None))
 
+    def test_is_safe_url(self):
+        """ Test the is_safe_url function. """
+        import flask
+        app = flask.Flask('pkgdb2')
+
+        with app.test_request_context():
+            self.assertTrue(pkgdb2.is_safe_url('http://localhost'))
+            self.assertTrue(pkgdb2.is_safe_url('https://localhost'))
+            self.assertTrue(pkgdb2.is_safe_url('http://localhost/test'))
+            self.assertFalse(
+                pkgdb2.is_safe_url('http://fedoraproject.org/'))
+            self.assertFalse(
+                pkgdb2.is_safe_url('https://fedoraproject.org/'))
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskTest)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
