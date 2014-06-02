@@ -103,6 +103,8 @@ def list_packages(motif=None, orphaned=False, status=None,
         packages_count=packages_count,
         page=page,
         status=status,
+        owner=owner,
+        branches=branches,
     )
 
 
