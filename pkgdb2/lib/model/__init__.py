@@ -1444,7 +1444,7 @@ class Log(BASE):
     package_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Package.id', ondelete='RESTRICT', onupdate='CASCADE'),
+            'Package.id', ondelete='SET NULL', onupdate='CASCADE'),
         nullable=True,
         index=True)
     description = sa.Column(sa.Text, nullable=False)
