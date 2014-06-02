@@ -8,7 +8,7 @@
 {% block options_title %}Package Status{% endblock %}
 {%block options %}
 <table id="metainfo">
-<!--
+{#
 This is commented out for now after the initial deployment to prod.
 
 In the future we may use that for things like "Under review", "Reviewed", etc.
@@ -18,7 +18,7 @@ confusing what the difference is between that status an the per-branch status)
         <th>Status</th>
         <td>{{ package.status }}</td>
     </tr>
--->
+#}
     <tr>
         <th>Created on</th>
         <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
@@ -31,6 +31,18 @@ confusing what the difference is between that status an the per-branch status)
     </tr>
     {% endif %}
     {% endfor %}
+    <tr>
+      <td colspan="2">
+        <form action="{{ url_for('.delete_package', package=package.name) }}"
+          method="POST">
+          <button class="bold pkg_button_grey inline" type="submit"
+            onclick="return confirm('Are you sure you want to delete this package?');">
+            Delete package
+          </button>
+          {{ form.csrf_token }}
+        </form>
+      </td>
+    </tr>
 </table>
 {% endblock %}
 
