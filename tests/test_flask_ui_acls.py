@@ -665,12 +665,17 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
+            # Toshio is no longer requesting, thus is not in the list of
+            # users and thus makes the request invalid
             output = self.app.post(
                 '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h4>Package Administrator(s)</h4>' in output.data)
+            self.assertTrue(
+                '<li class="error">Invalid user: toshio</li>' in output.data)
+
 
             data = {
                 'branch': 'master',
