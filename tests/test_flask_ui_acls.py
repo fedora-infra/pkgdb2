@@ -641,7 +641,8 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">toshio&#39;s commit ACL updated on '
                 'master</li>' in output.data)
 
-            mock_func.return_value = ['pingou', 'ralph', 'toshio']
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
             data = {
                 'branch': 'master',
                 'acls': 'foobar',
@@ -649,6 +650,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
+            # Invalid ACL status provided
             output = self.app.post(
                 '/package/guake/acl/commit/', data=data,
                 follow_redirects=True)
