@@ -209,6 +209,10 @@ def log(session, package, topic, message):
                       '%(previous_status)s to: '
                       '%(status)s on branch: '
                       '%(package_listing.collection.branchname)s',
+        'acl.delete': 'user: %(agent)s deleted acl: %(acl.acl)s of '
+                      'package: %(acl.packagelist.package.name)s of user: '
+                      '%(acl.fas_name)s on: '
+                      '%(acl.packagelist.collection.branchname)s',
         'owner.update': 'user: %(agent)s changed point of contact of package: '
                         '%(package_name)s from: '
                         '%(previous_owner)s to: '
@@ -220,6 +224,10 @@ def log(session, package, topic, message):
         'branch.complete': 'user: %(agent)s finished branching from '
                            '%(collection_from.branchname)s to '
                            '%(collection_to.branchname)s',
+        'package.branch.delete': 'user: %(agent)s deleted branch: '
+                          '%(package_listing.collection.branchname)s '
+                          'for package %(package_listing.package.name)s ',
+        'package.delete': 'user: %(agent)s deleted package %(package.name)s',
         'package.new': 'user: %(agent)s created package: '
                        '%(package_name)s on branch: '
                        '%(package_listing.collection.branchname)s for point'

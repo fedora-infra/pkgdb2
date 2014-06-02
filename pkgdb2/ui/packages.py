@@ -734,9 +734,21 @@ def delete_package(package):
 
     for pkglist in package.listings:
         for acl in pkglist.acls:
+            pkgdb2.lib.utils.log(SESSION, None, 'acl.delete', dict(
+                agent=flask.g.fas_user.username,
+                acl=acl.to_json(),
+            ))
             SESSION.delete(acl)
+        pkgdb2.lib.utils.log(SESSION, None, 'package.branch.delete', dict(
+            agent=flask.g.fas_user.username,
+            package_listing=pkglist.to_json(),
+        ))
         SESSION.delete(pkglist)
 
+    pkgdb2.lib.utils.log(SESSION, None, 'package.delete', dict(
+        agent=flask.g.fas_user.username,
+        package=package.to_json(),
+    ))
     SESSION.delete(package)
 
     try:
