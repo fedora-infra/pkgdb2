@@ -267,13 +267,29 @@ class FlaskUiAclsTest(Modeltests):
         create_package_acl(self.session)
 
         user = FakeFasUser()
-        mock_func.return_value = ['pingou', 'ralph', 'kevin']
+        mock_func.return_value = ['pingou', 'ralph', 'kevin', 'dodji']
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
                 '/acl/guake/giveup/approveacls/', follow_redirects=True)
             self.assertEqual(output.status_code, 405)
 
+        user.username = 'dodji'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/')
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+            data = {'csrf_token': csrf_token}
+
+            output = self.app.post(
+                '/acl/offlineimap/giveup/approveacls/',
+                data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No active branches found for you for '
+                'the ACL: approveacls</li>' in output.data)
+
+        user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
             output = self.app.get('/package/guake/')
             csrf_token = output.data.split(
