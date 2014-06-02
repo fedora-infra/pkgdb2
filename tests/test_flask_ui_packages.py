@@ -298,6 +298,16 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/orphan')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title> Select branches | PkgDB </title>' in output.data)
+
+            output = self.app.get('/package/guake/orphan/0')
+            self.assertEqual(output.status_code, 200)
+            self.assertFalse(
+                '<title> Select branches | PkgDB </title>' in output.data)
+
             output = self.app.post(
                 '/package/guake/orphan', follow_redirects=True,
                 data={'branches': ['master']})
@@ -408,6 +418,15 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/retire')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title> Select branches | PkgDB </title>' in output.data)
+
+            output = self.app.get('/package/guake/retire/0')
+            self.assertEqual(output.status_code, 200)
+            self.assertFalse(
+                '<title> Select branches | PkgDB </title>' in output.data)
 
             data['branches'] = ['foobar']
             output = self.app.post(
@@ -499,6 +518,16 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/take')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<title> Select branches | PkgDB </title>' in output.data)
+
+            output = self.app.get('/package/guake/take/0')
+            self.assertEqual(output.status_code, 200)
+            self.assertFalse(
+                '<title> Select branches | PkgDB </title>' in output.data)
+
             output = self.app.post(
                 '/package/guake/take', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
