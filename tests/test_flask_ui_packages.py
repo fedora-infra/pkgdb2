@@ -173,6 +173,13 @@ class FlaskUiPackagesTest(Modeltests):
             output = self.app.get('/package/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
+                '<title> Give package | PkgDB </title>' in output.data)
+
+            output = self.app.get('/package/guake/give/0')
+            self.assertEqual(output.status_code, 200)
+            self.assertFalse(
+                '<title> Give package | PkgDB </title>' in output.data)
+            self.assertTrue(
                 '<h1>Give Point of Contact of package: guake</h1>'
                 in output.data)
             self.assertTrue(
