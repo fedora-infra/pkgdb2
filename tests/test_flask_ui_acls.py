@@ -773,6 +773,8 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<li class="message">toshio&#39;s commit ACL updated on '
                 'master</li>' in output.data)
+            # One more approved ACL
+            self.assertTrue(output.data.count('title="ACL Approved"'), 3)
 
     @patch('pkgdb2.packager_login_required')
     def test_pending_acl(self, login_func):
