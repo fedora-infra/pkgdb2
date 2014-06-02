@@ -183,7 +183,9 @@ def giveup_acl(package, acl):
             pkglist.collection.branchname
             for pkglist in pkg.listings
             if pkglist.collection.status in
-            ['Active', 'Under Development']])
+            ['Active', 'Under Development'] and flask.g.fas_user.username in
+            [tmpacl.fas_name for tmpacl in pkglist.acls]
+        ])
 
         if not pkg_branchs:
             flask.flash(
