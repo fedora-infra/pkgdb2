@@ -281,7 +281,7 @@ def package_new():
 def package_give(package, full=True):
     ''' Gives the PoC of a package to someone else. '''
 
-    if not bool(full) or full in ['0', 'False']:
+    if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     packagename = package
@@ -365,7 +365,7 @@ def package_give(package, full=True):
 def package_orphan(package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
 
-    if not bool(full) or full in ['0', 'False']:
+    if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
@@ -430,7 +430,7 @@ def package_orphan(package, full=True):
 def package_retire(package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
 
-    if not bool(full) or full in ['0', 'False']:
+    if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
@@ -505,7 +505,7 @@ def package_retire(package, full=True):
 def package_take(package, full=True):
     ''' Make someone Point of contact of an orphaned package. '''
 
-    if not bool(full) or full in ['0', 'False']:
+    if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
