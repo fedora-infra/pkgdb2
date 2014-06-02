@@ -856,6 +856,13 @@ class FlaskUiAclsTest(Modeltests):
 
         user.username = 'Toshio'
         with user_set(pkgdb2.APP, user):
+            output = self.app.get('/acl/foo/give/', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No package found by this name</li>'
+                in output.data)
+            self.assertTrue('<h1>Search packages</h1>' in output.data)
+
             output = self.app.get('/acl/guake/give/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
