@@ -421,6 +421,22 @@ def create_package_acl(session):
     )
     session.add(packager)
 
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_geany_devel.id,
+        acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_geany_devel.id,
+        acl='approveacls',
+        status='Approved',
+    )
+    session.add(packager)
+
     session.commit()
 
 
