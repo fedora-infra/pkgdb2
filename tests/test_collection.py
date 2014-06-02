@@ -48,7 +48,8 @@ class Collectiontests(Modeltests):
     def test_repr_collection(self):
         """ Test the __repr__ function of Collection. """
         create_collection(self.session)
-        collections = model.Collection.all(self.session)
+        collections = sorted(
+            model.Collection.all(self.session), key=lambda x: x.branchname)
         self.assertEqual(collections[0].branchname, 'el4')
         self.assertEqual(collections[1].branchname, 'el6')
         self.assertEqual("Collection(u'Fedora', u'17', u'Active', "
