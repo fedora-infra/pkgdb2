@@ -646,6 +646,7 @@ def update_acl(package, update_acl):
         sub_acls = flask.request.values.getlist('acls')
         sub_users = flask.request.values.getlist('user')
         sub_branches = flask.request.values.getlist('branch')
+        changed = False
 
         if sub_acls and len(sub_acls) == (len(sub_users) * len(sub_branches)):
             cnt = 0
@@ -693,12 +694,15 @@ def update_acl(package, update_acl):
                         SESSION.commit()
                         flask.flash("%s's %s ACL updated on %s" % (
                             lcl_user, update_acl, lcl_branch))
+                        changed = True
                     except pkgdblib.PkgdbException, err:
                         SESSION.rollback()
                         flask.flash(str(err), 'error')
                     cnt += 1
 
             SESSION.commit()
+            if not changed:
+                flask.flash('Nothing to update')
             return flask.redirect(
                 flask.url_for('.package_info', package=package.name))
         else:
