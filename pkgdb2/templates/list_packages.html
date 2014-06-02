@@ -53,7 +53,8 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
     <tr>
         <td>
         {% if page > 1%}
-            <a href="{{ url_for('.%s' % origin, motif=motif) }}?page={{page - 1}}">
+            <a href="{{ url_for('.%s' % origin, motif=motif, page=page-1,
+                branches=branches, status=status, owner=owner) }}">
                 &lt; Previous
             </a>
         {% else %}
@@ -63,7 +64,8 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
         <td>{{ page }} / {{ total_page }}</td>
         <td>
             {% if page < total_page %}
-            <a href="{{ url_for('.%s' % origin, motif=motif) }}?page={{page + 1}}">
+            <a href="{{ url_for('.%s' % origin, motif=motif, page=page+1,
+                branches=branches, status=status, owner=owner) }}">
                 Next &gt;
             </a>
             {% else %}
