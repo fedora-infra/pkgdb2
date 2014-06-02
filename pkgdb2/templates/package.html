@@ -31,6 +31,7 @@ confusing what the difference is between that status an the per-branch status)
     </tr>
     {% endif %}
     {% endfor %}
+    {% if is_admin %}
     <tr>
       <td colspan="2">
         <form action="{{ url_for('.delete_package', package=package.name) }}"
@@ -43,6 +44,7 @@ confusing what the difference is between that status an the per-branch status)
         </form>
       </td>
     </tr>
+    {% endif %}
 </table>
 {% endblock %}
 
