@@ -310,7 +310,7 @@ User's packages
 
     '''
     httpcode = 200
-    output = {}
+    output = {'output': 'ok'}
 
     packagername = flask.request.args.get('packagername', None) or packagername
     eol = flask.request.args.get('eol', False)
