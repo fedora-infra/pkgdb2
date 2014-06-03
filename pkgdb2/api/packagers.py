@@ -304,7 +304,8 @@ User's packages
           "output": "notok",
           "co-maintained": [],
           "point of contact": [],
-          "watch": []
+          "watch": [],
+          "error": "No ACLs found for that user"
         }
 
     '''
@@ -355,6 +356,7 @@ User's packages
 
     if not packages and not packages_co and not packages_watch:
         output['output'] = 'notok'
+        output['error'] = 'No ACLs found for that user'
         httpcode = 404
 
     jsonout = flask.jsonify(output)
