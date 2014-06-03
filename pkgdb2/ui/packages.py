@@ -208,6 +208,12 @@ def package_info(package):
                         aclname not in watch_acls[user][collection_name]:
                     watch_acls[user][collection_name][aclname] = None
 
+    statuses = set([
+        listing.status
+        for listing in package.sorted_listings
+        if listing.collection.status != 'EOL'
+    ])
+
     return flask.render_template(
         'package.html',
         package=package,
@@ -215,6 +221,7 @@ def package_info(package):
         watch_acls=watch_acls,
         pocs=pocs,
         admins=admins,
+        statuses=statuses,
         pending_admins=pending_admins,
         branches=branches,
         committers=committers,
