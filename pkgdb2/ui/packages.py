@@ -778,7 +778,7 @@ def delete_package(package):
 
     try:
         SESSION.commit()
-    except SQLAlchemyError, err:
+    except SQLAlchemyError, err:  #pragma: no cover
         SESSION.rollback()
         flask.flash(
             'An error occured while trying to delete the package %s'
