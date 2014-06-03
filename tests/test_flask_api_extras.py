@@ -388,7 +388,7 @@ guake|pingou
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
 avail | @provenpackager,pingou,toshio | rpms/fedocal/master
-avail | @provenpackager,@gtk-sig, | rpms/geany/master
+avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master"""
         self.assertEqual(output.data, expected)
@@ -425,7 +425,7 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
                     u'master': {
                         u'commit': {
                             u'groups': [u'provenpackager', u'gtk-sig'],
-                            u'people': []
+                            u'people': ['pingou']
                         }
                     }
                 },

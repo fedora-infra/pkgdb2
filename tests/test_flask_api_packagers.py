@@ -103,7 +103,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['page_total'], 1)
-        self.assertEqual(len(output['acls']), 10)
+        self.assertEqual(len(output['acls']), 11)
         self.assertEqual(
             set(output['acls'][0].keys()),
             set(['status', 'fas_name', 'packagelist', 'acl']))
@@ -133,7 +133,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['page_total'], 1)
-        self.assertEqual(len(output['acls']), 10)
+        self.assertEqual(len(output['acls']), 11)
         self.assertEqual(set(output['acls'][0].keys()),
                          set(['status', 'fas_name', 'packagelist', 'acl']))
         self.assertEqual(
@@ -154,7 +154,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['page_total'], 1)
-        self.assertEqual(len(output['acls']), 5)
+        self.assertEqual(len(output['acls']), 6)
         self.assertEqual(
             set(output['acls'][0].keys()),
             set(['status', 'fas_name', 'packagelist', 'acl']))
@@ -186,7 +186,7 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(sorted(output.keys()),
                          ['acls_count', 'output', 'page', 'page_total'])
         self.assertEqual(output['output'], 'ok')
-        self.assertEqual(output['acls_count'], 5)
+        self.assertEqual(output['acls_count'], 6)
         self.assertEqual(output['page'], 1)
         self.assertEqual(output['page_total'], 1)
 
@@ -220,7 +220,7 @@ class FlaskApiPackagersTest(Modeltests):
                          ['page_total', 'output', 'acls', 'page'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(output['page_total'], 1)
-        self.assertEqual(len(output['acls']), 2)
+        self.assertEqual(len(output['acls']), 3)
         self.assertEqual(
             set(output['acls'][0].keys()),
             set(['status', 'fas_name', 'packagelist', 'acl']))
@@ -229,9 +229,14 @@ class FlaskApiPackagersTest(Modeltests):
             set(['critpath', 'package', 'status_change', 'collection',
                  'point_of_contact', 'status']))
         self.assertEqual(
-            output['acls'][0]['packagelist']['package']['name'], 'fedocal')
+            output['acls'][0]['packagelist']['package']['name'], 'geany')
         self.assertEqual(
             output['acls'][0]['packagelist']['collection']['branchname'],
+            'master')
+        self.assertEqual(
+            output['acls'][1]['packagelist']['package']['name'], 'fedocal')
+        self.assertEqual(
+            output['acls'][1]['packagelist']['collection']['branchname'],
             'master')
 
     def test_packager_list(self):

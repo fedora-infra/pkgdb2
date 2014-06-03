@@ -1005,7 +1005,7 @@ class PkgdbLibtests(Modeltests):
         create_package_acl2(self.session)
 
         acls = pkgdblib.get_acl_packager(self.session, 'pingou')
-        self.assertEqual(len(acls), 10)
+        self.assertEqual(len(acls), 11)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
@@ -1022,7 +1022,7 @@ class PkgdbLibtests(Modeltests):
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls='commit')
-        self.assertEqual(len(acls), 5)
+        self.assertEqual(len(acls), 6)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1].packagelist.package.name, 'guake')
@@ -1030,7 +1030,7 @@ class PkgdbLibtests(Modeltests):
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit', 'watchbugzilla'])
-        self.assertEqual(len(acls), 8)
+        self.assertEqual(len(acls), 9)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1].packagelist.package.name, 'guake')
@@ -1046,11 +1046,13 @@ class PkgdbLibtests(Modeltests):
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit'], poc=False)
-        self.assertEqual(len(acls), 2)
-        self.assertEqual(acls[0].packagelist.package.name, 'fedocal')
+        self.assertEqual(len(acls), 3)
+        self.assertEqual(acls[0].packagelist.package.name, 'geany')
         self.assertEqual(acls[0].packagelist.collection.branchname, 'master')
         self.assertEqual(acls[1].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[2].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[2].packagelist.collection.branchname, 'f18')
 
     def test_get_pending_acl_user(self):
         """ Test the get_pending_acl_user function. """
