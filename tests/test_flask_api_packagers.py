@@ -347,6 +347,23 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output['master']['point of contact'], 0)
         self.assertEqual(output['master']['co-maintainer'], 0)
 
+        output = self.app.get('/api/packager/stats/dodji/?eol=True')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(sorted(output.keys()),
+                         ['el4', 'el6', 'f17', 'f18', 'master', 'output'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(output['el4']['point of contact'], 0)
+        self.assertEqual(output['el4']['co-maintainer'], 0)
+        self.assertEqual(output['el6']['point of contact'], 0)
+        self.assertEqual(output['el6']['co-maintainer'], 0)
+        self.assertEqual(output['f17']['point of contact'], 0)
+        self.assertEqual(output['f17']['co-maintainer'], 0)
+        self.assertEqual(output['f18']['point of contact'], 0)
+        self.assertEqual(output['f18']['co-maintainer'], 0)
+        self.assertEqual(output['master']['point of contact'], 0)
+        self.assertEqual(output['master']['co-maintainer'], 0)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiPackagersTest)
