@@ -235,6 +235,133 @@ User's ACL
     return jsonout
 
 
+@API.route('/packager/package/')
+@API.route('/packager/package')
+@API.route('/packager/package/<packagername>/')
+@API.route('/packager/package/<packagername>')
+def api_packager_package(packagername=None):
+    '''
+User's packages
+---------------
+    List the packages of the user.
+
+    ::
+
+        /api/packager/package/<fas_username>/
+
+        /api/packager/package/?packagername=<username>
+
+    Accept GET queries only.
+
+    :arg packagername: String of the packager name.
+    :kwarg eol: a boolean to specify whether to include results for
+        EOL collections or not. Defaults to False.
+        If ``True``, it will return results for all collections (including
+        EOL).
+        If ``False``, it will return results only for non-EOL collections.
+
+    Sample response:
+
+    ::
+
+        /api/packager/acl/pingou
+
+        {
+          "output": "ok",
+          "co-maintained": [
+            {
+              "acls": [],
+              "status": "Approved",
+              "upstream_url": null,
+              "description": null,
+              "summary": "Data of T- and B-cell Acute Lymphocytic "
+                         "Leukemia",
+              "creation_date": 1384775354.0,
+              "review_url": null,
+              "name": "R-ALL"
+
+            }
+          ],
+          "watch": [],
+          "point of contact": [
+            {
+              "status": "Approved",
+              "upstream_url": null,
+              "description": null,
+              "summary": "Data of T- and B-cell Acute Lymphocytic "
+                         "Leukemia",
+              "creation_date": 1384775354.0,
+              "review_url": null,
+              "name": "R-ALL",
+              "acls": []
+            }
+          ]
+        }
+
+        /api/packager/package/?packagername=random
+
+        {
+          "output": "notok",
+          "co-maintained": [],
+          "point of contact": [],
+          "watch": []
+        }
+
+    '''
+    httpcode = 200
+    output = {}
+
+    packagername = flask.request.args.get('packagername', None) or packagername
+    eol = flask.request.args.get('eol', False)
+
+    packages_co = pkgdblib.get_package_maintained(
+        SESSION,
+        packager=packagername,
+        poc=False,
+        eol=eol,
+    )
+    seen = []
+    for pkg in packages_co:
+        if pkg[0] not in seen:
+            seen.append(pkg[0])
+    packages_co = seen
+
+    packages = pkgdblib.get_package_maintained(
+        SESSION,
+        packager=packagername,
+        poc=True,
+        eol=eol,
+    )
+    seen = []
+    for pkg in packages:
+        if pkg[0] not in seen:
+            seen.append(pkg[0])
+    packages = seen
+
+    packages_watch = pkgdblib.get_package_watch(
+        SESSION,
+        packager=packagername,
+        eol=eol,
+    )
+    seen = []
+    for pkg in packages_watch:
+        if pkg[0] not in seen:
+            seen.append(pkg[0])
+    packages_watch = seen
+
+    output['point of contact'] = [pkg.to_json(acls=False) for pkg in packages]
+    output['co-maintained'] = [pkg.to_json(acls=False) for pkg in packages_co]
+    output['watch'] = [pkg.to_json(acls=False) for pkg in packages_watch]
+
+    if not packages and not packages_co and not packages_watch:
+        output['output'] = 'notok'
+        httpcode = 404
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
+
+
 @API.route('/packager/stats/')
 @API.route('/packager/stats')
 @API.route('/packager/stats/<packagername>/')
