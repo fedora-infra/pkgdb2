@@ -543,6 +543,81 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
+    def test_delete_package(self, login_func, mock_func):
+        """ Test the delete_package function. """
+        login_func.return_value = None
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        create_package_acl(self.session)
+
+        data = {}
+
+        # User is not an admin
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/delete', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not an administrator of pkgdb'
+                '</li>' in output.data)
+
+        # User is an admin but no csrf
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/delete', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">Invalid input</li>' in output.data)
+
+            output = self.app.get('/package/guake/')
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data = {
+            'csrf_token': csrf_token,
+        }
+
+        # User is not an admin but csrf
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/delete', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">You are not an administrator of pkgdb'
+                '</li>' in output.data)
+
+            # Check before deleting
+            output = self.app.get('/packages/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<p>4 packages found</p>' in output.data)
+
+        # User is an admin with csrf
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/delete', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<p>3 packages found</p>' in output.data)
+
+            output = self.app.post(
+                '/package/random/delete', follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No package of this name found.</li>'
+                in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiPackagesTest)
