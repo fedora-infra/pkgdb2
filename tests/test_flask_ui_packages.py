@@ -333,15 +333,15 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="message">You are no longer point of contact on '
                 'branch: master</li>' in output.data)
 
-        user = FakeFasUserAdmin()
-        with user_set(pkgdb2.APP, user):
+            # You cannot orphan twice the same package, the branch is no
+            # longer available
             output = self.app.post(
                 '/package/guake/orphan', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">You are no longer point of contact on '
-                'branch: master</li>' in output.data)
+                '<td class="errors">&#39;master&#39; is not a valid choice '
+                'for this field</td>' in output.data)
 
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
