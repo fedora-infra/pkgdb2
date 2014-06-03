@@ -609,6 +609,9 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
+                '<li class="message">Package guake deleted</li>'
+                in output.data)
+            self.assertTrue(
                 '<p>3 packages found</p>' in output.data)
 
             output = self.app.post(
