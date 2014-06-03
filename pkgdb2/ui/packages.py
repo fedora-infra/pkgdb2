@@ -778,6 +778,7 @@ def delete_package(package):
 
     try:
         SESSION.commit()
+        flask.flash('Package %s deleted' % packagename)
     except SQLAlchemyError, err:  #pragma: no cover
         SESSION.rollback()
         flask.flash(
