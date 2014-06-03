@@ -735,7 +735,7 @@ def update_acl(package, update_acl):
     )
 
 
-@UI.route('/package/<package>/delete/', methods=['POST'])
+@UI.route('/package/<package>/delete', methods=['POST'])
 @is_admin
 def delete_package(package):
     ''' Delete the specified package.
