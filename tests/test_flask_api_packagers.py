@@ -369,6 +369,70 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output['master']['point of contact'], 0)
         self.assertEqual(output['master']['co-maintainer'], 0)
 
+    def test_packager_package(self):
+        """ Test the api_packager_package function.  """
+
+        output = self.app.get('/api/packager/package/')
+        self.assertEqual(output.status_code, 404)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data,
+            {
+              "co-maintained": [],
+              "error": "No ACLs found for that user",
+              "output": "notok",
+              "point of contact": [],
+              "watch": []
+            }
+        )
+
+        output = self.app.get('/api/packager/package/pingou/')
+        self.assertEqual(output.status_code, 404)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data,
+            {
+              "co-maintained": [],
+              "error": "No ACLs found for that user",
+              "output": "notok",
+              "point of contact": [],
+              "watch": []
+            }
+        )
+
+        output = self.app.get('/api/packager/package/?packagername=pingou')
+        self.assertEqual(output.status_code, 404)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data,
+            {
+              "co-maintained": [],
+              "error": "No ACLs found for that user",
+              "output": "notok",
+              "point of contact": [],
+              "watch": []
+            }
+        )
+
+        create_package_acl2(self.session)
+
+        output = self.app.get('/api/packager/package/pingou/')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(
+            sorted(output.keys()),
+            ['co-maintained',  'output', 'point of contact', 'watch'])
+        self.assertEqual(output['output'], 'ok')
+        self.assertEqual(len(output['co-maintained']), 1)
+        self.assertEqual(len(output['point of contact']), 2)
+        self.assertEqual(len(output['watch']), 2)
+
+        self.assertEqual(output['co-maintained'][0]['name'], 'geany')
+        self.assertEqual(output['point of contact'][0]['name'], 'fedocal')
+        self.assertEqual(output['point of contact'][1]['name'], 'guake')
+        self.assertEqual(output['watch'][0]['name'], 'fedocal')
+        self.assertEqual(output['watch'][1]['name'], 'guake')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiPackagersTest)
