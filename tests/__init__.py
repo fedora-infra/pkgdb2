@@ -629,6 +629,14 @@ def create_package_acl2(session):
 
     packager = model.PackageListingAcl(
         fas_name='pingou',
+        packagelisting_id=pkglist_geany_devel.id,
+        acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
         packagelisting_id=pkglist_fedocal_devel.id,
         acl='commit',
         status='Approved',
