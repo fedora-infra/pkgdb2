@@ -364,6 +364,17 @@ button.pkg_button_lightgrey, button.pkg_button_lightgrey:hover{
     padding: 0.5em 1.3em 0em 1.3em;
 }
 
+#pkg_actions {
+    float: right;
+}
+
+#pkg_actions td,
+#pkg_actions td button {
+    width: 145px;
+    padding-left: 0px;
+}
+
+
 #pkg_watchers table{
     width: 100%;
 }
