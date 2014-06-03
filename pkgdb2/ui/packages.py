@@ -387,6 +387,7 @@ def package_orphan(package, full=True):
         acl.collection.branchname
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
+        and acl.status == 'Approved'
         and (
             is_pkgdb_admin(flask.g.fas_user)
             or acl.point_of_contact == flask.g.fas_user.username
