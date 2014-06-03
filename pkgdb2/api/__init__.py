@@ -90,6 +90,7 @@ def api():
     api_collection_list = load_doc(collections.api_collection_list)
 
     api_packager_acl = load_doc(packagers.api_packager_acl)
+    api_packager_package = load_doc(packagers.api_packager_package)
     api_packager_list = load_doc(packagers.api_packager_list)
     api_packager_stats = load_doc(packagers.api_packager_stats)
 
@@ -118,7 +119,8 @@ def api():
             api_collection_list,
         ],
         packagers=[
-            api_packager_list, api_packager_acl, api_packager_stats
+            api_packager_list, api_packager_acl, api_packager_package,
+            api_packager_stats
         ],
         packages=[
             api_package_info, api_package_list,
