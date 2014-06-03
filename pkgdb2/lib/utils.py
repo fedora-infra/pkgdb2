@@ -225,8 +225,10 @@ def log(session, package, topic, message):
                            '%(collection_from.branchname)s to '
                            '%(collection_to.branchname)s',
         'package.branch.delete': 'user: %(agent)s deleted branch: '
-                          '%(package_listing.collection.branchname)s '
-                          'for package %(package_listing.package.name)s ',
+                                 '%(package_listing.collection.'
+                                 'branchname)s '
+                                 'for package %(package_listing.'
+                                 'package.name)s ',
         'package.delete': 'user: %(agent)s deleted package %(package.name)s',
         'package.new': 'user: %(agent)s created package: '
                        '%(package_name)s on branch: '

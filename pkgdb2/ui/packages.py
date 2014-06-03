@@ -787,7 +787,7 @@ def delete_package(package):
         APP.logger.debug('Could not delete package: %s', packagename)
         APP.logger.exception(err)
         return flask.redirect(
-                flask.url_for('.package_info', package=package.name))
+            flask.url_for('.package_info', package=package.name))
 
     return flask.redirect(
         flask.url_for('.list_packages'))

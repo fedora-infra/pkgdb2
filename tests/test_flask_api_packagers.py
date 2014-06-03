@@ -378,11 +378,11 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(
             data,
             {
-              "co-maintained": [],
-              "error": "No ACLs found for that user",
-              "output": "notok",
-              "point of contact": [],
-              "watch": []
+                "co-maintained": [],
+                "error": "No ACLs found for that user",
+                "output": "notok",
+                "point of contact": [],
+                "watch": []
             }
         )
 
@@ -392,11 +392,11 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(
             data,
             {
-              "co-maintained": [],
-              "error": "No ACLs found for that user",
-              "output": "notok",
-              "point of contact": [],
-              "watch": []
+                "co-maintained": [],
+                "error": "No ACLs found for that user",
+                "output": "notok",
+                "point of contact": [],
+                "watch": []
             }
         )
 
@@ -406,11 +406,11 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(
             data,
             {
-              "co-maintained": [],
-              "error": "No ACLs found for that user",
-              "output": "notok",
-              "point of contact": [],
-              "watch": []
+                "co-maintained": [],
+                "error": "No ACLs found for that user",
+                "output": "notok",
+                "point of contact": [],
+                "watch": []
             }
         )
 
