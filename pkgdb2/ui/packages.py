@@ -459,7 +459,7 @@ def package_retire(package, full=True):
         acl.collection.branchname
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
-        and acl.point_of_contact == 'orphan'
+        and acl.status == 'Orphaned'
     ]
 
     form = pkgdb2.forms.BranchForm(collections=collections)
