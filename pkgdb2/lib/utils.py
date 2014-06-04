@@ -133,10 +133,12 @@ def get_bz():
 
 
 def set_bugzilla_owner(
-        username, pkg_name, collectn, collectn_version, bz_comment=None):
+        username, prev_poc, pkg_name, collectn, collectn_version,
+        bz_comment=None):
     '''Change the package owner
 
-     :arg user_email: User email address to change the owner.
+     :arg username: Username of the new point of contact.
+     :arg prev_poc: Username of the previous point of contact
      :arg pkg_name: Name of the package to change the owner.
      :arg collectn: Collection name of the package.
      :arg collectn_version: Collection version.

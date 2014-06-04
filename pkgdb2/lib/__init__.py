@@ -443,7 +443,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     )
     # Update Bugzilla about new owner
     pkgdb2.lib.utils.set_bugzilla_owner(
-        pkg_poc, package.name, collection.name, collection.version)
+        pkg_poc, prev_poc, package.name, collection.name,
+        collection.version)
 
     return output
 
@@ -522,6 +523,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         session.add(pkglisting)
         session.flush()
     elif pkgdb2.is_pkgdb_admin(user):
+        prev_poc = None
         if status == 'Approved':
             if pkglisting.status == 'Orphaned' and poc == 'orphan':
                 raise PkgdbException(
@@ -529,6 +531,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                     'package for this branch to un-orphan it')
             # is the new poc valide:
             _validate_poc(poc)
+            prev_poc = pkglisting.point_of_contact
             pkglisting.point_of_contact = poc
 
         pkglisting.status = status
@@ -536,7 +539,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         session.flush()
         # Update Bugzilla about new owner
         pkgdb2.lib.utils.set_bugzilla_owner(
-            poc, package.name, collection.name,
+            poc, prev_poc, package.name, collection.name,
             collection.version)
 
     else:
@@ -1375,7 +1378,8 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         package_listing=pkg_listing.to_json(),
     ))
     pkgdb2.lib.utils.set_bugzilla_owner(
-        user.username, package.name, collection.name, collection.version)
+        user.username, None, package.name, collection.name,
+        collection.version)
 
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 
