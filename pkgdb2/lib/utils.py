@@ -163,15 +163,16 @@ def set_bugzilla_owner(
     query_results = get_bz().query(bz_query)
 
     for bug in query_results:
-        if pkgdb2.APP.config[
-                'PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
-            bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
-        else:
-            print(
-                'Would have reassigned bug #%(bug_num)s '
-                'from %(former)s to %(current)s' % {
-                    'bug_num': bug.bug_id, 'former': bug.assigned_to,
-                    'current': bz_mail})
+        if bug.assigned_to != bz_mail:
+            if pkgdb2.APP.config[
+                    'PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
+                bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
+            else:
+                print(
+                    'Would have reassigned bug #%(bug_num)s '
+                    'from %(former)s to %(current)s' % {
+                        'bug_num': bug.bug_id, 'former': bug.assigned_to,
+                        'current': bz_mail})
 
 
 def _construct_substitutions(msg):
