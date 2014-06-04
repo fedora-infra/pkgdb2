@@ -151,8 +151,12 @@ def set_bugzilla_owner(
                      ' of this component.'
 
     user_email = get_bz_email_user(username).bugzilla_email
+    prev_poc_email = ''
+    if prev_poc:
+        prev_poc_email = get_bz_email_user(prev_poc).bugzilla_email
 
     bz_mail = '%s' % user_email
+    prev_mail = '%s' % prev_poc_email
     bz_query = {}
     bz_query['product'] = collectn
     bz_query['component'] = pkg_name
@@ -165,7 +169,7 @@ def set_bugzilla_owner(
     query_results = get_bz().query(bz_query)
 
     for bug in query_results:
-        if bug.assigned_to != bz_mail:
+        if not prev_poc_email or bug.assigned_to == prev_poc_email:
             if pkgdb2.APP.config[
                     'PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
                 bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
