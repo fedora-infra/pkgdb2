@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.10.1
+Version:        1.11
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,16 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Jun 04 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.11-1
+- Update to 1.11
+- DB change to the log table to allow deleting packages
+- Add a button to completely delete a package from the database, admins only
+- Fix displaying the action buttons on the package's page
+- Keep the filtering parameters when browsing multiple pages
+- Enhance unit-tests
+- Add new api endpoint /api/packager/package/ which lists the packages related
+  to the specified packager (just like the packager's page does)
+
 * Fri May 30 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.10.1-1
 - Update to 1.10.1
 - CSS fixes on the package's page (min resolution: 1024x768)
