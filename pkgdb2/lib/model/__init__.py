@@ -1630,7 +1630,7 @@ def bugzilla(session, name=None):
 
 
 def vcs_acls(session, eol=False):
-    """ Return information for each package to sync with bugzilla.
+    """ Return information for each package to sync with git.
 
     :arg session: the session to connect to the database with.
     :kwarg eol: A boolean specifying whether to include information about
