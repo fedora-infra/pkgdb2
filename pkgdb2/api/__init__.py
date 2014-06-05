@@ -105,6 +105,7 @@ def api():
     api_acl_update = load_doc(acls.api_acl_update)
     api_acl_reassign = load_doc(acls.api_acl_reassign)
 
+    api_version_doc = load_doc(api_version)
     api_extras_bugzilla = load_doc(extras.api_bugzilla)
     api_extras_critpath = load_doc(extras.api_critpath)
     api_extras_notify = load_doc(extras.api_notify)
@@ -131,6 +132,7 @@ def api():
             api_acl_update, api_acl_reassign,
         ],
         extras=[
+            api_version_doc,
             api_extras_bugzilla, api_extras_critpath,
             api_extras_notify, api_extras_notify_all,
             api_extras_vcs
@@ -141,5 +143,24 @@ def api():
 @API.route('/version/')
 @API.route('/version')
 def api_version():
-    ''' Display the api version information. '''
+    '''
+API Version
+-----------
+    Display the api version information.
+
+    ::
+
+        /api/version
+
+    Accept GET queries only.
+
+    Sample response:
+
+    ::
+
+        {
+          "version": "1.6"
+        }
+
+    '''
     return flask.jsonify({'version': __api_version__})
