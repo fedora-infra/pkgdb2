@@ -169,7 +169,8 @@ def set_bugzilla_owner(
     query_results = get_bz().query(bz_query)
 
     for bug in query_results:
-        if not prev_poc_email or bug.assigned_to == prev_poc_email:
+        if (not prev_poc_email or bug.assigned_to == prev_mail) \
+                and bug.assigned_to != bz_mail:
             if pkgdb2.APP.config[
                     'PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
                 bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
