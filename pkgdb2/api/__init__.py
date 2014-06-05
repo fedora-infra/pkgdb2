@@ -131,8 +131,10 @@ def api():
         acls=[
             api_acl_update, api_acl_reassign,
         ],
-        extras=[
+        other=[
             api_version_doc,
+        ],
+        extras=[
             api_extras_bugzilla, api_extras_critpath,
             api_extras_notify, api_extras_notify_all,
             api_extras_vcs

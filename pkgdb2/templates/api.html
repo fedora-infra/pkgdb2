@@ -34,6 +34,13 @@
 {% endautoescape %}
 {% endfor %}
 
+<h2>Other</h2>
+{% for html in other %}
+{% autoescape false %}
+{{ html | InsertDiv}}
+{% endautoescape %}
+{% endfor %}
+
 <h2>Extras</h2>
 
 <p>
