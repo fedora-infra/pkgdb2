@@ -52,13 +52,6 @@ from pkgdb2.lib.exceptions import PkgdbException, PkgdbBugzillaException
 ## Ignore variable name that are too short
 # pylint: disable=C0103
 
-
-class PkgdbException(Exception):
-    """ Generic Exception object used to throw pkgdb2 specific error.
-    """
-    pass
-
-
 def _validate_poc(pkg_poc):
     """ Validate is the provided ``pkg_poc`` is a valid poc for a package.
 
