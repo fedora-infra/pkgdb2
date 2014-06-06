@@ -64,6 +64,8 @@ DEFAULT_GROUPS = {'provenpackager': {'commit': True}}
 ## Some of the object we use here have inherited methods which apparently
 ## pylint does not detect.
 # pylint: disable=E1101
+## In our object class we do not call the parent and it's fine
+# pylint: disable=W0231
 
 
 def create_tables(db_url, alembic_ini=None, debug=False):
