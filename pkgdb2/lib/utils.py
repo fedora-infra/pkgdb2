@@ -24,6 +24,7 @@ Utilities for all classes to use
 '''
 
 import pkgdb2
+import pkgdb2.lib.exceptions
 
 from bugzilla import RHBugzilla3
 
@@ -173,7 +174,13 @@ def set_bugzilla_owner(
                 and bug.assigned_to != bz_mail:
             if pkgdb2.APP.config[
                     'PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
-                bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
+                try:
+                    bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
+                except Exception, err:
+                    raise pkgdb2.lib.exceptions.PkgdbBugzillaException(
+                        'An error occured while calling bugzilla: %s'
+                        % str(err)
+                    )
             else:
                 print(
                     'Would have reassigned bug #%(bug_num)s '
