@@ -38,6 +38,7 @@ from fedora.client.fas2 import FASError
 import pkgdb2
 from pkgdb2.lib import model
 from pkgdb2.lib import utils
+from pkgdb2.lib.exceptions import PkgdbException, PkgdbBugzillaException
 
 
 ## Apparently some of our methods have too many arguments
