@@ -351,9 +351,9 @@ def package_give(package, full=True):
 
                 SESSION.commit()
         except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
-                APP.logger.exception(err)
-                flask.flash(str(err), 'error')
-                SESSION.rollback()
+            APP.logger.exception(err)
+            flask.flash(str(err), 'error')
+            SESSION.rollback()
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(str(err), 'error')
