@@ -287,6 +287,12 @@ Unorphan packages
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = messages
+        except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
+            APP.logger.exception(err)
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = str(err)
+            httpcode = 500
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             output['output'] = 'notok'
