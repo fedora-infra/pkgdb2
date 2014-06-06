@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013-2014  Red Hat, Inc.
+# Copyright © 2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -26,5 +26,12 @@ PkgDB exceptions classes.
 
 class PkgdbException(Exception):
     """ Generic Exception object used to throw pkgdb2 specific error.
+    """
+    pass
+
+
+class PkgdbBugzillaException(PkgdbException):
+    """ Generic Exception object used to throw pkgdb2 error specifically
+    related to its interaction with bugzilla.
     """
     pass
