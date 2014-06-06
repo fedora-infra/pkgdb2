@@ -762,7 +762,6 @@ def delete_package(package):
     packagename = package
     package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
         package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
