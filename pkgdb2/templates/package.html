@@ -26,7 +26,7 @@ confusing what the difference is between that status an the per-branch status)
     {% for listing in package.sorted_listings %}
     {% if listing.collection.status != 'EOL' %}
     <tr>
-        <th>{{ listing.collection.branchname }}</th>
+        <th>{{ listing.collection.name }} {{ listing.collection.version }}</th>
         <td>{{ listing.status }} {% if listing.critpath %} -- critpatch {% endif %}</td>
     </tr>
     {% endif %}
