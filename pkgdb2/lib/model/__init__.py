@@ -918,8 +918,6 @@ class PackageListing(BASE):
         ).filter(
             PackageListingAcl.fas_name.like(pattern)
         ).filter(
-            PackageListingAcl.acl == 'commit'
-        ).filter(
             PackageListingAcl.status == 'Approved'
         ).order_by(
             PackageListingAcl.fas_name
