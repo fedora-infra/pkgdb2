@@ -26,7 +26,7 @@ Utilities for all classes to use
 import pkgdb2
 import pkgdb2.lib.exceptions
 
-from bugzilla import RHBugzilla3
+from bugzilla import Bugzilla
 
 # The Fedora Account System Module
 from fedora.client.fas2 import AccountSystem
@@ -128,8 +128,8 @@ def get_bz():
     bz_user = pkgdb2.APP.config['PKGDB2_BUGZILLA_USER']
     bz_pass = pkgdb2.APP.config['PKGDB2_BUGZILLA_PASSWORD']
 
-    _BUGZILLA = RHBugzilla3(url=bz_url, user=bz_user, password=bz_pass,
-                            cookiefile=None)
+    _BUGZILLA = Bugzilla(url=bz_url, user=bz_user, password=bz_pass,
+                         cookiefile=None, tokenfile=None)
     return _BUGZILLA
 
 
@@ -167,7 +167,8 @@ def set_bugzilla_owner(
     bz_query['version'] = collectn_version
     if bz_query['version'] == 'devel':
         bz_query['version'] = 'rawhide'
-    query_results = get_bz().query(bz_query)
+    bugz = get_bz()
+    query_results = bugz.query(bz_query)
 
     for bug in query_results:
         if (not prev_poc_email or bug.assigned_to == prev_mail) \
