@@ -25,7 +25,7 @@ BuildRequires:  python-docutils
 BuildRequires:  python-dateutil
 BuildRequires:  python-dogpile-cache
 BuildRequires:  python-mock
-BuildRequires:  python-bugzilla
+BuildRequires:  python-bugzilla >= 1.1.0
 BuildRequires:  python-memcached
 BuildRequires:  python-setuptools
 BuildRequires:  python-blinker
@@ -49,7 +49,7 @@ Requires:  python-fedora-flask
 Requires:  python-docutils
 Requires:  python-dateutil
 Requires:  python-dogpile-cache
-Requires:  python-bugzilla
+Requires:  python-bugzilla >= 1.1.0
 Requires:  python-memcached
 Requires:  python-setuptools
 Requires:  mod_wsgi
