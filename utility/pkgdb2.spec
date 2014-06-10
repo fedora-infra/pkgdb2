@@ -25,7 +25,7 @@ BuildRequires:  python-docutils
 BuildRequires:  python-dateutil
 BuildRequires:  python-dogpile-cache
 BuildRequires:  python-mock
-BuildRequires:  python-bugzilla >= 1.1.0
+BuildRequires:  python-bugzilla
 BuildRequires:  python-memcached
 BuildRequires:  python-setuptools
 BuildRequires:  python-blinker
