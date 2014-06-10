@@ -42,14 +42,16 @@ from pkgdb2.ui import UI
 
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
-def list_packages(motif=None, orphaned=False, status=None,
+def list_packages(motif=None, orphaned=None, status=None,
                   origin='list_packages', case_sensitive=False):
     ''' Display the list of packages corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
-    orphaned = bool(flask.request.args.get('orphaned', orphaned))
+    orphaned = flask.request.args.get('orphaned', orphaned)
+    if str(orphaned) in ['False', '0']:
+        orphaned = False
     status = flask.request.args.get('status', status)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
     page = flask.request.args.get('page', 1)
