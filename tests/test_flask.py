@@ -204,6 +204,15 @@ engineers need to create packages and spin them into a distribution."""
         self.assertTrue('<a href="/package/geany/">' in output.data)
         self.assertTrue('<a href="/package/guake/">' in output.data)
 
+        output = self.app.get('/search/?term=gu*', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue(
+            '<li class="message">Only one package matching, redirecting you'
+            ' to it</li>' in output.data)
+        self.assertTrue(
+            '<p property="doap:shortdesc">Top down terminal for GNOME</p>'
+            in output.data)
+
         output = self.app.get('/search/?term=g*&type=orphaned',
                               follow_redirects=True)
         self.assertEqual(output.status_code, 200)
