@@ -879,3 +879,73 @@ def delete_package(package):
 
     return flask.redirect(
         flask.url_for('.list_packages'))
+
+
+@UI.route('/package/<package>/request_branch', methods=('GET', 'POST'))
+@UI.route('/package/<package>/request_branch/<full>', methods=('GET', 'POST'))
+@packager_login_required
+def package_request_branch(package, full=True):
+    ''' Gives the possibility to request a new branch for this package. '''
+
+    if not bool(full) or str(full) in ['0', 'False']:
+        full = False
+
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    branches = [
+        pkg.collection.branchname
+        for pkg in package_acl
+        if pkg.collection.status != 'EOL'
+    ]
+
+    collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    branches_possible = [
+        collec.branchname
+        for collec in collections
+        if collec.branchname not in branches]
+
+    form = pkgdb2.forms.NewRequestForm(
+        collections=branches_possible,
+        from_branch=branches)
+
+    if form.validate_on_submit():
+        for branch in form.branches.data:
+            try:
+                print 'request new branch: %s from %s' % (
+                    branch, form.from_branch.data)
+                pkgdblib.add_new_branch_request(
+                    session=SESSION,
+                    pkg_name=package.name,
+                    clt_from=form.from_branch.data,
+                    clt_to=branch,
+                    user=flask.g.fas_user)
+                SESSION.commit()
+                flask.flash('Branch %s requested' % branch)
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
+                flask.flash(str(err), 'error')
+                SESSION.rollback()
+            except SQLAlchemyError, err:  # pragma: no cover
+                APP.logger.exception(err)
+                flask.flash(
+                    'Could not save the request to the database for '
+                    'branch: %s' % branch, 'error')
+                SESSION.rollback()
+
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    return flask.render_template(
+        'request_branch.html',
+        full=full,
+        package=package,
+        form=form,
+        action='request_branch',
+    )
