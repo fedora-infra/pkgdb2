@@ -76,7 +76,7 @@ confusing what the difference is between that status an the per-branch status)
     {% endif %}
     {% endfor %}
 
-    {% if branches_possible %}
+    {% if g.fas_user and branches_possible %}
     <tr>
       <td colspan="2" align="center">
         <a href="{{ url_for('.package_request_branch', package=package.name) }}"
