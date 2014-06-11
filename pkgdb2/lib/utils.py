@@ -256,6 +256,10 @@ def log(session, package, topic, message):
         'package.branch.new': 'user: %(agent)s created branch '
                               '%(package_listing.collection.'
                               'branchname)s on package %(package.name)s',
+        'package.branch.request': 'user: %(agent)s requested branch: '
+                                 '%(collection_to.branchname)s from branch '
+                                 '%(collection_from.branchname)s '
+                                 'for package %(package.name)s',
         'package.delete': 'user: %(agent)s deleted package %(package.name)s',
         'package.new': 'user: %(agent)s created package: '
                        '%(package_name)s on branch: '
@@ -282,6 +286,8 @@ def log(session, package, topic, message):
         'acl.update': '%(agent)s:%(package_name)s %(acl)s  set to %(status)s',
         'owner.update': '%(agent)s:%(package_name)s set point of contact to: '
                         '%(username)s',
+        'package.branch.request': '%(agent)s:%(package.name)s requested new '
+                                  'branch %(collection_to.branchname)s',
         'package.update': '%(agent)s updated package: '
                           '%(package.name)s',
         'package.update.status': '%(agent)s updated package: '
