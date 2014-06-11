@@ -110,6 +110,42 @@ class FlaskUiAdminTest(Modeltests):
                 '<p class=\'error\'>No logs found in the database.</p>'
                 in output.data)
 
+    @patch('pkgdb2.is_admin')
+    def test_admin_actions(self, login_func):
+        """ Test the admin_actions function. """
+        login_func.return_value = None
+
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/admin/actions/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Actions</h1>' in output.data)
+            self.assertTrue(
+                'Restrict to package: <input type="text" name="package" />'
+                in output.data)
+
+            output = self.app.get(
+                '/admin/actions/?page=abc&limit=def&status=ghi&package=test')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Actions</h1>' in output.data)
+            self.assertTrue(
+                'Restrict to package: <input type="text" name="package" />'
+                in output.data)
+            self.assertTrue(
+                'class="errors">Incorrect limit provided, using default</'
+                in output.data)
+            self.assertTrue(
+                '<li class="errors">No package exists</li>' in output.data)
+
+            output = self.app.get('/admin/actions/?package=guake')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Actions</h1>' in output.data)
+            self.assertTrue(
+                'Restrict to package: <input type="text" name="package" />'
+                in output.data)
+            self.assertTrue(
+                '<th>Status</th>\n  </tr>\n\n</table>' in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiAdminTest)
