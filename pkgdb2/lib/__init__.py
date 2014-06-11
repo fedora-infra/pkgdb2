@@ -1604,7 +1604,8 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
         this exception beeing raised:
             - The specified package does not exists.
             - The specified branch from is invalid (does not exist)
-            - The specified branch to is invalid (does not exist).
+            - The specified branch to is invalid (does not exist)
+            - The user requesting is not a packager
 
     """
     try:
@@ -1621,6 +1622,8 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
         clt_to = model.Collection.by_name(session, clt_to)
     except NoResultFound:
         raise PkgdbException('Branch %s not found' % clt_to)
+
+    _validate_poc(user.username)
 
     action = model.AdminAction(
         package_id=package.id,
