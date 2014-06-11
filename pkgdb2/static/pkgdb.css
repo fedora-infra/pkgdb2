@@ -396,6 +396,8 @@ ul.nobullet .pkg_button_lightgrey {
     text-align: center;
     padding-top: 7px;
     padding-bottom: 7px;
+    padding-left: 5px;
+    padding-right: 5px;
     line-height: 13px;
 }
 
