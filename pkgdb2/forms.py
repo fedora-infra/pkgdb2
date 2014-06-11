@@ -346,3 +346,27 @@ class BranchForm(wtf.Form):
 class ConfirmationForm(wtf.Form):
     """ The simplest form we can do but that ensures CSRF protection. """
     pass
+
+
+class NewRequestForm(BranchForm):
+    """ Form to perform an action on one or more branches of a package. """
+    from_branch = wtforms.SelectField(
+        'Branch from which to create this or these new branches',
+        [wtforms.validators.Required()],
+        choices=[('', '')])
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(NewRequestForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            self.branches.choices = [
+                (collec, collec)
+                for collec in kwargs['collections']
+            ]
+        if 'from_branch' in kwargs:
+            self.from_branch.choices = [
+                (collec, collec)
+                for collec in kwargs['from_branch']
+            ]
