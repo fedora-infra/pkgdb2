@@ -33,7 +33,7 @@ confusing what the difference is between that status an the per-branch status)
     {% endfor %}
     {% if is_admin %}
     <tr>
-      <td colspan="2">
+      <td colspan="2" align="center">
         <form action="{{ url_for('.delete_package', package=package.name) }}"
           method="POST">
           <button class="bold pkg_button_grey inline" type="submit"

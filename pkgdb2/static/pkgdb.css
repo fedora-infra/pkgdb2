@@ -498,3 +498,12 @@ table .col_odd,
     text-align: left;
     padding-left: 7px;
 }
+
+#metainfo {
+    width: 100%;
+}
+
+#metainfo button {
+    width: 170px;
+    float: none;
+}
