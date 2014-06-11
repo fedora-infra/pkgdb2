@@ -269,10 +269,16 @@ engineers need to create packages and spin them into a distribution."""
         self.assertEqual(output.status_code, 200)
 
         expected = """
-<h2>Collections</h2>
-
-
+<h2>
+    Collections
+    <a name="collections" class="headerlink" title="Permalink to this """ \
+"""headline" href="#collections">
+    <img src="/static/link.png" />
+    </a>
+</h2>
 <div class="accordion">
+
+
 <h3 class="title">New collection</h3>
 <div>
 <p>Create a new collection.</p>
@@ -284,8 +290,6 @@ engineers need to create packages and spin them into a distribution."""
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">arg clt_name:</th>"""\
-"""<td class="field-body">String of the collection name to be created.</td>
 """
         self.assertTrue(expected in output.data)
 
