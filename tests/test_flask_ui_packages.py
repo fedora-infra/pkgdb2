@@ -754,6 +754,90 @@ class FlaskUiPackagesTest(Modeltests):
                 in output.data)
 
 
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
+    def test_package_request_branch(self, login_func, mock_func):
+        """ Test the package_request_branch function. """
+        login_func.return_value = None
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        create_package_acl(self.session)
+
+        data = {
+            'branches': ['epel7'],
+        }
+
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/foobar/request_branch', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No package of this name found.</li>'
+                in output.data)
+
+            output = self.app.post(
+                '/package/guake/request_branch', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">&#39;epel7&#39; is not a valid choice '
+                'for this field</td>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data = {
+            'branches': ['el6'],
+            'csrf_token': csrf_token,
+        }
+
+        # Missing one input
+        user = FakeFasUser()
+        user.username = 'kevin'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/request_branch',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">Not a valid choice</td>' in output.data)
+
+        data = {
+            'branches': ['el6'],
+            'from_branch': 'master',
+            'csrf_token': csrf_token,
+        }
+
+        # Input correct but user is not allowed
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/request_branch/0',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">User &#34;kevin&#34; is not in the '
+                'packager group</li>' in output.data)
+
+        data = {
+            'branches': ['el6'],
+            'from_branch': 'master',
+            'csrf_token': csrf_token,
+        }
+
+        # All good
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/request_branch',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Branch el6 requested</li>'
+                in output.data)
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiPackagesTest)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
