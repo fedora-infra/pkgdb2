@@ -6,42 +6,73 @@
 
 {% block content %}
 
-<h2>Collections</h2>
+<h2>
+    Collections
+    <a name="collections" class="headerlink" title="Permalink to this headline" href="#collections">
+    <img src="{{ url_for('static', filename='link.png') }}" />
+    </a>
+</h2>
 {% for html in collections %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
 
-<h2>Packagers</h2>
+<h2>
+    Packagers
+    <a name="packagers" class="headerlink" title="Permalink to this headline" href="#packagers">
+    <img src="{{ url_for('static', filename='link.png') }}" />
+    </a>
+</h2>
 {% for html in packagers %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
 
-<h2>Packages</h2>
+<h2>
+    Packages
+    <a name="packages" class="headerlink" title="Permalink to this headline" href="#packages">
+    <img src="{{ url_for('static', filename='link.png') }}" />
+    </a>
+</h2>
+
 {% for html in packages %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
 
-<h2>ACLs</h2>
+<h2>
+    ACLs
+    <a name="acls" class="headerlink" title="Permalink to this headline" href="#acls">
+    <img src="{{ url_for('static', filename='link.png') }}" />
+    </a>
+</h2>
 {% for html in acls %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
 
-<h2>Other</h2>
+<h2>
+    Other
+    <a name="other" class="headerlink" title="Permalink to this headline" href="#other">
+    <img src="{{ url_for('static', filename='link.png') }}" />
+    </a>
+</h2>
 {% for html in other %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
 
-<h2>Extras</h2>
+<h2>
+    Extras
+    <a name="extras" class="headerlink" title="Permalink to this headline" href="#extras">
+    <img src="{{ url_for('static', filename='link.png') }}" />
+    </a>
+</h2>
 
 <p>
   The pkgdb2 api has few other endpoints that are used for very specific
