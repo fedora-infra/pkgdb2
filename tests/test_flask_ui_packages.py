@@ -23,7 +23,7 @@
 pkgdb tests for the Flask application.
 '''
 
-__requires__ = ['SQLAlchemy >= 0.7']
+__requires__ = ['SQLAlchemy >= 0.8']
 import pkg_resources
 
 import json
