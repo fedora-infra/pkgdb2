@@ -52,7 +52,7 @@
 </table>
 {% endif %}
 
-<table>
+<table id="actiontable">
   <tr>
     <th>Date</th>
     <th>User</th>
@@ -63,11 +63,15 @@
     <th>Status</th>
   </tr>
 {% for action in actions %}
+ {% if loop.last %}
+ <tr class="lastrow">
+ {% else %}
   <tr>
+ {% endif %}
     <td>
         {{ action.date_created.strftime('%Y-%m-%d %H:%M:%S') }}
     </td>
-    <td>
+    <td class="col_odd">
       <a href="{{url_for('.packager_info', packager=action.user)}}">
         {{ action.user }}
       </a>
@@ -77,10 +81,10 @@
         {{ action.package.name }}
       </a>
     </td>
-    <td>{{ action.action }}</td>
+    <td class="col_odd">{{ action.action }}</td>
     <td>{{ action.collection.branchname }}</td>
-    <td>{{ action.from_collection.branchname }}</td>
-    <td>{{ action.status }}</td>
+    <td class="col_odd">{{ action.from_collection.branchname }}</td>
+    <td class="lastcel" >{{ action.status }}</td>
   </tr>
 {% endfor %}
 </table>

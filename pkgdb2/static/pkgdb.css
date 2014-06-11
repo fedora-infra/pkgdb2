@@ -388,7 +388,7 @@ ul.nobullet .pkg_button_lightgrey {
     min-width: 10px;
 }
 
-#pkg_committers td, #pkg_watchers td {
+#pkg_committers td, #pkg_watchers td, #actiontable td {
     border-top: 1px solid #BBBBBB;
     border-left: 1px solid #BBBBBB;
     margin: 0;
@@ -397,6 +397,10 @@ ul.nobullet .pkg_button_lightgrey {
     padding-top: 7px;
     padding-bottom: 7px;
     line-height: 13px;
+}
+
+#actiontable th{
+    text-align: center;
 }
 
 #edit_acl #pkg_committers td{
