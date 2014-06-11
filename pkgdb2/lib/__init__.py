@@ -1529,6 +1529,57 @@ def add_branch(session, clt_from, clt_to, user):
     return messages
 
 
+def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
+    """ Register a new branch request.
+
+    This method only flushes the new objects.
+
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package for which to create the branch.
+    :arg clt_from: the ``branchname`` of the collection to branch from.
+    :arg clt_to: the ``branchname`` of the collection to branch to.
+    :arg user: the user making the action.
+    :raises pkgdb2.lib.PkgdbException: There are three conditions leading to
+        this exception beeing raised:
+            - The specified package does not exists.
+            - The specified branch from is invalid (does not exist)
+            - The specified branch to is invalid (does not exist).
+
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('Package %s not found' % pkg_name)
+
+    try:
+        clt_from = model.Collection.by_name(session, clt_from)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % clt_from)
+
+    try:
+        clt_to = model.Collection.by_name(session, clt_to)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % clt_to)
+
+    action = model.AdminAction(
+        package_id=package.id,
+        collection_id=clt_to.id,
+        from_collection_id=clt_from.id,
+        user=user.username,
+        status='Awaiting Review',
+        action='request.branch',
+    )
+
+    session.add(action)
+
+    pkgdb2.lib.utils.log(session, None, 'package.branch.request', dict(
+        agent=user.username,
+        package=package.to_json(),
+        collection_from=clt_from.to_json(),
+        collection_to=clt_to.to_json(),
+    ))
+
+
 def count_collection(session):
     """ Return the number of package 'Approved' for each collection.
 
