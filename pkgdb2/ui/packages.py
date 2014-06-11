@@ -928,8 +928,6 @@ def package_request_branch(package, full=True):
     if form.validate_on_submit():
         for branch in form.branches.data:
             try:
-                print 'request new branch: %s from %s' % (
-                    branch, form.from_branch.data)
                 pkgdblib.add_new_branch_request(
                     session=SESSION,
                     pkg_name=package.name,
