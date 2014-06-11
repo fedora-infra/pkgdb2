@@ -1590,6 +1590,101 @@ class Log(BASE):
         session.flush()
 
 
+class AdminAction(BASE):
+    """This associates a package with a particular collection.
+
+    Table -- admin_actions
+    """
+
+    __tablename__ = 'admin_actions'
+    id = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    package_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False)
+    collection_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False)
+    status = sa.Column(
+        sa.String(50),
+        sa.ForeignKey('AclStatus.status', onupdate='CASCADE'),
+        nullable=False,
+        index=True)
+    user = sa.Column(sa.Text, nullable=False, index=True)
+    action = sa.Column(sa.Text, nullable=False, index=True)
+    from_collection_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False)
+
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow)
+    date_change = sa.Column(sa.DateTime, nullable=False,
+                              default=datetime.datetime.utcnow,
+                              onupdate=sa.func.now())
+
+    package = relation("Package")
+    collection = relation(
+        "Collection",
+        foreign_keys=[collection_id], remote_side=[Collection.id],
+    )
+    from_collection = relation(
+        "Collection",
+        foreign_keys=[from_collection_id], remote_side=[Collection.id],
+    )
+
+    @classmethod
+    def search(cls, session, package_id=None, packager=None, action=None,
+               status=None, offset=None, limit=None, count=False):
+        """ Return the list of actions present in the database and
+        matching these criterias.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+        :kwarg package: retrict the logs to a certain package.
+        :kwarg packager: restrict the logs to a certain user/packager.
+        :kwarg action: a type of action to search for.
+        :kwarg status: restrict the requests returned to the ones with this
+            status.
+        :kwarg limit: limit the result to X row
+        :kwarg offset: start the result at row X
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+
+        """
+        query = session.query(
+            cls
+        )
+
+        if package_id:
+            query = query.filter(cls.package_id == package_id)
+
+        if packager:
+            query = query.filter(cls.user == packager)
+
+        if action:
+            query = query.filter(cls.action == action)
+
+        if status:
+            query = query.filter(cls.status == status)
+
+        query = query.order_by(cls.date_created.asc())
+
+        if count:
+            return query.count()
+
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
+
+        return query.all()
+
+
 def notify(session, eol=False, name=None, version=None, acls=None):
     """ Return the user that should be notify for each package.
 
