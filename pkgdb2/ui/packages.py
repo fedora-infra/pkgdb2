@@ -222,6 +222,14 @@ def package_info(package):
         if listing.collection.status != 'EOL'
     ])
 
+    collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    branches_possible = [
+        collec.branchname
+        for collec in collections
+        if '%s %s' %(collec.name, collec.version) not in branches]
+
     return flask.render_template(
         'package.html',
         package=package,
@@ -232,6 +240,7 @@ def package_info(package):
         statuses=statuses,
         pending_admins=pending_admins,
         branches=branches,
+        branches_possible=branches_possible,
         committers=committers,
         form=pkgdb2.forms.ConfirmationForm(),
     )
