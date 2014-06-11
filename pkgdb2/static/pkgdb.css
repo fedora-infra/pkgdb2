@@ -507,3 +507,21 @@ table .col_odd,
     width: 170px;
     float: none;
 }
+
+.ui-accordion {
+    position: relative;
+}
+
+.ui-accordion-content{
+    height: auto;
+}
+
+.ui-accordion .accordion-link {
+    position: absolute;
+    right: 2%;
+    margin-top: 16px; /* adjust as needed to vertically center the icon */
+    z-index: 1;
+    width: 12px; /* approx 12x12 link icon */
+    height: 12px;
+    background: url(link.png) center center no-repeat;
+}
