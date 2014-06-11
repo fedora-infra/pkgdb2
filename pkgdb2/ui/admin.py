@@ -109,3 +109,65 @@ def admin_log():
         from_date=from_date or '',
         packager=packager or '',
     )
+
+
+@UI.route('/admin/actions/')
+@is_admin
+def admin_actions():
+    """ Return the actions requested and requiring intervention from an
+    admin.
+    """
+    package = flask.request.args.get('package', None)
+    packager = flask.request.args.get('packager', None)
+    action = flask.request.args.get('action', None)
+    status = flask.request.args.get('status', 'Awaiting Review')
+    limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
+    page = flask.request.args.get('page', 1)
+
+    try:
+        page = abs(int(page))
+    except ValueError:
+        page = 1
+
+    try:
+        limit = abs(int(limit))
+    except ValueError:
+        limit = APP.config['ITEMS_PER_PAGE']
+        flask.flash('Incorrect limit provided, using default', 'errors')
+
+    actions = []
+    cnt_actions = 0
+    try:
+        actions = pkgdblib.search_actions(
+            SESSION,
+            package=package or None,
+            packager=packager or None,
+            action=action,
+            status=status,
+            page=page,
+            limit=limit,
+        )
+        cnt_actions = pkgdblib.search_actions(
+            SESSION,
+            package=package or None,
+            packager=packager or None,
+            action=action,
+            status=status,
+            count=True
+        )
+    except pkgdblib.PkgdbException, err:
+        flask.flash(err, 'errors')
+
+    total_page = int(ceil(cnt_actions / float(limit)))
+
+    return flask.render_template(
+        'list_actions.html',
+        actions=actions,
+        cnt_actions=cnt_actions,
+        total_page=total_page,
+        page=page,
+        package=package or '',
+        packager=packager or '',
+        action=action,
+        status=status,
+    )
