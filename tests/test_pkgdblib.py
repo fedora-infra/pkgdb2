@@ -1776,6 +1776,64 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUserAdmin()
         )
 
+    def test_search_actions(self):
+        """ Test the search_actions method of pkgdblib. """
+        create_package_acl(self.session)
+
+        # Wrong limit
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.search_actions,
+            self.session,
+            limit='a'
+        )
+
+        # Wrong offset
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.search_actions,
+            self.session,
+            page='a'
+        )
+
+        # Wrong package name
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.search_actions,
+            self.session,
+            package='asdads'
+        )
+
+        # Check before insert
+        actions = pkgdblib.search_actions(
+            self.session,
+            package='guake'
+        )
+        self.assertEqual(actions, [])
+
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = ['pingou']
+
+        # Insert
+        pkgdblib.add_new_branch_request(
+            session=self.session,
+            pkg_name='guake',
+            clt_from='master',
+            clt_to='el6',
+            user=FakeFasUser()
+        )
+
+        # Check after insert
+        actions = pkgdblib.search_actions(
+            self.session,
+            package='guake'
+        )
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(actions[0].user, 'pingou')
+        self.assertEqual(actions[0].package.name, 'guake')
+        self.assertEqual(actions[0].collection.branchname, 'el6')
+        self.assertEqual(actions[0].from_collection.branchname, 'master')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
