@@ -761,6 +761,67 @@ def search_packagers(session, pattern, eol=False, page=None, limit=None,
     return packagers
 
 
+def search_actions(
+        session, package=None, packager=None,
+        action=None, status='Awaiting Review', page=None,
+        limit=None, count=False):
+    """ Return the list of actions requiring an admin and matching the
+    given criteria.
+
+    :arg session: session with which to connect to the database.
+    :kwarg package: retrict the logs to a certain package.
+    :kwarg packager: restrict the logs to a certain user/packager.
+    :kwarg action: restrict the actions to this specific category.
+    :kwarg status: restrict the actions to this specific status.
+        Defaults to ``Awaiting Review``.
+    :kwarg page: the page number to apply to the results.
+    :kwarg limit: the number of results to return.
+    :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+    :returns: a list of ``Log`` entry corresponding to the given criterias.
+    :rtype: list(Log)
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The provided ``limit`` is not an integer.
+            - The provided ``page`` is not an integer.
+            - The ``package`` name specified does not correspond to any
+                package.
+
+    """
+    if limit is not None:
+        try:
+            limit = abs(int(limit))
+        except ValueError:
+            raise PkgdbException('Wrong limit provided')
+
+    if page is not None:
+        try:
+            page = abs(int(page))
+        except ValueError:
+            raise PkgdbException('Wrong page provided')
+
+    package_id = None
+    if package is not None:
+        package = search_package(session, package, limit=1)
+        if not package:
+            raise PkgdbException('No package exists')
+        else:
+            package_id = package[0].id
+
+    if page is not None and page > 0 and limit is not None and limit > 0:
+        page = (page - 1) * limit
+
+    return model.AdminAction.search(
+        session,
+        package_id=package_id,
+        packager=packager,
+        action=action,
+        status=status,
+        offset=page,
+        limit=limit,
+        count=count)
+
+
 def search_logs(session, package=None, packager=None,
                 from_date=None, page=None,
                 limit=None, count=False):
