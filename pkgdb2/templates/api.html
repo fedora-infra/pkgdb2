@@ -12,11 +12,13 @@
     <img src="{{ url_for('static', filename='link.png') }}" />
     </a>
 </h2>
+<div class="accordion">
 {% for html in collections %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
+</div>
 
 <h2>
     Packagers
@@ -24,11 +26,13 @@
     <img src="{{ url_for('static', filename='link.png') }}" />
     </a>
 </h2>
+<div class="accordion">
 {% for html in packagers %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
+</div>
 
 <h2>
     Packages
@@ -37,11 +41,13 @@
     </a>
 </h2>
 
+<div class="accordion">
 {% for html in packages %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
+</div>
 
 <h2>
     ACLs
@@ -49,11 +55,13 @@
     <img src="{{ url_for('static', filename='link.png') }}" />
     </a>
 </h2>
+<div class="accordion">
 {% for html in acls %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
+</div>
 
 <h2>
     Other
@@ -61,11 +69,13 @@
     <img src="{{ url_for('static', filename='link.png') }}" />
     </a>
 </h2>
+<div class="accordion">
 {% for html in other %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
+</div>
 
 <h2>
     Extras
@@ -82,11 +92,13 @@
   consumption, you may use them, just be cautious.
 </p>
 
+<div class="accordion">
 {% for html in extras %}
 {% autoescape false %}
 {{ html | InsertDiv}}
 {% endautoescape %}
 {% endfor %}
+</div>
 
 {% endblock %}
 
