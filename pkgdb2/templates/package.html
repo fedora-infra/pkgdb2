@@ -75,6 +75,21 @@ confusing what the difference is between that status an the per-branch status)
     </tr>
     {% endif %}
     {% endfor %}
+
+    {% if branches_possible %}
+    <tr>
+      <td colspan="2" align="center">
+        <a href="{{ url_for('.package_request_branch', package=package.name) }}"
+            title="Request a new branch for this package"
+            id="requestbranch">
+          <button class="bold pkg_button_blue inline" type="submit">
+            Request new branch
+          </button>
+        </a>
+      </td>
+    </tr>
+    {% endif %}
+
     <tr>
       <td colspan="2" align="center">
         <a href="{{ url_for('.package_timeline', package=package.name) }}">
@@ -648,6 +663,25 @@ confusing what the difference is between that status an the per-branch status)
                 });
             }
         );
+
+        $('#requestbranch').click(function(){
+            var _url = "{{ url_for('.package_request_branch', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    var _height = $(window).height() * 0.8;
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+
+            return false;
+        });
     });
 </script>
 {% endblock %}
