@@ -68,10 +68,18 @@ def list_packagers(motif=None):
     )
     total_page = int(ceil(packagers_count / float(limit)))
 
+    packagers = [pkg[0] for pkg in packagers]
+
+    if len(packagers) == 1:
+        flask.flash(
+            'Only one packager matching, redirecting you to ''his/her page')
+        return flask.redirect(flask.url_for(
+            '.packager_info', packager=packagers[0]))
+
     return flask.render_template(
         'list_packagers.html',
         select='packagers',
-        packagers=[pkg[0] for pkg in packagers],
+        packagers=packagers,
         motif=motif,
         total_page=total_page,
         page=page
