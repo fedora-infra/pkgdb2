@@ -1,0 +1,95 @@
+{% extends "master.html" %}
+
+{% block title %} {{ super() }} {% endblock %}
+
+{%block header %}
+{% if refresh %}
+<meta http-equiv="refresh" content="5" >
+{% endif %}
+{% endblock %}
+
+{%block tag %}admin{% endblock %}
+
+
+{% set options = True %}
+{%block options %}
+<form action="{{ url_for('.admin_actions') }}" method="get">
+    Restrict to package: <input type="text" name="package" /> <br />
+    Restrict to packager: <input type="text" name="packager" /> <br />
+    Restrict to action: <input id="action" type="text" name="action" /> <br />
+    Restrict to Status: <input id="status" type="text" name="status" /> <br />
+    <input type="submit" class="submit positive button" value="filter">
+</form>
+{% endblock %}
+
+{% block content %}
+
+<h1>Actions</h1>
+
+{% if total_page and total_page > 1 %}
+<table>
+    <tr>
+        <td>
+        {% if page > 1%}
+            <a href="{{ url_for('.admin_action') }}?page={{page - 1}}&package={{package}}&from_date={{from_date}}">
+                < Previous
+            </a>
+        {% else %}
+            < Previous
+        {% endif %}
+        </td>
+        <td>{{ page }} / {{ total_page }}</td>
+        <td>
+            {% if page < total_page %}
+            <a href="{{ url_for('.admin_action') }}?page={{page + 1}}&package={{package}}&from_date={{from_date}}">
+                Next >
+            </a>
+            {% else %}
+            Next >
+            {% endif %}
+        </td>
+    </tr>
+</table>
+{% endif %}
+
+<table>
+    <tr>
+        <th>Date</th>
+        <th>User</th>
+        <th>Package</th>
+        <th>Action</th>
+        <th>Branch</th>
+        <th>From branch</th>
+        <th>Status</th>
+    </tr>
+{% for action in actions %}
+    <tr>
+        <td>
+            {{ action.date_created.strftime('%Y-%m-%d %H:%M:%S') }}
+        </td>
+        <td>{{ action.user }}</td>
+        <td>{{ action.package.name }}</td>
+        <td>{{ action.action }}</td>
+        <td>{{ action.collection.branchname }}</td>
+        <td>{{ action.from_collection.branchname }}</td>
+        <td>{{ action.status }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='jquery-ui-timespinner.js') }}">
+</script>
+<script type="text/javascript">
+    $(function(){
+        $('#from_date').datepicker({
+            dateFormat: "yy-mm-dd",
+        });
+    });
+</script>
+{% endblock %}
