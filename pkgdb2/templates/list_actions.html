@@ -53,27 +53,35 @@
 {% endif %}
 
 <table>
-    <tr>
-        <th>Date</th>
-        <th>User</th>
-        <th>Package</th>
-        <th>Action</th>
-        <th>Branch</th>
-        <th>From branch</th>
-        <th>Status</th>
-    </tr>
+  <tr>
+    <th>Date</th>
+    <th>User</th>
+    <th>Package</th>
+    <th>Action</th>
+    <th>Branch</th>
+    <th>From branch</th>
+    <th>Status</th>
+  </tr>
 {% for action in actions %}
-    <tr>
-        <td>
-            {{ action.date_created.strftime('%Y-%m-%d %H:%M:%S') }}
-        </td>
-        <td>{{ action.user }}</td>
-        <td>{{ action.package.name }}</td>
-        <td>{{ action.action }}</td>
-        <td>{{ action.collection.branchname }}</td>
-        <td>{{ action.from_collection.branchname }}</td>
-        <td>{{ action.status }}</td>
-    </tr>
+  <tr>
+    <td>
+        {{ action.date_created.strftime('%Y-%m-%d %H:%M:%S') }}
+    </td>
+    <td>
+      <a href="{{url_for('.packager_info', packager=action.user)}}">
+        {{ action.user }}
+      </a>
+    </td>
+    <td>
+      <a href="{{url_for('.package_info', package=action.package.name)}}">
+        {{ action.package.name }}
+      </a>
+    </td>
+    <td>{{ action.action }}</td>
+    <td>{{ action.collection.branchname }}</td>
+    <td>{{ action.from_collection.branchname }}</td>
+    <td>{{ action.status }}</td>
+  </tr>
 {% endfor %}
 </table>
 
