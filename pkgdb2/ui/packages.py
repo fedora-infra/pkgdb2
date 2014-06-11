@@ -95,6 +95,11 @@ def list_packages(motif=None, orphaned=None, status=None,
 
     select = origin.replace('list_', '')
 
+    if len(packages) == 1:
+        flask.flash('Only one package matching, redirecting you to it')
+        return flask.redirect(flask.url_for(
+            '.package_info', package=packages[0].name))
+
     return flask.render_template(
         'list_packages.html',
         origin=origin,
