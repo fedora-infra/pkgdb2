@@ -21,3 +21,6 @@ This list is generated using
 ::
 
   git shortlog -s -n -e
+
+
+The link icon (``static/link.png``) was designed by `Máirín Duffy <http://blog.linuxgrrl.com/>`_.
