@@ -100,7 +100,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_poc='ralph',
                           pkg_review_url=None,
                           pkg_upstream_url='http://guake.org',
-                          user=FakeFasUserAdmin())
+                              user=FakeFasUserAdmin())
 
         pkgdb2.lib.utils.get_packagers = mock.MagicMock()
         pkgdb2.lib.utils.get_packagers.return_value = ['pingou']
@@ -1738,6 +1738,43 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUser()
         )
         self.assertEqual(msg, 'Monitoring status of guake set to False')
+
+    def test_add_new_branch_request(self):
+        """ Test the add_new_branch_request method of pkgdblib. """
+        create_package_acl(self.session)
+
+        # Invalid package
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_branch_request,
+            session=self.session,
+            pkg_name='foobar',
+            clt_from='master',
+            clt_to='el6',
+            user=FakeFasUserAdmin()
+        )
+
+        # Invalid collection_to
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_branch_request,
+            session=self.session,
+            pkg_name='guake',
+            clt_from='master',
+            clt_to='foobar',
+            user=FakeFasUserAdmin()
+        )
+
+        # Invalid collection_from
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_branch_request,
+            session=self.session,
+            pkg_name='guake',
+            clt_from='foobar',
+            clt_to='el6',
+            user=FakeFasUserAdmin()
+        )
 
 
 if __name__ == '__main__':
