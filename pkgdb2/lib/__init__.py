@@ -1644,6 +1644,51 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
     ))
 
 
+def add_unretire_request(session, pkg_name, pkg_branch, user):
+    """ Register a new request to un-retire a package.
+
+    This method only flushes the new objects.
+
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package to unretire.
+    :arg clt_to: the ``branchname`` of the collection to unretire.
+    :arg user: the user making the action.
+    :raises pkgdb2.lib.PkgdbException: There are three conditions leading to
+        this exception beeing raised:
+            - The specified package does not exists.
+            - The specified branch is invalid (does not exist)
+            - The user requesting is not a packager
+
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('Package %s not found' % pkg_name)
+
+    try:
+        pkg_branch = model.Collection.by_name(session, pkg_branch)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % pkg_branch)
+
+    _validate_poc(user.username)
+
+    action = model.AdminAction(
+        package_id=package.id,
+        collection_id=pkg_branch.id,
+        user=user.username,
+        status='Awaiting Review',
+        action='request.unretire',
+    )
+
+    session.add(action)
+
+    pkgdb2.lib.utils.log(session, None, 'package.unretire.request', dict(
+        agent=user.username,
+        package=package.to_json(),
+        collection=pkg_branch.to_json(),
+    ))
+
+
 def count_collection(session):
     """ Return the number of package 'Approved' for each collection.
 
