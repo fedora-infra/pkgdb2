@@ -91,7 +91,10 @@ List admin actions
               "package": {
                 "acls": [],
                 "creation_date": 1400063778.0,
-                "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+                "description": "Guake is a drop-down terminal for Gnome "
+                               "Desktop Environment, so you just need to "
+                               "press a key to invoke him, and press again "
+                               "to hide.",
                 "name": "guake",
                 "review_url": null,
                 "status": "Approved",
@@ -105,6 +108,11 @@ List admin actions
           "page": 1,
           "page_total": 1
         }
+
+    .. note:: the ``date_created`` and ``date_updated`` fields are both
+            timestamps expressed in
+            `Unix TIME <https://en.wikipedia.org/wiki/Unix_time>`_
+
     """
     package = flask.request.args.get('package', None)
     packager = flask.request.args.get('packager', None)
