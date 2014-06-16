@@ -78,6 +78,20 @@
 </div>
 
 <h2>
+    Admin
+    <a name="admin" class="headerlink" title="Permalink to this headline" href="#admin">
+    <img src="{{ url_for('static', filename='link.png') }}" />
+    </a>
+</h2>
+<div class="accordion">
+{% for html in admin %}
+{% autoescape false %}
+{{ html | InsertDiv}}
+{% endautoescape %}
+{% endfor %}
+</div>
+
+<h2>
     Extras
     <a name="extras" class="headerlink" title="Permalink to this headline" href="#extras">
     <img src="{{ url_for('static', filename='link.png') }}" />
