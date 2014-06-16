@@ -162,7 +162,7 @@ List admin actions
         output['error'] = 'No actions found for these parameters'
         httpcode = 404
     else:
-        output['packages'] = [
+        output['actions'] = [
             action.to_json()
             for action in actions
         ]
