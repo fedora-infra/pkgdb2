@@ -107,7 +107,7 @@ def api():
     api_acl_update = load_doc(acls.api_acl_update)
     api_acl_reassign = load_doc(acls.api_acl_reassign)
 
-    api_admin_actions = load_doc(admin.admin_actions)
+    api_admin_actions = load_doc(admin.api_admin_actions)
 
     api_version_doc = load_doc(api_version)
     api_extras_bugzilla = load_doc(extras.api_bugzilla)
