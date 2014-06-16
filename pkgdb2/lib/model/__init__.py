@@ -1637,6 +1637,28 @@ class AdminAction(BASE):
         foreign_keys=[from_collection_id], remote_side=[Collection.id],
     )
 
+    def to_json(self, _seen=None, acls=True, package=True, collection=None):
+        """ Return a dictionnary representation of the object.
+
+        """
+        _seen = _seen or []
+        cls = type(self)
+
+        ## pylint complains about timetuple() but it is a method
+        # pylint: disable=E1102
+        result = {
+            'action': self.action,
+            'user': self.user,
+            'status': self.status,
+            'package': self.package.to_json(acls=False),
+            'collection': self.collection.to_json(),
+            'from_collection': self.from_collection.to_json(),
+            'date_created': time.mktime(self.date_created.timetuple()),
+            'date_updated': time.mktime(self.date_change.timetuple()),
+        }
+
+        return result
+
     @classmethod
     def search(cls, session, package_id=None, packager=None, action=None,
                status=None, offset=None, limit=None, count=False):
