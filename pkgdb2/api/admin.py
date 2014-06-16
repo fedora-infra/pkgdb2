@@ -129,12 +129,6 @@ List admin actions
     except ValueError:
         page = 1
 
-    try:
-        limit = abs(int(limit))
-    except ValueError:
-        limit = APP.config['ITEMS_PER_PAGE']
-        flask.flash('Incorrect limit provided, using default', 'errors')
-
     actions = []
     cnt_actions = 0
     try:
