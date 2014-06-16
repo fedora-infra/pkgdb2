@@ -37,7 +37,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 import pkgdb2
-from pkgdb2 import APP
 from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
@@ -53,9 +52,12 @@ class FlaskApiAdminTest(Modeltests):
         pkgdb2.APP.config['TESTING'] = True
         pkgdb2.SESSION = self.session
         pkgdb2.api.admin.SESSION = self.session
+        pkgdb2.ui.packages.SESSION = self.session
         self.app = pkgdb2.APP.test_client()
 
-    def test_admin_actions(self):
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
+    def test_admin_actions(self, login_func, mock_func):
         """ Test the api_admin_actions function.  """
 
         output = self.app.get('/api/admin/actions/')
@@ -68,6 +70,70 @@ class FlaskApiAdminTest(Modeltests):
             data['error'], 'No actions found for these parameters')
 
         output = self.app.get('/api/admin/actions/?page=abc&limit=abcd')
+        data = json.loads(output.data)
+        self.assertEqual(data['actions'], [])
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['page_total'], 1)
+        self.assertEqual(data['output'], 'notok')
+        self.assertEqual(
+            data['error'], 'No actions found for these parameters')
+
+        # Unretire the package
+        from test_flask_ui_packages import FlaskUiPackagesTest
+        test = FlaskUiPackagesTest('test_package_unretire')
+        test.session = self.session
+        test.app = self.app
+        test.test_package_unretire()
+
+        output = self.app.get('/api/admin/actions/?page=2&limit=1')
+        data = json.loads(output.data)
+        self.assertEqual(data['actions'], [])
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['page_total'], 1)
+        self.assertEqual(data['output'], 'notok')
+        self.assertEqual(
+            data['error'], 'No actions found for these parameters')
+
+        output = self.app.get('/api/admin/actions/?package=guake')
+        data = json.loads(output.data)
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['page_total'], 1)
+        self.assertEqual(len(data['actions']), 1)
+        self.assertEqual(data['actions'][0]['action'], 'request.unretire')
+        self.assertEqual(
+            data['actions'][0]['collection']['branchname'], 'f18')
+        self.assertEqual(data['actions'][0]['package']['name'], 'guake')
+        self.assertEqual(data['actions'][0]['package']['acls'], [])
+        self.assertEqual(data['output'], 'ok')
+        self.assertFalse('error' in data)
+
+        output = self.app.get('/api/admin/actions/?status=Awaiting Review')
+        data = json.loads(output.data)
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['page_total'], 1)
+        self.assertEqual(len(data['actions']), 1)
+        self.assertEqual(data['actions'][0]['action'], 'request.unretire')
+        self.assertEqual(
+            data['actions'][0]['collection']['branchname'], 'f18')
+        self.assertEqual(data['actions'][0]['package']['name'], 'guake')
+        self.assertEqual(data['actions'][0]['package']['acls'], [])
+        self.assertEqual(data['output'], 'ok')
+        self.assertFalse('error' in data)
+
+        output = self.app.get('/api/admin/actions/?action=request.unretire')
+        data = json.loads(output.data)
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['page_total'], 1)
+        self.assertEqual(len(data['actions']), 1)
+        self.assertEqual(data['actions'][0]['action'], 'request.unretire')
+        self.assertEqual(
+            data['actions'][0]['collection']['branchname'], 'f18')
+        self.assertEqual(data['actions'][0]['package']['name'], 'guake')
+        self.assertEqual(data['actions'][0]['package']['acls'], [])
+        self.assertEqual(data['output'], 'ok')
+        self.assertFalse('error' in data)
+
+        output = self.app.get('/api/admin/actions/?packager=pingou')
         data = json.loads(output.data)
         self.assertEqual(data['actions'], [])
         self.assertEqual(data['page'], 1)
