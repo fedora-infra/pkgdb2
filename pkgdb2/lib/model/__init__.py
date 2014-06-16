@@ -1619,7 +1619,7 @@ class AdminAction(BASE):
         sa.Integer,
         sa.ForeignKey(
             'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
-        nullable=False)
+        nullable=True)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
