@@ -649,7 +649,6 @@ def package_unretire(package, full=True):
                         # We should never hit this
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
-                        APP.logger.exception(err)
                     except SQLAlchemyError, err:
                         SESSION.rollback()
                         flask.flash(
