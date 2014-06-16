@@ -150,7 +150,7 @@ List admin actions
             status=status,
             count=True,
         )
-    except pkgdblib.PkgdbException, err:
+    except pkgdblib.PkgdbException, err:  # pragma: no cover
         SESSION.rollback()
         output['output'] = 'notok'
         output['error'] = str(err)
