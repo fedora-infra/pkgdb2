@@ -61,14 +61,25 @@ class FlaskUiPackagesTest(Modeltests):
 
     def test_list_packages(self):
         """ Test the list_packages function. """
+        create_package_acl(self.session)
 
         output = self.app.get('/packages/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<p>4 packages found</p>' in output.data)
 
         output = self.app.get('/packages/?limit=abc&page=def')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<p>4 packages found</p>' in output.data)
+        self.assertTrue(
+            '<li class="errors">Incorrect limit provided, using default</li>'
+            in output.data)
+
+        output = self.app.get('/packages/?orphaned=0')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<p>4 packages found</p>' in output.data)
 
     def test_package_info(self):
         """ Test the package_info function. """
