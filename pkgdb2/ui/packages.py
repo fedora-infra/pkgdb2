@@ -605,6 +605,83 @@ def package_retire(package, full=True):
     )
 
 
+@UI.route('/package/<package>/unretire', methods=('GET', 'POST'))
+@UI.route('/package/<package>/unretire/<full>', methods=('GET', 'POST'))
+@packager_login_required
+def package_unretire(package, full=True):
+    ''' Asks an admin to unretire the package. '''
+
+    if not bool(full) or str(full) in ['0', 'False']:
+        full = False
+
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    collections = [
+        acl.collection.branchname
+        for acl in package_acl
+        if acl.collection.status in ['Active', 'Under Development']
+        and acl.status == 'Retired'
+    ]
+
+    form = pkgdb2.forms.BranchForm(collections=collections)
+
+    if form.validate_on_submit():
+        for acl in package_acl:
+            if acl.collection.branchname in form.branches.data:
+                if acl.point_of_contact == 'orphan':
+                    try:
+                        pkgdblib.add_unretire_request(
+                            session=SESSION,
+                            pkg_name=package.name,
+                            pkg_branch=acl.collection.branchname,
+                            user=flask.g.fas_user,
+                        )
+                        flask.flash(
+                            'Admins have been asked to un-retire branch: %s'
+                            % acl.collection.branchname)
+                    except pkgdblib.PkgdbException, err:  # pragma: no cover
+                        # We should never hit this
+                        flask.flash(str(err), 'error')
+                        SESSION.rollback()
+                        APP.logger.exception(err)
+                    except SQLAlchemyError, err:
+                        SESSION.rollback()
+                        flask.flash(
+                            'Could not save the request for branch: %s, has '
+                            'it already been requested?'
+                            % acl.collection.branchname, 'error')
+                else:  # pragma: no cover
+                    flask.flash(
+                        'This package is not orphaned on branch: %s'
+                        % acl.collection.branchname)
+
+        try:
+            SESSION.commit()
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We should never hit this
+            SESSION.rollback()
+            APP.logger.exception(err)
+            flask.flash(str(err), 'error')
+
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    return flask.render_template(
+        'branch_selection.html',
+        full=full,
+        package=package,
+        form=form,
+        action='unretire',
+    )
+
+
 @UI.route('/package/<package>/take', methods=('GET', 'POST'))
 @UI.route('/package/<package>/take/<full>', methods=('GET', 'POST'))
 @packager_login_required
