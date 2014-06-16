@@ -29,15 +29,82 @@ from dateutil import parser
 from math import ceil
 
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION, APP, is_admin
-from pkgdb2.api import API
+from pkgdb2 import SESSION, APP
+from pkgdb2.api import API, get_limit
 
 
 @API.route('/admin/actions/')
-@is_admin
 def admin_actions():
-    """ Return the actions requested and requiring intervention from an
-    admin.
+    """
+List admin actions
+------------------
+    List actions requiring intervention from an admin.
+
+    ::
+
+        /api/admin/actions
+
+        /api/admin/actions
+
+    Accept GET queries only.
+
+    :kwarg package: restrict the actions to a specific package.
+    :kwarg packager: restrict the actions to a specific packager.
+    :kwarg action: restrict the actions to a specific action, options are:
+        ``request.branch``.
+    :kwarg status: restrict the actions depending on their status, options
+        are: ``Awaiting Review``, ``Approved``, ``Denied``, ``Obsolete``,
+        ``Removed``.
+    :kwarg limit: An integer to limit the number of results, defaults to
+        250, maximum is 500.
+    :kwarg page: The page number to return (useful in combination to limit).
+
+    Sample response:
+
+    ::
+
+        /api/admin/actions
+
+        {
+          "output": "ok",
+          "packages": [
+            {
+              "action": "request.branch",
+              "collection": {
+                "branchname": "epel7",
+                "dist_tag": ".el7",
+                "koji_name": "epel7",
+                "name": "Fedora EPEL",
+                "status": "Active",
+                "version": "7"
+              },
+              "date_created": 1402470695.0,
+              "date_updated": 1402470695.0,
+              "from_collection": {
+                "branchname": "f19",
+                "dist_tag": ".fc19",
+                "koji_name": "f19",
+                "name": "Fedora",
+                "status": "Active",
+                "version": "19"
+              },
+              "package": {
+                "acls": [],
+                "creation_date": 1400063778.0,
+                "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+                "name": "guake",
+                "review_url": null,
+                "status": "Approved",
+                "summary": "Drop-down terminal for GNOME",
+                "upstream_url": "http://guake.org/"
+              },
+              "status": "Awaiting Review",
+              "user": "pingou"
+            }
+          ],
+          "page": 1,
+          "page_total": 1
+        }
     """
     package = flask.request.args.get('package', None)
     packager = flask.request.args.get('packager', None)
@@ -79,7 +146,6 @@ def admin_actions():
             packager=packager or None,
             action=action,
             status=status,
-            eol=eol,
             count=True,
         )
     except pkgdblib.PkgdbException, err:
