@@ -1652,13 +1652,18 @@ class AdminAction(BASE):
 
         ## pylint complains about timetuple() but it is a method
         # pylint: disable=E1102
+
+        from_collection = None
+        if self.from_collection:
+            from_collection = self.from_collection.to_json()
+
         result = {
             'action': self.action,
             'user': self.user,
             'status': self.status,
             'package': self.package.to_json(acls=False),
             'collection': self.collection.to_json(),
-            'from_collection': self.from_collection.to_json(),
+            'from_collection': from_collection  ,
             'date_created': time.mktime(self.date_created.timetuple()),
             'date_updated': time.mktime(self.date_change.timetuple()),
         }
