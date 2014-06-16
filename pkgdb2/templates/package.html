@@ -204,6 +204,16 @@ confusing what the difference is between that status an the per-branch status)
                 </button>
               </a>
             </td>
+          {% elif ('Retired' in statuses) %}
+            <td>
+              <a title="Ask an admin to un-retire the package for you"
+                 id="unretirebutton"
+                 href="{{ url_for('.package_unretire', package=package.name) }}">
+                <button class="bold pkg_button_blue">
+                  + Ask Unretire
+                </button>
+              </a>
+            </td>
           {% else %}
             <td></td>
           {% endif %}
@@ -646,6 +656,23 @@ confusing what the difference is between that status an the per-branch status)
                 },
             });
 
+            return false;
+        });
+        $('#unretirebutton').click(function(){
+            var _url = "{{ url_for('.package_unretire', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    var _height = $(window).height() * 0.8;
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
             return false;
         });
 
