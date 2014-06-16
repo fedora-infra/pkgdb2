@@ -107,4 +107,5 @@ def admin_log():
         page=page,
         package=package or '',
         from_date=from_date or '',
+        packager=packager or '',
     )

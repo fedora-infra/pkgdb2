@@ -35,7 +35,9 @@ This page should refresh automatically every 5 seconds
     <tr>
         <td>
         {% if page > 1%}
-            <a href="{{ url_for('.admin_log') }}?page={{page - 1}}&package={{package}}&from_date={{from_date}}">
+            <a href="{{ url_for(
+                '.admin_log', package=package, from_date=from_date,
+                packager=packager, page=page-1) }}">
                 < Previous
             </a>
         {% else %}
@@ -45,7 +47,9 @@ This page should refresh automatically every 5 seconds
         <td>{{ page }} / {{ total_page }}</td>
         <td>
             {% if page < total_page %}
-            <a href="{{ url_for('.admin_log') }}?page={{page + 1}}&package={{package}}&from_date={{from_date}}">
+            <a href="{{ url_for(
+                '.admin_log', package=package, from_date=from_date,
+                packager=packager, page=page+1) }}">
                 Next >
             </a>
             {% else %}
