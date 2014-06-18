@@ -99,7 +99,7 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
     {% endfor %}
 {% elif total_page %}
     <li>Sorry, but the page you are requesting is unavailable. <br />
-        <a href="{{ url_for('.list_packages', motif=motif) }}">
+        <a href="{{ url_for('.%s' % origin, motif=motif) }}">
             Back to the list
         </a>
     </li>
