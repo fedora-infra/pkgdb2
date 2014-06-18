@@ -43,12 +43,14 @@
                 {{ packager }}</a>
         </li>
     {% endfor %}
-{% else %}
+{% elif total_page %}
     <li>Sorry, but the page you are requesting is unavailable. <br />
         <a href="{{ url_for('.list_packagers', motif=motif) }}">
             Back to the list
         </a>
     </li>
+{% else %}
+    <p class='error'>No packagers found in the database.</p>
 {% endif %}
 </ul>
 

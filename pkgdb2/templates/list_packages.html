@@ -97,12 +97,14 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
         )
         </li>
     {% endfor %}
-{% else %}
+{% elif total_page %}
     <li>Sorry, but the page you are requesting is unavailable. <br />
         <a href="{{ url_for('.list_packages', motif=motif) }}">
             Back to the list
         </a>
     </li>
+{% else %}
+    <p class='error'>No packages found in the database.</p>
 {% endif %}
 </ul>
 

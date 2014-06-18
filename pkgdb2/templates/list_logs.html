@@ -60,7 +60,6 @@ This page should refresh automatically every 5 seconds
 </table>
 {% endif %}
 
-
 {% if total_page >= page and page > 0 %}
     <table>
     {% for log in logs %}
@@ -74,13 +73,15 @@ This page should refresh automatically every 5 seconds
         </tr>
     {% endfor %}
     </table>
-{% else %}
+{% elif total_page %}
     <p>
         Sorry, but the page you are requesting is unavailable. <br />
         <a href="{{ url_for('.admin_log', motif=motif) }}">
             Back to the list
         </a>
     </p>
+{% else %}
+    <p class='error'>No logs found in the database.</p>
 {% endif %}
 
 
