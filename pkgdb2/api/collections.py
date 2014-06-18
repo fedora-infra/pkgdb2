@@ -269,7 +269,7 @@ List collections
 
     ::
 
-        /api/collections?pattern=EL*
+        /api/collections?pattern=el*
 
         {
           "collections": [
