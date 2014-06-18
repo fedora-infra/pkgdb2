@@ -30,7 +30,7 @@
 This page should refresh automatically every 5 seconds
 {% endif %}
 
-{% if total_page and total_page > 1 %}
+{% if total_page and total_page > 1 and total_page >= page %}
 <table>
     <tr>
         <td>
@@ -60,18 +60,27 @@ This page should refresh automatically every 5 seconds
 </table>
 {% endif %}
 
-<table>
-{% for log in logs %}
-    <tr>
-        <td>
-            {{ log.change_time.strftime('%Y-%m-%d %H:%M:%S') }}
-        </td>
-        <td>
-        {{ log.description }}
-        </td>
-    </tr>
-{% endfor %}
-</table>
+
+{% if total_page >= page and page > 0 %}
+    <table>
+    {% for log in logs %}
+        <tr>
+            <td>
+                {{ log.change_time.strftime('%Y-%m-%d %H:%M:%S') }}
+            </td>
+            <td>
+            {{ log.description }}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>
+        Sorry, but the page you are requesting is unavailable. <br />
+        <a href="{{ url_for('.list_logs', motif=motif) }}">Back to the beginning of the list</a>
+    </p>
+{% endif %}
+
 
 {% endblock %}
 
