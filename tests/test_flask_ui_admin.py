@@ -107,7 +107,7 @@ class FlaskUiAdminTest(Modeltests):
                 'Restrict to package: <input type="text" name="package" />'
                 in output.data)
             self.assertTrue(
-                'Sorry, but the page you are requesting is unavailable.'
+                '<p class=\'error\'>No logs found in the database.</p>'
                 in output.data)
 
 
