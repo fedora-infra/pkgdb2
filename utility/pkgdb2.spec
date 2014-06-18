@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.11.1
+Version:        1.12
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,18 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Jun 18 2014  Pierre-Yves Chibon <pingou@pingoured.fr> - 1.12-1
+- Update to 1.12
+- Add anchors to the API documentation
+- Fix error in the API documentation
+- Handle situation when the user asks for a page outside the allowed range
+  (Thanks Cydrobolt!)
+- Improve unit-test suit
+- Fix the pagination while browsing logs with some filtering criteria
+- When searching for a package or a packager if there is only 1 result
+  possible redirect the user directly to the corresponding page
+- Fix typo in the package's detail page
+
 * Tue Jun 10 2014  Pierre-Yves Chibon <pingou@pingoured.fr> - 1.11.1-1
 - Update to 1.11.1
 - Fix the search to search all packages by default, including orphaned onces
