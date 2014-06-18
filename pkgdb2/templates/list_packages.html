@@ -52,7 +52,7 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
 <table>
     <tr>
         <td>
-        {% if page > 1%}
+        {% if page > 1 %}
             <a href="{{ url_for('.%s' % origin, motif=motif, page=page-1,
                 branches=branches, status=status, owner=owner) }}">
                 &lt; Previous
@@ -77,25 +77,33 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
 {% endif %}
 
 <ul>
-{% for pkg in packages %}
-    <li>
-    <a href="{{url_for('.package_info', package=pkg.name)}}">
-            {{ pkg.name }}</a>
-    -- {{ pkg.summary }}
-    (
-    {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
-        %} {% if listing.collection.status != 'EOL' %}
-        {% if origin == 'list_packages' and listing.status == 'Approved' %}
-            {{ listing.collection.branchname }}
-        {% elif origin == 'list_retired' and listing.status == 'Retired' %}
-            {{ listing.collection.branchname }}
-        {% elif origin == 'list_orphaned' and listing.status == 'Orphaned' %}
-            {{ listing.collection.branchname }}
-        {% endif %}
-    {% endif %}{% endfor %}
-    )
+{% if total_page >= page and page > 0 %}
+    {% for pkg in packages %}
+        <li>
+        <a href="{{url_for('.package_info', package=pkg.name)}}">
+                {{ pkg.name }}</a>
+        -- {{ pkg.summary }}
+        (
+        {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
+            %} {% if listing.collection.status != 'EOL' %}
+            {% if origin == 'list_packages' and listing.status == 'Approved' %}
+                {{ listing.collection.branchname }}
+            {% elif origin == 'list_retired' and listing.status == 'Retired' %}
+                {{ listing.collection.branchname }}
+            {% elif origin == 'list_orphaned' and listing.status == 'Orphaned' %}
+                {{ listing.collection.branchname }}
+            {% endif %}
+        {% endif %}{% endfor %}
+        )
+        </li>
+    {% endfor %}
+{% else %}
+    <li>Sorry, but the page you are requesting is unavailable. <br />
+        <a href="{{ url_for('.list_packagers', motif=motif) }}">
+            Back to the list
+        </a>
     </li>
-{% endfor %}
+{% endif %}
 </ul>
 
 {% endblock %}

@@ -12,7 +12,7 @@
 <table>
     <tr>
         <td>
-        {% if page > 1%}
+        {% if page > 1 %}
             <a href="{{ url_for('.list_packagers', motif=motif) }}?page={{page - 1}}">
                 < Previous
             </a>
@@ -30,17 +30,26 @@
             Next >
             {% endif %}
         </td>
+
     </tr>
 </table>
 {% endif %}
 
 <ul>
-{% for packager in packagers %}
-    <li>
-        <a href="{{url_for('.packager_info', packager=packager)}}">
-            {{ packager }}</a>
+{% if total_page >= page and page > 0 %}
+    {% for packager in packagers %}
+        <li>
+            <a href="{{url_for('.packager_info', packager=packager)}}">
+                {{ packager }}</a>
+        </li>
+    {% endfor %}
+{% else %}
+    <li>Sorry, but the page you are requesting is unavailable. <br />
+        <a href="{{ url_for('.list_packagers', motif=motif) }}">
+            Back to the list
+        </a>
     </li>
-{% endfor %}
+{% endif %}
 </ul>
 
 {% endblock %}
