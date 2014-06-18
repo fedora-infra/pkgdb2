@@ -106,7 +106,9 @@ class FlaskUiAdminTest(Modeltests):
             self.assertTrue(
                 'Restrict to package: <input type="text" name="package" />'
                 in output.data)
-            self.assertTrue('<table>\n\n</table>' in output.data)
+            self.assertTrue(
+                'Sorry, but the page you are requesting is unavailable.'
+                in output.data)
 
 
 if __name__ == '__main__':
