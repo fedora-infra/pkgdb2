@@ -28,7 +28,8 @@ import flask
 from urlparse import urlparse
 
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import APP, SESSION, FAS, is_pkgdb_admin, __version__, is_safe_url
+from pkgdb2 import (APP, SESSION, FAS, is_pkgdb_admin, __version__,
+    is_safe_url, is_authenticated)
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
@@ -70,7 +71,12 @@ def inject_is_admin():
 def index():
     ''' Display the index package DB page. '''
     packages = pkgdblib.get_latest_package(SESSION, 10)
-    return flask.render_template('index.html', latest_pkgs=packages)
+    pending_acls = None
+    if is_authenticated():
+        pending_acls = pkgdblib.get_pending_acl_user(
+            SESSION, flask.g.fas_user.username)
+    return flask.render_template(
+        'index.html', latest_pkgs=packages, pending_acls=pending_acls)
 
 
 @UI.route('/stats/')
