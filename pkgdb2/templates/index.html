@@ -42,3 +42,25 @@ engineers need to create packages and spin them into a distribution.
 </table>
 
 {% endblock %}
+
+
+{% block jscripts %}
+{{ super() }}
+{% if pending_acls %}
+<script type="text/javascript"
+    src="{{ url_for('static', filename='notify.min.js') }}">
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        $('#flashes').notify(
+            "You have ACLs awaiting review from you",
+            {
+                position: "top center",
+                className: "warn",
+            }
+        );
+    });
+</script>
+{% endif %}
+{% endblock %}
