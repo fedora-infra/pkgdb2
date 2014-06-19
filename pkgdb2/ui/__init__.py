@@ -63,6 +63,11 @@ def inject_is_admin():
     """ Inject whether the user is a pkgdb2 admin or not in every page
     (every template).
     """
+    justlogedin = flask.session.get('_justlogedin', False)
+    if justlogedin:
+        flask.g.pending_acls = pkgdblib.get_pending_acl_user(
+            SESSION, flask.g.fas_user.username)
+        flask.session['_justlogedin'] = None
     return dict(is_admin=is_pkgdb_admin(flask.g.fas_user),
                 version=__version__)
 
@@ -71,12 +76,7 @@ def inject_is_admin():
 def index():
     ''' Display the index package DB page. '''
     packages = pkgdblib.get_latest_package(SESSION, 10)
-    pending_acls = None
-    if is_authenticated():
-        pending_acls = pkgdblib.get_pending_acl_user(
-            SESSION, flask.g.fas_user.username)
-    return flask.render_template(
-        'index.html', latest_pkgs=packages, pending_acls=pending_acls)
+    return flask.render_template('index.html', latest_pkgs=packages)
 
 
 @UI.route('/stats/')
@@ -164,6 +164,13 @@ def msg():
     """ Page used to display error messages
     """
     return flask.render_template('msg.html')
+
+
+@FAS.postlogin
+def check_pending_acls(return_url):
+    """ After login check if the user has ACLs awaiting review. """
+    flask.session['_justlogedin'] = True
+    return flask.redirect(return_url)
 
 
 @UI.route('/login/', methods=['GET', 'POST'])
