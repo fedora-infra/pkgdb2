@@ -111,6 +111,7 @@ def api():
     api_extras_notify = load_doc(extras.api_notify)
     api_extras_notify_all = load_doc(extras.api_notify_all)
     api_extras_vcs = load_doc(extras.api_vcs)
+    api_extras_pendingacls = load_doc(extras.api_pendingacls)
 
     return flask.render_template(
         'api.html',
@@ -137,7 +138,7 @@ def api():
         extras=[
             api_extras_bugzilla, api_extras_critpath,
             api_extras_notify, api_extras_notify_all,
-            api_extras_vcs
+            api_extras_vcs, api_extras_pendingacls
         ]
     )
 
