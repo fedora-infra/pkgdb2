@@ -1164,7 +1164,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
                              '"%s".' % clt_branchname)
 
 
-def get_pending_acl_user(session, user):
+def get_pending_acl_user(session, user=None):
     """ Return the pending ACLs on any of the packages owned by the
     specified user.
     The method returns a list of dictionnary containing the package name
@@ -1183,7 +1183,7 @@ def get_pending_acl_user(session, user):
     """
     output = []
     for package in model.PackageListingAcl.get_pending_acl(
-            session, user):
+            session, user=user):
         output.append(
             {'package': package.packagelist.package.name,
              'user': package.fas_name,
