@@ -611,6 +611,12 @@ guake:master has toshio waiting for commit
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
 
+        self.assertEqual(data, expected)
+
+        output = self.app.get('/api/pendingacls/?format=json&username=toshio')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        expected = {'pending_acls': [], 'total_requests_pending': 0}
 
         self.assertEqual(data, expected)
 
