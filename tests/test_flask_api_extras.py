@@ -534,6 +534,86 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
 
         self.assertEqual(data, expected)
 
+    def test_api_pendingacls_empty(self):
+        """ Test the api_pendingacls function with an empty database. """
+
+        # Empty DB
+        output = self.app.get('/api/pendingacls/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of requests pending: 0\n"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/pendingacls/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        expected = {'pending_acls': [], 'total_requests_pending': 0}
+        output = self.app.get('/api/pendingacls/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/pendingacls/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+    def test_api_pendingacls_filled(self):
+        """ Test the api_pendingacls function with a filled database. """
+        # Fill the DB
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        output = self.app.get('/api/pendingacls/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """# Number of requests pending: 2
+guake:master has ralph waiting for approveacls
+guake:master has toshio waiting for commit
+"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/pendingacls/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/pendingacls/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'pending_acls': [
+                {
+                    'acl': 'approveacls',
+                    'collection': 'master',
+                    'package': 'guake',
+                    'status': 'Awaiting Review',
+                    'user': 'ralph'
+                },
+                {
+                    'acl': 'commit',
+                    'collection': 'master',
+                    'package': 'guake',
+                    'status': 'Awaiting Review',
+                    'user': 'toshio'
+                }
+            ],
+            'total_requests_pending': 2
+        }
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get('/api/pendingacls/?format=json&username=pingou')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+
+        self.assertEqual(data, expected)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiExtrasTest)
