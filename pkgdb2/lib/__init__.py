@@ -1697,14 +1697,13 @@ def set_critpath_packages(
                                                             package.id,
                                                             collection.id)
 
-    msgs = []
+    msg = None
     branches = []
     if critpath != pkglisting.critpath:
         pkglisting.critpath = critpath
         branches.append(pkglisting.collection.branchname)
-        msgs.append(
-            '%s: critpath updated on %s to %s' %  (
-                package.name, pkglisting.collection.branchname, critpath))
+        msg = '%s: critpath updated on %s to %s' %  (
+                package.name, pkglisting.collection.branchname, critpath)
         session.add(pkglisting)
 
     try:
@@ -1720,4 +1719,4 @@ def set_critpath_packages(
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not edit package.')
 
-    return msgs
+    return msg
