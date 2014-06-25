@@ -474,7 +474,7 @@ Pending ACLs requests
         output['total_requests_pending'] = len(pending_acls)
         return flask.jsonify(output)
     else:
-        pending_acls = sorted(pending_acls, key=lambda it: it['package'])
+        pending_acls.sort(key=lambda it: it['package'])
         output = [
             "# Number of requests pending: %s" % len(pending_acls)]
         for entry in pending_acls:
