@@ -250,6 +250,9 @@ def log(session, package, topic, message):
                        '%(package_name)s on branch: '
                        '%(package_listing.collection.branchname)s for point'
                        ' of contact: %(package_listing.point_of_contact)s',
+        'package.critpath.update': 'user: %(agent)s updated critpath status'
+                                   'for package: %(package.name)s on '
+                                   'branches %(branches)s',
         'package.update': 'user: %(agent)s updated package: '
                           '%(package.name)s',
         'package.update.status': 'user: %(agent)s updated package: '
