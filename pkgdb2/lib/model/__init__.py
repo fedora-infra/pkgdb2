@@ -130,7 +130,7 @@ def create_status(session):
         session.add(obj)
         try:
             session.commit()
-        except SQLAlchemyError:
+        except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
     for status in ['Approved', 'Awaiting Review', 'Denied', 'Obsolete',
@@ -139,7 +139,7 @@ def create_status(session):
         session.add(obj)
         try:
             session.commit()
-        except SQLAlchemyError:
+        except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
     for status in ['EOL', 'Active', 'Under Development']:
@@ -147,7 +147,7 @@ def create_status(session):
         session.add(obj)
         try:
             session.commit()
-        except SQLAlchemyError:
+        except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
     for status in ['Approved', 'Removed', 'Retired', 'Orphaned']:
@@ -155,7 +155,7 @@ def create_status(session):
         session.add(obj)
         try:
             session.commit()
-        except SQLAlchemyError:
+        except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
 
