@@ -943,3 +943,96 @@ List packages
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
     return jsonout
+
+
+@API.route('/package/critpath/', methods=['POST'])
+@is_admin
+def api_package_critpath():
+    '''
+Critpath status
+---------------
+    Update the critpath status of a package.
+
+    ::
+
+        /api/package/critpath/
+
+    Accept POST queries only.
+
+    :arg pkgnames: A list of string of the packages name.
+    :arg branches: A list of string of the branches name in which the
+        critpath status will be updated.
+    :kwarg critpath: A boolean of the critpath status. Defaults to True.
+
+
+    Sample response:
+
+    ::
+
+        {
+            "output": "ok",
+            "messages": [
+                'guake: critpath updated on master to True',
+                'guake: critpath updated on f18 to True'
+            ]
+        }
+
+        {
+          "output": "notok",
+          "error": "No package found by this name"
+        }
+
+     '''
+    httpcode = 200
+    output = {}
+
+    pkgnames = flask.request.form.getlist('pkgnames', None)
+    branches = flask.request.form.getlist('branches', None)
+    critpath = flask.request.form.get('critpath', False)
+    if str(critpath).lower() in ['1', 'true']:
+        critpath = True
+    elif str(critpath).lower() in ['0', 'false']:
+        critpath = False
+
+    if pkgnames and branches:
+        try:
+            messages = []
+            for pkg_name, pkg_branch in itertools.product(
+                    pkgnames, branches):
+                message = pkgdblib.set_critpath_packages(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    pkg_branch=pkg_branch,
+                    critpath=critpath,
+                    user=flask.g.fas_user,
+                )
+                if message:
+                    messages.append(message)
+            if messages:
+                SESSION.commit()
+                output['output'] = 'ok'
+                output['messages'] = messages
+            else:
+                output['output'] = 'notok'
+                output['error'] = 'Nothing to update'
+                httpcode = 500
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = str(err)
+            httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        detail = []
+        if not pkgnames:
+            detail.append('pkgnames: This field is required.')
+        if not branches:
+            detail.append('branches: This field is required.')
+        if detail:
+            output['error_detail'] = detail
+        httpcode = 500
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
