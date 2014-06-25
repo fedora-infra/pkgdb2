@@ -878,6 +878,108 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['output'], 'notok')
         self.assertEqual(data['packages'], [])
 
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.is_admin')
+    def test_api_package_edit(self, login_func, mock_func):
+        """ Test the api_package_edit function.  """
+        login_func.return_value = None
+
+        # Redirect as you are not admin
+        user = FakeFasUser()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/edit/')
+            self.assertEqual(output.status_code, 302)
+
+        user = FakeFasUserAdmin()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/edit/')
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['error', 'error_detail', 'output']
+            )
+            self.assertEqual(
+                data['error'], "Invalid input submitted")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+            self.assertEqual(
+                sorted(data['error_detail']),
+                [
+                    "pkgname: This field is required.",
+                ]
+            )
+
+        data = {
+            'pkgname': 'gnome-terminal',
+            'summary': 'Terminal emulator for GNOME',
+            'description': 'Terminal for GNOME...',
+            'review_url': 'http://bugzilla.redhat.com/1234',
+            'status': 'Approved',
+            'upstream_url': 'http://www.gnome.org/',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/edit/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "No package of this name found",
+                    "output": "notok"
+                }
+            )
+
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        # Before edit:
+        output = self.app.get('/api/package/guake/', data=data)
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data['packages'][0]['package']['upstream_url'],
+            'http://guake.org'
+        )
+
+        data = {
+            'pkgname': 'guake',
+            'upstream_url': 'http://www.guake.org',
+        }
+
+        # User is not an admin
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/edit/', data=data)
+            self.assertEqual(output.status_code, 302)
+
+        # User is an admin
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/edit/', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "messages": ['Package "guake" edited'],
+                    "output": "ok"
+                }
+            )
+
+        # After edit:
+        output = self.app.get('/api/package/guake/', data=data)
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            data['packages'][0]['package']['upstream_url'],
+            'http://www.guake.org'
+        )
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiPackagesTest)
