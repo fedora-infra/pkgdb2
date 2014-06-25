@@ -475,11 +475,13 @@ Pending ACLs requests
         return flask.jsonify(output)
     else:
         pending_acls = sorted(pending_acls, key=lambda it: it['package'])
-        output_str = "# Number of requests pending: %s\n" % len(pending_acls)
+        output = [
+            "# Number of requests pending: %s" % len(pending_acls)]
         for entry in pending_acls:
-            output_str += "%(package)s:%(collection)s has %(user)s waiting"\
-            " for %(acl)s\n" % (entry)
+            output.append(
+                "%(package)s:%(collection)s has %(user)s waiting for "
+                "%(acl)s" % (entry))
         return flask.Response(
-            output_str,
+            '\n'.join(output),
             content_type="text/plain;charset=UTF-8"
         )
