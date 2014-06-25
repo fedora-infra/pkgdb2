@@ -424,14 +424,64 @@ Critical path packages
         output = {"pkgs": output}
         return flask.jsonify(output)
     else:
-        output_str = ""
+        output_str = []
         keys = output.keys()
         keys.reverse()
         for key in keys:
-            output_str += "== %s ==\n" % key
+            output_str.append("== %s ==\n" % key)
             for pkg in output[key]:
-                output_str += "* %s\n" % pkg
+                output_str.append("* %s\n" % pkg)
         return flask.Response(
-            output_str,
+            ''.join(output_str),
+            content_type="text/plain;charset=UTF-8"
+        )
+
+
+@API.route('/pendingacls/')
+@API.route('/pendingacls')
+def api_pendingacls():
+    '''
+Pending ACLs requests
+---------------------
+    Return the list ACLs request that are ``Awaiting Approval``.
+
+    ::
+
+        /api/pendingacls
+
+    :kwarg username: Return the list of pending ACL requests requiring
+        action from the specified user.
+    :kwarg format: Specify if the output if text or json.
+
+    '''
+
+    out_format = flask.request.args.get('format', 'text')
+    username = flask.request.args.get('username', None)
+
+    if out_format not in ('text', 'json'):
+        out_format = 'text'
+
+    if request_wants_json():
+        out_format = 'json'
+
+    output = {}
+
+    pending_acls = pkgdblib.get_pending_acl_user(
+        SESSION, username)
+
+    if out_format == 'json':
+        output = {"pending_acls": pending_acls}
+        output['total_requests_pending'] = len(pending_acls)
+        return flask.jsonify(output)
+    else:
+        pending_acls.sort(key=lambda it: it['package'])
+        output = [
+            "# Number of requests pending: %s" % len(pending_acls)]
+        for entry in pending_acls:
+            output.append(
+                "%(package)s:%(collection)s has %(user)s waiting for "
+                "%(acl)s" % (entry))
+        return flask.Response(
+            '\n'.join(output),
             content_type="text/plain;charset=UTF-8"
         )

@@ -486,7 +486,7 @@ class PackageListingAcl(BASE):
         return personpkg
 
     @classmethod
-    def get_pending_acl(cls, session, user):
+    def get_pending_acl(cls, session, user=None):
         """ Return for all the packages of which `user` is point of
         contact the ACL which have status 'Awaiting Review'.
 
@@ -505,8 +505,6 @@ class PackageListingAcl(BASE):
         ).filter(
             cls.packagelisting_id == PackageListing.id
         ).filter(
-            PackageListing.point_of_contact == user
-        ).filter(
             PackageListing.package_id == Package.id
         ).filter(
             PackageListing.collection_id == Collection.id
@@ -515,6 +513,9 @@ class PackageListingAcl(BASE):
         ).order_by(
             Package.name, Collection.branchname, cls.fas_name, cls.acl
         )
+
+        if user is not None:
+            query = query.filter(PackageListing.point_of_contact == user)
 
         return query.all()
 
