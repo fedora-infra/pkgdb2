@@ -130,6 +130,24 @@
         src="{{ url_for('static',
             filename='jquery-ui-1.10.4.custom.min.js') }}">
     </script>
+
+    {% if g.pending_acls %}
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='notify.min.js') }}">
+    </script>
+
+    <script type="text/javascript">
+        $(function(){
+            $('#mainNav').notify(
+                "You have ACLs awaiting review from you",
+                {
+                    position: "bottom center",
+                    className: "warn",
+                }
+            );
+        });
+    </script>
+    {% endif %}
     {% endblock %}
 
   </body>
