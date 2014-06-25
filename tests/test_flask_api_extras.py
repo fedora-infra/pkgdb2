@@ -541,7 +541,7 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
         output = self.app.get('/api/pendingacls/')
         self.assertEqual(output.status_code, 200)
 
-        expected = "# Number of requests pending: 0\n"
+        expected = "# Number of requests pending: 0"
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/pendingacls/?format=random')
@@ -573,8 +573,7 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
 
         expected = """# Number of requests pending: 2
 guake:master has ralph waiting for approveacls
-guake:master has toshio waiting for commit
-"""
+guake:master has toshio waiting for commit"""
         self.assertEqual(output.data, expected)
 
         output = self.app.get('/api/pendingacls/?format=random')
