@@ -424,15 +424,15 @@ Critical path packages
         output = {"pkgs": output}
         return flask.jsonify(output)
     else:
-        output_str = ""
+        output_str = []
         keys = output.keys()
         keys.reverse()
         for key in keys:
-            output_str += "== %s ==\n" % key
+            output_str.append("== %s ==\n" % key)
             for pkg in output[key]:
-                output_str += "* %s\n" % pkg
+                output_str.append("* %s\n" % pkg)
         return flask.Response(
-            output_str,
+            ''.join(output_str),
             content_type="text/plain;charset=UTF-8"
         )
 
