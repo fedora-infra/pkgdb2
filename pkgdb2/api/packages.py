@@ -149,6 +149,115 @@ New package
     return jsonout
 
 
+@API.route('/package/edit/', methods=['POST'])
+@is_admin
+def api_package_edit():
+    '''
+Edit a package
+--------------
+    Edit a package.
+
+    ::
+
+        /api/package/edit/
+
+    Accept POST queries only.
+
+    :arg pkgname: String of the package name to be created.
+    :arg summary: String of the summary description of the package.
+    :arg description: String describing the package (same as in the
+        spec file).
+    :arg review_url: the URL of the package review on the bugzilla.
+    :arg status: status of the package can be one of: 'Approved',
+        'Awaiting Review', 'Denied', 'Obsolete', 'Removed'
+    :arg upstream_url: the URL of the upstream project
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["Package edited"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You're not allowed to edit this package"]
+        }
+
+    '''
+    httpcode = 200
+    output = {}
+
+    pkg_status = pkgdblib.get_status(SESSION, 'pkg_status')['pkg_status']
+
+    form = forms.EditPackageForm(
+        csrf_enabled=False,
+        pkg_status_list=pkg_status,
+    )
+    if form.validate_on_submit():
+        pkg_name = form.pkgname.data
+
+        package = None
+        try:
+            package = pkgdblib.search_package(SESSION, pkg_name, limit=1)[0]
+        except (NoResultFound, IndexError):
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = 'No package of this name found'
+            httpcode = 500
+
+        if package:
+            pkg_summary = form.summary.data
+            pkg_description = form.description.data
+            pkg_review_url = form.review_url.data
+            pkg_status = form.status.data
+            if pkg_status == 'None':
+                pkg_status = None
+            pkg_upstream_url = form.upstream_url.data
+
+            try:
+                message = pkgdblib.edit_package(
+                    SESSION,
+                    package,
+                    pkg_name=pkg_name,
+                    pkg_summary=pkg_summary,
+                    pkg_description=pkg_description,
+                    pkg_review_url=pkg_review_url,
+                    pkg_upstream_url=pkg_upstream_url,
+                    pkg_status=pkg_status,
+                    user=flask.g.fas_user
+                )
+                SESSION.commit()
+                output['output'] = 'ok'
+                output['messages'] = [message]
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
+                # We can only reach here in two cases:
+                # 1) the user is not an admin, but that's taken care of
+                #    by the decorator
+                # 2) we have a SQLAlchemy problem when storing the info
+                #    in the DB which we cannot test
+                SESSION.rollback()
+                output['output'] = 'notok'
+                output['error'] = str(err)
+                httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
+
+
 @API.route('/package/orphan/', methods=['POST'])
 @packager_login_required
 def api_package_orphan():
