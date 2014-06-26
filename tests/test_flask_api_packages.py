@@ -112,9 +112,6 @@ class FlaskApiPackagesTest(Modeltests):
             output = self.app.post('/api/package/new/', data=data)
             self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
-            ## FIXME: this is damn ugly but there is something wrong between
-            ## me and jenkins that needs sorting out.
-            print output.data
             self.assertEqual(
                 data,
                 {
