@@ -114,20 +114,9 @@ class FlaskApiPackagesTest(Modeltests):
             data = json.loads(output.data)
             ## FIXME: this is damn ugly but there is something wrong between
             ## me and jenkins that needs sorting out.
-            self.assertTrue(
-                data ==
-                {
-                    "error": "Invalid input submitted",
-                    "error_detail": [
-                        "status: This field is required.",
-                        "poc: This field is required.",
-                        "branches: '' is not a valid choice for this field",
-                        "critpath: This field is required.",
-                    ],
-                    "output": "notok"
-                }
-                ## Me v
-                or data ==
+            print output.data
+            self.assertEqual(
+                data,
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
