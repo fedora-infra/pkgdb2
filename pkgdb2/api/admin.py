@@ -34,6 +34,7 @@ from pkgdb2.api import API, get_limit
 
 
 @API.route('/admin/actions/')
+@API.route('/admin/actions')
 def api_admin_actions():
     """
 List admin actions
@@ -42,9 +43,7 @@ List admin actions
 
     ::
 
-        /api/admin/actions
-
-        /api/admin/actions
+        /api/admin/actions/
 
     Accept GET queries only.
 
