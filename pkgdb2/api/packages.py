@@ -962,7 +962,7 @@ Critpath status
     :arg pkgnames: A list of string of the packages name.
     :arg branches: A list of string of the branches name in which the
         critpath status will be updated.
-    :kwarg critpath: A boolean of the critpath status. Defaults to True.
+    :kwarg critpath: A boolean of the critpath status. Defaults to False.
 
 
     Sample response:
