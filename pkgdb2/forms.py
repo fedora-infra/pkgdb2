@@ -141,7 +141,8 @@ class AddPackageForm(wtf.Form):
     )
     critpath = wtforms.BooleanField(
         'Package in critpath',
-        default=False
+        [wtforms.validators.optional()],
+        default=False,
     )
     branches = wtforms.SelectMultipleField(
         'Collection',
