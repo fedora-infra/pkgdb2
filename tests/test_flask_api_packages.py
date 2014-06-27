@@ -442,7 +442,7 @@ class FlaskApiPackagesTest(Modeltests):
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
-            self.assertEqual(output.status_code, 500)
+            self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
             self.assertEqual(
                 data,
@@ -450,7 +450,7 @@ class FlaskApiPackagesTest(Modeltests):
                     'error':
                         'Package "guake" is not in the collection el4',
                     "messages": ["Package guake has been unorphaned on f18 by pingou"],
-                    'output': 'notok'
+                    'output': 'ok'
                 }
             )
 
@@ -473,7 +473,7 @@ class FlaskApiPackagesTest(Modeltests):
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
-            self.assertEqual(output.status_code, 500)
+            self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
             self.assertEqual(
                 data,
@@ -482,7 +482,7 @@ class FlaskApiPackagesTest(Modeltests):
                     "messages": [
                         "Package guake has been unorphaned on master by pingou"
                     ],
-                    "output": "notok"
+                    "output": "ok"
                 }
             )
 
