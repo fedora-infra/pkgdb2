@@ -381,10 +381,11 @@ Unorphan packages
     poc = flask.request.form.get('poc', None)
 
     if pkgnames and branches and poc:
-        try:
-            messages = []
-            for pkg_name, pkg_branch in itertools.product(
-                    pkgnames, branches):
+        messages = []
+        errors = set()
+        for pkg_name, pkg_branch in itertools.product(
+                pkgnames, branches):
+            try:
                 message = pkgdblib.unorphan_package(
                     session=SESSION,
                     pkg_name=pkg_name,
@@ -393,19 +394,24 @@ Unorphan packages
                     user=flask.g.fas_user
                 )
                 messages.append(message)
-            SESSION.commit()
-            output['output'] = 'ok'
+                SESSION.commit()
+            except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
+                APP.logger.exception(err)
+                SESSION.rollback()
+                errors.add(str(err))
+            except pkgdblib.PkgdbException, err:
+                SESSION.rollback()
+                errors.add(str(err))
+
+        if messages:
             output['messages'] = messages
-        except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
-            APP.logger.exception(err)
-            SESSION.rollback()
+            output['output'] = 'ok'
+        if errors:
+
+            output['error'] = errors
+            if len(errors) == 1:
+                output['error'] = errors.pop()
             output['output'] = 'notok'
-            output['error'] = str(err)
-            httpcode = 500
-        except pkgdblib.PkgdbException, err:
-            SESSION.rollback()
-            output['output'] = 'notok'
-            output['error'] = str(err)
             httpcode = 500
     else:
         output['output'] = 'notok'
