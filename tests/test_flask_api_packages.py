@@ -377,7 +377,10 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "Package \"guake\" is not orphaned on f18",
+                    "error": [
+                        'Package "guake" is not orphaned on f18',
+                        'Package "guake" is not orphaned on master',
+                    ],
                     "output": "notok"
                 }
             )
@@ -424,31 +427,30 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to update ACLs of someone "
-                    "else.",
+                        "else.",
                     "output": "notok"
                 }
             )
 
         mock_func.get_packagers.return_value = ['pingou']
 
-        # Unorphan the package
+        # Unorphan the package on a branch where it is not
         data = {
             'pkgnames': 'guake',
-            'branches': ['f18', 'master'],
+            'branches': ['el4', 'f18'],
             'poc': 'pingou',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unorphan/', data=data)
-            self.assertEqual(output.status_code, 200)
+            self.assertEqual(output.status_code, 500)
             data = json.loads(output.data)
             self.assertEqual(
                 data,
                 {
-                    "messages": [
-                        "Package guake has been unorphaned on f18 by pingou",
-                        "Package guake has been unorphaned on master by pingou"
-                    ],
-                    "output": "ok"
+                    'error':
+                        'Package "guake" is not in the collection el4',
+                    "messages": ["Package guake has been unorphaned on f18 by pingou"],
+                    'output': 'notok'
                 }
             )
 
@@ -460,13 +462,13 @@ class FlaskApiPackagesTest(Modeltests):
 
             self.assertEqual(pkg_acl[1].collection.branchname, 'master')
             self.assertEqual(pkg_acl[1].package.name, 'guake')
-            self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
-            self.assertEqual(pkg_acl[1].status, 'Approved')
+            self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
+            self.assertEqual(pkg_acl[1].status, 'Orphaned')
 
-        # Unorphan the package on a branch where it is not
+        # Unorphan the package
         data = {
             'pkgnames': 'guake',
-            'branches': ['el4'],
+            'branches': ['f18', 'master'],
             'poc': 'pingou',
         }
         with user_set(pkgdb2.APP, user):
@@ -476,8 +478,11 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    'error': 'Package "guake" is not in the collection el4',
-                    'output': 'notok'
+                    "error": 'Package "guake" is not orphaned on f18',
+                    "messages": [
+                        "Package guake has been unorphaned on master by pingou"
+                    ],
+                    "output": "notok"
                 }
             )
 
