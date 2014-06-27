@@ -175,6 +175,46 @@ class AddPackageForm(wtf.Form):
             ]
 
 
+class EditPackageForm(wtf.Form):
+    """ Form to edit packages. """
+    pkgname = wtforms.TextField(
+        'Package name <span class="error">*</span>',
+        [wtforms.validators.Required()]
+    )
+    summary = wtforms.TextField(
+        'Summary <span class="error">*</span>',
+        [wtforms.validators.optional()]
+    )
+    description = wtforms.TextField(
+        'Description',
+    )
+    review_url = wtforms.TextField(
+        'Review URL',
+        [wtforms.validators.optional()]
+    )
+    status = wtforms.SelectField(
+        'Status',
+        [wtforms.validators.optional()],
+        choices=[(item, item) for item in []]
+    )
+    upstream_url = wtforms.TextField(
+        'Upstream URL',
+        [wtforms.validators.optional()]
+    )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        drop-down list.
+        """
+        super(EditPackageForm, self).__init__(*args, **kwargs)
+        if 'pkg_status_list' in kwargs:
+            self.status.choices = [
+                (status, status)
+                for status in kwargs['pkg_status_list']
+            ]
+
+
 class SetAclPackageForm(wtf.Form):
     """ Form to set ACLs to someone on a package. """
     pkgname = wtforms.TextField(
