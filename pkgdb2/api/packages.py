@@ -406,13 +406,14 @@ Unorphan packages
         if messages:
             output['messages'] = messages
             output['output'] = 'ok'
-        if errors:
+        else:
+            httpcode = 500
+            output['output'] = 'notok'
 
+        if errors:
             output['error'] = errors
             if len(errors) == 1:
                 output['error'] = errors.pop()
-            output['output'] = 'notok'
-            httpcode = 500
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
