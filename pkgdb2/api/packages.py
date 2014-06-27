@@ -300,10 +300,11 @@ Orphan package
     branches = flask.request.form.getlist('branches', None)
 
     if pkgnames and branches:
-        try:
-            messages = []
-            for pkg_name, pkg_branch in itertools.product(
-                    pkgnames, branches):
+        messages = []
+        errors = set()
+        for pkg_name, pkg_branch in itertools.product(
+                pkgnames, branches):
+            try:
                 message = pkgdblib.update_pkg_poc(
                     SESSION,
                     pkg_name=pkg_name,
@@ -312,14 +313,25 @@ Orphan package
                     user=flask.g.fas_user,
                 )
                 messages.append(message)
-            SESSION.commit()
-            output['output'] = 'ok'
+                SESSION.commit()
+                output['output'] = 'ok'
+                output['messages'] = messages
+            except pkgdblib.PkgdbException, err:
+                SESSION.rollback()
+                errors.add(str(err))
+
+        if messages:
             output['messages'] = messages
-        except pkgdblib.PkgdbException, err:
-            SESSION.rollback()
-            output['output'] = 'notok'
-            output['error'] = str(err)
+            output['output'] = 'ok'
+        else:
             httpcode = 500
+            output['output'] = 'notok'
+
+        if errors:
+            output['error'] = errors
+            if len(errors) == 1:
+                output['error'] = errors.pop()
+
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
