@@ -1348,7 +1348,11 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
-    pkg_listing = get_acl_package(session, pkg_name, pkg_branch)[0]
+    pkg_listing = get_acl_package(session, pkg_name, pkg_branch)
+    if not pkg_listing:
+        raise PkgdbException(
+            'Package "%s" is not in the collection %s' % (pkg_name, pkg_branch))
+    pkg_listing = pkg_listing[0]
 
     if pkg_listing.status not in ('Orphaned', 'Retired'):
         raise PkgdbException(
