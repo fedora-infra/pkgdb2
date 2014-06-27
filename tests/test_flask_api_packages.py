@@ -259,25 +259,27 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
-            'branches': ['el4'],
+            'branches': ['el4', 'f18'],
             'poc': 'test',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/orphan/', data=data)
-            self.assertEqual(output.status_code, 500)
+            self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
             self.assertEqual(
                 data,
                 {
                     'error': 'The package guake could not be found in the '
                     'collection el4.',
-                    'output': 'notok'
+                    'messages': [''],
+                    'output': 'ok'
                 }
             )
             pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
             self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
             self.assertEqual(pkg_acl[0].package.name, 'guake')
-            self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
+            self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
+            self.assertEqual(pkg_acl[0].status, 'Orphaned')
 
             self.assertEqual(pkg_acl[1].collection.branchname, 'master')
             self.assertEqual(pkg_acl[1].package.name, 'guake')
