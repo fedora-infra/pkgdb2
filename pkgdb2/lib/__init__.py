@@ -400,6 +400,10 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
                                                             collection.id)
+    if not pkglisting:
+        raise PkgdbException(
+            'The package %s could not be found in the collection %s.' %
+            (pkg_name, pkg_branch))
 
     prev_poc = pkglisting.point_of_contact
 
