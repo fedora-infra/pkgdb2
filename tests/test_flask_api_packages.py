@@ -463,6 +463,35 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
             self.assertEqual(pkg_acl[1].status, 'Approved')
 
+        # Unorphan the package on a branch where it is not
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['el4'],
+            'poc': 'pingou',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/unorphan/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    'error': 'Package "guake" is not in the collection el4',
+                    'output': 'notok'
+                }
+            )
+
+            pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+            self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
+            self.assertEqual(pkg_acl[0].package.name, 'guake')
+            self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
+            self.assertEqual(pkg_acl[0].status, 'Approved')
+
+            self.assertEqual(pkg_acl[1].collection.branchname, 'master')
+            self.assertEqual(pkg_acl[1].package.name, 'guake')
+            self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
+            self.assertEqual(pkg_acl[1].status, 'Approved')
+
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
     def test_api_package_retire(self, login_func, mock_func):
