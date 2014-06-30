@@ -1652,3 +1652,71 @@ def vcs_acls(session, eol=False):
             }
 
     return output
+
+
+def set_critpath_packages(
+        session, pkg_name, pkg_branch, critpath=True, user=None):
+    """ Set the provided critpath status on a specified package.
+
+    This method can be used to set or unset the critpath flag of a package
+    on the specified branches.
+
+    :arg session: the session with which to connect to the database.
+    :arg pkg_name: The name of the package to update.
+    :arg pkg_branch: The branchname of the collection to update
+    :kwarg user: The user performing the update.
+    :returns: a message informing that the package was successfully
+        updated.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to edit a package, only pkgdb admin can.
+            - The package cannot be found in the database.
+            - The branch cannot be found in the database.
+            - An error occured while updating the package in the database
+                the message returned is a dummy information message to
+                return to the user, the trace back is in the logs.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to edit packages')
+
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    try:
+        collection = model.Collection.by_name(session, pkg_branch)
+    except NoResultFound:
+        raise PkgdbException('No collection found by the name of %s'
+                             % pkg_branch)
+
+    pkglisting = model.PackageListing.by_pkgid_collectionid(session,
+                                                            package.id,
+                                                            collection.id)
+
+    msg = None
+    branches = []
+    if critpath != pkglisting.critpath:
+        pkglisting.critpath = critpath
+        branches.append(pkglisting.collection.branchname)
+        msg = '%s: critpath updated on %s to %s' %  (
+                package.name, pkglisting.collection.branchname, critpath)
+        session.add(pkglisting)
+
+    try:
+        session.add(package)
+        session.flush()
+        pkgdb2.lib.utils.log(session, None, 'package.critpath.update', dict(
+            agent=user.username,
+            critpath=critpath,
+            branches=branches,
+            package=package.to_json(),
+        ))
+    except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb2.LOG.exception(err)
+        raise PkgdbException('Could not edit package.')
+
+    return msg

@@ -97,6 +97,7 @@ def api():
     api_package_info = load_doc(packages.api_package_info)
     api_package_new = load_doc(packages.api_package_new)
     api_package_edit = load_doc(packages.api_package_edit)
+    api_package_critpath = load_doc(packages.api_package_critpath)
     api_package_orphan = load_doc(packages.api_package_orphan)
     api_package_unorphan = load_doc(packages.api_package_unorphan)
     api_package_retire = load_doc(packages.api_package_retire)
@@ -128,6 +129,7 @@ def api():
         packages=[
             api_package_info, api_package_list,
             api_package_new, api_package_edit,
+            api_package_critpath,
             api_package_orphan, api_package_unorphan,
             api_package_retire, api_package_unretire,
         ],

@@ -980,6 +980,139 @@ class FlaskApiPackagesTest(Modeltests):
             'http://www.guake.org'
         )
 
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.is_admin')
+    def test_api_package_critpath(self, login_func, mock_func):
+        """ Test the api_package_critpath function.  """
+        login_func.return_value = None
+
+        # Redirect as you are not admin
+        user = FakeFasUser()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/critpath/')
+            self.assertEqual(output.status_code, 302)
+
+        user = FakeFasUserAdmin()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/critpath/')
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['error', 'error_detail', 'output']
+            )
+            self.assertEqual(
+                data['error'], "Invalid input submitted")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+            self.assertEqual(
+                sorted(data['error_detail']),
+                [
+                    'branches: This field is required.',
+                    'pkgnames: This field is required.'
+                ]
+            )
+
+        data = {
+            'pkgnames': 'gnome-terminal',
+            'branches': 'master'
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/critpath/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "No package found by this name",
+                    "output": "notok"
+                }
+            )
+
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        # Before edit:
+        output = self.app.get('/api/package/guake/', data=data)
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        for pkg in data['packages']:
+            self.assertFalse(pkg['critpath'])
+            self.assertFalse(pkg['critpath'])
+
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['master', 'f18'],
+        }
+
+        # User is an admin - But not updating the critpath
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/critpath/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "Nothing to update",
+                    "output": "notok"
+                }
+            )
+
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['foobar'],
+        }
+
+        # User is an admin - But not invalid collection the critpath
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/critpath/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "No collection found by the name of foobar",
+                    "output": "notok"
+                }
+            )
+
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['master', 'f18'],
+            'critpath': True,
+        }
+
+        # User is an admin and updating the critpath
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/critpath/', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    'messages': [
+                        'guake: critpath updated on master to True',
+                        'guake: critpath updated on f18 to True'
+                    ],
+                    'output': 'ok'
+                }
+            )
+
+        # After edit:
+        output = self.app.get('/api/package/guake/', data=data)
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        for pkg in data['packages']:
+            self.assertTrue(pkg['critpath'])
+            self.assertTrue(pkg['critpath'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiPackagesTest)
