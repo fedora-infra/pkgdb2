@@ -567,7 +567,26 @@ class FlaskApiPackagesTest(Modeltests):
                     "guake on branch f18.",
                     "output": "notok"
                 }
+            )
 
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['master'],
+            'poc': 'test',
+        }
+        # User is not the poc
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/retire/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "You are not allowed to change the retire "
+                    "this package.",
+                    "output": "notok"
+                }
             )
 
         # Retire the package
