@@ -139,12 +139,10 @@ class FlaskUiPackagesTest(Modeltests):
 
             output = self.app.post('/new/package/', data=data)
             self.assertEqual(output.status_code, 200)
-            ## FIXME: this is the same problem as in test_api_package_new
-            ## we need to look into this.
-            self.assertTrue(
+            self.assertEqual(
                 output.data.count(
                     '<td class="errors">This field is required.</td>'
-                ) in (5, 7))
+                ), 5)
 
             mock_func.get_packagers.return_value = ['mclasen']
             mock_func.log.return_value = ''
