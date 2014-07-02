@@ -400,6 +400,10 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     pkglisting = model.PackageListing.by_pkgid_collectionid(session,
                                                             package.id,
                                                             collection.id)
+    if not pkglisting:
+        raise PkgdbException(
+            'The package %s could not be found in the collection %s.' %
+            (pkg_name, pkg_branch))
 
     prev_poc = pkglisting.point_of_contact
 
@@ -1344,7 +1348,11 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
-    pkg_listing = get_acl_package(session, pkg_name, pkg_branch)[0]
+    pkg_listing = get_acl_package(session, pkg_name, pkg_branch)
+    if not pkg_listing:
+        raise PkgdbException(
+            'Package "%s" is not in the collection %s' % (pkg_name, pkg_branch))
+    pkg_listing = pkg_listing[0]
 
     if pkg_listing.status not in ('Orphaned', 'Retired'):
         raise PkgdbException(

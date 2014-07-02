@@ -259,6 +259,34 @@ class FlaskApiPackagesTest(Modeltests):
 
         data = {
             'pkgnames': 'guake',
+            'branches': ['el4', 'f18'],
+            'poc': 'test',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/orphan/', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    'error': 'The package guake could not be found in the '
+                    'collection el4.',
+                    'messages': [''],
+                    'output': 'ok'
+                }
+            )
+            pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+            self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
+            self.assertEqual(pkg_acl[0].package.name, 'guake')
+            self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
+            self.assertEqual(pkg_acl[0].status, 'Orphaned')
+
+            self.assertEqual(pkg_acl[1].collection.branchname, 'master')
+            self.assertEqual(pkg_acl[1].package.name, 'guake')
+            self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
+
+        data = {
+            'pkgnames': 'guake',
             'branches': ['f18', 'master'],
             'poc': 'test',
         }
@@ -351,7 +379,10 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "Package \"guake\" is not orphaned on f18",
+                    "error": [
+                        'Package "guake" is not orphaned on f18',
+                        'Package "guake" is not orphaned on master',
+                    ],
                     "output": "notok"
                 }
             )
@@ -398,12 +429,43 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to update ACLs of someone "
-                    "else.",
+                        "else.",
                     "output": "notok"
                 }
             )
 
         mock_func.get_packagers.return_value = ['pingou']
+
+        # Unorphan the package on a branch where it is not
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['el4', 'f18'],
+            'poc': 'pingou',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/unorphan/', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    'error':
+                        'Package "guake" is not in the collection el4',
+                    "messages": ["Package guake has been unorphaned on f18 by pingou"],
+                    'output': 'ok'
+                }
+            )
+
+            pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+            self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
+            self.assertEqual(pkg_acl[0].package.name, 'guake')
+            self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
+            self.assertEqual(pkg_acl[0].status, 'Approved')
+
+            self.assertEqual(pkg_acl[1].collection.branchname, 'master')
+            self.assertEqual(pkg_acl[1].package.name, 'guake')
+            self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
+            self.assertEqual(pkg_acl[1].status, 'Orphaned')
 
         # Unorphan the package
         data = {
@@ -418,8 +480,8 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
+                    "error": 'Package "guake" is not orphaned on f18',
                     "messages": [
-                        "Package guake has been unorphaned on f18 by pingou",
                         "Package guake has been unorphaned on master by pingou"
                     ],
                     "output": "ok"

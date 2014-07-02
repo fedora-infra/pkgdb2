@@ -300,10 +300,11 @@ Orphan package
     branches = flask.request.form.getlist('branches', None)
 
     if pkgnames and branches:
-        try:
-            messages = []
-            for pkg_name, pkg_branch in itertools.product(
-                    pkgnames, branches):
+        messages = []
+        errors = set()
+        for pkg_name, pkg_branch in itertools.product(
+                pkgnames, branches):
+            try:
                 message = pkgdblib.update_pkg_poc(
                     SESSION,
                     pkg_name=pkg_name,
@@ -312,14 +313,27 @@ Orphan package
                     user=flask.g.fas_user,
                 )
                 messages.append(message)
-            SESSION.commit()
-            output['output'] = 'ok'
+                SESSION.commit()
+            except pkgdblib.PkgdbException, err:
+                SESSION.rollback()
+                errors.add(str(err))
+
+        if messages:
             output['messages'] = messages
-        except pkgdblib.PkgdbException, err:
-            SESSION.rollback()
-            output['output'] = 'notok'
-            output['error'] = str(err)
+            output['output'] = 'ok'
+        else:
+            # If messages is empty that means that we failed all the orphans
+            # so output is `notok`, otherwise it means that we succeeded at
+            # least once and thus output will be `ok` to keep backward
+            # compatibility.
             httpcode = 500
+            output['output'] = 'notok'
+
+        if errors:
+            output['error'] = errors
+            if len(errors) == 1:
+                output['error'] = errors.pop()
+
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
@@ -381,10 +395,11 @@ Unorphan packages
     poc = flask.request.form.get('poc', None)
 
     if pkgnames and branches and poc:
-        try:
-            messages = []
-            for pkg_name, pkg_branch in itertools.product(
-                    pkgnames, branches):
+        messages = []
+        errors = set()
+        for pkg_name, pkg_branch in itertools.product(
+                pkgnames, branches):
+            try:
                 message = pkgdblib.unorphan_package(
                     session=SESSION,
                     pkg_name=pkg_name,
@@ -393,20 +408,30 @@ Unorphan packages
                     user=flask.g.fas_user
                 )
                 messages.append(message)
-            SESSION.commit()
-            output['output'] = 'ok'
+                SESSION.commit()
+            except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
+                APP.logger.exception(err)
+                SESSION.rollback()
+                errors.add(str(err))
+            except pkgdblib.PkgdbException, err:
+                SESSION.rollback()
+                errors.add(str(err))
+
+        if messages:
             output['messages'] = messages
-        except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
-            APP.logger.exception(err)
-            SESSION.rollback()
-            output['output'] = 'notok'
-            output['error'] = str(err)
+            output['output'] = 'ok'
+        else:
+            # If messages is empty that means that we failed all the
+            # unorphans so output is `notok`, otherwise it means that we
+            # succeeded at least once and thus output will be `ok` to keep
+            # backward compatibility.
             httpcode = 500
-        except pkgdblib.PkgdbException, err:
-            SESSION.rollback()
             output['output'] = 'notok'
-            output['error'] = str(err)
-            httpcode = 500
+
+        if errors:
+            output['error'] = errors
+            if len(errors) == 1:
+                output['error'] = errors.pop()
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
@@ -470,6 +495,7 @@ Retire packages
     if pkgnames and branches:
         try:
             messages = []
+            errors = set()
             for pkg_name, pkg_branch in itertools.product(
                     pkgnames, branches):
                 message = pkgdblib.update_pkg_status(
@@ -481,13 +507,26 @@ Retire packages
                 )
                 messages.append(message)
             SESSION.commit()
-            output['output'] = 'ok'
-            output['messages'] = messages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
-            output['output'] = 'notok'
-            output['error'] = str(err)
+            errors.add(str(err))
+
+        if messages:
+            output['messages'] = messages
+            output['output'] = 'ok'
+        else:
+            # If messages is empty that means that we failed all the
+            # retire so output is `notok`, otherwise it means that we
+            # succeeded at least once and thus output will be `ok` to keep
+            # backward compatibility.
             httpcode = 500
+            output['output'] = 'notok'
+
+        if errors:
+            output['error'] = errors
+            if len(errors) == 1:
+                output['error'] = errors.pop()
+
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'

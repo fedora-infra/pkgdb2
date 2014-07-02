@@ -829,7 +829,7 @@ class PackageListing(BASE):
             PackageListing.package_id == pkgid
         ).filter(
             PackageListing.collection_id == collectionid
-        ).one()
+        ).first()
 
     @classmethod
     def by_collectionid(cls, session, collectionid):
