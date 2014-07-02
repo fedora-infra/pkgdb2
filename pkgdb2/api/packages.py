@@ -495,6 +495,7 @@ Retire packages
     if pkgnames and branches:
         try:
             messages = []
+            errors = set()
             for pkg_name, pkg_branch in itertools.product(
                     pkgnames, branches):
                 message = pkgdblib.update_pkg_status(
@@ -506,13 +507,26 @@ Retire packages
                 )
                 messages.append(message)
             SESSION.commit()
-            output['output'] = 'ok'
-            output['messages'] = messages
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
-            output['output'] = 'notok'
-            output['error'] = str(err)
+            errors.add(str(err))
+
+        if messages:
+            output['messages'] = messages
+            output['output'] = 'ok'
+        else:
+            # If messages is empty that means that we failed all the
+            # retire so output is `notok`, otherwise it means that we
+            # succeeded at least once and thus output will be `ok` to keep
+            # backward compatibility.
             httpcode = 500
+            output['output'] = 'notok'
+
+        if errors:
+            output['error'] = errors
+            if len(errors) == 1:
+                output['error'] = errors.pop()
+
     else:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
