@@ -314,8 +314,6 @@ Orphan package
                 )
                 messages.append(message)
                 SESSION.commit()
-                output['output'] = 'ok'
-                output['messages'] = messages
             except pkgdblib.PkgdbException, err:
                 SESSION.rollback()
                 errors.add(str(err))
@@ -324,6 +322,10 @@ Orphan package
             output['messages'] = messages
             output['output'] = 'ok'
         else:
+            # If messages is empty that means that we failed all the orphans
+            # so output is `notok`, otherwise it means that we succeeded at
+            # least once and thus output will be `ok` to keep backward
+            # compatibility.
             httpcode = 500
             output['output'] = 'notok'
 
@@ -419,6 +421,10 @@ Unorphan packages
             output['messages'] = messages
             output['output'] = 'ok'
         else:
+            # If messages is empty that means that we failed all the
+            # unorphans so output is `notok`, otherwise it means that we
+            # succeeded at least once and thus output will be `ok` to keep
+            # backward compatibility.
             httpcode = 500
             output['output'] = 'notok'
 
