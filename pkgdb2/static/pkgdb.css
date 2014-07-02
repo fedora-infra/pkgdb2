@@ -525,3 +525,23 @@ table .col_odd,
     height: 12px;
     background: url(link.png) center center no-repeat;
 }
+
+th.header {
+    background-image: url(small.gif);
+    cursor: pointer;
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-position: center left;
+    padding-left: 20px;
+    margin-left: -1px;
+}
+
+th.headerSortUp {
+    background-image: url(small_asc.gif);
+    background-color: #C0C0C0;
+}
+
+th.headerSortDown {
+    background-image: url(small_desc.gif);
+    background-color: #C0C0C0;
+}

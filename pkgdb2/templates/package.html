@@ -315,13 +315,16 @@ confusing what the difference is between that status an the per-branch status)
       </ul>
     </div>
 
-    <table>
+    <table id="committers">
+    <thead>
       <tr>
         <th></th>
         {% for branch in branches | sort_branches %}
         <th>{{ branch }}</th>
         {% endfor %}
       </tr>
+    </thead>
+    <tbody>
       {% for user in commit_acls | sort %}
         {% if loop.last %}
           <tr class="lastrow">
@@ -351,6 +354,7 @@ confusing what the difference is between that status an the per-branch status)
           {% endfor %}
         </tr>
       {% endfor %}
+    </tbody>
     </table>
   </section>
 
@@ -382,7 +386,7 @@ confusing what the difference is between that status an the per-branch status)
       {% endif %}
     </div>
 
-    <table>
+    <table >
       <tr>
         <th></th>
         {% for branch in branches | sort_branches %}
@@ -443,7 +447,16 @@ confusing what the difference is between that status an the per-branch status)
 
 {% block jscripts %}
 {{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='jquery.tablesorter.min.js') }}">
+</script>
+
 <script type="text/javascript">
+    $(document).ready(function(){
+        $("#committers").tablesorter();
+    });
+
     $(function(){
         $('#givebutton').click(function(){
             var _url = "{{ url_for('.package_give', package=package.name, full=0) }}";
