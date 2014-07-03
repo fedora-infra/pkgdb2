@@ -330,6 +330,7 @@ Orphan package
             output['output'] = 'notok'
 
         if errors:
+            errors = list(errors)
             output['error'] = errors
             if len(errors) == 1:
                 output['error'] = errors.pop()
@@ -429,6 +430,7 @@ Unorphan packages
             output['output'] = 'notok'
 
         if errors:
+            errors = list(errors)
             output['error'] = errors
             if len(errors) == 1:
                 output['error'] = errors.pop()
@@ -523,6 +525,7 @@ Retire packages
             output['output'] = 'notok'
 
         if errors:
+            errors = list(errors)
             output['error'] = errors
             if len(errors) == 1:
                 output['error'] = errors.pop()
