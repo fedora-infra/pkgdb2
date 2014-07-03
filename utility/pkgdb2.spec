@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.12.1
+Version:        1.13
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,22 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Jul 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.13-1
+- Update to 1.13.0
+- Allow users to retire package that they did not orphan first
+- Enable the sorting of the committers table
+- Allow the API to orphan/unorphan/retire a package on multiple branches even if
+  the package does not have all of them (the branches)
+- Adjust unit-tests so that they behave the same in jenkins and locally
+- Add a new API endpoint to update critpath status
+- Add a new API endpoint to update the information related to a package (summary
+  & co)
+- Add a new API endpoint to list the pending ACLs requests
+- Add a notification system notify the user if he/she has pending ACLs requests
+  right after they log in
+- Update the unit-tests so that they only run against faitout on jenkins (by
+  checking for the BUILD_ID environment variable)
+
 * Wed Jun 18 2014  Pierre-Yves Chibon <pingou@pingoured.fr> - 1.12.1-1
 - Update to 1.12.1
 - Fix the back link when listing packages and asked for a page outside the

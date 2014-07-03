@@ -38,8 +38,8 @@ from functools import wraps
 from flask.ext.fas_openid import FAS
 
 
-__version__ = '1.12.1'
-__api_version__ = '1.6'
+__version__ = '1.13'
+__api_version__ = '1.7'
 
 APP = flask.Flask(__name__)
 
