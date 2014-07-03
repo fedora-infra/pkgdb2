@@ -263,24 +263,30 @@ class FlaskApiAclsTest(Modeltests):
         mock_func.get_packagers.return_value = ['pingou', 'ralph', 'toshio']
         mock_func.log.return_value = ''
 
-        # Fails is user is a packager but not in the group that is the
-        # current poc
+        # Fails for geany is user is a packager but not in the group that
+        # is the current poc  -  works for guake
         with user_set(APP, user):
             exp = {
                 "error": "You are not part of the group \"gtk-sig\", you "
                          "are not allowed to change the point of contact.",
-                "output": "notok"
+                "messages": [""],
+                "output": "ok"
             }
             output = self.app.post('/api/package/acl/reassign/', data=data)
             json_out = json.loads(output.data)
-            self.assertEqual(output.status_code, 500)
+            self.assertEqual(output.status_code, 200)
             self.assertEqual(json_out, exp)
 
         # Works
+        data = {
+            'pkgnames': ['geany'],
+            'branches': 'master',
+            'poc': 'toshio',
+        }
         user.groups.append('gtk-sig')
 
         with user_set(APP, user):
-            exp = {"messages": ['', ''], "output": "ok"}
+            exp = {"messages": [''], "output": "ok"}
             output = self.app.post('/api/package/acl/reassign/', data=data)
             json_out = json.loads(output.data)
             self.assertEqual(output.status_code, 200)
