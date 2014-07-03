@@ -501,7 +501,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 and not pkgdb2.is_pkgdb_admin(user) \
                 and not pkglisting.point_of_contact.startswith('group::'):
             raise PkgdbException(
-                'You are not allowed to change the retire this package.')
+                'You are not allowed to retire this package.')
 
         # Admins can deprecate everything
         # Users can deprecate Fedora devel and EPEL branches
