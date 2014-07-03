@@ -495,10 +495,14 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
     prev_status = pkglisting.status
     if status == 'Retired':
-        if prev_status != 'Orphaned' and not pkgdb2.is_pkgdb_admin(user):
+
+        if pkglisting.point_of_contact != user.username \
+                and pkglisting.point_of_contact != 'orphan' \
+                and not pkgdb2.is_pkgdb_admin(user) \
+                and not pkglisting.point_of_contact.startswith('group::'):
             raise PkgdbException(
-                'The package: %s is not orphaned on branch %s.' % (
-                    package.name, collection.branchname))
+                'You are not allowed to retire this package.')
+
         # Admins can deprecate everything
         # Users can deprecate Fedora devel and EPEL branches
         if pkgdb2.is_pkgdb_admin(user) \
@@ -506,10 +510,16 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                     and collection.version == 'devel') \
                 or collection.name == 'EPEL':
 
+            prev_poc = pkglisting.point_of_contact
             pkglisting.status = 'Retired'
             pkglisting.point_of_contact = 'orphan'
             session.add(pkglisting)
             session.flush()
+            if prev_status != 'Orphaned':
+                # Update Bugzilla about new owner
+                pkgdb2.lib.utils.set_bugzilla_owner(
+                    poc, prev_poc, package.name, collection.name,
+                    collection.version)
         else:
             raise PkgdbException(
                 'You are not allowed to retire the '

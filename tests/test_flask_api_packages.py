@@ -550,43 +550,6 @@ class FlaskApiPackagesTest(Modeltests):
         create_package_acl(self.session)
         mock_func.log.return_value = ''
 
-        # Package not orphaned
-        data = {
-            'pkgnames': 'guake',
-            'branches': ['f18', 'master'],
-        }
-        with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/package/retire/', data=data)
-            self.assertEqual(output.status_code, 500)
-            data = json.loads(output.data)
-            self.assertEqual(
-                data,
-                {
-                    "error": "The package: guake is not orphaned on "
-                    "branch f18.",
-                    "output": "notok"
-                }
-
-            )
-
-        # Orphan the package
-        data = {
-            'pkgnames': 'guake',
-            'branches': ['f18', 'master'],
-            'poc': 'test',
-        }
-        with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/package/orphan/', data=data)
-            self.assertEqual(output.status_code, 200)
-            data = json.loads(output.data)
-            self.assertEqual(
-                data,
-                {
-                    "messages": ["", ""],
-                    "output": "ok"
-                }
-            )
-
         data = {
             'pkgnames': 'guake',
             'branches': ['f18', 'master'],
@@ -604,7 +567,25 @@ class FlaskApiPackagesTest(Modeltests):
                     "guake on branch f18.",
                     "output": "notok"
                 }
+            )
 
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['master'],
+            'poc': 'test',
+        }
+        # User is not the poc
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/retire/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "You are not allowed to retire this package.",
+                    "output": "notok"
+                }
             )
 
         # Retire the package
