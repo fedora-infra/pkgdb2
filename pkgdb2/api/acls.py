@@ -204,26 +204,42 @@ Reassign packages
         httpcode = 500
 
     else:
-        try:
-            messages = []
-            for (package, branch) in itertools.product(packages, branches):
-                messages.append(
-                    pkgdblib.update_pkg_poc(
-                        session=SESSION,
-                        pkg_name=package,
-                        pkg_branch=branch,
-                        pkg_poc=user_target,
-                        user=flask.g.fas_user
-                    )
+        messages = []
+        errors = set()
+        for (package, branch) in itertools.product(packages, branches):
+            try:
+                message = pkgdblib.update_pkg_poc(
+                    session=SESSION,
+                    pkg_name=package,
+                    pkg_branch=branch,
+                    pkg_poc=user_target,
+                    user=flask.g.fas_user
                 )
-            SESSION.commit()
-            output['output'] = 'ok'
+                SESSION.commit()
+                messages.append(message)
+            except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
+                APP.logger.exception(err)
+                SESSION.rollback()
+                errors.add(str(err))
+            except pkgdblib.PkgdbException, err:
+                SESSION.rollback()
+                errors.add(str(err))
+
+        if messages:
             output['messages'] = messages
-        except pkgdblib.PkgdbException, err:
-            SESSION.rollback()
-            output['output'] = 'notok'
-            output['error'] = str(err)
+            output['output'] = 'ok'
+        else:
+            # If messages is empty that means that we failed all the
+            # unorphans so output is `notok`, otherwise it means that we
+            # succeeded at least once and thus output will be `ok` to keep
+            # backward compatibility.
             httpcode = 500
+            output['output'] = 'notok'
+
+        if errors:
+            output['error'] = errors
+            if len(errors) == 1:
+                output['error'] = errors.pop()
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
