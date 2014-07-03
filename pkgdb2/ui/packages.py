@@ -547,7 +547,7 @@ def package_take(package, full=True):
         acl.collection.branchname
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
-        and acl.point_of_contact == 'orphan'
+        and acl.status == 'Orphaned'
     ]
 
     if not collections:
