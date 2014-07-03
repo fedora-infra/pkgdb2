@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.13.1
+Version:        1.13.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -106,6 +106,11 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Jul 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.13.2-1
+- Update to 1.13.2
+- Fix api for orphan/unorphan/retire and reassign as set are not
+  serializable to JSON
+
 * Thu Jul 03 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.13.1-1
 - Update to 1.13.1
 - Fix the /api/package/acl/reassign endpoint so that it supports giving a
