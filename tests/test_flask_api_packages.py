@@ -583,8 +583,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "You are not allowed to change the retire "
-                    "this package.",
+                    "error": "You are not allowed to retire this package.",
                     "output": "notok"
                 }
             )
