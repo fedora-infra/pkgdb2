@@ -188,7 +188,11 @@ def login():  # pragma: no cover
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         return flask.redirect(next_url)
     else:
-        return FAS.login(return_url=next_url)
+        groups = APP.config['ADMIN_GROUP']
+        if isinstance(groups, basestring):
+            groups = [groups]
+        groups.append('packager')
+        return FAS.login(return_url=next_url, groups=groups)
 
 
 @UI.route('/logout/')
