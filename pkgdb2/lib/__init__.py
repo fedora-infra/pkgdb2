@@ -1390,7 +1390,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         package_listing=pkg_listing.to_json(),
     ))
     pkgdb2.lib.utils.set_bugzilla_owner(
-        user.username, None, package.name, collection.name,
+        pkg_user, None, package.name, collection.name,
         collection.version)
 
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
