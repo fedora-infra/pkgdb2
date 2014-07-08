@@ -132,12 +132,14 @@ def main():
     if args.nomail:
         print message
     else:
+        to_email=pkgdb2.APP.config.get('MAIL_ADMIN')
+        print 'Sending report by email to: %s' % to_email
         notify.email_publish(
             user=user,
             package=None,
             message=message,
             subject='Report: branching to %s' % args.new_branch,
-            to_email=pkgdb2.APP.config.get('MAIL_ADMIN')
+            to_email=to_email,
         )
 
     return 0
