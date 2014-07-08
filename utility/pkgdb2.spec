@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.14.1
+Version:        1.14.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Jul 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.14.2-1
+- Update to 1.14.2
+- Ensure the pkgdb2_branch loads the correct version of jinja on EL6
+
 * Tue Jul 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.14.1-1
 - Update to 1.14.1
 - Ensure the pkgdb2_branch loads SQLAchemy >= 0.7
