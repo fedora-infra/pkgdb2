@@ -43,5 +43,6 @@ setup(
     url='https://fedorahosted.org/pkgdb2/',
     packages=['pkgdb2'],
     include_package_data=True,
-    install_requires=requires
-    )
+    install_requires=requires,
+    scripts=['utility/pkgdb2_branch.py'],
+)
