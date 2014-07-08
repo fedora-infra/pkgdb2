@@ -1483,9 +1483,6 @@ def add_branch(session, clt_from, clt_to, user):
                     pkglist.package.name, clt_from.name, clt_to.name))
                 messages.append(err)
 
-    # Should not fail since all the flush() passed
-    session.commit()
-
     # Should we raise a PkgdbException if messages != [], or just return
     # them?
 
