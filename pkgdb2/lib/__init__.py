@@ -1483,17 +1483,12 @@ def add_branch(session, clt_from, clt_to, user):
                     pkglist.package.name, clt_from.name, clt_to.name))
                 messages.append(err)
 
-    # Should we raise a PkgdbException if messages != [], or just return
-    # them?
-
     pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
         agent=user.username,
         collection_from=clt_from.to_json(),
         collection_to=clt_to.to_json(),
     ))
 
-    # Go for returning them for the moment, which allows the logs to be
-    # inserted
     return messages
 
 
