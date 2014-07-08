@@ -1477,7 +1477,7 @@ def add_branch(session, clt_from, clt_to, user):
                     pkglist.package.name, clt_from.name, clt_to.name))
             except SQLAlchemyError, err:  # pragma: no cover
                 session.rollback()
-                pkgdb2.LOG.exception(err)
+                pkgdb2.LOG.debug(err)
                 messages.append(
                     'FAILED: %s failed to branch from %s to %s' %(
                     pkglist.package.name, clt_from.name, clt_to.name))
