@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.14.3
+Version:        1.14.4
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Jul 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.14.4-1
+- Update to 1.14.4
+- Fix pkgdb2.lib.set_acl_package to handle case where pkglisting isn't found
+
 * Tue Jul 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.14.3-1
 - Update to 1.14.3
 - Fix logging/sending email when editing a collection
