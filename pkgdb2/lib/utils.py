@@ -285,10 +285,12 @@ def log(session, package, topic, message):
     model.Log.insert(session, message['agent'], package, final_msg)
 
     if pkgdb2.APP.config.get('PKGDB2_EMAIL_NOTIFICATION', False):
-        body_email = '{0}\n\nTo make changes to this package see:\n' \
-            '{1}/package/{2}'.format(
-                final_msg, pkgdb2.APP.config.get('SITE_URL'),
-                package.name)
+        body_email = final_msg
+        if package:
+            body_email = '{0}\n\nTo make changes to this package see:\n' \
+                '{1}/package/{2}'.format(
+                    final_msg, pkgdb2.APP.config.get('SITE_URL'),
+                    package.name)
         email_publish(
             message['agent'], package, body_email, subject=subject)
 
