@@ -272,7 +272,8 @@ Notification information
         out_format = 'json'
 
     output = _bz_notify_cache(
-        name, version, eol, out_format, acls=['commit', 'approveacls'])
+        name, version, eol, out_format,
+        acls=['commit', 'approveacls', 'watchcommits'])
 
     if out_format == 'json':
         return flask.jsonify(output)
