@@ -1470,8 +1470,14 @@ def add_branch(session, clt_from, clt_to, user):
         if pkglist.status == 'Approved':
             try:
                 pkglist.branch(session, clt_to)
+                messages.append(
+                    '%s branched successfully from %s to %s' %(
+                    pkglist.package.name, clt_from.name, clt_to.name))
             except SQLAlchemyError, err:  # pragma: no cover
                 pkgdb2.LOG.exception(err)
+                messages.append(
+                    'FAILED: %s failed to branch from %s to %s' %(
+                    pkglist.package.name, clt_from.name, clt_to.name))
                 messages.append(err)
 
     # Should we raise a PkgdbException if messages != [], or just return
