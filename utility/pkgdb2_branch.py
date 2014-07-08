@@ -46,6 +46,7 @@ except ImportError:
     import pkgdb2
 
 import pkgdb2.lib
+import pkgdb2.lib.notifications as notify
 
 
 class FakeFasUser(object):
@@ -105,7 +106,7 @@ def main():
     user = FakeFasUser(username=args.user, groups=args.groups)
 
     try:
-        pkgdlist = pkgdb2.lib.add_branch(
+        pkgdblist = pkgdb2.lib.add_branch(
             pkgdb2.SESSION,
             clt_from='master',
             clt_to=args.new_branch,
@@ -120,6 +121,18 @@ def main():
     except SQLAlchemyError. err:
         print err
         return 1
+
+    message = 'Nothing happened'
+    if pkgdblist:
+        message = 'Output from the branching:\n\n%s' % ('\n'.join(pkgdblist))
+
+    notify.email_publish(
+        user=user,
+        package=None,
+        message=message,
+        subject='Report: branching to %s' % args.new_branch,
+        to_email=pkgdb2.APP.config.get('MAIL_ADMIN')
+    )
 
     return 0
 
