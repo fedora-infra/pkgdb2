@@ -315,12 +315,12 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             'Invalid group "%s" all groups in pkgdb should end with '
             '"-sig".' % pkg_user)
 
-    try:
-        pkglisting = model.PackageListing.by_pkgid_collectionid(
-            session,
-            package.id,
-            collection.id)
-    except NoResultFound:  # pragma: no cover  TODO: can we test this?
+
+    pkglisting = model.PackageListing.by_pkgid_collectionid(
+        session,
+        package.id,
+        collection.id)
+    if not pkglisting:
         pkglisting = package.create_listing(point_of_contact=pkg_user,
                                             collection=collection,
                                             statusname='Approved')
