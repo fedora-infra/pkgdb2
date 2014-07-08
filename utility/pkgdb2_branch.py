@@ -88,6 +88,9 @@ def get_arguments():
     parser.add_argument(
         '--groups', dest='groups', action='append',
         help='FAS groups in which the user performing the action is')
+    parser.add_argument(
+        '--nomail', dest='nomail', action='store_true', default=False,
+        help='Print the repo instead of sending it by email')
 
     return parser.parse_args()
 
@@ -126,13 +129,16 @@ def main():
     if pkgdblist:
         message = 'Output from the branching:\n\n%s' % ('\n'.join(pkgdblist))
 
-    notify.email_publish(
-        user=user,
-        package=None,
-        message=message,
-        subject='Report: branching to %s' % args.new_branch,
-        to_email=pkgdb2.APP.config.get('MAIL_ADMIN')
-    )
+    if args.nomail:
+        print message
+    else:
+        notify.email_publish(
+            user=user,
+            package=None,
+            message=message,
+            subject='Report: branching to %s' % args.new_branch,
+            to_email=pkgdb2.APP.config.get('MAIL_ADMIN')
+        )
 
     return 0
 
