@@ -1470,10 +1470,13 @@ def add_branch(session, clt_from, clt_to, user):
         if pkglist.status == 'Approved':
             try:
                 pkglist.branch(session, clt_to)
+                # Should not fail since the flush() passed
+                session.commit()
                 messages.append(
                     '%s branched successfully from %s to %s' %(
                     pkglist.package.name, clt_from.name, clt_to.name))
             except SQLAlchemyError, err:  # pragma: no cover
+                session.rollback()
                 pkgdb2.LOG.exception(err)
                 messages.append(
                     'FAILED: %s failed to branch from %s to %s' %(
