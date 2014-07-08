@@ -1481,7 +1481,7 @@ def add_branch(session, clt_from, clt_to, user):
                 messages.append(
                     'FAILED: %s failed to branch from %s to %s' %(
                     pkglist.package.name, clt_from.name, clt_to.name))
-                messages.append(err)
+                messages.append(str(err))
 
     pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
         agent=user.username,
