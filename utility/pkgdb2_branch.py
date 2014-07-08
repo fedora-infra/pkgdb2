@@ -25,6 +25,10 @@ Script to run to branch packages from the `devel` collection into the new,
 specified collection.
 '''
 
+## These two lines are needed to run on EL6
+__requires__ = ['SQLAlchemy >= 0.7']
+import pkg_resources
+
 import argparse
 import os
 
