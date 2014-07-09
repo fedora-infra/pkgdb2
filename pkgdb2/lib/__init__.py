@@ -1473,14 +1473,16 @@ def add_branch(session, clt_from, clt_to, user):
                 # Should not fail since the flush() passed
                 session.commit()
                 messages.append(
-                    '%s branched successfully from %s to %s' %(
-                    pkglist.package.name, clt_from.name, clt_to.name))
+                    '%s branched successfully from %s to %s %s' %(
+                    pkglist.package.name, clt_from.name, clt_to.name,
+                    clt_to.version))
             except SQLAlchemyError, err:  # pragma: no cover
                 session.rollback()
                 pkgdb2.LOG.debug(err)
                 messages.append(
-                    'FAILED: %s failed to branch from %s to %s' %(
-                    pkglist.package.name, clt_from.name, clt_to.name))
+                    'FAILED: %s failed to branch from %s to %s %s' %(
+                    pkglist.package.name, clt_from.name, clt_to.name,
+                    clt_to.version))
                 messages.append(str(err))
 
     pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
