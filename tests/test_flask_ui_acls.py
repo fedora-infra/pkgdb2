@@ -832,8 +832,23 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
+            # No CSRF provided
             output = self.app.post(
                 '/acl/pending/approve', follow_redirects=True)
+            self.assertTrue('<table id="pending">' in output.data)
+            self.assertTrue(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertTrue(
+                '<input type="submit" value="Update"/>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # Valid request
+            data = {'csrf_token': csrf_token}
+            output = self.app.post(
+                '/acl/pending/approve', data=data, follow_redirects=True)
+            print output.data
             self.assertTrue(
                 '<li class="message">All ACLs approved</li>' in output.data)
             self.assertFalse('<table id="pending">' in output.data)
@@ -858,8 +873,22 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
+            # No CSRF provided
             output = self.app.post(
                 '/acl/pending/deny', follow_redirects=True)
+            self.assertTrue('<table id="pending">' in output.data)
+            self.assertTrue(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertTrue(
+                '<input type="submit" value="Update"/>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # Valid request
+            data = {'csrf_token': csrf_token}
+            output = self.app.post(
+                '/acl/pending/deny', data=data, follow_redirects=True)
             self.assertTrue(
                 '<li class="message">All ACLs denied</li>' in output.data)
             self.assertFalse('<table id="pending">' in output.data)
