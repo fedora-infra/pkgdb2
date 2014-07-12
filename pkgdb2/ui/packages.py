@@ -221,12 +221,17 @@ def package_info(package):
         if listing.collection.status != 'EOL'
     ])
 
+    avatars = dict([
+        (packager, pkgdb2.lib.utils.avatar_url(packager, 24))
+        for packager in pocs])
+
     return flask.render_template(
         'package.html',
         package=package,
         commit_acls=commit_acls,
         watch_acls=watch_acls,
         pocs=pocs,
+        avatars=avatars,
         admins=admins,
         statuses=statuses,
         pending_admins=pending_admins,

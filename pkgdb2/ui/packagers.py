@@ -76,10 +76,15 @@ def list_packagers(motif=None):
         return flask.redirect(flask.url_for(
             '.packager_info', packager=packagers[0]))
 
+    avatars = dict([
+        (packager, pkgdblib.utils.avatar_url(packager, 24))
+        for packager in packagers])
+
     return flask.render_template(
         'list_packagers.html',
         select='packagers',
         packagers=packagers,
+        avatars=avatars,
         motif=motif,
         total_page=total_page,
         page=page
@@ -121,9 +126,12 @@ def packager_info(packager):
         flask.flash('No packager of this name found.', 'errors')
         return flask.render_template('msg.html')
 
+    avatar = pkgdblib.utils.avatar_url(packager, 64)
+
     return flask.render_template(
         'packager.html',
         packager=packager,
+        avatar=avatar,
         packages=packages,
         packages_co=packages_co,
         packages_watch=packages_watch,

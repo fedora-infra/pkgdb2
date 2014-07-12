@@ -545,3 +545,11 @@ th.headerSortDown {
     background-image: url(small_desc.gif);
     background-color: #C0C0C0;
 }
+
+.avatar {
+    vertical-align: middle;
+}
+
+.circle {
+    border-radius: 50%;
+}
