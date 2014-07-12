@@ -816,12 +816,14 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_pending_acl_approve(self, login_func):
+    def test_pending_acl_approve(self, login_func, mock_func):
         """ Test the pending_acl_approve function. """
         login_func.return_value = None
 
         create_package_acl(self.session)
+        mock_func.return_value = ['pingou', 'ralph', 'kevin', 'toshio']
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
@@ -848,7 +850,6 @@ class FlaskUiAclsTest(Modeltests):
             data = {'csrf_token': csrf_token}
             output = self.app.post(
                 '/acl/pending/approve', data=data, follow_redirects=True)
-            print output.data
             self.assertTrue(
                 '<li class="message">All ACLs approved</li>' in output.data)
             self.assertFalse('<table id="pending">' in output.data)
@@ -857,12 +858,14 @@ class FlaskUiAclsTest(Modeltests):
             self.assertFalse(
                 '<input type="submit" value="Update"/>' in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_pending_acl_deny(self, login_func):
+    def test_pending_acl_deny(self, login_func, mock_func):
         """ Test the pending_acl_deny function. """
         login_func.return_value = None
 
         create_package_acl(self.session)
+        mock_func.return_value = ['pingou', 'ralph', 'kevin', 'toshio']
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
