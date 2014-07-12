@@ -9,7 +9,7 @@
 
 <h1>Pending ACLs</h1>
 
-
+{% if pending_acls %}
 <div>
     <form action="{{ url_for('.pending_acl_deny') }}"
       method="POST">
@@ -28,6 +28,7 @@
       {{ form.csrf_token }}
     </form>
 </div>
+{% endif %}
 
 {% if pending_acls %}
 <table id="pending">
