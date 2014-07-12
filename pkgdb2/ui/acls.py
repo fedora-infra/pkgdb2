@@ -499,9 +499,11 @@ def pending_acl():
     ''' List the pending acls for the user logged in. '''
     pending_acls = pkgdblib.get_pending_acl_user(
         SESSION, flask.g.fas_user.username)
+    form = pkgdb2.forms.ConfirmationForm()
     return flask.render_template(
         'acl_pending.html',
         pending_acls=pending_acls,
+        form=form,
     )
 
 
@@ -509,26 +511,29 @@ def pending_acl():
 @packager_login_required
 def pending_acl_approve():
     ''' Approve all the pending acls for the user logged in. '''
-    pending_acls = pkgdblib.get_pending_acl_user(
-        SESSION, flask.g.fas_user.username)
-    try:
-        for acl in pending_acls:
-            pkgdblib.set_acl_package(
-                SESSION,
-                pkg_name=acl['package'],
-                pkg_branch=acl['collection'],
-                pkg_user=acl['user'],
-                acl=acl['acl'],
-                status='Approved',
-                user=flask.g.fas_user
-            )
+    form = pkgdb2.forms.ConfirmationForm()
 
-        SESSION.commit()
-        flask.flash('All ACLs approved')
-        # Let's keep this in although we should never see it
-    except pkgdblib.PkgdbException, err:  # pragma: no cover
-        SESSION.rollback()
-        flask.flash(str(err), 'error')
+    if form.validate_on_submit():
+        pending_acls = pkgdblib.get_pending_acl_user(
+            SESSION, flask.g.fas_user.username)
+        try:
+            for acl in pending_acls:
+                pkgdblib.set_acl_package(
+                    SESSION,
+                    pkg_name=acl['package'],
+                    pkg_branch=acl['collection'],
+                    pkg_user=acl['user'],
+                    acl=acl['acl'],
+                    status='Approved',
+                    user=flask.g.fas_user
+                )
+
+            SESSION.commit()
+            flask.flash('All ACLs approved')
+            # Let's keep this in although we should never see it
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
 
     return flask.redirect(flask.url_for('.pending_acl'))
 
@@ -537,25 +542,28 @@ def pending_acl_approve():
 @packager_login_required
 def pending_acl_deny():
     ''' Deny all the pending acls for the user logged in. '''
-    pending_acls = pkgdblib.get_pending_acl_user(
-        SESSION, flask.g.fas_user.username)
-    try:
-        for acl in pending_acls:
-            pkgdblib.set_acl_package(
-                SESSION,
-                pkg_name=acl['package'],
-                pkg_branch=acl['collection'],
-                pkg_user=acl['user'],
-                acl=acl['acl'],
-                status='Denied',
-                user=flask.g.fas_user
-            )
+    form = pkgdb2.forms.ConfirmationForm()
 
-        SESSION.commit()
-        flask.flash('All ACLs denied')
-        # Let's keep this in although we should never see it
-    except pkgdblib.PkgdbException, err:  # pragma: no cover
-        SESSION.rollback()
-        flask.flash(str(err), 'error')
+    if form.validate_on_submit():
+        pending_acls = pkgdblib.get_pending_acl_user(
+            SESSION, flask.g.fas_user.username)
+        try:
+            for acl in pending_acls:
+                pkgdblib.set_acl_package(
+                    SESSION,
+                    pkg_name=acl['package'],
+                    pkg_branch=acl['collection'],
+                    pkg_user=acl['user'],
+                    acl=acl['acl'],
+                    status='Denied',
+                    user=flask.g.fas_user
+                )
+
+            SESSION.commit()
+            flask.flash('All ACLs denied')
+            # Let's keep this in although we should never see it
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
 
     return flask.redirect(flask.url_for('.pending_acl'))
