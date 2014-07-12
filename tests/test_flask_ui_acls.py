@@ -816,6 +816,32 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
+    @patch('pkgdb2.packager_login_required')
+    def test_pending_acl_approve(self, login_func):
+        """ Test the pending_acl_approve function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/acl/pending/')
+            self.assertTrue('<table id="pending">' in output.data)
+            self.assertTrue(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertTrue(
+                '<input type="submit" value="Update"/>' in output.data)
+
+            output = self.app.post(
+                '/acl/pending/approve', follow_redirects=True)
+            self.assertTrue(
+                '<li class="message">All ACLs approved</li>' in output.data)
+            self.assertFalse('<table id="pending">' in output.data)
+            self.assertFalse(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertFalse(
+                '<input type="submit" value="Update"/>' in output.data)
+
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
     def test_package_give_acls(self, login_func, mock_func):
