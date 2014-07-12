@@ -58,6 +58,18 @@ def branches_filter(branches):
     return output
 
 
+@APP.template_filter('avatar')
+def avatar(packager, size=64):
+    """ Template filter sorting the given branches, Fedora first then EPEL,
+    then whatever is left.
+    """
+    output = '<img class="avatar circle" src="%s"/>' % (
+        pkgdblib.utils.avatar_url(packager, size)
+    )
+
+    return output
+
+
 @UI.context_processor
 def inject_is_admin():
     """ Inject whether the user is a pkgdb2 admin or not in every page
