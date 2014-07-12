@@ -39,7 +39,7 @@
 {% if total_page >= page and page > 0 %}
     {% for packager in packagers %}
         <li>
-            <img class="avatar circle" src="{{ avatars[packager] }}"/>
+            {{ packager | avatar(24) | safe }}
             <a href="{{url_for('.packager_info', packager=packager)}}">
                 {{ packager }}</a>
         </li>

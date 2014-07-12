@@ -112,7 +112,7 @@ confusing what the difference is between that status an the per-branch status)
         <ul>
           {% for user in pocs %}
           <li>
-            <img class="avatar circle" src="{{ avatars[user] }}"/>
+            {{ user | avatar(32) | safe }}
             <span class="username">
               <a href="{{ url_for('.packager_info', packager=user) }}">
                 {{ user }}
@@ -194,7 +194,7 @@ confusing what the difference is between that status an the per-branch status)
           <ul>
             {% for user in admins %}
             <li>
-              <img class="avatar circle" src="{{ avatars[user] }}"/>
+              {{ user | avatar(32) | safe }}
               <span class="username">
                 <a href="{{ url_for('.packager_info', packager=user) }}">
                   {{ user }}
@@ -210,7 +210,7 @@ confusing what the difference is between that status an the per-branch status)
         <ul>
           {% for user in pending_admins %}
           <li>
-            <img class="avatar circle" src="{{ avatars[user] }}"/>
+            {{ user | avatar(32) | safe }}
             <span class="username">
               <a class="pending" title="Admin rights awaiting review"
                  href="{{ url_for('.packager_info', packager=user) }}">
@@ -335,7 +335,7 @@ confusing what the difference is between that status an the per-branch status)
           <tr>
         {% endif %}
           <td class="users">
-            <img class="avatar circle" src="{{ avatars[user] }}"/>
+            {{ user | avatar(32) | safe }}
             <a href="{{ url_for('.packager_info', packager=user) }}" class="username">
               {{ user }}
             </a>
@@ -412,7 +412,7 @@ confusing what the difference is between that status an the per-branch status)
           <tr class="{{ loop.cycle('row_odd', 'row_even') }}">
         {% endif %}
           <td>
-            <img class="avatar circle" src="{{ avatars[user] }}"/>
+            {{ user | avatar(32) | safe }}
             <a href="{{ url_for('.packager_info', packager=user) }}"
               class="username">
               {{ user }}
