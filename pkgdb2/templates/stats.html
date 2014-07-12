@@ -43,6 +43,7 @@
             #{{ loop.index }}
         </td>
         <td>
+            {{ row[0] | avatar(32) | safe }}
             <a href="{{url_for('.packager_info', packager=row[0])}}">
             {{ row[0] }}
             </a>
@@ -63,6 +64,7 @@
             #{{ loop.index }}
         </td>
         <td>
+            {{ row[0] | avatar(32) | safe }}
             <a href="{{url_for('.packager_info', packager=row[0])}}">
             {{ row[0] }}
             </a>
