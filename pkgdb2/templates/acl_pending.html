@@ -21,7 +21,10 @@
     </tr>
     {% for pending_acl in pending_acls %}
     <tr>
-        <td>{{ pending_acl['user'] }}</td>
+        <td>
+          {{ pending_acl['user'] | avatar(32) | safe }}
+          {{ pending_acl['user'] }}
+        </td>
         <td>
             <a href="{{ url_for('.package_info',
                      package=pending_acl['package']) }}">

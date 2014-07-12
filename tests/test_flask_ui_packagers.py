@@ -76,7 +76,7 @@ class FlaskUiPackagersTest(Modeltests):
 
         output = self.app.get('/packager/pingou/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>pingou</h1>' in output.data)
+        self.assertTrue('pingou</h1>' in output.data)
         self.assertTrue('<a href="/package/guake/">' in output.data)
 
         output = self.app.get('/packager/random/')

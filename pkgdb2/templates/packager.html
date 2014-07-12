@@ -7,7 +7,9 @@
 {% block content %}
 
 <span class="inline">
-<h1>{{ packager }}</h1> (<a class="fas" target="_blank"
+<h1>
+  {{ packager | avatar | safe }}
+  {{ packager }}</h1> (<a class="fas" target="_blank"
     href="https://admin.fedoraproject.org/accounts/user/view/{{ packager }}"
     >fas</a>)
 </span>

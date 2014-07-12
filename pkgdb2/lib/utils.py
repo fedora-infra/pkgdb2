@@ -23,6 +23,9 @@
 Utilities for all classes to use
 '''
 
+import hashlib
+import urllib
+
 import pkgdb2
 import pkgdb2.lib.exceptions
 
@@ -295,3 +298,28 @@ def log(session, package, topic, message):
             message['agent'], package, body_email, subject=subject)
 
     return final_msg
+
+
+def avatar_url(username, size=64, default='retro'):
+    openid = "http://%s.id.fedoraproject.org/" % username
+    return avatar_url_from_openid(openid, size, default)
+
+
+def avatar_url_from_openid(openid, size=64, default='retro', dns=False):
+    """
+    Our own implementation since fas doesn't support this nicely yet.
+    """
+
+    if dns:
+        # This makes an extra DNS SRV query, which can slow down our webapps.
+        # It is necessary for libravatar federation, though.
+        import libravatar
+        return libravatar.libravatar_url(
+            openid=openid,
+            size=size,
+            default=default,
+        )
+    else:
+        query = urllib.urlencode({'s': size, 'd': default})
+        hash = hashlib.sha256(openid).hexdigest()
+        return "https://seccdn.libravatar.org/avatar/%s?%s" % (hash, query)
