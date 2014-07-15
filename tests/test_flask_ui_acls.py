@@ -817,6 +817,90 @@ class FlaskUiAclsTest(Modeltests):
                 '<input type="submit" value="Update"/>' in output.data)
 
     @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.packager_login_required')
+    def test_pending_acl_approve(self, login_func, mock_func):
+        """ Test the pending_acl_approve function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+        mock_func.return_value = ['pingou', 'ralph', 'kevin', 'toshio']
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/acl/pending/')
+            self.assertTrue('<table id="pending">' in output.data)
+            self.assertTrue(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertTrue(
+                '<input type="submit" value="Update"/>' in output.data)
+
+            # No CSRF provided
+            output = self.app.post(
+                '/acl/pending/approve', follow_redirects=True)
+            self.assertTrue('<table id="pending">' in output.data)
+            self.assertTrue(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertTrue(
+                '<input type="submit" value="Update"/>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # Valid request
+            data = {'csrf_token': csrf_token}
+            output = self.app.post(
+                '/acl/pending/approve', data=data, follow_redirects=True)
+            self.assertTrue(
+                '<li class="message">All ACLs approved</li>' in output.data)
+            self.assertFalse('<table id="pending">' in output.data)
+            self.assertFalse(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertFalse(
+                '<input type="submit" value="Update"/>' in output.data)
+
+    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.packager_login_required')
+    def test_pending_acl_deny(self, login_func, mock_func):
+        """ Test the pending_acl_deny function. """
+        login_func.return_value = None
+
+        create_package_acl(self.session)
+        mock_func.return_value = ['pingou', 'ralph', 'kevin', 'toshio']
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/acl/pending/')
+            self.assertTrue('<table id="pending">' in output.data)
+            self.assertTrue(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertTrue(
+                '<input type="submit" value="Update"/>' in output.data)
+
+            # No CSRF provided
+            output = self.app.post(
+                '/acl/pending/deny', follow_redirects=True)
+            self.assertTrue('<table id="pending">' in output.data)
+            self.assertTrue(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertTrue(
+                '<input type="submit" value="Update"/>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            # Valid request
+            data = {'csrf_token': csrf_token}
+            output = self.app.post(
+                '/acl/pending/deny', data=data, follow_redirects=True)
+            self.assertTrue(
+                '<li class="message">All ACLs denied</li>' in output.data)
+            self.assertFalse('<table id="pending">' in output.data)
+            self.assertFalse(
+                '<a href="/package/guake/acl/commit/">' in output.data)
+            self.assertFalse(
+                '<input type="submit" value="Update"/>' in output.data)
+
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
     def test_package_give_acls(self, login_func, mock_func):
         """ Test the package_give_acls function. """

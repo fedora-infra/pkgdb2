@@ -554,6 +554,7 @@ th.headerSortDown {
     border-radius: 50%;
 }
 
-#manage_watch .pkg_button_blue {
+#manage_watch .pkg_button_blue,
+#pendingAcl .pkg_button_blue {
     margin-right: 10px;
 }
