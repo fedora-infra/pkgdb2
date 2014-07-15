@@ -3,7 +3,7 @@ Contributors to packagedb
 
 Pkgdb2 would be nothing without its contributors.
 
-On July 8, 2014 (release 1.14.4), the list looks as follow:
+On July 15, 2014 (release 1.15), the list looks as follow:
 
 =================  ===========
 Number of commits  Contributor
