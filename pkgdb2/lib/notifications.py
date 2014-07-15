@@ -50,8 +50,8 @@ def fedmsg_publish(*args, **kwargs):  # pragma: no cover
 
 
 def email_publish(
-        user, package, message, subject=None, to_email=None
-        ):  # pragma: no cover
+        user, package, message, subject=None,
+        to_email=None):  # pragma: no cover
     ''' Send notification by email. '''
 
     if not package and not subject and not to_email:

@@ -315,7 +315,6 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             'Invalid group "%s" all groups in pkgdb should end with '
             '"-sig".' % pkg_user)
 
-
     pkglisting = model.PackageListing.by_pkgid_collectionid(
         session,
         package.id,
@@ -1361,7 +1360,8 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     pkg_listing = get_acl_package(session, pkg_name, pkg_branch)
     if not pkg_listing:
         raise PkgdbException(
-            'Package "%s" is not in the collection %s' % (pkg_name, pkg_branch))
+            'Package "%s" is not in the collection %s'
+            % (pkg_name, pkg_branch))
     pkg_listing = pkg_listing[0]
 
     if pkg_listing.status not in ('Orphaned', 'Retired'):
@@ -1473,16 +1473,16 @@ def add_branch(session, clt_from, clt_to, user):
                 # Should not fail since the flush() passed
                 session.commit()
                 messages.append(
-                    '%s branched successfully from %s to %s %s' %(
-                    pkglist.package.name, clt_from.name, clt_to.name,
-                    clt_to.version))
+                    '%s branched successfully from %s to %s %s' % (
+                        pkglist.package.name, clt_from.name, clt_to.name,
+                        clt_to.version))
             except SQLAlchemyError, err:  # pragma: no cover
                 session.rollback()
                 pkgdb2.LOG.debug(err)
                 messages.append(
-                    'FAILED: %s failed to branch from %s to %s %s' %(
-                    pkglist.package.name, clt_from.name, clt_to.name,
-                    clt_to.version))
+                    'FAILED: %s failed to branch from %s to %s %s' % (
+                        pkglist.package.name, clt_from.name, clt_to.name,
+                        clt_to.version))
                 messages.append(str(err))
 
     pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
@@ -1726,8 +1726,8 @@ def set_critpath_packages(
     if critpath != pkglisting.critpath:
         pkglisting.critpath = critpath
         branches.append(pkglisting.collection.branchname)
-        msg = '%s: critpath updated on %s to %s' %  (
-                package.name, pkglisting.collection.branchname, critpath)
+        msg = '%s: critpath updated on %s to %s' % (
+            package.name, pkglisting.collection.branchname, critpath)
         session.add(pkglisting)
 
     try:

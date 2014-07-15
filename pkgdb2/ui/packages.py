@@ -696,8 +696,8 @@ def update_acl(package, update_acl):
                     if lcl_branch not in branches_inv or (
                         branches_inv[lcl_branch] in commit_acls[lcl_user]
                             and commit_acls[lcl_user][
-                                branches_inv[lcl_branch]
-                            ][update_acl] == lcl_acl):
+                                branches_inv[lcl_branch]][
+                                    update_acl] == lcl_acl):
                         cnt += 1
                         continue
 
