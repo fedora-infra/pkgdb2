@@ -444,6 +444,24 @@ confusing what the difference is between that status an the per-branch status)
         </tr>
       {% endfor %}
     </table>
+    {% if g.fas_user %}
+    <p id="manage_watch">
+      <a href="{{ url_for('.update_acl',package=package.name,
+               update_acl='watchcommits') }}"
+        title="Manage watchcommits ACLs">
+        <button class="bold pkg_button_blue inline wheel">
+          Manage watchcommits
+        </button>
+      </a>
+      <a href="{{ url_for('.update_acl',package=package.name,
+               update_acl='watchbugzilla') }}"
+        title="Manage watchbugzilla ACLs">
+        <button class="bold pkg_button_blue inline wheel">
+          Manage watchbugzilla
+        </button>
+      </a>
+    </p>
+    {% endif %}
   </section>
 
 </section>

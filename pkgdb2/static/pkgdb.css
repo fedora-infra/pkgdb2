@@ -553,3 +553,7 @@ th.headerSortDown {
 .circle {
     border-radius: 50%;
 }
+
+#manage_watch .pkg_button_blue {
+    margin-right: 10px;
+}
