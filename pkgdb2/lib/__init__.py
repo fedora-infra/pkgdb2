@@ -893,7 +893,7 @@ def get_package_maintained(
     """
     output = {}
     for pkg, clt in model.Package.get_package_of_user(
-            session, packager, poc=poc, eol=eol):
+            session, user=packager, poc=poc, eol=eol):
         if branch is not None:
             if clt.branchname != branch:
                 continue
