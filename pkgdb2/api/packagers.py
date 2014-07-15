@@ -313,46 +313,55 @@ User's packages
     output = {'output': 'ok'}
 
     packagername = flask.request.args.get('packagername', None) or packagername
+    branches = flask.request.args.getlist('branches', None)
     eol = flask.request.args.get('eol', False)
 
-    packages_co = pkgdblib.get_package_maintained(
-        SESSION,
-        packager=packagername,
-        poc=False,
-        eol=eol,
-    )
-    seen = []
-    for pkg in packages_co:
-        if pkg[0] not in seen:
-            seen.append(pkg[0])
-    packages_co = seen
+    if not branches:
+        branches = [None]
 
-    packages = pkgdblib.get_package_maintained(
-        SESSION,
-        packager=packagername,
-        poc=True,
-        eol=eol,
-    )
-    seen = []
-    for pkg in packages:
-        if pkg[0] not in seen:
-            seen.append(pkg[0])
-    packages = seen
+    packages = []
+    packages_co = []
+    packages_watch = []
+    for branch in branches:
 
-    packages_watch = pkgdblib.get_package_watch(
-        SESSION,
-        packager=packagername,
-        eol=eol,
-    )
-    seen = []
-    for pkg in packages_watch:
-        if pkg[0] not in seen:
-            seen.append(pkg[0])
-    packages_watch = seen
+        tmp = pkgdblib.get_package_maintained(
+            SESSION,
+            packager=packagername,
+            poc=False,
+            branch=branch,
+            eol=eol,
+        )
+        for pkg in tmp:
+            if pkg[0] not in packages_co:
+                packages_co.append(pkg[0])
+
+        tmp_co = pkgdblib.get_package_maintained(
+            SESSION,
+            packager=packagername,
+            poc=True,
+            branch=branch,
+            eol=eol,
+        )
+        for pkg in tmp_co:
+            if pkg[0] not in packages:
+                packages.append(pkg[0])
+
+        tmp_w = pkgdblib.get_package_watch(
+            SESSION,
+            packager=packagername,
+            branch=branch,
+            eol=eol,
+        )
+        for pkg in tmp_w:
+            if pkg[0] not in packages_watch:
+                packages_watch.append(pkg[0])
 
     output['point of contact'] = [pkg.to_json(acls=False) for pkg in packages]
     output['co-maintained'] = [pkg.to_json(acls=False) for pkg in packages_co]
-    output['watch'] = [pkg.to_json(acls=False) for pkg in packages_watch]
+    output['watch'] = [
+        pkg.to_json(acls=False)
+        for pkg in packages_watch
+        if pkg not in packages and pkg not in packages_co]
 
     if not packages and not packages_co and not packages_watch:
         output['output'] = 'notok'
