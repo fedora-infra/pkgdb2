@@ -425,13 +425,11 @@ class FlaskApiPackagersTest(Modeltests):
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['co-maintained']), 1)
         self.assertEqual(len(output['point of contact']), 2)
-        self.assertEqual(len(output['watch']), 2)
+        self.assertEqual(len(output['watch']), 0)
 
         self.assertEqual(output['co-maintained'][0]['name'], 'geany')
         self.assertEqual(output['point of contact'][0]['name'], 'fedocal')
         self.assertEqual(output['point of contact'][1]['name'], 'guake')
-        self.assertEqual(output['watch'][0]['name'], 'fedocal')
-        self.assertEqual(output['watch'][1]['name'], 'guake')
 
 
 if __name__ == '__main__':
