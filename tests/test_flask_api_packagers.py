@@ -446,7 +446,6 @@ class FlaskApiPackagersTest(Modeltests):
         )
 
         output = self.app.get('/api/packager/package/spot/?branches=master')
-        print output.data
         self.assertEqual(output.status_code, 200)
         output = json.loads(output.data)
         self.assertEqual(
