@@ -56,6 +56,32 @@ Every time you save a file, the project will be automatically restarted
 so you can see your change immediatly.
 
 
+Get a working database
+----------------------
+
+We provide a daily dump of the pkgdb2 database used in `production in Fedora
+<https://admin.fedoraproject.org/pkgdb/>`_. You can load this database dump
+and use it for your tests and hacking.
+
+You will need to set up your postgresql server first.
+
+
+Once you postgresql database is running, download the latest database dump::
+
+    wget http://infrastructure.fedoraproject.org/infra/db-dumps/pkgdb2.db
+
+Create the database itself::
+
+    createdb pkgdb2
+
+Load the dump::
+
+    pg_restore -d pkgdb2 pkgdb2.db
+
+Please refer to ``createdb --help`` and ``pg_restore --help`` for further
+help on using these commands.
+
+
 Coding standards
 ----------------
 
