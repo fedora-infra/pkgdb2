@@ -55,6 +55,10 @@ pkgdb2::
 
     (my-pkgdb2-env)$ python createdb.py
 
+.. note:: If you need/want a copy of the database used in production, follow the
+          instructions in the `documentation
+          <http://pkgdb2.readthedocs.org/en/latest/development.html#get-a-working-database>`_
+
 If all goes well, you can start a development instance of the server by
 running::
 
