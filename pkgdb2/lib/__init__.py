@@ -1523,6 +1523,16 @@ def count_fedora_collection(session):
     return collections_fedora
 
 
+def get_groups(session):
+    """ Return the list of FAS groups involved in maintaining packages in
+    the database
+
+    :arg session: the session to connect to the database with.
+
+    """
+    return model.get_groups(session)
+
+
 def notify(session, eol=False, name=None, version=None, acls=None):
     """ Return the user that should be notify for each package.
 
