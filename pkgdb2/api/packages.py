@@ -652,6 +652,11 @@ Package information
         EOL collections or not. Defaults to False.
         If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
+    :kwarg acls: a boolean to specify whether to include the ACLs in the
+        results. Defaults to True.
+        If True, it will include the ACL of the package in the collection.
+        If False, it will not include the ACL of the package in the
+        collection.
 
     Sample response:
 
@@ -732,6 +737,9 @@ Package information
     pkg_name = flask.request.args.get('pkgname', pkgname)
     branches = flask.request.args.getlist('branches', None)
     eol = flask.request.args.get('eol', False)
+    acls = flask.request.args.get('acls', True)
+    if str(acls).lower() in ['0', 'false']:
+        acls = False
 
     try:
         packages = pkgdblib.get_acl_package(
@@ -749,7 +757,7 @@ Package information
             output['output'] = 'ok'
             output['packages'] = [
                 pkg.to_json(not_provenpackager=APP.config.get(
-                    'PKGS_NOT_PROVENPACKAGER'))
+                    'PKGS_NOT_PROVENPACKAGER'), acls=acls)
                 for pkg in packages]
     except NoResultFound:
         output['output'] = 'notok'
