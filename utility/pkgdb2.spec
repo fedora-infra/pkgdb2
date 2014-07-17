@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.15
+Version:        1.16
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,12 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Jul 17 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.16-1
+- Update to 1.16
+- Add buttons in the pending ACLs page to Approve/Deny all the pending requests
+- Add buttons to the matrix management page for the watch* ACLs
+- Add the possibility to not include the ACLs in /api/package/<pkgname>
+
 * Tue Jul 15 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.15-1
 - Update to 1.15
 - Avatar integration (thanks to Ralph Bean)
