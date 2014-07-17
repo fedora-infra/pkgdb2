@@ -1667,3 +1667,26 @@ def vcs_acls(session, eol=False):
     )
 
     return query.all()
+
+
+def get_groups(session):
+    """ Return the list of FAS groups involved in maintaining packages in
+    the database.
+    """
+    query_poc = session.query(
+        sa.distinct(PackageListing.point_of_contact)
+    ).filter(
+        PackageListing.point_of_contact.like('group::%')
+    )
+
+    query_acl = session.query(
+        sa.distinct(PackageListingAcl.fas_name)
+    ).filter(
+        PackageListingAcl.fas_name.like('group::%')
+    )
+
+    groups = []
+    for group in query_poc.union(query_acl).all():
+        groups.append(group[0].split('group::')[1])
+
+    return groups
