@@ -23,7 +23,6 @@
 UI namespace for the Flask application.
 '''
 
-import copy
 import flask
 
 from urlparse import urlparse
@@ -201,9 +200,8 @@ def login():  # pragma: no cover
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         return flask.redirect(next_url)
     else:
-        groups = copy.copy(APP.config['ADMIN_GROUP'])
-        if isinstance(groups, basestring):
-            groups = [groups]
+        groups = pkgdblib.get_groups(SESSION)
+        groups.extend(APP.config['ADMIN_GROUP'])
         groups.append('packager')
         return FAS.login(return_url=next_url, groups=groups)
 
