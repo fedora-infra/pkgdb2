@@ -1542,6 +1542,16 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(
             pkg_list[0].collection.branchname, "master")
 
+    def test_get_groups(self):
+        """ Test the get_groups function. """
+        groups = pkgdblib.get_groups(self.session)
+        self.assertEqual(groups, [])
+
+        create_package_acl(self.session)
+
+        groups = pkgdblib.get_groups(self.session)
+        self.assertEqual(groups, ['gtk-sig'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
