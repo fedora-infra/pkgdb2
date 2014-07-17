@@ -750,6 +750,24 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['packages'][0]['package']['name'],
                          'guake')
 
+        output = self.app.get(
+            '/api/package/?pkgname=guake&branches=master&acls=0')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(data.keys(), ['output', 'packages'])
+        self.assertEqual(len(data['packages']), 1)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(
+            set(data['packages'][0].keys()),
+            set(['status', 'point_of_contact', 'package', 'collection',
+                 'status_change', 'critpath']))
+        self.assertEqual(data['packages'][0]['collection']['branchname'],
+                         'master')
+        self.assertEqual(data['packages'][0]['point_of_contact'],
+                         'pingou')
+        self.assertEqual(data['packages'][0]['package']['name'],
+                         'guake')
+
         output = self.app.get('/api/package/?pkgname=guake&branches=f19')
         self.assertEqual(output.status_code, 404)
         data = json.loads(output.data)
