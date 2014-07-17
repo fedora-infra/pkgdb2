@@ -735,7 +735,8 @@ class PackageListing(BASE):
                    self.id, self.point_of_contact, self.status,
                    self.package_id, self.collection_id)
 
-    def to_json(self, _seen=None, package=True, not_provenpackager=None):
+    def to_json(self, _seen=None, acls=True, package=True,
+                not_provenpackager=None):
         """ Return a dictionary representation of this object. """
         _seen = _seen or []
         _seen.append(type(self))
@@ -752,7 +753,7 @@ class PackageListing(BASE):
         if self.collection:
             result['collection'] = self.collection.to_json(_seen)
 
-        if self.acls and not type(self.acls[0]) in _seen:
+        if acls and self.acls and not type(self.acls[0]) in _seen:
             tmp = []
             for acl in self.acls:
                 tmp.append(acl.to_json(_seen + [type(self)]))
