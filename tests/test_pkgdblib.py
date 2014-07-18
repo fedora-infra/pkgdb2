@@ -1067,6 +1067,14 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[1].packagelist.collection.branchname, 'master')
 
         acls = pkgdblib.get_acl_packager(
+            self.session, 'pingou', acls='commit', page=2, limit=2)
+        self.assertEqual(len(acls), 2)
+        self.assertEqual(acls[0].packagelist.package.name, 'geany')
+        self.assertEqual(acls[0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[1].packagelist.collection.branchname, 'master')
+
+        acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit', 'watchbugzilla'])
         self.assertEqual(len(acls), 9)
         self.assertEqual(acls[0].packagelist.package.name, 'guake')
