@@ -1590,6 +1590,17 @@ class PkgdbLibtests(Modeltests):
         groups = pkgdblib.get_groups(self.session)
         self.assertEqual(groups, ['gtk-sig'])
 
+    def test_set_critpath_packages(self):
+        """ Test the set_critpath_packages function. """
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.set_critpath_packages,
+            session=self.session,
+            pkg_name='master',
+            pkg_branch='blah',
+            user=FakeFasUser()
+        )
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
