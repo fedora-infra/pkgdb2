@@ -87,7 +87,7 @@ def __get_fas_grp_member(group='packager'):  # pragma: no cover
     return fas.group_members(group)
 
 
-def get_packagers():
+def get_packagers():  # pragma: no cover
     """ Return a list containing the name of all the packagers. """
     output = []
     for user in __get_fas_grp_member('packager'):
@@ -97,7 +97,7 @@ def get_packagers():
 
 
 @pkgdb2.CACHE.cache_on_arguments(expiration_time=3600)
-def get_fas_group(group):
+def get_fas_group(group):  # pragma: no cover
     """ Return group information from FAS based on the specified group name.
     """
     fas = get_fas()
@@ -114,7 +114,7 @@ def get_bz_email_user(username):  # pragma: no cover
     return fas.person_by_username(username)
 
 
-def get_bz():
+def get_bz():  # pragma: no cover
     '''Retrieve a connection to bugzilla
 
     :raises xmlrpclib.ProtocolError: If we're unable to contact bugzilla
@@ -138,7 +138,7 @@ def get_bz():
 
 def set_bugzilla_owner(
         username, prev_poc, pkg_name, collectn, collectn_version,
-        bz_comment=None):
+        bz_comment=None):  # pragma: no cover
     '''Change the package owner
 
      :arg username: Username of the new point of contact.
@@ -287,7 +287,8 @@ def log(session, package, topic, message):
 
     model.Log.insert(session, message['agent'], package, final_msg)
 
-    if pkgdb2.APP.config.get('PKGDB2_EMAIL_NOTIFICATION', False):
+    if pkgdb2.APP.config.get(
+            'PKGDB2_EMAIL_NOTIFICATION', False):  # pragma: no cover
         body_email = final_msg
         if package:
             body_email = '{0}\n\nTo make changes to this package see:\n' \
@@ -310,7 +311,7 @@ def avatar_url_from_openid(openid, size=64, default='retro', dns=False):
     Our own implementation since fas doesn't support this nicely yet.
     """
 
-    if dns:
+    if dns:  # pragma: no cover
         # This makes an extra DNS SRV query, which can slow down our webapps.
         # It is necessary for libravatar federation, though.
         import libravatar
