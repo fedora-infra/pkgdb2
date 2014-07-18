@@ -78,7 +78,7 @@ def _bz_acls_cached(name=None, out_format='text'):
                 group = []
                 for ppl in packages[clt][pkg]['cc'].split(','):
                     if ppl.startswith('group::'):
-                        group.append(ppl)
+                        group.append(ppl.replace('group::', '@'))
                     elif ppl:
                         user.append(ppl)
                 poc = packages[clt][pkg]['poc']
