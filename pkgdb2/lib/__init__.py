@@ -305,11 +305,6 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         raise PkgdbException(
             'Groups cannot have "approveacls".')
 
-    if pkg_user.startswith('group::') and not pkg_user.endswith('-sig'):
-        raise PkgdbException(
-            'Invalid group "%s" all groups in pkgdb should end with '
-            '"-sig".' % pkg_user)
-
     pkglisting = model.PackageListing.by_pkgid_collectionid(
         session,
         package.id,
