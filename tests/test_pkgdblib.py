@@ -350,6 +350,19 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # Group cannot have approveacls
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.set_acl_package,
+                          self.session,
+                          pkg_name='guake',
+                          pkg_branch='f18',
+                          pkg_user='group::gtk-sig',
+                          acl='approveacls',
+                          status='Approved',
+                          user=FakeFasUser(),
+                          )
+        self.session.rollback()
+
         ## Working ones
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
