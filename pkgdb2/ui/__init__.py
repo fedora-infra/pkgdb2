@@ -25,11 +25,9 @@ UI namespace for the Flask application.
 
 import flask
 
-from urlparse import urlparse
-
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import (APP, SESSION, FAS, is_pkgdb_admin, __version__,
-                    is_safe_url, is_authenticated)
+                    is_safe_url)
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
