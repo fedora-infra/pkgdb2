@@ -1379,6 +1379,12 @@ class PkgdbLibtests(Modeltests):
             self.session, from_date=date.today(), package='guake')
         self.assertEqual(len(logs), 5)
 
+        logs = pkgdblib.search_logs(self.session, packager='admin')
+        self.assertEqual(len(logs), 23)
+
+        logs = pkgdblib.search_logs(self.session, packager='pingou')
+        self.assertEqual(len(logs), 0)
+
     def test_unorphan_package(self):
         """ Test the unorphan_package function. """
         create_package_acl(self.session)
