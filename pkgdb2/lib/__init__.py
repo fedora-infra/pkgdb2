@@ -37,7 +37,7 @@ from fedora.client.fas2 import FASError
 
 import pkgdb2
 from pkgdb2.lib import model
-from pkgdb2.lib import utils
+import pkgdb2.lib.utils
 from pkgdb2.lib.exceptions import PkgdbException, PkgdbBugzillaException
 
 
