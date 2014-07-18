@@ -76,7 +76,7 @@ def inject_is_admin():
     (every template).
     """
     justlogedin = flask.session.get('_justlogedin', False)
-    if justlogedin:
+    if justlogedin:  # pragma: no cover
         flask.g.pending_acls = pkgdblib.get_pending_acl_user(
             SESSION, flask.g.fas_user.username)
         flask.session['_justlogedin'] = None
@@ -179,7 +179,7 @@ def msg():
 
 
 @FAS.postlogin
-def check_pending_acls(return_url):
+def check_pending_acls(return_url):  # pragma: no cover
     """ After login check if the user has ACLs awaiting review. """
     flask.session['_justlogedin'] = True
     return flask.redirect(return_url)
