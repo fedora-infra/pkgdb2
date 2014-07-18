@@ -194,11 +194,6 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
     if pkg_poc.startswith('group::'):
         acls = ['commit', 'watchbugzilla', 'watchcommits']
-    if pkg_poc.startswith('group::') and not pkg_poc.endswith('-sig'):
-        session.rollback()
-        raise PkgdbException(
-            'Invalid group "%s" all groups in pkgdb should end with '
-            '"-sig".' % pkg_poc)
 
     for collec in pkg_collection:
         for acl in acls:
