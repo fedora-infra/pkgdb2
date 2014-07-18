@@ -1615,6 +1615,21 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUser()
         )
 
+    def test_notify(self):
+        """ Test the notify function. """
+        create_package_acl(self.session)
+
+        data = pkgdblib.notify(self.session, acls='commit')
+        self.assertEqual(
+            data,
+            {u'guake': u'pingou', u'geany': u'group::gtk-sig,josef'}
+        )
+
+        data = pkgdblib.notify(self.session)
+        self.assertEqual(
+            data,
+            {u'guake': u'pingou', u'geany': u'group::gtk-sig,josef'})
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
