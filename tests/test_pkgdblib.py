@@ -122,6 +122,20 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_fas_group = mock.MagicMock()
         pkgdb2.lib.utils.get_fas_group.return_value = FakeFasGroupInvalid
 
+        # Invalid FAS group, not ending with -sig
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.add_package,
+                          self.session,
+                          pkg_name='fedocal',
+                          pkg_summary='web calendar for Fedora',
+                          pkg_description='Web-based calendar system',
+                          pkg_status='Approved',
+                          pkg_collection='master, f18',
+                          pkg_poc='group::infra-group',
+                          pkg_review_url=None,
+                          pkg_upstream_url=None,
+                          user=FakeFasUserAdmin())
+
         # Invalid FAS group returned
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
