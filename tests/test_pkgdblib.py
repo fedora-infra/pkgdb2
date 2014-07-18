@@ -430,6 +430,17 @@ class PkgdbLibtests(Modeltests):
                                  )
         self.session.commit()
 
+        # You can approve your own ACLs on a new branch
+        pkgdblib.set_acl_package(self.session,
+                                 pkg_name='guake',
+                                 pkg_branch='el6',
+                                 pkg_user='pingou',
+                                 acl='approveacls',
+                                 status='Awaiting Review',
+                                 user=FakeFasUser(),
+                                 )
+        self.session.commit()
+
         # An admin can approve you ACLs
         pkgdblib.set_acl_package(self.session,
                                  pkg_name='guake',
