@@ -64,6 +64,28 @@ class Packagetests(Modeltests):
             set(package.keys()),
             set(['status', 'upstream_url', 'name', 'summary', 'acls',
                  'creation_date', 'review_url', 'description']))
+        self.assertEqual(package['acls'], [])
+
+        package = model.Package.by_name(self.session, 'guake')
+        package = package.to_json(collection='master')
+        self.assertEqual(
+            set(package.keys()),
+            set(['status', 'upstream_url', 'name', 'summary', 'acls',
+                 'creation_date', 'review_url', 'description']))
+        self.assertEqual(package['acls'], [])
+
+    def test_to_json_acls(self):
+        """ Test the to_json function of Package with ACLs data. """
+
+        create_package_acl(self.session)
+
+        package = model.Package.by_name(self.session, 'guake')
+        package = package.to_json(collection='master')
+        self.assertEqual(
+            set(package.keys()),
+            set(['status', 'upstream_url', 'name', 'summary', 'acls',
+                 'creation_date', 'review_url', 'description']))
+        self.assertNotEqual(package['acls'], [])
 
     def test_search(self):
         """ Test the search function of Package. """
