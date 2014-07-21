@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.16
+Version:        1.17
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,15 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Jul 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.17-1
+- Update to 1.17
+- Fix login to account for group maintainership (ask the appropriate group
+  upon login)
+- Improve unit-tests coverage especially for the group maintainership
+- Removed un-used imports
+- In /api/bugzilla's json output, not the groups as @group even in the group
+  section
+
 * Thu Jul 17 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.16-1
 - Update to 1.16
 - Add buttons in the pending ACLs page to Approve/Deny all the pending requests
