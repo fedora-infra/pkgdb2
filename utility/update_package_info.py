@@ -3,6 +3,9 @@
 """
 This script queries the summary and description information from
 packages and update the pgkdb2 database with them.
+
+Background and history:
+https://fedorahosted.org/fedora-infrastructure/ticket/3792
 """
 
 # These two lines are needed to run on EL6
@@ -32,10 +35,6 @@ import pkgwat.api
 import pkgdb2
 import pkgdb2.lib
 
-
-#
-#https://fedorahosted.org/fedora-infrastructure/ticket/3792
-#
 
 class User(object):
     username = 'pkgdb_updater'
