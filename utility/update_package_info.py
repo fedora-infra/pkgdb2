@@ -77,6 +77,9 @@ for pkg in pkgdb2.lib.search_package(
         updated += 1
     if PG_BAR:
         pbar.update(cnt)
+
+pkgdb2.SESSION.commit()
+
 if PG_BAR:
     pbar.finish()
 
