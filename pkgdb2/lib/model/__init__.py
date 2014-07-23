@@ -1671,12 +1671,24 @@ def get_groups(session):
         sa.distinct(PackageListing.point_of_contact)
     ).filter(
         PackageListing.point_of_contact.like('group::%')
+    ).filter(
+        PackageListing.collection_id == Collection.id
+    ).filter(
+        PackageListing.status == 'Approved'
+    ).filter(
+        Collection.status != 'EOL'
     )
 
     query_acl = session.query(
         sa.distinct(PackageListingAcl.fas_name)
     ).filter(
         PackageListingAcl.fas_name.like('group::%')
+    ).filter(
+        PackageListing.collection_id == Collection.id
+    ).filter(
+        PackageListing.status == 'Approved'
+    ).filter(
+        Collection.status != 'EOL'
     )
 
     groups = []
