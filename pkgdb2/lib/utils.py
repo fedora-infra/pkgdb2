@@ -256,7 +256,7 @@ def log(session, package, topic, message):
         'package.critpath.update': 'user: %(agent)s updated critpath status'
                                    'for package: %(package.name)s on '
                                    'branches %(branches)s',
-        'package.update': 'user: %(agent)s updated package: '
+        'package.update': 'user: %(agent)s updated %(fields)s package: '
                           '%(package.name)s',
         'package.update.status': 'user: %(agent)s updated package: '
                           '%(package_name)s status from: '
