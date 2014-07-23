@@ -675,6 +675,14 @@ kernel-maint"""
 
         self.assertEqual(data, expected)
 
+        output = self.app.get(
+            '/api/groups/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiExtrasTest)
