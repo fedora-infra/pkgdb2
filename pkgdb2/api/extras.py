@@ -494,7 +494,7 @@ def api_groups():
     '''
 List group maintainer
 ---------------------
-    Return the list FAS groups having ACLs on one or more packages.
+    Return the list FAS groups which have ACLs on one or more packages.
 
     ::
 
