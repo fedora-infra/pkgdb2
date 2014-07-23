@@ -619,6 +619,70 @@ guake:master has toshio waiting for commit"""
 
         self.assertEqual(data, expected)
 
+    def test_api_groups_empty(self):
+        """ Test the api_groups function with a filled database. """
+
+        output = self.app.get('/api/groups/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of groups: 0"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/groups/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/groups/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'groups': [],
+            'total_groups': 0
+        }
+
+        self.assertEqual(data, expected)
+
+    def test_api_groups_filled(self):
+        """ Test the api_groups function with a filled database. """
+        # Fill the DB
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        output = self.app.get('/api/groups/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """# Number of groups: 2
+gtk-sig
+kernel-maint"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/groups/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/groups/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'groups': [
+                'gtk-sig',
+                'kernel-maint',
+            ],
+            'total_groups': 2
+        }
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/groups/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiExtrasTest)
