@@ -65,7 +65,7 @@ for pkg in pkgdb2.lib.search_package(
     summary = results['summary']
     description = results['description']
 
-    pkgdb2.lib.edit_package(
+    msg = pkgdb2.lib.edit_package(
         session=pkgdb2.SESSION,
         package=pkg,
         pkg_summary=results.get('summary', None),
@@ -73,7 +73,8 @@ for pkg in pkgdb2.lib.search_package(
         pkg_upstream_url=results.get('upstream_url', None),
         user = User()
     )
-    updated += 1
+    if msg:
+        updated += 1
     if PG_BAR:
         pbar.update(cnt)
 if PG_BAR:
