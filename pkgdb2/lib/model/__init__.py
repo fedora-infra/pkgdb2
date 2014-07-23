@@ -499,6 +499,8 @@ class PackageListingAcl(BASE):
         ).filter(
             cls.packagelisting_id == PackageListing.id
         ).filter(
+            PackageListing.status == 'Approved'
+        ).filter(
             PackageListing.package_id == Package.id
         ).filter(
             PackageListing.collection_id == Collection.id
