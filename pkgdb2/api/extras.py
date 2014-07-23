@@ -486,3 +486,46 @@ Pending ACLs requests
             '\n'.join(output),
             content_type="text/plain;charset=UTF-8"
         )
+
+
+@API.route('/groups/')
+@API.route('/groups')
+def api_groups():
+    '''
+List group maintainer
+---------------------
+    Return the list FAS groups having ACLs on one or more packages.
+
+    ::
+
+        /api/groups
+
+    :kwarg format: Specify if the output if text or json.
+
+    '''
+
+    out_format = flask.request.args.get('format', 'text')
+
+    if out_format not in ('text', 'json'):
+        out_format = 'text'
+
+    if request_wants_json():
+        out_format = 'json'
+
+    output = {}
+
+    groups = pkgdblib.get_groups(SESSION)
+
+    if out_format == 'json':
+        output = {"groups": groups}
+        output['total_groups'] = len(groups)
+        return flask.jsonify(output)
+    else:
+        output = [
+            "# Number of groups: %s" % len(groups)]
+        for entry in sorted(groups):
+            output.append("%s" % (entry))
+        return flask.Response(
+            '\n'.join(output),
+            content_type="text/plain;charset=UTF-8"
+        )
