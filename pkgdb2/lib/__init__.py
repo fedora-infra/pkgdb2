@@ -1106,7 +1106,7 @@ def edit_package(session, package, pkg_name=None, pkg_summary=None,
             pkgdb2.lib.utils.log(session, None, 'package.update', dict(
                 agent=user.username,
                 fields=edited,
-                package=package.to_json(),
+                package=package.to_json(acls=False),
             ))
             return 'Package "%s" edited' % package.name
         except SQLAlchemyError, err:  # pragma: no cover
