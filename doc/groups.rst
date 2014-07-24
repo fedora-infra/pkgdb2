@@ -14,7 +14,7 @@ There are some requirements for the FAS group:
 * must require sponsoring
 
 
-There is one requirement for the bugzilla group:
+One requirement for the mailing list address:
 
 * The mailing list address given to the FAS group must have a corresponding
   bugzilla account
