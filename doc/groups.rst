@@ -29,8 +29,11 @@ There is one requirement for the bugzilla group:
 Once the group has been created in FAS, you may give it ``commit``,
 ``watchcommits`` and ``watchbugzilla`` ACLs using the ``Manage`` button on
 the package's page.
+
 On the manage page, you will have to click on ``Add someone`` and specify
 which ACL you want to give and on which branch.
-The packager name will then have the format ``group::<fas_group_name>``.
-If you do not respect this format, pkgdb2 will refuse to add the group as
-co-maintainer.
+
+.. note:: For groups, the packager name will then have the format
+    ``group::<fas_group_name>``.
+    If you do not respect this format, pkgdb2 will refuse to add the group as
+    co-maintainer.
