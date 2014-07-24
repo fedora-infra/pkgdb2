@@ -50,11 +50,9 @@ if PG_BAR:
                ' ', ETA()]
     pbar = ProgressBar(widgets=widgets, maxval=count).start()
 
-cnt = 0
 updated = 0
-for pkg in pkgdb2.lib.search_package(
-        pkgdb2.SESSION, '*', status='Approved'):
-    cnt += 1
+for cnt, pkg in enumerate(pkgdb2.lib.search_package(
+        pkgdb2.SESSION, '*', status='Approved')):
     try:
         results = pkgwat.api.get(pkg.name)
     except KeyError:
