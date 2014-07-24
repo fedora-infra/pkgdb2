@@ -23,6 +23,7 @@ Contents:
 
    deployment
    configuration
+   groups
    development
    contributing
    contributors
