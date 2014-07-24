@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.17
+Version:        1.18
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,14 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Jul 24 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18-1
+- Update to 1.18
+- Add script to sync package summary and description from the packages
+  application (that retrieves the information from yum)
+- Add new api endpoint /api/groups/ listing all the FAS groups having one
+  or more ACLs in the database
+- Fix /api/pendingacls to exclude package that are Retired or Orphaned
+
 * Mon Jul 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.17-1
 - Update to 1.17
 - Fix login to account for group maintainership (ask the appropriate group
