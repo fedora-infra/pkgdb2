@@ -21,7 +21,7 @@ There is one requirement for the bugzilla group:
 
 
 .. note:: If you wish to share you ACLs with a FAS group, `open a new ticket
-          <https://fedorahosted.org/fedora-infrastructure/newticket>`_ on
+          <https://fedorahosted.org/fedora-infrastructure/newticket?type=New Pkgdb Group>`_ on
           the `infrastructure trac <https://fedorahosted.org/fedora-infrastructure/>`_
           (Type: ``New Pkgdb Group``).
 
