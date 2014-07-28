@@ -1076,9 +1076,10 @@ def package_request_new():
                     user=flask.g.fas_user,
                 )
                 if message:
-                    messsages.append(message)
+                    messages.append(message)
             SESSION.commit()
-            flask.flash(message)
+            for message in messages:
+                flask.flash(message)
             return flask.redirect(flask.url_for('.list_packages'))
         # Keep it in, but normally we shouldn't hit this
         except pkgdblib.PkgdbException, err:  # pragma: no cover
