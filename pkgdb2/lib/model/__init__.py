@@ -1602,7 +1602,7 @@ class AdminAction(BASE):
         sa.Integer,
         sa.ForeignKey(
             'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
-        nullable=False)
+        nullable=True)
     collection_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
