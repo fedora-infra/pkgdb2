@@ -131,7 +131,7 @@ class AddPackageForm(wtf.Form):
         'Description',
     )
     review_url = wtforms.TextField(
-        'Review URL',
+        'Review URL <span class="error">*</span>',
         [wtforms.validators.Required()]
     )
     status = wtforms.SelectField(
@@ -145,7 +145,7 @@ class AddPackageForm(wtf.Form):
         default=False,
     )
     branches = wtforms.SelectMultipleField(
-        'Collection',
+        'Collection <span class="error">*</span>',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
