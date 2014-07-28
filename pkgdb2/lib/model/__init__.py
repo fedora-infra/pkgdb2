@@ -26,6 +26,7 @@ Mapping of python classes to Database Tables.
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
+import ast
 import datetime
 import logging
 import time
@@ -1643,6 +1644,14 @@ class AdminAction(BASE):
         "Collection",
         foreign_keys=[from_collection_id], remote_side=[Collection.id],
     )
+
+    @property
+    def info_data(self):
+        """ Return the dict stored as string in the database as an actual
+        dict object.
+
+        """
+        return ast.literal_eval(self.info)
 
     def to_json(self, _seen=None, acls=True, package=True, collection=None):
         """ Return a dictionnary representation of the object.
