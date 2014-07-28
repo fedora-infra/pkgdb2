@@ -1032,3 +1032,60 @@ def package_request_branch(package, full=True):
         form=form,
         action='request_branch',
     )
+
+@UI.route('/request/package/', methods=('GET', 'POST'))
+@packager_login_required
+def package_request_new():
+    ''' Page to request a new package. '''
+
+    collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    pkg_status = pkgdb2.lib.get_status(SESSION, 'pkg_status')['pkg_status']
+
+    form = pkgdb2.forms.AddPackageForm(
+        collections=collections,
+        pkg_status_list=pkg_status,
+    )
+
+    if form.validate_on_submit():
+        pkg_name = form.pkgname.data
+        pkg_summary = form.summary.data
+        pkg_description = form.description.data
+        pkg_review_url = form.review_url.data
+        pkg_status = form.status.data
+        pkg_critpath = form.critpath.data
+        pkg_collection = form.branches.data
+        pkg_poc = form.poc.data
+        pkg_upstream_url = form.upstream_url.data
+
+        try:
+            messages = []
+            for clt in pkg_collection:
+                message = pkgdblib.add_new_package_request(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    pkg_summary=pkg_summary,
+                    pkg_description=pkg_description,
+                    pkg_review_url=pkg_review_url,
+                    pkg_status=pkg_status,
+                    pkg_critpath=pkg_critpath,
+                    pkg_collection=clt,
+                    pkg_poc=pkg_poc,
+                    pkg_upstream_url=pkg_upstream_url,
+                    user=flask.g.fas_user,
+                )
+                if message:
+                    messsages.append(message)
+            SESSION.commit()
+            flask.flash(message)
+            return flask.redirect(flask.url_for('.list_packages'))
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
+
+    return flask.render_template(
+        'package_request.html',
+        form=form,
+    )
