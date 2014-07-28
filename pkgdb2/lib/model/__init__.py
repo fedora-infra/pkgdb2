@@ -1666,12 +1666,15 @@ class AdminAction(BASE):
         from_collection = None
         if self.from_collection:
             from_collection = self.from_collection.to_json()
+        pkg = None
+        if self.package:
+            pkg = self.package.to_json(acls=False)
 
         result = {
             'action': self.action,
             'user': self.user,
             'status': self.status,
-            'package': self.package.to_json(acls=False),
+            'package': pkg,
             'collection': self.collection.to_json(),
             'from_collection': from_collection  ,
             'date_created': time.mktime(self.date_created.timetuple()),
