@@ -77,9 +77,13 @@
       </a>
     </td>
     <td>
+    {% if action.package %}
       <a href="{{url_for('.package_info', package=action.package.name)}}">
         {{ action.package.name }}
       </a>
+    {% else %}
+      {{ action.info_data['pkg_name'] }}
+    {% endif %}
     </td>
     <td class="col_odd">{{ action.action }}</td>
     <td>{{ action.collection.branchname }}</td>
