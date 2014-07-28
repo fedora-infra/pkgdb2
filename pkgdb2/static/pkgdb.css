@@ -595,3 +595,7 @@ table.list thead th,
 .info_retire {
     text-decoration: underline
 }
+
+#requestpackage {
+    float:none;
+}
