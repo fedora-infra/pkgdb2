@@ -1080,7 +1080,7 @@ def package_request_new():
             SESSION.commit()
             for message in messages:
                 flask.flash(message)
-            return flask.redirect(flask.url_for('.list_packages'))
+            return flask.redirect(flask.url_for('.index'))
         # Keep it in, but normally we shouldn't hit this
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
