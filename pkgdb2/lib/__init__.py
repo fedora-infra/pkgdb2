@@ -1643,6 +1643,73 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
         collection_to=clt_to.to_json(),
     ))
 
+def add_new_package_request(
+        session, pkg_name, pkg_summary, pkg_description, pkg_status,
+        pkg_collection, pkg_poc, user, pkg_review_url,
+        pkg_upstream_url=None, pkg_critpath=False):
+    """ Create a new Package request in the database.
+
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :arg pkg_summary: a summary description of the package.
+    :arg pkg_description: the description of the package.
+    :arg pkg_status: the status of the package.
+    :arg pkg_collection: the collection in which had the package.
+    :arg pkg_poc: the point of contact for this package in this collection
+    :arg user: the user performing the action
+    :kwarg pkg_review_url: the url of the review-request on the bugzilla
+    :kwarg pkg_upstream_url: the url of the upstream project.
+    :kwarg pkg_critpath: a boolean specifying if the package is marked as
+        being in critpath.
+    :returns: a message informating that the request has been successfully
+        created.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - Invallid pkg_poc provided
+            - Something went wrong when adding the request to the database
+    :raises sqlalchemy.orm.exc.NoResultFound: when there is no collection
+        found in the database with the name ``pkg_collection``.
+
+    """
+    _validate_poc(pkg_poc)
+
+    try:
+        clt = model.Collection.by_name(session, pkg_collection)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % pkg_collection)
+
+    info = {
+        'pkg_name': pkg_name,
+        'pkg_summary': pkg_summary,
+        'pkg_description': pkg_description,
+        'pkg_status': pkg_status,
+        'pkg_collection': pkg_collection,
+        'pkg_poc': pkg_poc,
+        'pkg_review_url': pkg_review_url,
+        'pkg_upstream_url': pkg_upstream_url,
+        'pkg_critpath': pkg_critpath,
+    }
+
+    action = model.AdminAction(
+        package_id=None,
+        collection_id=clt.id,
+        from_collection_id=None,
+        user=user.username,
+        status='Awaiting Review',
+        action='request.package',
+        info=str(info),
+    )
+
+    session.add(action)
+
+    return pkgdb2.lib.utils.log(session, None, 'package.new.request', dict(
+        agent=user.username,
+        package=None,
+        collection=clt.to_json(),
+        info=info,
+    ))
+
 
 def add_unretire_request(session, pkg_name, pkg_branch, user):
     """ Register a new request to un-retire a package.
