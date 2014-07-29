@@ -1110,6 +1110,24 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
 
+            # Still no update
+            data = {
+                'pkgnames': 'guake',
+                'branches': ['master', 'f18'],
+                'critpath': False,
+            }
+
+            output = self.app.post('/api/package/critpath/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "Nothing to update",
+                    "output": "notok"
+                }
+            )
+
         data = {
             'pkgnames': 'guake',
             'branches': ['foobar'],
