@@ -64,7 +64,7 @@ FASPASS = pkgdb2.APP.config.get('PKGDB2_FAS_PASSWORD')
 FASINSECURE = pkgdb2.APP.config.get('PKGDB2_FAS_INSECURE')
 NOTIFYEMAIL = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_NOTIFY_EMAIL')
 PKGDBSERVER = pkgdb2.APP.config.get('SITE_URL')
-DRY_RUN = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_URL')
+DRY_RUN = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_DRY_RUN', False)
 
 # When querying for current info, take segments of 1000 packages a time
 BZ_PKG_SEGMENT = 1000
@@ -304,6 +304,10 @@ if __name__ == '__main__':
         help='Print the changes instead of making them in bugzilla')
 
     args = parser.parse_args()
+
+    if args.debug:
+        global DRY_RUN
+        DRY_RUN = True
 
     # Non-fatal errors to alert people about
     errors = []
