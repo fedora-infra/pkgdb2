@@ -323,6 +323,8 @@ if __name__ == '__main__':
         if product not in ('Fedora', 'Fedora EPEL'):
             continue
         for pkg in acls[product]:
+            if DRY_RUN:
+                print pkg
             pkgInfo = acls[product][pkg]
             try:
                 bugzilla.add_edit_component(
