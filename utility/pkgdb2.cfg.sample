@@ -55,6 +55,8 @@ PKGDB2_BUGZILLA_NOTIFY_EMAIL = [
     'kevin@fedoraproject.org',
     'pingou@fedoraproject']
 BUGZILLA_COMPONENT_API = "component.get"
+## Boolean to specify if the pkgdb-sync-bugzilla script runs for real or not
+PKGDB2_BUGZILLA_DRY_RUN = False
 
 ### FAS information
 

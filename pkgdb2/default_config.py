@@ -80,6 +80,7 @@ PKGDB2_BUGZILLA_NOTIFY_EMAIL = [
     'kevin@fedoraproject.org',
     'pingou@fedoraproject']
 BUGZILLA_COMPONENT_API = "component.get"
+PKGDB2_BUGZILLA_DRY_RUN = False
 
 # FAS information
 PKGDB2_FAS_URL = None
