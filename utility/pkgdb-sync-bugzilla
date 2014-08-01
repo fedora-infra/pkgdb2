@@ -36,45 +36,37 @@ import codecs
 import smtplib
 import bugzilla
 import requests
-from configobj import ConfigObj, flatten_errors
 from email.Message import Message
 from fedora.client.fas2 import AccountSystem
-from validate import Validator
 
-vldtr = Validator()
-# configspec to set default values and validate types
-configspec = '''
-[global]
-    bugzilla.url = string(default = 'https://bugdev.devel.redhat.com/bugzilla-cvs/xmlrpc.cgi')
-    bugzilla.username = string(default = '')
-    bugzilla.password = string(default = '')
-    bugzilla.component_api = string(default = 'component.get')
-    fas.url = string(default = '')
-    fas.username = string(default = '')
-    fas.password = string(default = '')
-    notify.email = force_list(default = list(''))
-    debug = boolean(default = 'False')
-'''.splitlines()
-cfg = ConfigObj('/etc/pkgdb-sync-bugzilla.cfg', configspec = configspec)
-res = cfg.validate(vldtr, preserve_errors=True)
 
-for entry in flatten_errors(cfg, res):
-    section_list, key, error = entry
-    if error == False:
-        restore_default(key)
+if 'PKGDB2_CONFIG' not in os.environ \
+        and os.path.exists('/etc/pkgdb2/pkgdb2.cfg'):
+    print 'Using configuration file `/etc/pkgdb2/pkgdb2.cfg`'
+    os.environ['PKGDB2_CONFIG'] = '/etc/pkgdb2/pkgdb2.cfg'
 
-BZSERVER = cfg['global']['bugzilla.url']
-BZUSER = cfg['global']['bugzilla.username']
-BZPASS = cfg['global']['bugzilla.password']
-BZCOMPAPI = cfg['global']['bugzilla.component_api']
-FASURL = cfg['global']['fas.url']
-FASUSER = cfg['global']['fas.username']
-FASPASS = cfg['global']['fas.password']
-NOTIFYEMAIL = cfg['global']['notify.email']
-PKGDBSERVER = cfg['global']['pkgdbserver.url']
-DRY_RUN = cfg['global']['debug']
 
-# When querying for current info, take segments of 5000 packages a time
+try:
+    import pkgdb2
+except ImportError:
+    sys.path.insert(
+        0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+    import pkgdb2
+
+
+BZSERVER = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_URL')
+BZUSER = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_USER')
+BZPASS = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_PASSWORD')
+BZCOMPAPI = pkgdb2.APP.config.get('BUGZILLA_COMPONENT_API')
+FASURL = pkgdb2.APP.config.get('PKGDB2_FAS_URL')
+FASUSER = pkgdb2.APP.config.get('PKGDB2_FAS_USER')
+FASPASS = pkgdb2.APP.config.get('PKGDB2_FAS_PASSWORD')
+FASINSECURE = pkgdb2.APP.config.get('PKGDB2_FAS_INSECURE')
+NOTIFYEMAIL = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_NOTIFY_EMAIL')
+PKGDBSERVER = pkgdb2.APP.config.get('SITE_URL')
+DRY_RUN = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_URL')
+
+# When querying for current info, take segments of 1000 packages a time
 BZ_PKG_SEGMENT = 1000
 
 class DataChangedError(Exception):
