@@ -27,9 +27,9 @@ This short script takes information about package onwership and imports it
 into bugzilla.
 '''
 
+import argparse
 import sys
 import os
-import getopt
 import itertools
 import xmlrpclib
 import codecs
@@ -295,14 +295,15 @@ def send_email(fromAddress, toAddress, subject, message):
 if __name__ == '__main__':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
-    opts, args = getopt.getopt(sys.argv[1:], '', ('usage', 'help'))
-    if len(args) > 0:
-        print '''
-Usage: bz-make-components.py
 
-Sync package information from the package database to bugzilla.
-'''
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description='Script syncing information between pkgdb and bugzilla'
+    )
+    parser.add_argument(
+        '--debug', dest='debug', action='store_true', default=False,
+        help='Print the changes instead of making them in bugzilla')
+
+    args = parser.parse_args()
 
     # Non-fatal errors to alert people about
     errors = []
