@@ -70,6 +70,13 @@ PKGDB2_BUGZILLA_URL = 'https://bugzilla.redhat.com'
 PKGDB2_BUGZILLA_USER = None
 PKGDB2_BUGZILLA_PASSWORD = None
 
+# Settings specific to the ``pkgdb-sync-bugzilla`` script/cron
+PKGDB2_BUGZILLA_NOTIFY_EMAIL = [
+    'toshio@fedoraproject.org',
+    'kevin@fedoraproject.org',
+    'pingou@fedoraproject']
+BUGZILLA_COMPONENT_API = "component.get"
+
 # FAS information
 PKGDB2_FAS_URL = None
 PKGDB2_FAS_USER = None
