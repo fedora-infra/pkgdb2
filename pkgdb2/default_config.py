@@ -63,6 +63,10 @@ PKGDB2_CACHE_KWARGS = {
     }
 }
 
+# Information regarding where the application is deployed
+SITE_ROOT = 'https://admin.fedoraproject.org'
+SITE_URL = '%s/pkgdb' % SITE_ROOT
+
 # Bugzilla information
 PKGDB2_BUGZILLA_IN_TESTS = False
 PKGDB2_BUGZILLA_NOTIFICATION = False
