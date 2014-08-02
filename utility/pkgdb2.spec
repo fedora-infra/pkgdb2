@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.18
+Version:        1.18.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Sat Aug 02 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.1-1
+- Update to 1.18.1
+- Allow user to retire package on collections `Under Development`
+
 * Thu Jul 24 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18-1
 - Update to 1.18
 - Add script to sync package summary and description from the packages
