@@ -496,7 +496,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         # Users can deprecate Fedora devel and EPEL branches
         if pkgdb2.is_pkgdb_admin(user) \
                 or (collection.name == 'Fedora'
-                    and collection.version == 'devel') \
+                    and collection.status == 'Under Development') \
                 or collection.name == 'EPEL':
 
             prev_poc = pkglisting.point_of_contact
