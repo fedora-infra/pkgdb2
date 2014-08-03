@@ -588,6 +588,24 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
 
+        # Retire the package on a non-existant branch
+        user = FakeFasUser()
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['el6'],
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/retire/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "No package guake found in collection el6",
+                    "output": "notok"
+                }
+            )
+
         # Retire the package
         user = FakeFasUserAdmin()
         data = {
