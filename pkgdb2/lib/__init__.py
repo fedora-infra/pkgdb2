@@ -482,6 +482,10 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                                                             package.id,
                                                             collection.id)
 
+    if not pkglisting:
+        raise PkgdbException('No package %s found in collection %s' % (
+                             pkg_name, pkg_branch))
+
     prev_status = pkglisting.status
     if status == 'Retired':
 
