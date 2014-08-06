@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.18.1
+Version:        1.18.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,13 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Aug 06 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.2-1
+- Update to 1.18.2
+- Improve the unit-test suite
+- Fix bug that was checking if a collection is `EPEL` instead of `Fedora EPEL`
+- Raise exception if someone is trying to orphan/retire a package on a branch
+  that this package does not have
+
 * Sat Aug 02 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.1-1
 - Update to 1.18.1
 - Allow user to retire package on collections `Under Development`
