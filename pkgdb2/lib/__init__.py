@@ -501,7 +501,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         if pkgdb2.is_pkgdb_admin(user) \
                 or (collection.name == 'Fedora'
                     and collection.status == 'Under Development') \
-                or collection.name == 'EPEL':
+                or collection.name == 'Fedora EPEL':
 
             prev_poc = pkglisting.point_of_contact
             pkglisting.status = 'Retired'
