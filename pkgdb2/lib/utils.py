@@ -154,7 +154,12 @@ def set_bugzilla_owner(
                      ' Package Database.  Reassigning to the new owner'\
                      ' of this component.'
 
-    user_email = get_bz_email_user(username).bugzilla_email
+    if username.startswith('group::'):
+        user_email = get_fas_group(
+            username.replace('group::', '')).mailing_list
+    else:
+        user_email = get_bz_email_user(username).bugzilla_email
+
     prev_poc_email = ''
     if prev_poc:
         prev_poc_email = get_bz_email_user(prev_poc).bugzilla_email
