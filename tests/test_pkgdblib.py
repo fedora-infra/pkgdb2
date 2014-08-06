@@ -905,7 +905,8 @@ class PkgdbLibtests(Modeltests):
         """ Test the search_collection function. """
         create_collection(self.session)
 
-        collections = pkgdblib.search_collection(self.session, 'EPEL*')
+        collections = pkgdblib.search_collection(
+            self.session, 'Fedora EPEL*')
         self.assertEqual(len(collections), 0)
 
         collections = pkgdblib.search_collection(self.session, 'f*',

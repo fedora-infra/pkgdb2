@@ -638,7 +638,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Add the EPEL 7 collection
         collection = model.Collection(
-            name='EPEL',
+            name='Fedora EPEL',
             version='7',
             status='Active',
             owner='kevin',
@@ -693,7 +693,7 @@ class FlaskApiPackagesTest(Modeltests):
 
         # Add the EPEL 7 collection
         collection = model.Collection(
-            name='EPEL',
+            name='Fedora EPEL',
             version='7',
             status='Active',
             owner='kevin',

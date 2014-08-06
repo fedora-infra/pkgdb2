@@ -181,7 +181,7 @@ def create_collection(session):
     session.add(collection)
 
     collection = model.Collection(
-        name='EPEL',
+        name='Fedora EPEL',
         version='6',
         status='Active',
         owner='kevin',
@@ -191,7 +191,7 @@ def create_collection(session):
     session.add(collection)
 
     collection = model.Collection(
-        name='EPEL',
+        name='Fedora EPEL',
         version='4',
         status='EOL',
         owner='kevin',

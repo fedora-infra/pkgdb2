@@ -218,7 +218,7 @@ class FlaskApiCollectionTest(Modeltests):
             )
 
         data = {
-            'clt_name': 'EPEL',
+            'clt_name': 'Fedora EPEL',
             'version': '6',
             'branchname': 'EL-6',
             'clt_status': 'ACTIVE',
@@ -242,7 +242,7 @@ class FlaskApiCollectionTest(Modeltests):
 
         # Need to find out how to set flask.g.fas_user
         data = {
-            'clt_name': 'EPEL',
+            'clt_name': 'Fedora EPEL',
             'version': '6',
             'branchname': 'EL-6',
             'clt_status': 'Active',
