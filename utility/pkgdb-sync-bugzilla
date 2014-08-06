@@ -55,8 +55,8 @@ except ImportError:
 
 
 BZSERVER = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_URL')
-BZUSER = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_USER')
-BZPASS = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_PASSWORD')
+BZUSER = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_NOTIFY_USER')
+BZPASS = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_NOTIFY_PASSWORD')
 BZCOMPAPI = pkgdb2.APP.config.get('BUGZILLA_COMPONENT_API')
 FASURL = pkgdb2.APP.config.get('PKGDB2_FAS_URL')
 FASUSER = pkgdb2.APP.config.get('PKGDB2_FAS_USER')
