@@ -42,6 +42,7 @@ __version__ = '1.18.2'
 __api_version__ = '1.11'
 
 APP = flask.Flask(__name__)
+flask.session.permanent = True
 
 APP.config.from_object('pkgdb2.default_config')
 if 'PKGDB2_CONFIG' in os.environ:  # pragma: no cover
