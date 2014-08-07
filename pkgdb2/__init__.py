@@ -42,7 +42,6 @@ __version__ = '1.18.2'
 __api_version__ = '1.11'
 
 APP = flask.Flask(__name__)
-flask.session.permanent = True
 
 APP.config.from_object('pkgdb2.default_config')
 if 'PKGDB2_CONFIG' in os.environ:  # pragma: no cover
@@ -91,12 +90,10 @@ APP.logger.addHandler(STDERR_LOG)
 
 LOG = APP.logger
 
-
 import pkgdb2.lib as pkgdblib
 import pkgdb2.proxy
 
 APP.wsgi_app = pkgdb2.proxy.ReverseProxied(APP.wsgi_app)
-
 
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
@@ -230,3 +227,9 @@ APP.register_blueprint(UI)
 def shutdown_session(exception=None):
     """ Remove the DB session at the end of each request. """
     SESSION.remove()
+
+# pylint: disable=W0613
+@APP.before_request
+def set_session():
+    """ Set the flask session as permanent. """
+    flask.session.permanent = True
