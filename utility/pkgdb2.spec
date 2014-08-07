@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.18.2
+Version:        1.18.3
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -107,6 +107,11 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Aug 07 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.3-1
+- Update to 1.18.3
+- Fix re-assigning bugs on bugzilla if the new POC is a group
+- Use permanent session so that we can time then out via the configuration file
+
 * Wed Aug 06 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.2-1
 - Update to 1.18.2
 - Improve the unit-test suite
