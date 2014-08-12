@@ -1732,6 +1732,20 @@ class AdminAction(BASE):
 
         return query.all()
 
+    @classmethod
+    def get(cls, session, action_id):
+        """ Return the admin action object having the specified identifier.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+        :arg action_id: the identifier of the Admin Action object to return.
+
+        """
+
+        query = session.query(cls).filter(cls.id == action_id)
+
+        return query.first()
+
 
 def notify(session, eol=False, name=None, version=None, acls=None):
     """ Return the user that should be notify for each package.
