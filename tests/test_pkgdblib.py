@@ -33,6 +33,7 @@ import os
 
 from datetime import date
 
+from mock import patch
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
 
@@ -1739,9 +1740,12 @@ class PkgdbLibtests(Modeltests):
         )
         self.assertEqual(msg, 'Monitoring status of guake set to False')
 
-    def test_add_new_branch_request(self):
+    @patch('pkgdb2.lib.utils')
+    def test_add_new_branch_request(self, mock_func):
         """ Test the add_new_branch_request method of pkgdblib. """
         create_package_acl(self.session)
+
+        mock_func.get_packagers.return_value = ['pingou']
 
         # Invalid package
         self.assertRaises(
@@ -1774,6 +1778,16 @@ class PkgdbLibtests(Modeltests):
             clt_from='foobar',
             clt_to='el6',
             user=FakeFasUserAdmin()
+        )
+
+        # valid entry
+        user = FakeFasUser()
+        pkgdblib.add_new_branch_request(
+            session=self.session,
+            pkg_name='guake',
+            clt_from='master',
+            clt_to='el6',
+            user=user
         )
 
     def test_search_actions(self):
