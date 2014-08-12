@@ -1671,6 +1671,7 @@ class AdminAction(BASE):
             pkg = self.package.to_json(acls=False)
 
         result = {
+            'id': self.id,
             'action': self.action,
             'user': self.user,
             'status': self.status,
