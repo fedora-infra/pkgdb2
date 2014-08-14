@@ -44,5 +44,5 @@ setup(
     packages=['pkgdb2'],
     include_package_data=True,
     install_requires=requires,
-    scripts=['utility/pkgdb2_branch.py'],
+    scripts=['utility/pkgdb2_branch.py', 'utility/pkgdb-sync-bugzilla'],
 )

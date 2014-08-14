@@ -33,6 +33,10 @@ PKGDB2_CACHE_KWARGS = {
     }
 }
 
+### Information regarding where the application is deployed
+SITE_ROOT = 'https://admin.fedoraproject.org'
+SITE_URL = '%s/pkgdb' % SITE_ROOT
+
 
 ### Bugzilla information
 
@@ -45,6 +49,14 @@ PKGDB2_BUGZILLA_USER = None
 ## password of the user the pkgdb application can log in to bugzilla with
 PKGDB2_BUGZILLA_PASSWORD = None
 
+### Settings specific to the ``pkgdb-sync-bugzilla`` script/cron
+PKGDB2_BUGZILLA_NOTIFY_EMAIL = [
+    'toshio@fedoraproject.org',
+    'kevin@fedoraproject.org',
+    'pingou@fedoraproject']
+BUGZILLA_COMPONENT_API = "component.get"
+## Boolean to specify if the pkgdb-sync-bugzilla script runs for real or not
+PKGDB2_BUGZILLA_DRY_RUN = False
 
 ### FAS information
 
