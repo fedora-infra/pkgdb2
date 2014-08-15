@@ -1873,6 +1873,80 @@ class PkgdbLibtests(Modeltests):
         action = pkgdblib.get_admin_action(self.session, 2)
         self.assertEqual(action, None)
 
+    def test_edit_action_status(self):
+        """ Test the edit_action_status method of pkgdblib. """
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+        self.assertEqual(action, None)
+
+        # Unretire the package
+        self.test_add_new_branch_request()
+        self.session.commit()
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+        self.assertNotEqual(action, None)
+        self.assertEqual(action.action, 'request.branch')
+        self.assertEqual(action.user, 'pingou')
+        self.assertEqual(action.status, 'Awaiting Review')
+        self.assertEqual(action.package.name, 'guake')
+        self.assertEqual(action.collection.branchname, 'el6')
+        self.assertEqual(action.from_collection.branchname, 'master')
+        self.assertEqual(action.info, None)
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='foo',
+            user=FakeFasUser()
+        )
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='foo',
+            user=FakeFasUserAdmin()
+        )
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+
+        msg = pkgdblib.edit_action_status(
+            self.session,
+            admin_action=action,
+            action_status='Awaiting Review',
+            user=FakeFasUserAdmin()
+        )
+
+        self.assertEqual(msg, 'Nothing to change.')
+
+        msg = pkgdblib.edit_action_status(
+            self.session,
+            admin_action=action,
+            action_status='Approved',
+            user=FakeFasUserAdmin()
+        )
+
+        self.assertEqual(
+            msg,
+            'user: admin updated action: 1 from Awaiting Review to Approved'
+        )
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+
+        self.assertNotEqual(action, None)
+        self.assertEqual(action.action, 'request.branch')
+        self.assertEqual(action.user, 'pingou')
+        self.assertEqual(action.status, 'Approved')
+        self.assertEqual(action.package.name, 'guake')
+        self.assertEqual(action.collection.branchname, 'el6')
+        self.assertEqual(action.from_collection.branchname, 'master')
+        self.assertEqual(action.info, None)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
