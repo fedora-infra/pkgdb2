@@ -2128,3 +2128,48 @@ def get_admin_action(session, action_id):
 
     """
     return model.AdminAction.get(session, action_id)
+
+
+def edit_action_status(session, admin_action, action_status, user):
+    """ Update the status of the given Admin Action if the user is allowed
+    to.
+
+    :arg session: the session with which to connect to the database.
+    :arg admin_action: a AdminAction object whose status is to update.
+    :arg action_status: the status to update the provided AdminAdction to.
+    :arg user: the user doing the action.
+    :returns: a string informing if the action was successfull
+    :rtype: str
+    :raises pkgdb2.lib.PkgdbException: This exception is raised when the
+        user performing the action is not a pkgdb admin.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to edit admin action')
+
+    edit = []
+    old_status = admin_action.status
+    if admin_action.status != action_status:
+        admin_action.status = action_status
+        edit.append('status')
+
+    if edit:
+        try:
+            session.add(admin_action)
+            session.flush()
+            msg = pkgdb2.lib.utils.log(
+                session, None, 'admin.action.status.update', dict(
+                    agent=user.username,
+                    old_status=old_status,
+                    new_status=action_status,
+                    action=admin_action.to_json(),
+                ))
+        except SQLAlchemyError, err:
+            session.rollback()
+            pkgdb2.LOG.exception(err)
+            raise PkgdbException('Could not edit action.')
+    else:
+        msg = 'Nothing to change.'
+
+    return msg
