@@ -37,6 +37,18 @@ from flask.ext import wtf
 import wtforms
 
 
+## Yes we do nothing with the form argument but they are required...
+# pylint: disable=W0613
+def is_number(form, field):
+    ''' Check if the data in the field is a number and raise an exception
+    if it is not.
+    '''
+    try:
+        float(field.data)
+    except ValueError:
+        raise wtforms.ValidationError('Field must contain a number')
+
+
 class AddCollectionForm(wtf.Form):
     """ Form to add or edit collections. """
     clt_name = wtforms.TextField(
@@ -369,4 +381,27 @@ class NewRequestForm(BranchForm):
             self.from_branch.choices = [
                 (collec, collec)
                 for collec in kwargs['from_branch']
+            ]
+
+
+class EditActionStatusForm(wtf.Form):
+    """ Form to update the status of an admin action. """
+    action_id = wtforms.TextField(
+        'Action identifier <span class="error">*</span>',
+        [wtforms.validators.Required(), is_number]
+    )
+    action_status = wtforms.SelectField(
+        'Action status',
+        [wtforms.validators.Required()],
+        choices=[('', '')])
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(EditActionStatusForm, self).__init__(*args, **kwargs)
+        if 'status' in kwargs:
+            self.action_status.choices = [
+                (status, status)
+                for status in kwargs['status']
             ]
