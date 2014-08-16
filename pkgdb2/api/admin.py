@@ -29,7 +29,8 @@ from dateutil import parser
 from math import ceil
 
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION, APP
+import pkgdb2.forms
+from pkgdb2 import SESSION, APP, is_admin
 from pkgdb2.api import API, get_limit
 
 
@@ -172,6 +173,98 @@ List admin actions
     if 'page_total' not in output:
         output['page'] = 1
         output['page_total'] = 1
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
+
+
+
+@API.route('/admin/action/status', methods=['POST'])
+@is_admin
+def api_admin_action_edit_status():
+    '''
+Edit Admin Action status update
+-------------------------------
+    Edit the status of an Admin Action.
+
+    ::
+
+        /admin/action/status
+
+    Accept POST queries only.
+
+    :arg action_id: An integer representing the identifier of the admin
+        action to update in the database. The identifier is returned in the
+        API, see ``List admin actions``.
+    :arg action_status: The status to which the action should be updated.
+        Can be any of: ``Approved``, ``Awaiting Review``, ``Denied``,
+        ``Obsolete``, ``Removed``.
+
+    Sample response:
+
+    ::
+
+        {
+          "output": "ok",
+          "messages": ["Admin action status updated to: Approved"]
+        }
+
+        {
+          "output": "notok",
+          "error": ["You are not an admin"]
+        }
+
+    '''
+    httpcode = 200
+    output = {}
+
+    action_status = pkgdblib.get_status(SESSION, 'acl_status')['acl_status']
+
+    form = pkgdb2.forms.EditActionStatusForm(
+        csrf_enabled=False,
+        status=action_status,
+    )
+    if form.validate_on_submit():
+        action_id = form.action_id.data
+
+        admin_action = pkgdblib.get_admin_action(SESSION, action_id)
+        if not admin_action:
+            output['output'] = 'notok'
+            output['error'] = 'No Admin action with this identifier found'
+            httpcode = 500
+        else:
+
+            try:
+                message = pkgdblib.edit_action_status(
+                    SESSION,
+                    admin_action,
+                    action_status=form.action_status.data,
+                    user=flask.g.fas_user
+                )
+                SESSION.commit()
+                output['output'] = 'ok'
+                output['messages'] = [message]
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
+                # We can only reach here in two cases:
+                # 1) the user is not an admin, but that's taken care of
+                #    by the decorator
+                # 2) we have a SQLAlchemy problem when storing the info
+                #    in the DB which we cannot test
+                SESSION.rollback()
+                output['output'] = 'notok'
+                output['error'] = str(err)
+                httpcode = 500
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 500
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
