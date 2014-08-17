@@ -196,10 +196,10 @@ Edit Admin Action status update
 
     Accept POST queries only.
 
-    :arg action_id: An integer representing the identifier of the admin
+    :arg id: An integer representing the identifier of the admin
         action to update in the database. The identifier is returned in the
         API, see ``List admin actions``.
-    :arg action_status: The status to which the action should be updated.
+    :arg status: The status to which the action should be updated.
         Can be any of: ``Approved``, ``Awaiting Review``, ``Denied``,
         ``Obsolete``, ``Removed``.
 
@@ -228,7 +228,7 @@ Edit Admin Action status update
         status=action_status,
     )
     if form.validate_on_submit():
-        action_id = form.action_id.data
+        action_id = form.id.data
 
         admin_action = pkgdblib.get_admin_action(SESSION, action_id)
         if not admin_action:
@@ -241,7 +241,7 @@ Edit Admin Action status update
                 message = pkgdblib.edit_action_status(
                     SESSION,
                     admin_action,
-                    action_status=form.action_status.data,
+                    action_status=form.status.data,
                     user=flask.g.fas_user
                 )
                 SESSION.commit()
