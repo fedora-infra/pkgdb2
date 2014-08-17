@@ -61,6 +61,7 @@
     <th>Branch</th>
     <th>From branch</th>
     <th>Status</th>
+    <th></th>
   </tr>
 {% for action in actions %}
  {% if loop.last %}
@@ -89,6 +90,11 @@
     <td>{{ action.collection.branchname }}</td>
     <td class="col_odd">{{ action.from_collection.branchname }}</td>
     <td class="lastcel" >{{ action.status }}</td>
+    <td>
+      <a href="{{ url_for('.admin_action_edit_status', action_id=action.id) }}">
+        Update
+      </a>
+    </td>
   </tr>
 {% endfor %}
 </table>
