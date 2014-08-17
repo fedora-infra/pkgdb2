@@ -386,11 +386,11 @@ class NewRequestForm(BranchForm):
 
 class EditActionStatusForm(wtf.Form):
     """ Form to update the status of an admin action. """
-    action_id = wtforms.TextField(
+    id = wtforms.TextField(
         'Action identifier <span class="error">*</span>',
         [wtforms.validators.Required(), is_number]
     )
-    action_status = wtforms.SelectField(
+    status = wtforms.SelectField(
         'Action status',
         [wtforms.validators.Required()],
         choices=[('', '')])
@@ -401,7 +401,7 @@ class EditActionStatusForm(wtf.Form):
         """
         super(EditActionStatusForm, self).__init__(*args, **kwargs)
         if 'status' in kwargs:
-            self.action_status.choices = [
+            self.status.choices = [
                 (status, status)
                 for status in kwargs['status']
             ]
