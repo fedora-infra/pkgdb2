@@ -146,6 +146,68 @@ class FlaskUiAdminTest(Modeltests):
             self.assertTrue(
                 '<th>Status</th>\n  </tr>\n\n</table>' in output.data)
 
+    @patch('pkgdb2.fas_login_required')
+    def test_admin_action_edit_status(self, login_func):
+        """ Test the admin_action_edit_status function. """
+        login_func.return_value = None
+
+        user = FakeFasUser()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/admin/action/1/status')
+            self.assertEqual(output.status_code, 302)
+
+        user = FakeFasUserAdmin()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/admin/action/1/status')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No action found with this identifier.</li>'
+                in output.data)
+
+        # Have another test create a pending Admin Action
+        from test_flask_ui_packages import FlaskUiPackagesTest
+        uitest = FlaskUiPackagesTest('test_package_request_branch')
+        uitest.session = self.session
+        uitest.app = self.app
+        uitest.test_package_request_branch()
+
+        with user_set(pkgdb2.APP, user):
+            # Before
+            output = self.app.get('/admin/actions/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Actions</h1>' in output.data)
+            self.assertTrue(
+                '<td class="col_odd">request.branch</td>' in output.data)
+
+            # Update
+            output = self.app.get('/admin/action/1/status')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Update admin action: 1</h1>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            data = {
+                'status': 'Approved',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/admin/action/1/status', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">user: admin updated action: 1 from '
+                'Awaiting Review to Approved</li>' in output.data)
+
+            # After
+            output = self.app.get('/admin/actions/')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Actions</h1>' in output.data)
+            self.assertFalse(
+                '<td class="col_odd">request.branch</td>' in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiAdminTest)
