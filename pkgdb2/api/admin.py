@@ -88,6 +88,8 @@ List admin actions
                 "status": "Active",
                 "version": "19"
               },
+              "id": 8,
+              "info": null,
               "package": {
                 "acls": [],
                 "creation_date": 1400063778.0,
