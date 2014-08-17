@@ -174,14 +174,14 @@ class FlaskApiAdminTest(Modeltests):
             self.assertEqual(
                 sorted(data['error_detail']),
                 [
-                    'action_id: This field is required.',
-                    'action_status: Not a valid choice',
+                    'id: This field is required.',
+                    'status: Not a valid choice',
                 ]
             )
 
         data = {
-            'action_id': 'foo',
-            'action_status': 'Approved',
+            'id': 'foo',
+            'status': 'Approved',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/admin/action/status', data=data)
@@ -192,7 +192,7 @@ class FlaskApiAdminTest(Modeltests):
                 {
                     "error": "Invalid input submitted",
                     "error_detail": [
-                        "action_id: Field must contain a number",
+                        "id: Field must contain a number",
                     ],
                     "output": "notok"
                 }
@@ -220,8 +220,8 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(action['user'], 'pingou')
 
         data = {
-            'action_id': 1,
-            'action_status': 'Approved',
+            'id': 1,
+            'status': 'Approved',
         }
 
         # User is not an admin
@@ -235,8 +235,8 @@ class FlaskApiAdminTest(Modeltests):
         with user_set(pkgdb2.APP, user):
 
             data = {
-                'action_id': 10,
-                'action_status': 'Approved',
+                'id': 10,
+                'status': 'Approved',
             }
 
             # Wrong identifier
@@ -252,8 +252,8 @@ class FlaskApiAdminTest(Modeltests):
             )
 
             data = {
-                'action_id': 1,
-                'action_status': 'Approved',
+                'id': 1,
+                'status': 'Approved',
             }
 
             # All good
