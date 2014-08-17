@@ -28,6 +28,7 @@ import flask
 from dateutil import parser
 from math import ceil
 
+import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP, is_admin
 from pkgdb2.ui import UI
@@ -170,4 +171,56 @@ def admin_actions():
         packager=packager or '',
         action=action,
         status=status,
+    )
+
+
+@UI.route('/admin/action/<action_id>/status', methods=['GET', 'POST'])
+@is_admin
+def admin_action_edit_status(action_id):
+    """ Edit Admin Action status update
+    """
+
+    admin_action = pkgdblib.get_admin_action(SESSION, action_id)
+    if not admin_action:
+        flask.flash('No action found with this identifier.', 'errors')
+        return flask.render_template('msg.html')
+
+    action_status = pkgdblib.get_status(SESSION, 'acl_status')['acl_status']
+
+    form = pkgdb2.forms.EditActionStatusForm(
+        status=action_status,
+        obj=admin_action
+    )
+    form.id.data = action_id
+
+    if form.validate_on_submit():
+
+        try:
+            message = pkgdblib.edit_action_status(
+                SESSION,
+                admin_action,
+                action_status=form.status.data,
+                user=flask.g.fas_user
+            )
+            SESSION.commit()
+            flask.flash(message)
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We can only reach here in two cases:
+            # 1) the user is not an admin, but that's taken care of
+            #    by the decorator
+            # 2) we have a SQLAlchemy problem when storing the info
+            #    in the DB which we cannot test
+            SESSION.rollback()
+            flask.flash(err, 'errors')
+            return flask.render_template('msg.html')
+
+        return flask.redirect(
+            flask.url_for('.admin_actions')
+        )
+
+    return flask.render_template(
+        'actions_update.html',
+        admin_action=admin_action,
+        action_id=action_id,
+        form=form,
     )
