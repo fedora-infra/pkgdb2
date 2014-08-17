@@ -1,0 +1,40 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %} Update action | PkgDB {% endblock %}
+
+{%block tag %}admin{% endblock %}
+
+{% block content %}
+
+<h1>Update admin action: {{ admin_action.id }}</h1>
+
+
+<form action="{{ url_for('.admin_action_edit_status', action_id=action_id) }}"
+    method="post">
+  <table>
+    <tr><td>User:</td><td>{{ admin_action.user }}</td></tr>
+    <tr>
+      <td>Package:</td>
+      <td>
+        {% if admin_action.package %}
+          <a href="{{url_for('.package_info', package=admin_action.package.name)}}">
+            {{ admin_action.package.name }}
+          </a>
+        {% else %}
+          {{ admin_action.info_data['pkg_name'] }}
+        {% endif %}
+      </td>
+    </tr>
+    <tr><td>Action:</td><td>{{ admin_action.action }}</td></tr>
+    <tr><td>From branch:</td><td>{{ admin_action.from_collection.branchname }}</td></tr>
+    <tr><td>To branch:</td><td>{{ admin_action.collection.branchname }}</td></tr>
+    {{ render_field_in_row(form.status) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Create">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {{ form.csrf_token }}
+  </p>
+</form>
+{% endblock %}
