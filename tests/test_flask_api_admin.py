@@ -143,6 +143,149 @@ class FlaskApiAdminTest(Modeltests):
             data['error'], 'No actions found for these parameters')
 
 
+    @patch('pkgdb2.is_admin')
+    def test_api_admin_action_edit_status(self, login_func):
+        """ Test the api_admin_action_edit_status function.  """
+        login_func.return_value = None
+
+        # Redirect as you are not admin
+        user = FakeFasUser()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/admin/action/status')
+            self.assertEqual(output.status_code, 302)
+
+        user = FakeFasUserAdmin()
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/admin/action/status')
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['error', 'error_detail', 'output']
+            )
+            self.assertEqual(
+                data['error'], "Invalid input submitted")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+            self.assertEqual(
+                sorted(data['error_detail']),
+                [
+                    'action_id: This field is required.',
+                    'action_status: Not a valid choice',
+                ]
+            )
+
+        data = {
+            'action_id': 'foo',
+            'action_status': 'Approved',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/admin/action/status', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "Invalid input submitted",
+                    "error_detail": [
+                        "action_id: Field must contain a number",
+                    ],
+                    "output": "notok"
+                }
+
+            )
+
+        # Have another test create a pending Admin Action
+        from test_flask_ui_packages import FlaskUiPackagesTest
+        uitest = FlaskUiPackagesTest('test_package_request_branch')
+        uitest.session = self.session
+        uitest.app = self.app
+        uitest.test_package_request_branch()
+
+        # Before edit:
+        output = self.app.get('/api/admin/actions/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(len(data['actions']), 1)
+        action = data['actions'][0]
+        self.assertEqual(action['action'], "request.branch")
+        self.assertEqual(action['id'], 1)
+        self.assertEqual(action['from_collection']['branchname'], 'master')
+        self.assertEqual(action['collection']['branchname'], 'el6')
+        self.assertEqual(action['package']['name'], 'guake')
+        self.assertEqual(action['user'], 'pingou')
+
+        data = {
+            'action_id': 1,
+            'action_status': 'Approved',
+        }
+
+        # User is not an admin
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/admin/action/status', data=data)
+            self.assertEqual(output.status_code, 302)
+
+        # User is an admin
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+
+            data = {
+                'action_id': 10,
+                'action_status': 'Approved',
+            }
+
+            # Wrong identifier
+            output = self.app.post('/api/admin/action/status', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "No Admin action with this identifier found",
+                    "output": "notok"
+                }
+            )
+
+            data = {
+                'action_id': 1,
+                'action_status': 'Approved',
+            }
+
+            # All good
+            output = self.app.post('/api/admin/action/status', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "messages": [
+                        "user: admin updated action: 1 from Awaiting "
+                        "Review to Approved"
+                    ],
+                    "output": "ok"
+                }
+            )
+
+        # After edit:
+        output = self.app.get('/api/admin/actions')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(len(data['actions']), 1)
+        action = data['actions'][0]
+        self.assertEqual(action['action'], "request.branch")
+        self.assertEqual(action['id'], 1)
+        self.assertEqual(action['from_collection']['branchname'], 'master')
+        self.assertEqual(action['collection']['branchname'], 'el6')
+        self.assertEqual(action['package']['name'], 'guake')
+        self.assertEqual(action['user'], 'pingou')
+
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiAdminTest)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
