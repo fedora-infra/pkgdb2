@@ -43,7 +43,7 @@ from sqlalchemy.orm import scoped_session
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
-from pkgdb2 import APP, FAS
+from pkgdb2 import APP, FAS, LOG
 from pkgdb2.lib import model
 
 #DB_PATH = 'sqlite:///:memory:'
@@ -60,6 +60,8 @@ if os.environ.get('BUILD_ID'):
             print 'Using faitout at: %s' % DB_PATH
     except:
         pass
+
+LOG.handlers = []
 
 
 class FakeFasUser(object):
