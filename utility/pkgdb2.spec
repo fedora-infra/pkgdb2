@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.18.3
+Version:        1.18.4
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -104,9 +104,17 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 %{python_sitelib}/pkgdb2/
 %{python_sitelib}/%{name}*.egg-info
 %{_bindir}/pkgdb2_branch.py
+%{_bindir}/pkgdb-sync-bugzilla
 
 
 %changelog
+* Mon Aug 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.4-1
+- Update to 1.18.4
+- Fix link to FAS for groups
+- Fix the pending ACLs page to show all pending ACL requests for which the user
+  has approveacls on the package
+- pkgdb-sync-bugzilla is now part of the sources
+
 * Thu Aug 07 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.3-1
 - Update to 1.18.3
 - Fix re-assigning bugs on bugzilla if the new POC is a group
