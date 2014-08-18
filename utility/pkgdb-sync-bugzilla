@@ -310,7 +310,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.debug:
-        global DRY_RUN
         DRY_RUN = True
 
     # Non-fatal errors to alert people about
