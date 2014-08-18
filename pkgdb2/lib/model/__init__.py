@@ -518,12 +518,16 @@ class PackageListingAcl(BASE):
                 PackageListingAcl.acl == 'approveacls'
             ).filter(
                 PackageListingAcl.fas_name == user
+            ).filter(
+                PackageListingAcl.status == 'Approved'
             )
 
             subquery2 = session.query(
                 PackageListing.id
             ).filter(
                 PackageListing.point_of_contact == user
+            .filter(
+                PackageListing.status == 'Approved'
             )
 
             query = query.filter(
