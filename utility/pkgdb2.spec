@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.18.4
+Version:        1.18.5
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -108,6 +108,12 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Aug 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.5-1
+- Update to 1.18.5
+- Fix the pending ACL page to show only the branch where the user has had
+  his/her approveacls ACL Approved
+- Fix the pkgdb-sync-bugzilla script to work fine and w/o warnings on python 2.6
+
 * Mon Aug 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.4-1
 - Update to 1.18.4
 - Fix link to FAS for groups
