@@ -39,6 +39,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import backref
+from sqlalchemy.sql import or_
 
 BASE = declarative_base()
 
@@ -511,7 +512,26 @@ class PackageListingAcl(BASE):
         )
 
         if user is not None:
-            query = query.filter(PackageListing.point_of_contact == user)
+            subquery = session.query(
+                PackageListingAcl.packagelisting_id
+            ).filter(
+                PackageListingAcl.acl == 'approveacls'
+            ).filter(
+                PackageListingAcl.fas_name == user
+            )
+
+            subquery2 = session.query(
+                PackageListing.id
+            ).filter(
+                PackageListing.point_of_contact == user
+            )
+
+            query = query.filter(
+                or_(
+                    PackageListing.id.in_(subquery.subquery()),
+                    PackageListing.id.in_(subquery2.subquery()),
+                )
+            )
 
         return query.all()
 
