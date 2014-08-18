@@ -526,7 +526,7 @@ class PackageListingAcl(BASE):
                 PackageListing.id
             ).filter(
                 PackageListing.point_of_contact == user
-            .filter(
+            ).filter(
                 PackageListing.status == 'Approved'
             )
 
