@@ -1638,7 +1638,7 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
 
     pkgdb2.lib.utils.log(session, None, 'package.branch.request', dict(
         agent=user.username,
-        package=package.to_json(),
+        package=package.to_json(acls=False),
         collection_from=clt_from.to_json(),
         collection_to=clt_to.to_json(),
     ))
