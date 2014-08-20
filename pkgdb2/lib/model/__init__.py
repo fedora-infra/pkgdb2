@@ -803,6 +803,7 @@ class PackageListing(BASE):
             status=self.status,
             package_id=self.package.id,
             collection_id=branch_to.id
+            critpath=self.critpath,
         )
         session.add(pkg_listing)
         session.flush()
