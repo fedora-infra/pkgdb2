@@ -1680,7 +1680,7 @@ class AdminAction(BASE):
             'from_collection': from_collection  ,
             'date_created': time.mktime(self.date_created.timetuple()),
             'date_updated': time.mktime(self.date_change.timetuple()),
-            'info': self.info,
+            'info': self.info_data,
         }
 
         return result
