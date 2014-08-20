@@ -1725,6 +1725,10 @@ def set_critpath_packages(
                                                             package.id,
                                                             collection.id)
 
+    if not pkglisting:
+        raise PkgdbException('%s was not found in the collection %s'
+                             % (pkg_name, pkg_branch))
+
     msg = None
     branches = []
     if critpath != pkglisting.critpath:
