@@ -802,7 +802,7 @@ class PackageListing(BASE):
             point_of_contact=self.point_of_contact,
             status=self.status,
             package_id=self.package.id,
-            collection_id=branch_to.id
+            collection_id=branch_to.id,
             critpath=self.critpath,
         )
         session.add(pkg_listing)
