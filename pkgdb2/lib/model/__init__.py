@@ -1651,7 +1651,10 @@ class AdminAction(BASE):
         dict object.
 
         """
-        return ast.literal_eval(self.info)
+        if self.info:
+            return ast.literal_eval(self.info)
+        else:
+            return {}
 
     def to_json(self, _seen=None, acls=True, package=True, collection=None):
         """ Return a dictionnary representation of the object.
