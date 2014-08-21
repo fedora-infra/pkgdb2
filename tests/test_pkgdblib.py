@@ -1616,6 +1616,19 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUser()
         )
 
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.set_critpath_packages,
+            session=self.session,
+            pkg_name='guake',
+            pkg_branch='el4',
+            user=FakeFasUserAdmin()
+        )
+
+
     def test_notify(self):
         """ Test the notify function. """
         create_package_acl(self.session)
