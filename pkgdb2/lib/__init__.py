@@ -1701,6 +1701,7 @@ def set_critpath_packages(
             - You are not allowed to edit a package, only pkgdb admin can.
             - The package cannot be found in the database.
             - The branch cannot be found in the database.
+            - The package does not have the branch specified.
             - An error occured while updating the package in the database
                 the message returned is a dummy information message to
                 return to the user, the trace back is in the logs.
