@@ -8,7 +8,7 @@ On August 18, 2014 (release 1.18.5), the list looks as follow:
 =================  ===========
 Number of commits  Contributor
 =================  ===========
-  1697              Pierre-Yves Chibon <pingou@pingoured.fr>
+  1703              Pierre-Yves Chibon <pingou@pingoured.fr>
     18              Ralph Bean <rbean@redhat.com>
      3              Chaoyi Zha <Cydrobolt@users.noreply.github.com>
      1              Christopher Meng <cickumqt@gmail.com>

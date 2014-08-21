@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.18.5
+Version:        1.18.6
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -108,6 +108,13 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Aug 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.6-1
+- Update to 1.18.6
+- When branching keep the critpath flag consistent
+- Handle the situation where the user tries to update the critpath flag on a
+  branch a package does not have
+- Add unit-tests for the situtation described above
+
 * Mon Aug 18 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.5-1
 - Update to 1.18.5
 - Fix the pending ACL page to show only the branch where the user has had
