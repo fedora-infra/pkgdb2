@@ -315,6 +315,11 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                                             statusname='Approved')
         session.add(pkglisting)
         session.flush()
+        pkgdb2.lib.utils.log(session, package, 'package.branch.new', dict(
+            agent=user.username,
+            package=package.to_json(acls=False),
+            package_listing=pkglisting.to_json(),
+        ))
 
     create = False
     personpkg = model.PackageListingAcl.get(
