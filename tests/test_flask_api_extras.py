@@ -386,8 +386,6 @@ guake|pingou
 # avail|@groups,users|rpms/Package/branch
 
 avail | @provenpackager,pingou | rpms/fedocal/f17
-avail | @provenpackager,pingou | rpms/fedocal/f18
-avail | @provenpackager,pingou,toshio | rpms/fedocal/master
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master"""
@@ -430,18 +428,6 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
                     }
                 },
                 "fedocal": {
-                    "f18": {
-                        "commit": {
-                            "groups": ["provenpackager"],
-                            "people": ["pingou"]
-                        }
-                    },
-                    "master": {
-                        "commit": {
-                            "groups": ["provenpackager"],
-                            "people": ["pingou", "toshio"]
-                        }
-                    },
                     "f17": {
                         "commit": {
                             "groups": ["provenpackager"],
