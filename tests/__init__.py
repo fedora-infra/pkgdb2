@@ -279,7 +279,7 @@ def create_package_listing(session):
         collection_id=devel_collec.id,
     )
     session.add(pkgltg)
-    # Pkg: fedocal - Collection: F17 - Orphaned
+    # Pkg: fedocal - Collection: F17 - Approved
     pkgltg = model.PackageListing(
         point_of_contact='pingou',
         status='Approved',
