@@ -1670,6 +1670,8 @@ def vcs_acls(session, eol=False):
         PackageListingAcl.packagelisting_id == PackageListing.id
     ).filter(
         PackageListing.collection_id == Collection.id
+    ).filter(
+        PackageListing.status == 'Approved'
     )
 
     if not eol:
