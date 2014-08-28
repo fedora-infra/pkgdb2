@@ -1671,7 +1671,7 @@ def vcs_acls(session, eol=False):
     ).filter(
         PackageListing.collection_id == Collection.id
     ).filter(
-        PackageListing.status == 'Approved'
+        PackageListing.status.in_(['Approved', 'Orphaned'])
     )
 
     if not eol:
