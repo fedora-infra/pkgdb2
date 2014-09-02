@@ -276,7 +276,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                 .. note:: groups cannot have 'approveacls' rights.
 
     """
-    if acl not in pkgdb2.APP.config['AUTO_APPROVE']:
+    if acl not in pkgdb2.APP.config['AUTO_APPROVE'] \
+            and status not in ('Removed', 'Obsolete'):
         _validate_poc(pkg_user)
 
     try:

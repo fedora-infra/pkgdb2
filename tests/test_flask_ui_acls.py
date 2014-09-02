@@ -331,8 +331,8 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.post(
                 '/acl/guake/giveup/commit/',
                 data=data, follow_redirects=True)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
+            self.assertEqual(output.status_code, 2001)
+            self.assertFalse(
                 '<li class="error">User &#34;toshio&#34; is not in the '
                 'packager group</li>' in output.data)
 

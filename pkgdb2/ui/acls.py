@@ -208,7 +208,7 @@ def giveup_acl(package, acl):
                 flask.flash(
                     'Your ACL %s is obsoleted on branch %s of package %s'
                     % (acl, branch, package))
-            except pkgdblib.PkgdbException, err:
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
 
