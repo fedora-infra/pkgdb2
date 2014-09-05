@@ -2,7 +2,7 @@
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
                         xmlns:moz="http://www.mozilla.org/2006/browser/search/"
                         xmlns:py="http://genshi.edgewall.org/">
-    <ShortName>Fedora PkgDB2: {{ shortname }}</ShortName>
+    <ShortName>pkgdb {{ shortname }}</ShortName>
     <Description>Search Fedora Package Database</Description>
     <InputEncoding>UTF-8</InputEncoding>
     <Image height="16" width="16" type="image/png">
@@ -19,8 +19,9 @@
         rel="self"
         template="{{ config.get('SITE_ROOT') }}{{ url_for('.opensearch', xmlfile='pkgdb_%s.xml' % shortname) }}" />
     <SearchForm>{{ config.get('SITE_ROOT') }}{{ url_for('.index') }}</SearchForm>
-    <LongName>Fedora-pkgdb Web Search</LongName>
+    <LongName>pkgdb Web OpenSearch</LongName>
     <Query role="example" searchTerms="{{ example }}" />
     <Developer>Adam Miller</Developer>
     <Developer>Pierre-Yves Chibon</Developer>
+    <Tags>pkgdb</Tags>
 </OpenSearchDescription>
