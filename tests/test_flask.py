@@ -324,17 +324,17 @@ engineers need to create packages and spin them into a distribution."""
         """ Test the opensearch function. """
         output = self.app.get('/opensearch/pkgdb_packages.xml')
         self.assertTrue(
-            '<ShortName>Fedora PkgDB2: packages</ShortName>' in output.data)
+            '<ShortName>pkgdb packages</ShortName>' in output.data)
         self.assertTrue(
-            '<LongName>Fedora-pkgdb Web Search</LongName>' in output.data)
+            '<LongName>pkgdb Web OpenSearch</LongName>' in output.data)
         self.assertTrue(
             '<Param name="type" value="packages"/>' in output.data)
 
         output = self.app.get('/opensearch/pkgdb_packager.xml')
         self.assertTrue(
-            '<ShortName>Fedora PkgDB2: packager</ShortName>' in output.data)
+            '<ShortName>pkgdb packager</ShortName>' in output.data)
         self.assertTrue(
-            '<LongName>Fedora-pkgdb Web Search</LongName>' in output.data)
+            '<LongName>pkgdb Web OpenSearch</LongName>' in output.data)
         self.assertTrue(
             '<Param name="type" value="packager"/>' in output.data)
 
