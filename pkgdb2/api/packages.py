@@ -794,6 +794,8 @@ List packages
     :arg poc: String of the user name to to which restrict the search.
     :arg orphaned: Boolean to retrict the search to orphaned packages.
     :arg critpath: Boolean to retrict the search to critpath packages.
+        Defaults to None which means results include both critpath and
+        non-critpath packages.
     :arg status: Allows to filter packages based on their status: Approved,
         Orphaned, Retired, Removed.
     :arg acls: Boolean use to retrieve the acls in addition of the package
