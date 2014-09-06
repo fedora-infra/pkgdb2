@@ -894,9 +894,9 @@ List packages
         orphaned = bool(orphaned)
 
     critpath = flask.request.args.get('critpath', None)
-    if not critpath or str(critpath).lower() in ['0', 'false']:
+    if critpath and str(critpath).lower() in ['0', 'false']:
         critpath = False
-    else:
+    elif critpath:
         critpath = True
     acls = bool(flask.request.args.get('acls', False))
     statuses = flask.request.args.getlist('status', None)
