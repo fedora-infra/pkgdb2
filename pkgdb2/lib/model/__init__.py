@@ -1424,14 +1424,15 @@ class Package(BASE):
 
         ## pylint complains about timetuple() but it is a method
         # pylint: disable=E1102
-        result = {'name': self.name,
-                  'summary': self.summary,
-                  'description': self.description,
-                  'status': self.status,
-                  'review_url': self.review_url,
-                  'upstream_url': self.upstream_url,
-                  'creation_date': time.mktime(self.date_created.timetuple())
-                  }
+        result = {
+            'name': self.name,
+            'summary': self.summary,
+            'description': self.description,
+            'status': self.status,
+            'review_url': self.review_url,
+            'upstream_url': self.upstream_url,
+            'creation_date': time.mktime(self.date_created.timetuple())
+        }
 
         _seen.append(cls)
 
