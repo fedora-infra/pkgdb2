@@ -57,7 +57,7 @@ class FlaskApiAdminTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
-    def test_admin_actions(self, login_func, mock_func):
+    def test_api_admin_actions(self, login_func, mock_func):
         """ Test the api_admin_actions function.  """
 
         output = self.app.get('/api/admin/actions/')
