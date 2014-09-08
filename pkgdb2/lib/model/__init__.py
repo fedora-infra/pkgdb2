@@ -1626,14 +1626,13 @@ class AdminAction(BASE):
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
     date_change = sa.Column(sa.DateTime, nullable=False,
-                              default=datetime.datetime.utcnow,
-                              onupdate=sa.func.now())
+                            default=datetime.datetime.utcnow,
+                            onupdate=sa.func.now())
 
     __table_args__ = (
         sa.UniqueConstraint(
             'user', 'action', 'status', 'package_id', 'collection_id'),
     )
-
 
     package = relation("Package")
     collection = relation(
@@ -1680,7 +1679,7 @@ class AdminAction(BASE):
             'status': self.status,
             'package': pkg,
             'collection': self.collection.to_json(),
-            'from_collection': from_collection  ,
+            'from_collection': from_collection,
             'date_created': time.mktime(self.date_created.timetuple()),
             'date_updated': time.mktime(self.date_change.timetuple()),
             'info': self.info_data,

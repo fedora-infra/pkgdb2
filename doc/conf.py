@@ -144,7 +144,7 @@ html_theme_options = {
 
     "bgcolor": "#FEFEFE",
     "textcolor": "#444444",
-    #"linkcolor": "#79db32", # First Green
+    #"linkcolor": "#79db32",  # First Green
     "linkcolor": "#00009d",
 
     "headtextcolor": "#444444",

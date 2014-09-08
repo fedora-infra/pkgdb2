@@ -228,7 +228,7 @@ def package_info(package):
     branches_possible = [
         collec.branchname
         for collec in collections
-        if '%s %s' %(collec.name, collec.version) not in branches]
+        if '%s %s' % (collec.name, collec.version) not in branches]
 
     return flask.render_template(
         'package.html',
@@ -1032,6 +1032,7 @@ def package_request_branch(package, full=True):
         form=form,
         action='request_branch',
     )
+
 
 @UI.route('/request/package/', methods=('GET', 'POST'))
 @packager_login_required

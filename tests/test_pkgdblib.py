@@ -101,7 +101,7 @@ class PkgdbLibtests(Modeltests):
                           pkg_poc='ralph',
                           pkg_review_url=None,
                           pkg_upstream_url='http://guake.org',
-                              user=FakeFasUserAdmin())
+                          user=FakeFasUserAdmin())
 
         pkgdb2.lib.utils.get_packagers = mock.MagicMock()
         pkgdb2.lib.utils.get_packagers.return_value = ['pingou']

@@ -1643,6 +1643,7 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
         collection_to=clt_to.to_json(),
     ))
 
+
 def add_new_package_request(
         session, pkg_name, pkg_summary, pkg_description, pkg_status,
         pkg_collection, pkg_poc, user, pkg_review_url,
