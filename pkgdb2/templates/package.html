@@ -210,7 +210,7 @@ confusing what the difference is between that status an the per-branch status)
                  id="unretirebutton"
                  href="{{ url_for('.package_unretire', package=package.name) }}">
                 <button class="bold pkg_button_blue">
-                  + Ask Unretire
+                  + Ask Unretirement
                 </button>
               </a>
             </td>
@@ -232,8 +232,7 @@ confusing what the difference is between that status an the per-branch status)
           {% endif %}
           </tr>
           <tr>
-          {% if (is_admin and 'Retired' in statuses)
-                or ('Orphaned' in statuses) %}
+          {% if ('Orphaned' in statuses) %}
             <td>
               <a title="This package is orphaned, take it!..."
                  id="takebutton"
