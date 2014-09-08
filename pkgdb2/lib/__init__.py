@@ -1750,11 +1750,13 @@ def add_unretire_request(session, pkg_name, pkg_branch, user):
 
     session.add(action)
 
-    pkgdb2.lib.utils.log(session, None, 'package.unretire.request', dict(
-        agent=user.username,
-        package=package.to_json(),
-        collection=pkg_branch.to_json(),
-    ))
+    return pkgdb2.lib.utils.log(
+        session, None, 'package.unretire.request', dict(
+            agent=user.username,
+            package=package.to_json(),
+            collection=pkg_branch.to_json(),
+        )
+    )
 
 
 def count_collection(session):
