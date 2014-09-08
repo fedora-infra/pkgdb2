@@ -185,8 +185,8 @@ List admin actions
 @API.route('/admin/action/')
 def api_admin_action(actionid=None):
     '''
-Return a specific Admin Action
-------------------------------
+Get a specific Admin Action
+---------------------------
     Return the desired Admin Action using its identifier.
 
     ::
