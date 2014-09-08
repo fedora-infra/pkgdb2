@@ -181,6 +181,84 @@ List admin actions
     return jsonout
 
 
+@API.route('/admin/action/<actionid>')
+@API.route('/admin/action/')
+def api_admin_action(actionid=None):
+    '''
+Return a specific Admin Action
+------------------------------
+    Return the desired Admin Action using its identifier.
+
+    ::
+
+        /admin/action/<actionid>
+        /admin/action/?actionid=<actionid>
+
+    Accept GET queries only.
+
+    :arg actionid: An integer representing the identifier of the admin
+        action in the database. The identifier is returned in the
+        API, see ``List admin actions``.
+
+    Sample response:
+
+    ::
+
+        {
+          "action": "request.branch",
+          "collection": {
+            "branchname": "epel7",
+            "dist_tag": ".el7",
+            "koji_name": "epel7",
+            "name": "Fedora EPEL",
+            "status": "Active",
+            "version": "7"
+          },
+          "date_created": 1410161489.0,
+          "date_updated": 1410168952.0,
+          "from_collection": {
+            "branchname": "master",
+            "dist_tag": ".fc21",
+            "koji_name": "rawhide",
+            "name": "Fedora",
+            "status": "Under Development",
+            "version": "devel"
+          },
+          "id": 1,
+          "info": {},
+          "package": {
+            "acls": [],
+            "creation_date": 1397204290.0,
+            "description": null,
+            "name": "R-BiocGenerics",
+            "review_url": null,
+            "status": "Approved",
+            "summary": "Generic functions for Bioconductor",
+            "upstream_url": null
+          },
+          "status": "Approved",
+          "user": "pingou"
+        }
+
+    '''
+    httpcode = 200
+    output = {}
+
+    actionid = flask.request.args.get('actionid', actionid)
+
+    admin_action = pkgdblib.get_admin_action(SESSION, actionid)
+    if not admin_action:
+        output['output'] = 'notok'
+        output['error'] = 'No Admin action with this identifier found'
+        httpcode = 500
+    else:
+        output = admin_action.to_json()
+        output['output'] = 'ok'
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
+
 
 @API.route('/admin/action/status', methods=['POST'])
 @is_admin
