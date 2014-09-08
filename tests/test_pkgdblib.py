@@ -1980,8 +1980,12 @@ class PkgdbLibtests(Modeltests):
             msg, 'user: pingou requested branch: master to be unretired '
             'for package guake')
 
-    def test_add_new_package_request(self):
+    @patch('pkgdb2.lib.utils.get_packagers')
+    def test_add_new_package_request(self, mock_func):
         """ Test the add_new_package_request method to pkgdblib. """
+
+        mock_func.return_value = ['pingou']
+
         self.assertRaises(
             pkgdblib.PkgdbException,
             pkgdblib.add_new_package_request,
