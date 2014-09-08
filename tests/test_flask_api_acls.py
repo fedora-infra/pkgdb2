@@ -38,7 +38,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb2
 from pkgdb2 import APP
-from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 

@@ -44,8 +44,7 @@ import pkgdb2
 import pkgdb2.lib as pkgdblib
 from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
                    FakeFasGroupValid, FakeFasGroupInvalid,
-                   create_collection, create_package,
-                   create_package_listing, create_package_acl,
+                   create_collection, create_package_acl,
                    create_package_acl2, create_package_critpath)
 
 

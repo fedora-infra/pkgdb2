@@ -30,15 +30,8 @@ import unittest
 import sys
 import os
 
-from datetime import date
-from datetime import timedelta
-
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import scoped_session
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
@@ -389,7 +382,6 @@ def create_package_acl(session):
     create_package_listing(session)
 
     guake_pkg = model.Package.by_name(session, 'guake')
-    fedocal_pkg = model.Package.by_name(session, 'fedocal')
     geany_pkg = model.Package.by_name(session, 'geany')
     offlineimap_pkg = model.Package.by_name(session, 'offlineimap')
 
@@ -405,8 +397,6 @@ def create_package_acl(session):
         session, geany_pkg.id, devel_collec.id)
     pkglist_offlineimap_el4 = model.PackageListing.by_pkgid_collectionid(
         session, offlineimap_pkg.id, el4_collec.id)
-    pkglist_offlineimap_devel = model.PackageListing.by_pkgid_collectionid(
-        session, offlineimap_pkg.id, devel_collec.id)
 
     packager = model.PackageListingAcl(
         fas_name='pingou',

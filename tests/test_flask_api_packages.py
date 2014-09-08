@@ -40,7 +40,7 @@ import pkgdb2
 from pkgdb2 import lib as pkgdblib
 from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
-                   create_collection, create_package, create_package_acl,
+                   create_collection, create_package_acl,
                    create_package_critpath, user_set)
 
 
