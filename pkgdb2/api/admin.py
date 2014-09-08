@@ -67,7 +67,7 @@ List admin actions
 
         {
           "output": "ok",
-          "packages": [
+          "actions": [
             {
               "action": "request.branch",
               "collection": {
