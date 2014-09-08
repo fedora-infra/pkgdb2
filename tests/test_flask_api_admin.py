@@ -142,6 +142,62 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(
             data['error'], 'No actions found for these parameters')
 
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
+    def test_api_admin_action(self, login_func, mock_func):
+        """ Test the api_admin_action function.  """
+
+        output = self.app.get('/api/admin/action/')
+        data = json.loads(output.data)
+        self.assertEqual(data['output'], 'notok')
+        self.assertEqual(
+            data['error'], 'No Admin action with this identifier found')
+
+        # Unretire the package
+        from test_flask_ui_packages import FlaskUiPackagesTest
+        test = FlaskUiPackagesTest('test_package_unretire')
+        test.session = self.session
+        test.app = self.app
+        test.test_package_unretire()
+
+        output = self.app.get('/api/admin/action/1')
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['action', 'collection', 'date_created', 'date_updated',
+             'from_collection', 'id', 'info', 'output', 'package',
+             'status', 'user'])
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['action'], 'request.unretire')
+        self.assertEqual(data['collection']['branchname'], 'f18')
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['package']['name'], 'guake')
+        self.assertEqual(data['package']['acls'], [])
+        self.assertEqual(data['status'], 'Awaiting Review')
+        self.assertEqual(data['user'], 'toshio')
+
+        output = self.app.get('/api/admin/action/?actionid=1')
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['action', 'collection', 'date_created', 'date_updated',
+             'from_collection', 'id', 'info', 'output', 'package',
+             'status', 'user'])
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['action'], 'request.unretire')
+        self.assertEqual(data['collection']['branchname'], 'f18')
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['package']['name'], 'guake')
+        self.assertEqual(data['package']['acls'], [])
+        self.assertEqual(data['status'], 'Awaiting Review')
+        self.assertEqual(data['user'], 'toshio')
+
+        output = self.app.get('/api/admin/action/100')
+        data = json.loads(output.data)
+        self.assertEqual(data['output'], 'notok')
+        self.assertEqual(
+            data['error'], 'No Admin action with this identifier found')
 
     @patch('pkgdb2.is_admin')
     def test_api_admin_action_edit_status(self, login_func):
@@ -283,7 +339,6 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')
-
 
 
 if __name__ == '__main__':
