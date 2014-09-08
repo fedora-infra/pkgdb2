@@ -931,6 +931,58 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="message">Branch el6 requested</li>'
                 in output.data)
 
+    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.packager_login_required')
+    def test_package_request_new(self, login_func, mock_func):
+        """ Test the package_request_new function. """
+        login_func.return_value = None
+        mock_func.return_value = ['pingou', 'toshio']
+        create_package_acl(self.session)
+
+        data = {
+            'pkgname': 'guake',
+            'summary': 'Drop down terminal for GNOME',
+            'description': 'desc',
+            'review_url': 'https://bz.rh.c/123',
+            'status': 'Approved',
+            'critpath': False,
+            'poc': 'pingou',
+            'upstream_url': 'http://guake.org',
+            'branches': 'master',
+        }
+
+        user = FakeFasUser()
+
+        user.username = 'toshio'
+        data['branches'] = 'epel7'
+        with user_set(pkgdb2.APP, user):
+
+            # Branch EPEL7 does not exist
+            output = self.app.post(
+                '/request/package/', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">&#39;epel7&#39; is not a valid choice'
+                in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data['csrf_token'] = csrf_token
+        data['branches'] = 'master'
+
+        # All good
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/request/package/',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">user: pingou request package: guake '
+                'on branch master</li>' in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiPackagesTest)
