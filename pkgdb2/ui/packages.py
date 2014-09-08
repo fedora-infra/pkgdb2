@@ -861,7 +861,8 @@ def update_acl(package, update_acl):
                                 not in commit_acls[lcl_user]:
                             cnt += 1
                             continue
-                        elif branches_inv[lcl_branch] in commit_acls[lcl_user] \
+                        elif branches_inv[lcl_branch] \
+                                in commit_acls[lcl_user] \
                                 and username != lcl_user:
                             flask.flash(
                                 'Only the user can remove his/her ACL',
