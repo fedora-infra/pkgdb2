@@ -25,12 +25,11 @@ Admin interface for the API.
 
 import flask
 
-from dateutil import parser
 from math import ceil
 
 import pkgdb2.lib as pkgdblib
 import pkgdb2.forms
-from pkgdb2 import SESSION, APP, is_admin
+from pkgdb2 import SESSION, is_admin
 from pkgdb2.api import API, get_limit
 
 
@@ -165,8 +164,8 @@ List admin actions
         httpcode = 404
     else:
         output['actions'] = [
-            action.to_json()
-            for action in actions
+            act.to_json()
+            for act in actions
         ]
         output['output'] = 'ok'
         output['page'] = int(page)
