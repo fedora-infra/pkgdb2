@@ -1947,6 +1947,39 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(action.from_collection.branchname, 'master')
         self.assertEqual(action.info, None)
 
+    def test_add_unretire_request(self):
+        """ Test the add_unretire_request method of pkgdblib. """
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_unretire_request,
+            self.session,
+            pkg_name='foo',
+            pkg_branch='master',
+            user=FakeFasUser()
+        )
+
+        self.test_add_new_branch_request()
+        self.session.commit()
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_unretire_request,
+            self.session,
+            pkg_name='guake',
+            pkg_branch='foo',
+            user=FakeFasUser()
+        )
+
+        msg = pkgdblib.add_unretire_request(
+            self.session,
+            pkg_name='guake',
+            pkg_branch='master',
+            user=FakeFasUser()
+        )
+        self.assertEqual(
+            msg, 'user: pingou requested branch: master to be unretired '
+            'for package guake')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
