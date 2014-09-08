@@ -13,11 +13,17 @@
 # serve to show the default.
 
 import os
-import sys
+import re
 
-#sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+pkgdbfile = os.path.join(
+    os.path.dirname(__file__), '..', 'pkgdb2', '__init__.py')
 
-#from pkgdb import __version__
+# Thanks to SQLAlchemy:
+# https://github.com/zzzeek/sqlalchemy/blob/master/setup.py#L104
+with open(pkgdbfile) as stream:
+    VERSION = re.compile(
+        r".*__version__ = '(.*?)'", re.S
+    ).match(stream.read()).group(1)
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
@@ -58,7 +64,7 @@ copyright = u'2013-2014, Pierre-Yves Chibon <pingou@pingoured.fr>'
 #
 # The short X.Y version.
 #version = __version__
-version = '1.18.6'
+version = VERSION
 # The full version, including alpha/beta/rc tags.
 #release = '1'
 
