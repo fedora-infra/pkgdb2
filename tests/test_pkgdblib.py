@@ -1980,6 +1980,59 @@ class PkgdbLibtests(Modeltests):
             msg, 'user: pingou requested branch: master to be unretired '
             'for package guake')
 
+    def test_add_new_package_request(self):
+        """ Test the add_new_package_request method to pkgdblib. """
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_package_request,
+            session=self.session,
+            pkg_name='guake',
+            pkg_summary='Drop-down terminal for GNOME',
+            pkg_description='desc',
+            pkg_status='Approved',
+            pkg_collection='foo',
+            pkg_poc='pingou',
+            user=FakeFasUser(),
+            pkg_review_url='https://bz.rh.c/123',
+            pkg_upstream_url=None,
+            pkg_critpath=False,
+        )
+
+        self.test_add_new_branch_request()
+        self.session.commit()
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_package_request,
+            session=self.session,
+            pkg_name='guake',
+            pkg_summary='Drop-down terminal for GNOME',
+            pkg_description='desc',
+            pkg_status='Approved',
+            pkg_collection='foo',
+            pkg_poc='pingou',
+            user=FakeFasUser(),
+            pkg_review_url='https://bz.rh.c/123',
+            pkg_upstream_url=None,
+            pkg_critpath=False,
+        )
+
+        msg = pkgdblib.add_new_package_request(
+            session=self.session,
+            pkg_name='zsh',
+            pkg_summary='Powerful interactive shell',
+            pkg_description='desc',
+            pkg_status='Approved',
+            pkg_collection='master',
+            pkg_poc='pingou',
+            user=FakeFasUser(),
+            pkg_review_url='https://bz.rh.c/123',
+            pkg_upstream_url=None,
+            pkg_critpath=False,
+        )
+        self.assertEqual(
+            msg, 'user: pingou request package: zsh on branch master')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
