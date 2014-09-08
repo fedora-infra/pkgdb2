@@ -108,6 +108,7 @@ def api():
     api_acl_reassign = load_doc(acls.api_acl_reassign)
 
     api_admin_actions = load_doc(admin.api_admin_actions)
+    api_admin_action = load_doc(admin.api_admin_action)
     api_admin_update_actions = load_doc(admin.api_admin_action_edit_status)
 
     api_version_doc = load_doc(api_version)
@@ -145,7 +146,7 @@ def api():
             api_version_doc,
         ],
         admin=[
-            api_admin_actions, api_admin_update_actions
+            api_admin_actions, api_admin_action, api_admin_update_actions
         ],
         extras=[
             api_extras_bugzilla, api_extras_critpath,
