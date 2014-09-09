@@ -927,7 +927,7 @@ class FlaskUiPackagesTest(Modeltests):
                 follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">Branch el6 requested</li>'
+                '<li class="message">Branch el6 requested for user pingou</'
                 in output.data)
 
     @patch('pkgdb2.lib.utils.get_packagers')
