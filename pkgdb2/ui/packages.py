@@ -1005,14 +1005,14 @@ def package_request_branch(package, full=True):
     if form.validate_on_submit():
         for branch in form.branches.data:
             try:
-                pkgdblib.add_new_branch_request(
+                msg = pkgdblib.add_new_branch_request(
                     session=SESSION,
                     pkg_name=package.name,
                     clt_from=form.from_branch.data,
                     clt_to=branch,
                     user=flask.g.fas_user)
                 SESSION.commit()
-                flask.flash('Branch %s requested' % branch)
+                flask.flash(msg)
             except pkgdblib.PkgdbException, err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
