@@ -252,7 +252,7 @@ def get_acl_package(session, pkg_name, pkg_clt=None, eol=False):
 
 
 def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
-                    user):
+                    user, force=False):
     """ Set the specified ACLs for the specified package.
 
     :arg session: session with which to connect to the database.
@@ -261,6 +261,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     :arg pkg_user: the FAS user for which the ACL should be set/change.
     :arg status: the status of the ACLs.
     :arg user: the user making the action.
+    :kwarg force: a boolean to force creating the ACLs w/o checking if the
+        user is an admin or not
     :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The ``pkg_name`` does not correspond to any package in the
@@ -291,7 +293,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         raise PkgdbException('No collection found by the name of %s'
                              % pkg_branch)
 
-    if not pkgdb2.is_pkg_admin(session, user, package.name, pkg_branch):
+    if not force and not pkgdb2.is_pkg_admin(
+            session, user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
