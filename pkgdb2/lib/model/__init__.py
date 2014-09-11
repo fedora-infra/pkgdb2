@@ -1690,7 +1690,35 @@ def vcs_acls(session, eol=False):
         Package.name
     )
 
-    return query.all()
+    data = query.all()
+    sub = set([(it[0], it[2]) for it in data])
+
+    query2 = session.query(
+        Package.name,  # 0
+        Collection.branchname,  # 1
+    ).filter(
+        Package.id == PackageListing.package_id
+    ).filter(
+        PackageListing.collection_id == Collection.id
+    ).filter(
+        PackageListing.status.in_(['Approved', 'Orphaned'])
+    ).group_by(
+        Package.name,
+        Collection.branchname,
+    ).order_by(
+        Package.name
+    )
+
+    if not eol:
+        query2 = query2.filter(
+            Collection.status != 'EOL')
+
+    sub2 = set(query2.all())
+
+    for entry in sub2 - sub:
+        data.append([entry[0], None, entry[1]])
+
+    return data
 
 
 def get_groups(session):
