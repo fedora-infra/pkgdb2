@@ -1649,7 +1649,7 @@ def vcs_acls(session, eol=False):
     for pkg in pkgs:
         user = None
         group = None
-        if pkg[1].startswith('group::'):
+        if pkg[1] and pkg[1].startswith('group::'):
             group = pkg[1].replace('group::', '@')
         else:
             user = pkg[1]

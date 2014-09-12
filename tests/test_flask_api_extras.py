@@ -387,14 +387,29 @@ guake|pingou
 
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
+avail | @provenpackager, | rpms/geany/f18
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
-avail | @provenpackager,pingou,spot | rpms/guake/master"""
+avail | @provenpackager,pingou,spot | rpms/guake/master
+avail | @provenpackager, | rpms/offlineimap/master"""
         self.assertEqual(output.data, expected)
+
+        # Including the EOL'd el4 collection
+        expected2 = """# VCS ACLs
+# avail|@groups,users|rpms/Package/branch
+
+avail | @provenpackager,pingou | rpms/fedocal/f17
+avail | @provenpackager,pingou | rpms/fedocal/f18
+avail | @provenpackager, | rpms/geany/f18
+avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
+avail | @provenpackager,pingou | rpms/guake/f18
+avail | @provenpackager,pingou,spot | rpms/guake/master
+avail | @provenpackager, | rpms/offlineimap/el4
+avail | @provenpackager, | rpms/offlineimap/master"""
 
         output = self.app.get('/api/vcs/?eol=True')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data, expected)
+        self.assertEqual(output.data, expected2)
 
         output = self.app.get('/api/vcs/?format=random')
         self.assertEqual(output.status_code, 200)
@@ -403,47 +418,89 @@ avail | @provenpackager,pingou,spot | rpms/guake/master"""
         output = self.app.get('/api/vcs/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
+        print output.data
 
         expected = {
-            u'packageAcls': {
-                u'guake': {
-                    u'f18': {
-                        u'commit': {
-                            u'groups': [u'provenpackager'],
-                            u'people': [u'pingou']
-                        }
-                    },
-                    u'master': {
-                        u'commit': {
-                            u'groups': [u'provenpackager'],
-                            u'people': [u'pingou', u'spot']
-                        }
-                    }
-                },
-                u'geany': {
-                    u'master': {
-                        u'commit': {
-                            u'groups': [u'provenpackager', u'gtk-sig'],
-                            u'people': ['pingou']
-                        }
-                    }
-                },
-                "fedocal": {
-                    "f18": {
-                        "commit": {
-                            "groups": ["provenpackager"],
-                            "people": ["pingou"]
-                        }
-                    },
-                    "f17": {
-                        "commit": {
-                            "groups": ["provenpackager"],
-                            "people": ["pingou"]
-                        }
-                    }
+              "packageAcls": {
+            "fedocal": {
+              "f17": {
+                "commit": {
+                  "groups": [
+                    "provenpackager"
+                  ],
+                  "people": [
+                    "pingou"
+                  ]
                 }
+              },
+              "f18": {
+                "commit": {
+                  "groups": [
+                    "provenpackager"
+                  ],
+                  "people": [
+                    "pingou"
+                  ]
+                }
+              }
             },
-            u'title': u'Fedora Package Database -- VCS ACLs'}
+            "geany": {
+              "f18": {
+                "commit": {
+                  "groups": [
+                    "provenpackager"
+                  ],
+                  "people": []
+                }
+              },
+              "master": {
+                "commit": {
+                  "groups": [
+                    "provenpackager",
+                    "gtk-sig"
+                  ],
+                  "people": [
+                    "pingou"
+                  ]
+                }
+              }
+            },
+            "guake": {
+              "f18": {
+                "commit": {
+                  "groups": [
+                    "provenpackager"
+                  ],
+                  "people": [
+                    "pingou"
+                  ]
+                }
+              },
+              "master": {
+                "commit": {
+                  "groups": [
+                    "provenpackager"
+                  ],
+                  "people": [
+                    "pingou",
+                    "spot"
+                  ]
+                }
+              }
+            },
+            "offlineimap": {
+              "master": {
+                "commit": {
+                  "groups": [
+                    "provenpackager"
+                  ],
+                  "people": []
+                }
+              }
+            }
+          },
+          "title": "Fedora Package Database -- VCS ACLs"
+        }
 
         self.assertEqual(data, expected)
 
