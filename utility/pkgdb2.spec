@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.18.6
+Version:        1.19
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -108,6 +108,19 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Sat Sep 13 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.19-1
+- Update to 1.19
+- Publish a fedmsg message when adding a new branch to a package
+- Restrict /api/vcs to list only those with commit on active branches
+- Do not check if the user is packager when we are removing ACLs
+- Update the opensearch xml returned (to prevent FF to associate the Fedora
+  keyword to it)
+- When listing packages in the API do not set the critpath to False if it is not
+  specified
+- Include in the /api/vcs output packages that are orphaned but have no
+  maintainer left
+- Adjust unit-tests accordingly for each of these changes
+
 * Thu Aug 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.18.6-1
 - Update to 1.18.6
 - When branching keep the critpath flag consistent
