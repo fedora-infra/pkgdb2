@@ -12,23 +12,23 @@ from setuptools import setup
 from pkgdb2 import __version__
 
 
-def get_requires():
-    ''' Reads the requirements.txt and return its content in a list. '''
-    stream = open('requirements.txt')
-    content = stream.readlines()
-    stream.close()
+def get_requirements(requirements_file='requirements.txt'):
+    """Get the contents of a file listing the requirements.
 
-    deps = []
-    for row in content:
-        if row.startswith('#'):
-            continue
-        else:
-            deps.append(row.strip())
+    :arg requirements_file: path to a requirements file
+    :type requirements_file: string
+    :returns: the list of requirements, or an empty list if
+              `requirements_file` could not be opened or read
+    :return type: list
+    """
 
-    return deps
+    try:
+        lines = open(requirements_file).readlines()
+    except (IOError, OSError) as err:
+        print "Error: %s" % err.message
+        return []
+    return [line.rstrip() for line in lines if not line.startswith(‘#’)]
 
-
-requires = get_requires()
 
 setup(
     name='pkgdb2',
@@ -43,6 +43,6 @@ setup(
     url='https://fedorahosted.org/pkgdb2/',
     packages=['pkgdb2'],
     include_package_data=True,
-    install_requires=requires,
+    install_requires=get_requirements(),
     scripts=['utility/pkgdb2_branch.py', 'utility/pkgdb-sync-bugzilla'],
 )
