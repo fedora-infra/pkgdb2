@@ -27,7 +27,11 @@ def get_requirements(requirements_file='requirements.txt'):
     except (IOError, OSError) as err:
         print "Error: %s" % err.message
         return []
-    return [line.rstrip() for line in lines if not line.startswith('#')]
+    return [
+        line.rstrip().split('#')[0]
+        for line in lines
+        if not line.startswith('#')
+    ]
 
 
 setup(
