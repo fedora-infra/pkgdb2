@@ -127,7 +127,7 @@ confusing what the difference is between that status an the per-branch status)
           <tr>
           {% if g.fas_user.username in pocs or is_admin %}
             <td>
-              <a title="Give the package to someone"
+              <a title="Give the package to someone..."
                 id="givebutton"
                 href="{{ url_for('.package_give', package=package.name) }}">
                 <button  class="bold pkg_button_blue">
@@ -140,7 +140,7 @@ confusing what the difference is between that status an the per-branch status)
           {% endif %}
           {% if (g.fas_user.username in pocs or is_admin) and 'Approved' in statuses %}
             <td>
-              <a title="Orphan the package"
+              <a title="Orphan the package..."
                 id="orphanbutton"
                 href="{{ url_for('.package_orphan', package=package.name) }}">
                 <button  class="bold pkg_button_grey">
@@ -157,7 +157,7 @@ confusing what the difference is between that status an the per-branch status)
                 (is_admin and 'Retired' in statuses) or 'Orphaned' in statuses
             ) %}
             <td>
-              <a title="This package is orphaned, take it!"
+              <a title="This package is orphaned, take it!..."
                  id="takebutton"
                  href="{{ url_for('.package_take', package=package.name) }}">
                 <button class="bold pkg_button_blue">
@@ -170,7 +170,7 @@ confusing what the difference is between that status an the per-branch status)
           {% endif %}
           {% if is_admin and 'Orphaned' in statuses %}
             <td>
-              <a title="This package is orphaned, retire it"
+              <a title="This package is orphaned, retire it..."
                  id="retirebutton"
                  href="{{ url_for('.package_retire', package=package.name) }}">
                 <button class="bold pkg_button_grey">
