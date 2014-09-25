@@ -104,6 +104,7 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 %{python_sitelib}/pkgdb2/
 %{python_sitelib}/%{name}*.egg-info
 %{_bindir}/pkgdb2_branch.py
+%{_bindir}/update_package_info.py
 %{_bindir}/pkgdb-sync-bugzilla
 
 
