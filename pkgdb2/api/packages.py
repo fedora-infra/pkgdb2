@@ -312,6 +312,7 @@ Orphan package
                     pkg_poc='orphan',
                     user=flask.g.fas_user,
                 )
+
                 messages.append(message)
                 SESSION.commit()
             except pkgdblib.PkgdbException, err:

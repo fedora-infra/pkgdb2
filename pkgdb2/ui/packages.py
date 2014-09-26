@@ -417,6 +417,7 @@ def package_orphan(package, full=True):
                     pkg_poc='orphan',
                     user=flask.g.fas_user
                 )
+
                 flask.flash(
                     'You are no longer point of contact on branch: %s'
                     % branch)

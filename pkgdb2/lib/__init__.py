@@ -420,6 +420,18 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     pkglisting.point_of_contact = pkg_poc
     if pkg_poc == 'orphan':
         pkglisting.status = 'Orphaned'
+        # Remove commit and watchcommits if the user has them
+        for acl in ['commit', 'approveacls']:
+            if has_acls(session, user.username, pkg_name, pkg_branch, acl):
+                set_acl_package(
+                    session,
+                    pkg_name=pkg_name,
+                    pkg_branch=pkg_branch,
+                    pkg_user=user.username,
+                    acl=acl,
+                    status='Obsolete',
+                    user=user,
+                )
     elif pkglisting.status in ('Orphaned', 'Retired'):
         pkglisting.status = 'Approved'
 
