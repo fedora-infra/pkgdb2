@@ -417,20 +417,6 @@ def package_orphan(package, full=True):
                     pkg_poc='orphan',
                     user=flask.g.fas_user
                 )
-                # Remove commit and watchcommits if the user has them
-                for acl in ['commit', 'approveacls']:
-                    user = flask.g.fas_user.username
-                    if pkgdblib.has_acls(
-                            SESSION, user, package.name, branch, acl):
-                        pkgdblib.set_acl_package(
-                            SESSION,
-                            pkg_name=package.name,
-                            pkg_branch=branch,
-                            pkg_user=user,
-                            acl=acl,
-                            status='Obsolete',
-                            user=flask.g.fas_user,
-                        )
 
                 flask.flash(
                     'You are no longer point of contact on branch: %s'

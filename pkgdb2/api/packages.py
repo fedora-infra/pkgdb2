@@ -312,20 +312,6 @@ Orphan package
                     pkg_poc='orphan',
                     user=flask.g.fas_user,
                 )
-                # Remove commit and watchcommits if the user has them
-                for acl in ['commit', 'approveacls']:
-                    user = flask.g.fas_user.username
-                    if pkgdblib.has_acls(
-                            SESSION, user, pkg_name, pkg_branch, acl):
-                        pkgdblib.set_acl_package(
-                            SESSION,
-                            pkg_name=pkg_name,
-                            pkg_branch=pkg_branch,
-                            pkg_user=user,
-                            acl=acl,
-                            status='Obsolete',
-                            user=flask.g.fas_user,
-                        )
 
                 messages.append(message)
                 SESSION.commit()
