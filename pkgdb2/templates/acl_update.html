@@ -51,7 +51,7 @@
               {% else %}
                 <td class="{{ coltype }}">
               {% endif %}
-                <select name="acls" id="acls" class="{{ select_cl }}">
+                <select name="acls" id="acls" class="{{ select_cl }}{% if loop.first %} first_col{% endif %}" >
                   {% for status in acl_status %}
                     {% if acl in commit_acls[user][branch] and
                         status == commit_acls[user][branch][acl] %}
@@ -104,6 +104,16 @@ $(function(){
         var _val = $(this).children(':selected').val();
         _val = _val.replace(' ', '_');
         $(this).attr('class', '').addClass(_val);
+    });
+    $('.first_col').on('change', function(ev) {
+        var _val = $(this).children(':selected').val();
+        var row = $(this).parent().parent();
+        row.children().each(function() {
+            $(this).children().children(
+                'option:contains(' + _val + ')').prop({selected: true});
+            var _val_lbl = _val.replace(' ', '_');
+            $(this).children().attr('class', '').addClass(_val_lbl);
+        });
     });
 });
 </script>
