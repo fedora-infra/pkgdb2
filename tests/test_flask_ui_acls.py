@@ -696,7 +696,8 @@ class FlaskUiAclsTest(Modeltests):
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h4>Package Administrator(s)</h4>' in output.data)
+                '<h4 title="`approveacls` ACL">Package Administrator(s)</h4>'
+                in output.data)
             self.assertTrue(
                 '<li class="error">Invalid user: toshio</li>' in output.data)
 
