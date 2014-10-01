@@ -186,7 +186,7 @@ confusing what the difference is between that status an the per-branch status)
       </div>
 
       <div id="pkg_admins">
-        <h4>Package Administrator(s)</h4>
+        <h4 title="`approveacls` ACL">Package Administrator(s)</h4>
           <p>
             These users can help you if you need commit privileges for this
             package.
@@ -271,7 +271,7 @@ confusing what the difference is between that status an the per-branch status)
 
   <section id="pkg_committers">
     <div>
-      <h3 class="inline">Committer(s)</h3>
+      <h3 class="inline" title="`commit` ACL">Committer(s)</h3>
       <ul class="nobullet">
         {% if g.fas_user and g.fas_user.username in committers %}
           <li>
@@ -366,7 +366,7 @@ confusing what the difference is between that status an the per-branch status)
 
   <section id="pkg_watchers">
     <div>
-      <h3 class="inline">Watcher(s)</h3>
+      <h3 class="inline" title="`watch*` ACL">Watcher(s)</h3>
       {% if g.fas_user and g.fas_user.username in watch_acls %}
         <form action="{{ url_for('.unwatch_package',package=package.name) }}"
             method="POST">
@@ -401,7 +401,7 @@ confusing what the difference is between that status an the per-branch status)
         <th></th>
         {% for branch in branches  %}
           {% for acl in ['Bugs', 'Commits'] %}
-            <th class="headings ">{{ acl }}</th>
+            <th class="headings">{{ acl }}</th>
           {% endfor %}
         {% endfor %}
       </tr>
