@@ -27,9 +27,17 @@ import logging.handlers
 
 import inspect
 import os
-import psutil
 import socket
 import traceback
+
+psutil = None
+try:
+    import psutil
+except (OSError, ImportError):
+    # We run into issues when trying to import psutil from inside mod_wsgi on
+    # rhel7.  If we hit that here, then just fail quietly.
+    # https://github.com/jmflinuxtx/kerneltest-harness/pull/17#issuecomment-48007837
+    pass
 
 
 class ContextInjector(logging.Filter):
