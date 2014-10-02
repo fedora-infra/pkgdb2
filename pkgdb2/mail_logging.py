@@ -70,7 +70,9 @@ class ContextInjector(logging.Filter):
 
         record.host = current_hostname
         record.proc = current_process
-        record.pid = current_process.pid
+        record.pid = '-'
+        if not isinstance(current_process, str):
+            record.pid = current_process.pid
         record.proc_name = current_process.name
         record.command_line = " ".join(current_process.cmdline)
         record.callstack = self.format_callstack()
@@ -97,7 +99,7 @@ class ContextInjector(logging.Filter):
         mypid = os.getpid()
 
         if not psutil:
-            raise OSError("Could not import psutil for %r" % mypid)
+            return "Could not import psutil for %r" % mypid
 
         for proc in psutil.process_iter():
             if proc.pid == mypid:
