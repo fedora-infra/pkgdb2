@@ -29,6 +29,7 @@ BuildRequires:  python-bugzilla
 BuildRequires:  python-memcached
 BuildRequires:  python-setuptools
 BuildRequires:  python-blinker
+BuildRequires:  python-psutil
 
 # EPEL6
 %if ( 0%{?rhel} && 0%{?rhel} == 6 )
@@ -52,6 +53,7 @@ Requires:  python-dogpile-cache
 Requires:  python-bugzilla >= 1.1.0
 Requires:  python-memcached
 Requires:  python-setuptools
+Requires:  python-psutil
 Requires:  mod_wsgi
 
 %description
