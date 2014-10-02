@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.19
+Version:        1.20
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -109,6 +109,24 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Oct 02 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20-1
+- Update to 1.20
+- Store the list of requirements in the requirements.txt only
+  (and the spec file)
+- Give an indication that some buttons have a pop-up by adding `...` to their
+  title
+  https://fedorahosted.org/pkgdb2/ticket/33
+- Upon changing the status for the first collection, propagate the change
+  to all of them
+  https://github.com/fedora-infra/pkgdb2/issues/84
+- Include the update_package_info script in the releases and install it in
+  the spec file
+- Drop commit and approveacl of the person orphaning a package
+  https://github.com/fedora-infra/pkgdb2/issues/60
+- Add a hover over title to the section's titles to explain to which ACL
+  they refer
+  https://fedorahosted.org/pkgdb2/ticket/24
+
 * Sat Sep 13 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.19-1
 - Update to 1.19
 - Publish a fedmsg message when adding a new branch to a package
