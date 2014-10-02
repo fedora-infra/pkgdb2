@@ -213,6 +213,7 @@ def shutdown_session(exception=None):
     """ Remove the DB session at the end of each request. """
     SESSION.remove()
 
+
 # pylint: disable=W0613
 @APP.before_request
 def set_session():

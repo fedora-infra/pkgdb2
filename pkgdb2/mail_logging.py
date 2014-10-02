@@ -79,7 +79,7 @@ class ContextInjector(logging.Filter):
     @staticmethod
     def format_callstack():
         for i, frame in enumerate(f[0] for f in inspect.stack()):
-            if not '__name__' in frame.f_globals:
+            if '__name__' not in frame.f_globals:
                 continue
             modname = frame.f_globals['__name__'].split('.')[0]
             if modname != "logging":
