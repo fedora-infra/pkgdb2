@@ -36,6 +36,7 @@ from functools import wraps
 ## pylint cannot import flask extension correctly
 # pylint: disable=E0611,F0401
 from flask.ext.fas_openid import FAS
+import pkgdb2.mail_logging
 
 
 __version__ = '1.20'
@@ -61,27 +62,11 @@ CACHE = dogpile.cache.make_region().configure(
     **APP.config.get('PKGDB2_CACHE_KWARGS', {})
 )
 
-# Set up the logger
-## Send emails for big exception
-MAIL_HANDLER = logging.handlers.SMTPHandler(
-    APP.config.get('SMTP_SERVER', '127.0.0.1'),
-    'nobody@fedoraproject.org',
-    APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org'),
-    'PkgDB2 error')
-MAIL_HANDLER.setFormatter(logging.Formatter('''
-    Message type:       %(levelname)s
-    Location:           %(pathname)s:%(lineno)d
-    Module:             %(module)s
-    Function:           %(funcName)s
-    Time:               %(asctime)s
-
-    Message:
-
-    %(message)s
-'''))
-MAIL_HANDLER.setLevel(logging.ERROR)
 if not APP.debug:
-    APP.logger.addHandler(MAIL_HANDLER)
+    APP.logger.addHandler(pkgdb2.mail_logging.get_mail_handler(
+        smtp_server=APP.config.get('SMTP_SERVER', '127.0.0.1'),
+        mail_admin=APP.config.get('MAIL_ADMIN', 'admin@fedoraproject.org')
+    ))
 
 # Log to stderr as well
 STDERR_LOG = logging.StreamHandler(sys.stderr)
@@ -227,6 +212,7 @@ APP.register_blueprint(UI)
 def shutdown_session(exception=None):
     """ Remove the DB session at the end of each request. """
     SESSION.remove()
+
 
 # pylint: disable=W0613
 @APP.before_request
