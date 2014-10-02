@@ -48,8 +48,11 @@ class ContextInjector(logging.Filter):
 
     http://docs.python.org/2/howto/logging-cookbook.html#filters-contextual
 
-    This code is coming from the fedmsg project:
+    This code has been originally written by Ralph Bean for the fedmsg
+    project:
         https://github.com/fedora-infra/fedmsg/
+    and can be found at:
+        https://infrastructure.fedoraproject.org/cgit/ansible.git/tree/roles/fedmsg/base/templates/logging.py.j2
 
     """
 
