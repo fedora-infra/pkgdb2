@@ -29,7 +29,7 @@ if 'PKGDB2_CONFIG' not in os.environ \
     os.environ['PKGDB2_CONFIG'] = '/etc/pkgdb2/pkgdb2.cfg'
 
 
-BASE_URL = 'http://dl.fedoraproject.org/pub/fedora/linux/development/' + \
+BASE_URL = 'https://dl.fedoraproject.org/pub/fedora/linux/development/' + \
     'rawhide/source/SRPMS/'
 
 
