@@ -54,7 +54,9 @@ def email_publish(
         to_email=None):  # pragma: no cover
     ''' Send notification by email. '''
 
-    if not package and not subject and not to_email:
+    if not package and not to_email:
+        # If we have no package and no to_email, we have no way to know
+        # where to send the email
         return
 
     msg = MIMEText(message)
