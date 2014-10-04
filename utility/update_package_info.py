@@ -39,7 +39,8 @@ import pkgdb2.lib
 class User(object):
     username = 'pkgdb_updater'
     cla_done = True
-    groups = ['sysadmin-min']
+    groups = ['sysadmin-main']
+
 
 count = 0
 pbar = None
