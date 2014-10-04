@@ -130,11 +130,11 @@ def main():
         try:
             pkgobj = get_pkg_info(session, pkg.name)
         except Exception, err:
-            print 'No such package %s found on packages.' % pkg.name
+            print 'No such package %s found in yum\'s metadata.' % pkg.name
             continue
 
         if not pkgobj:
-            print 'No such package %s found on packages.' % pkg.name
+            print 'No such package %s found in yum\'s metadata.' % pkg.name
             continue
 
         msg = pkgdb2.lib.edit_package(
