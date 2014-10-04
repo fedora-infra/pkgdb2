@@ -63,9 +63,11 @@ def email_publish(
 
     if subject:
         msg['Subject'] = '[PkgDB] %s' % subject
-    else:
+    elif package:
         msg['Subject'] = '[PkgDB] {0} updated {1}'.format(
             user, package.name)
+    else:
+        msg['Subject'] = '[PkgDB] updated by {0}'.format(user)
 
     from_email = pkgdb2.APP.config.get(
         'PKGDB2_EMAIL_FROM', 'nobody@fedoraproject.org')
