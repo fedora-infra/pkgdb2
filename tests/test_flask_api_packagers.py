@@ -421,7 +421,7 @@ class FlaskApiPackagersTest(Modeltests):
         output = json.loads(output.data)
         self.assertEqual(
             sorted(output.keys()),
-            ['co-maintained',  'output', 'point of contact', 'watch'])
+            ['co-maintained', 'output', 'point of contact', 'watch'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['co-maintained']), 1)
         self.assertEqual(len(output['point of contact']), 2)
@@ -450,7 +450,7 @@ class FlaskApiPackagersTest(Modeltests):
         output = json.loads(output.data)
         self.assertEqual(
             sorted(output.keys()),
-            ['co-maintained',  'output', 'point of contact', 'watch'])
+            ['co-maintained', 'output', 'point of contact', 'watch'])
         self.assertEqual(output['output'], 'ok')
         self.assertEqual(len(output['co-maintained']), 1)
         self.assertEqual(len(output['point of contact']), 0)

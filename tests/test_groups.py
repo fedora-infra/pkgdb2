@@ -44,9 +44,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb2
 import pkgdb2.lib as pkgdblib
 import pkgdb2.lib.model as model
-from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin, FakeFasGroupValid,
-                   FakeFasGroupValid, create_package_acl,
+from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
+                   FakeFasGroupValid, FakeFasGroupValid, create_package_acl,
                    create_package_acl2, user_set)
+
 
 class PkgdbGrouptests(Modeltests):
     """ PkgdbGroup tests. """

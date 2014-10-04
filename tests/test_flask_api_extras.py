@@ -421,85 +421,85 @@ avail | @provenpackager, | rpms/offlineimap/master"""
         print output.data
 
         expected = {
-              "packageAcls": {
-            "fedocal": {
-              "f17": {
-                "commit": {
-                  "groups": [
-                    "provenpackager"
-                  ],
-                  "people": [
-                    "pingou"
-                  ]
+            "packageAcls": {
+                "fedocal": {
+                    "f17": {
+                        "commit": {
+                            "groups": [
+                                "provenpackager"
+                            ],
+                            "people": [
+                                "pingou"
+                            ]
+                        }
+                    },
+                    "f18": {
+                        "commit": {
+                            "groups": [
+                                "provenpackager"
+                            ],
+                            "people": [
+                                "pingou"
+                            ]
+                        }
+                    }
+                },
+                "geany": {
+                    "f18": {
+                        "commit": {
+                            "groups": [
+                                "provenpackager"
+                            ],
+                            "people": []
+                        }
+                    },
+                    "master": {
+                        "commit": {
+                            "groups": [
+                                "provenpackager",
+                                "gtk-sig"
+                            ],
+                            "people": [
+                                "pingou"
+                            ]
+                        }
+                    }
+                },
+                "guake": {
+                    "f18": {
+                        "commit": {
+                            "groups": [
+                                "provenpackager"
+                            ],
+                            "people": [
+                                "pingou"
+                            ]
+                        }
+                    },
+                    "master": {
+                        "commit": {
+                            "groups": [
+                                "provenpackager"
+                            ],
+                            "people": [
+                                "pingou",
+                                "spot"
+                            ]
+                        }
+                    }
+                },
+                "offlineimap": {
+                    "master": {
+                        "commit": {
+                            "groups": [
+                                "provenpackager"
+                            ],
+                            "people": []
+                        }
+                    }
                 }
-              },
-              "f18": {
-                "commit": {
-                  "groups": [
-                    "provenpackager"
-                  ],
-                  "people": [
-                    "pingou"
-                  ]
-                }
-              }
             },
-            "geany": {
-              "f18": {
-                "commit": {
-                  "groups": [
-                    "provenpackager"
-                  ],
-                  "people": []
-                }
-              },
-              "master": {
-                "commit": {
-                  "groups": [
-                    "provenpackager",
-                    "gtk-sig"
-                  ],
-                  "people": [
-                    "pingou"
-                  ]
-                }
-              }
-            },
-            "guake": {
-              "f18": {
-                "commit": {
-                  "groups": [
-                    "provenpackager"
-                  ],
-                  "people": [
-                    "pingou"
-                  ]
-                }
-              },
-              "master": {
-                "commit": {
-                  "groups": [
-                    "provenpackager"
-                  ],
-                  "people": [
-                    "pingou",
-                    "spot"
-                  ]
-                }
-              }
-            },
-            "offlineimap": {
-              "master": {
-                "commit": {
-                  "groups": [
-                    "provenpackager"
-                  ],
-                  "people": []
-                }
-              }
-            }
-          },
-          "title": "Fedora Package Database -- VCS ACLs"
+            "title": "Fedora Package Database -- VCS ACLs"
         }
 
         self.assertEqual(data, expected)

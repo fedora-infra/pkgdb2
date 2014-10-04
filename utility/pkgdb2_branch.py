@@ -136,7 +136,7 @@ def main():
     if args.nomail:
         print message
     else:
-        to_email=pkgdb2.APP.config.get('MAIL_ADMIN')
+        to_email = pkgdb2.APP.config.get('MAIL_ADMIN')
         print 'Sending report by email to: %s' % to_email
         notify.email_publish(
             user=user,

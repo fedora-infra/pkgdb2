@@ -1255,7 +1255,7 @@ class PkgdbLibtests(Modeltests):
             clt_branchname='f18_b',
             clt_disttag='fc18',
             user=FakeFasUserAdmin(),
-            )
+        )
 
         self.assertEqual(out, 'Collection "f18_b" edited')
 
@@ -1291,7 +1291,7 @@ class PkgdbLibtests(Modeltests):
             pkg_review_url='http://bugzilla.rh.com/42',
             pkg_upstream_url='https://fedoraproject.org',
             user=FakeFasUserAdmin(),
-            )
+        )
 
         self.assertEqual(out, 'Package "Fedora youhou!" edited')
 
@@ -1627,7 +1627,6 @@ class PkgdbLibtests(Modeltests):
             pkg_branch='el4',
             user=FakeFasUserAdmin()
         )
-
 
     def test_notify(self):
         """ Test the notify function. """

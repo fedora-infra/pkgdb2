@@ -69,7 +69,7 @@ for cnt, pkg in enumerate(pkgdb2.lib.search_package(
         pkg_summary=results.get('summary', None),
         pkg_description=results.get('description', None),
         pkg_upstream_url=results.get('upstream_url', None),
-        user = User()
+        user=User()
     )
     if msg:
         updated += 1

@@ -110,61 +110,61 @@ import cloud_sptheme as csp
 
 html_style = 'site.css'
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
+# The theme to use for HTML and HTML Help pages. See the documentation for
 # a list of builtin themes.
 #html_theme = 'default'
 html_theme = "cloud"
 
 # Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
+# further. For a list of options available for each theme, see the
 # documentation.
 #html_theme_options = {}
 
 html_theme_options = {
-    "sidebarwidth":     "200px",
-    "max_width":        "900px",
-    "compact_width":    "800px",
-    "minimal_width":    "700px",
+    "sidebarwidth": "200px",
+    "max_width": "900px",
+    "compact_width": "800px",
+    "minimal_width": "700px",
 
     # Style it like Fedora..
-    "bodyfont":         "Cantarell",
+    "bodyfont": "Cantarell",
 
-    "highlightcolor":   "#79db32",  # First Green
+    "highlightcolor": "#79db32",  # First Green
 
-    "sidebarbgcolor":   "#FEFEFE",
+    "sidebarbgcolor": "#FEFEFE",
     "sidebartrimcolor": "#FEFEFE",
 
-    "sectionbgcolor":   "#FEFEFE",
+    "sectionbgcolor": "#FEFEFE",
     "sectiontrimcolor": "#FEFEFE",
     "sectiontextcolor": "#444444",
 
-    "relbarbgcolor":    "#FEFEFE",
-    "relbartextcolor":  "#444444",
-    "relbarlinkcolor":  "#444444",
+    "relbarbgcolor": "#FEFEFE",
+    "relbartextcolor": "#444444",
+    "relbarlinkcolor": "#444444",
 
-    "bgcolor":          "#FEFEFE",
-    "textcolor":        "#444444",
-    #"linkcolor":        "#79db32",  # First Green
-    "linkcolor":        "#00009d",
+    "bgcolor": "#FEFEFE",
+    "textcolor": "#444444",
+    #"linkcolor": "#79db32", # First Green
+    "linkcolor": "#00009d",
 
-    "headtextcolor":    "#444444",
-    "headlinkcolor":    "#444444",
+    "headtextcolor": "#444444",
+    "headlinkcolor": "#444444",
 
     #"codebgcolor"
     #"codetextcolor"
-    "codetrimcolor":    "#79db32",  # First Green
+    "codetrimcolor": "#79db32",  # First Green
 
-    "footerbgcolor":    "#FEFEFE",
+    "footerbgcolor": "#FEFEFE",
 }
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
 html_theme_path = [csp.get_theme_dir()]
 
-# The name for this set of Sphinx documents.  If None, it defaults to
+# The name for this set of Sphinx documents. If None, it defaults to
 # "<project> v<release> documentation".
 #html_title = None
 
-# A shorter title for the navigation bar.  Default is the same as html_title.
+# A shorter title for the navigation bar. Default is the same as html_title.
 #html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
@@ -172,7 +172,7 @@ html_theme_path = [csp.get_theme_dir()]
 #html_logo = None
 
 # The name of an image file (within the static path) to use as favicon of the
-# docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
+# docs. This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
 #html_favicon = None
 
@@ -223,7 +223,7 @@ html_sidebars = {
 #html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
-# contain a <link> tag referring to it.  The value of this option must be the
+# contain a <link> tag referring to it. The value of this option must be the
 # base URL from which the finished HTML is served.
 #html_use_opensearch = ''
 
@@ -232,7 +232,6 @@ html_sidebars = {
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pkgdb2'
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -251,9 +250,11 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'pkgdb2.tex', u'Pkgdb2 Documentation',
-     u'Pierre-Yves Chibon \\textless{}pingou@pingoured.fr\\textgreater{}',
-     'manual'),
+    (
+        'index', 'pkgdb2.tex', u'Pkgdb2 Documentation',
+        u'Pierre-Yves Chibon \\textless{}pingou@pingoured.fr\\textgreater{}',
+        'manual'
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -276,14 +277,16 @@ latex_documents = [
 # If false, no module index is generated.
 #latex_domain_indices = True
 
-
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pkgdb2', u'Pkgdb2 Documentation',
-     [u'Pierre-Yves Chibon <pingou@pingoured.fr>'], 1)
+    (
+        'index', 'pkgdb2', u'Pkgdb2 Documentation',
+        [u'Pierre-Yves Chibon <pingou@pingoured.fr>'],
+        1
+    )
 ]
 
 # If true, show URL addresses after external links.
@@ -294,12 +297,14 @@ man_pages = [
 
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
-#  dir menu entry, description, category)
+# dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'pkgdb2', u'Pkgdb2 Documentation',
-     u'Pierre-Yves Chibon <pingou@pingoured.fr>', 'pkgdb',
-     'The package database of Fedora.',
-     'Miscellaneous'),
+    (
+        'index', 'pkgdb2', u'Pkgdb2 Documentation',
+        u'Pierre-Yves Chibon <pingou@pingoured.fr>', 'pkgdb',
+        'The package database of Fedora.',
+        'Miscellaneous'
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.

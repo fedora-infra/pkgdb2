@@ -429,7 +429,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to update ACLs of someone "
-                        "else.",
+                    "else.",
                     "output": "notok"
                 }
             )
@@ -450,8 +450,10 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     'error':
-                        'Package "guake" is not in the collection el4',
-                    "messages": ["Package guake has been unorphaned on f18 by pingou"],
+                    'Package "guake" is not in the collection el4',
+                    "messages": [
+                        "Package guake has been unorphaned on f18 by pingou"
+                    ],
                     'output': 'ok'
                 }
             )
