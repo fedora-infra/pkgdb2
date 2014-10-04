@@ -94,8 +94,8 @@ def decompress_primary_db(archive, location):
     ''' Decompress the given XZ archive at the specified location. '''
     with contextlib.closing(lzma.LZMAFile(archive)) as stream_xz:
         data = stream_xz.read()
-        with open(location, 'wb') as stream:
-            stream.write(data)
+    with open(location, 'wb') as stream:
+        stream.write(data)
 
 
 def get_pkg_info(session, pkg_name):
