@@ -121,7 +121,6 @@ def main():
     session = db_session()
     print db_url
 
-
     # Update the package in pkgdb
     count = 0
     updated = 0
