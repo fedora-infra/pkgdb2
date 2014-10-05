@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.20
+Version:        1.20.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -111,6 +111,12 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Sun Oct 05 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20.1-1
+- Update to 1.20.1
+- Better email handler for the logs
+- Re-write update_package_info cron script using yum's metadata instead of
+  pkgwat
+
 * Thu Oct 02 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20-1
 - Update to 1.20
 - Store the list of requirements in the requirements.txt only
