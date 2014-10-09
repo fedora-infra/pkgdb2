@@ -17,7 +17,16 @@
     Restrict to package: <input type="text" name="package" /> <br />
     Restrict to packager: <input type="text" name="packager" /> <br />
     Restrict to action: <input id="action" type="text" name="action" /> <br />
-    Restrict to Status: <input id="status" type="text" name="status" /> <br />
+    Restrict to Status:
+    <select id="status" name="status">
+        {% for act_status in statuses %}
+        <option {%if act_status == status %}selected{% endif %} value="{{
+            act_status}}">
+            {{ act_status }}
+        </option>
+        {% endfor %}
+    </select>
+    <br />
     <input type="submit" class="submit positive button" value="filter">
 </form>
 {% endblock %}
