@@ -1721,6 +1721,16 @@ def add_new_package_request(
     except NoResultFound:
         raise PkgdbException('Branch %s not found' % pkg_collection)
 
+    # Prevent asking for an existing package
+    package = None
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        pass
+    if package:
+        raise PkgdbException(
+            'There is already a package named: %s' % pkg_name)
+
     info = {
         'pkg_name': pkg_name,
         'pkg_summary': pkg_summary,
