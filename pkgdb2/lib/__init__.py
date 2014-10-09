@@ -814,7 +814,7 @@ def search_actions(
     if page is not None and page > 0 and limit is not None and limit > 0:
         page = (page - 1) * limit
 
-    if status.lower() == 'all':
+    if status and status.lower() == 'all':
         status = None
 
     return model.AdminAction.search(
