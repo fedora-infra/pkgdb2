@@ -1146,6 +1146,23 @@ class Package(BASE):
         return session.query(cls).all()
 
     @classmethod
+    def get_monitored(cls, session):
+        """ Return the list of all Packages present in the database and
+        listed are `monitor`.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        """
+        return session.query(
+            cls
+        ).filter(
+            Package.monitor == True
+        ).order_by(
+            Package.name
+        ).all()
+
+    @classmethod
     def get_latest_package(cls, session, limit=10):
         """ Return the list of the most recent packages added to the
         database.
