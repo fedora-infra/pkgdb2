@@ -1783,3 +1783,52 @@ def get_monitored_package(session):
     """
 
     return model.Package.get_monitored(session)
+
+
+def set_monitor_package(session, pkg_name, status, user):
+    """ Set the provided status on the monitoring flag of the specified
+    pacakge.
+
+    :arg session: the session with which to connect to the database.
+    :arg pkg_name: The name of the package to update.
+    :arg status: boolean specifying the monitor status to set
+    :arg user: The user performing the update.
+    :returns: a message informing that the package was successfully
+        updated.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to edit a package, only pkgdb admin can.
+            - The package cannot be found in the database.
+            - An error occured while updating the package in the database
+                the message returned is a dummy information message to
+                return to the user, the trace back is in the logs.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to edit packages')
+
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    msg = None
+    if package.monitor != status:
+        package.monitor = status
+        session.add(package)
+        msg = 'Monitoring status of %s set to %s' % (pkg_name, status)
+
+    try:
+        session.flush()
+        pkgdb2.lib.utils.log(session, None, 'package.monitor.update', dict(
+            agent=user.username,
+            status=status,
+            package=package.to_json(),
+        ))
+    except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb2.LOG.exception(err)
+        raise PkgdbException('Could not update monitoring status.')
+
+    return msg
