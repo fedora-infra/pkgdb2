@@ -1136,7 +1136,7 @@ class Package(BASE):
 
     @classmethod
     def all(cls, session):
-        """ Return the list of all Collections present in the database.
+        """ Return the list of all Packages present in the database.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
