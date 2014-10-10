@@ -22,7 +22,7 @@ def upgrade():
             'monitor',
             sa.Boolean,
             default=False,
-            server_default=False,
+            server_default='False',
             nullable=False)
     )
 
