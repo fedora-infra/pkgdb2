@@ -1682,6 +1682,11 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
                 )
             msg = 'Branch %s created for user %s' % (
                 clt_to.branchname, user.username)
+
+            # The branch is created, so the action has been approved
+            action.status = 'Approved'
+            session.add(action)
+
     return msg
 
 
