@@ -1089,3 +1089,33 @@ Critpath status
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
     return jsonout
+
+
+@API.route('/package/<package>/monitor/<status>', methods=['POST'])
+@packager_login_required
+def monitor_package(package, status):
+    ''' Set the monitor status on the specified package.
+    '''
+
+    httpcode = 200
+    output = {}
+    if str(status).lower() not in ['1', 'true']:
+        status = False
+    else:
+        status = True
+
+    try:
+        msg = pkgdblib.set_monitor_package(
+            SESSION, package, status, flask.g.fas_user)
+        SESSION.commit()
+        output['output'] = 'ok'
+        output['messages'] = msg
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        output['output'] = 'notok'
+        output['error'] = str(err)
+        httpcode = 500
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
