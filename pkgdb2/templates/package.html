@@ -4,6 +4,11 @@
 
 {%block tag %}packages{% endblock %}
 
+{% block header %}
+<link rel="stylesheet" type="text/css" media="screen"
+    href="{{ url_for('static', filename='toggle.css') }}"/>
+{% endblock %}
+
 {% set options = True %}
 {% block options_title %}Package Status{% endblock %}
 {%block options %}
@@ -19,6 +24,18 @@ confusing what the difference is between that status an the per-branch status)
         <td>{{ package.status }}</td>
     </tr>
 #}
+    <tr>
+        <th>Monitoring</th>
+        <td>
+            <div class="switch">
+                <input type="radio" class="switch-input" name="monitor" value="on" id="monitoron"{%if package.monitor %} checked="checked"{% endif %}>
+                <label for="monitoron" class="switch-label switch-label-off">On</label>
+                <input type="radio" class="switch-input" name="monitor" value="off" id="monitoroff"{%if not package.monitor %} checked="checked"{% endif %}>
+                <label for="monitoroff" class="switch-label switch-label-on">Off</label>
+                <span class="switch-selection"></span>
+            </div>
+        </td>
+    </tr>
     <tr>
         <th>Created on</th>
         <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
@@ -476,11 +493,34 @@ confusing what the difference is between that status an the per-branch status)
 </script>
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        $("#committers").tablesorter();
-    });
+    function toggle_monitor(status){
+        var _url = "{{ url_for('api_ns.monitor_package', package=package.name, status='') }}";
+        $.ajax({
+            url: _url + status,
+            type: 'POST',
+            dataType: 'json',
+            success: function(res) {
+                $('#flashes').empty();
+                $('#flashes').append(
+                    '<li class="info">' + res.messages + '</li>'
+                );
+            },
+        });
+
+        return false;
+    }
 
     $(function(){
+        $("#committers").tablesorter();
+
+        $('#monitoroff').change(function(){
+            toggle_monitor(0);
+        });
+
+        $('#monitoron').change(function(){
+            toggle_monitor(1);
+        });
+
         $('#givebutton').click(function(){
             var _url = "{{ url_for('.package_give', package=package.name, full=0) }}";
             $.ajax({
