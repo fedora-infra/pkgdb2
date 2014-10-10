@@ -18,17 +18,13 @@ def upgrade():
     ''' Add the `monitor` column on the Package table. '''
     op.add_column(
         'Package',
-        sa.Column('monitor', sa.Boolean, default=False)
+        sa.Column(
+            'monitor',
+            sa.Boolean,
+            default=False,
+            server_default=False,
+            nullable=False)
     )
-
-    ins = "UPDATE \"Package\" SET monitor=FALSE;"
-    op.execute(ins)
-
-    op.alter_column('Package',
-                    column_name='monitor',
-                    nullable=False,
-                    existing_nullable=True,
-                    )
 
 
 def downgrade():
