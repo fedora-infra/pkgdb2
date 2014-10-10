@@ -18,7 +18,7 @@ def upgrade():
     ''' Add the `monitor` column on the Package table. '''
     op.add_column(
         'Package',
-        sa.Column('monitor', sa.boolean, default=False)
+        sa.Column('monitor', sa.Boolean, default=False)
     )
 
     ins = "UPDATE \"Package\" SET monitor=FALSE;"
