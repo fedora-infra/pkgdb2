@@ -1771,3 +1771,15 @@ def set_critpath_packages(
         raise PkgdbException('Could not edit package.')
 
     return msg
+
+
+def get_monitored_package(session):
+    """ Return the list of packaged flag as `to monitor`.
+
+    :arg session: the session with which to connect to the database.
+    :returns: a list of Ppackage.
+    :rtype: list()
+
+    """
+
+    return model.Package.get_monitored(session)
