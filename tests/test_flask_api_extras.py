@@ -669,7 +669,7 @@ guake:master has toshio waiting for commit"""
         self.assertEqual(data, expected)
 
     def test_api_groups_empty(self):
-        """ Test the api_groups function with a filled database. """
+        """ Test the api_groups function with an empty database. """
 
         output = self.app.get('/api/groups/')
         self.assertEqual(output.status_code, 200)
