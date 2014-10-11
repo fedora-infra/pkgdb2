@@ -1091,13 +1091,14 @@ class Package(BASE):
         return session.query(cls).filter(Package.name == pkgname).one()
 
     def __init__(self, name, summary, description, status,
-                 review_url=None, upstream_url=None):
+                 review_url=None, upstream_url=None, monitor=False):
         self.name = name
         self.summary = summary
         self.description = description
         self.status = status
         self.review_url = review_url
         self.upstream_url = upstream_url
+        self.monitor=monitor
 
     def __hash__(self):
         """ Returns the name of the package as hash. """
