@@ -1825,7 +1825,7 @@ def set_monitor_package(session, pkg_name, status, user):
         pkgdb2.lib.utils.log(session, None, 'package.monitor.update', dict(
             agent=user.username,
             status=status,
-            package=package.to_json(),
+            package=package.to_json(acls=False),
         ))
     except SQLAlchemyError, err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
