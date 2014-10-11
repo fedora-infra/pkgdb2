@@ -1159,6 +1159,13 @@ class PkgdbLibtests(Modeltests):
                 self.session, 'pingou', 'guake',
                 acl='commit', branch='master'))
 
+        self.assertTrue(pkgdblib.has_acls(
+            self.session, 'pingou', 'guake', acl='commit'))
+        self.assertTrue(pkgdblib.has_acls(
+            self.session, 'pingou', 'guake', acl='approveacls'))
+        self.assertFalse(pkgdblib.has_acls(
+            self.session, 'toshio', 'guake', acl='commit'))
+
     def test_get_status(self):
         """ Test the get_status function. """
         obs = pkgdblib.get_status(self.session)
