@@ -1165,6 +1165,8 @@ class PkgdbLibtests(Modeltests):
             self.session, 'pingou', 'guake', acl='approveacls'))
         self.assertFalse(pkgdblib.has_acls(
             self.session, 'toshio', 'guake', acl='commit'))
+        self.assertFalse(pkgdblib.has_acls(
+            self.session, 'toshio', 'guake', acl=['commit', 'approveacls']))
 
     def test_get_status(self):
         """ Test the get_status function. """
