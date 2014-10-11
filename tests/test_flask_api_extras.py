@@ -418,7 +418,6 @@ avail | @provenpackager, | rpms/offlineimap/master"""
         output = self.app.get('/api/vcs/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
-        print output.data
 
         expected = {
             "packageAcls": {
