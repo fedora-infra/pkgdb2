@@ -27,7 +27,9 @@ confusing what the difference is between that status an the per-branch status)
     <tr>
         <th><a target="_blank" href="https://fedoraproject.org/wiki/Upstream_release_monitoring">Monitoring</a></th>
         <td>
-            <div class="switch">
+            <div class="switch" {% if g.fas_user
+                %}title="Toggle bugzilla notification upon new releases found at release-monitoring.org"{%
+                else %}title="Login to change the monitoring status"{% endif %}>
                 <input type="radio" class="switch-input" name="monitor"
                     value="on" id="monitoron"
                     {%if package.monitor %} checked="checked"{% endif %}
