@@ -732,6 +732,39 @@ kernel-maint"""
 
         self.assertEqual(data, expected)
 
+    def test_api_monitored_empty(self):
+        """ Test the api_monitored function with an empty database. """
+
+        output = self.app.get('/api/monitored/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 0"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/monitored/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/monitored/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'packages': [
+            ],
+            'total_packages': 0
+        }
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/monitored/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiExtrasTest)
