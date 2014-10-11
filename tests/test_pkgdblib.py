@@ -1654,6 +1654,78 @@ class PkgdbLibtests(Modeltests):
             data,
             {u'guake': u'pingou', u'geany': u'group::gtk-sig,josef'})
 
+    def test_set_monitor_package(self):
+        """ Test the set_monitor_package function. """
+        self.assertFalse(
+            pkgdblib.has_acls(
+                self.session, 'pingou', 'guake',
+                acl='approveacl', branch='master'))
+
+        # Fails: package not found
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.set_monitor_package,
+            session=self.session,
+            pkg_name='guake',
+            status=True,
+            user=FakeFasUser()
+        )
+
+        create_package_acl(self.session)
+
+        self.assertTrue(
+            pkgdblib.has_acls(
+                self.session, 'pingou', 'guake',
+                acl='commit', branch='master'))
+
+        # Fails: user not a packager
+        user = FakeFasUser()
+        user.username = 'Toshio'
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.set_monitor_package,
+            session=self.session,
+            pkg_name='guake',
+            status=True,
+            user=user
+        )
+
+        # Works
+        msg = pkgdblib.set_monitor_package(
+            session=self.session,
+            pkg_name='guake',
+            status=True,
+            user=FakeFasUser()
+        )
+
+        self.assertEqual(msg, 'Monitoring status of guake set to True')
+
+        # Works
+        msg = pkgdblib.set_monitor_package(
+            session=self.session,
+            pkg_name='guake',
+            status=True,
+            user=FakeFasUser()
+        )
+
+        self.assertEqual(msg, 'Monitoring status un-changed')
+
+        # Works: user is a pkgdb admin
+        self.assertFalse(
+            pkgdblib.has_acls(
+                self.session, 'kevin', 'guake',
+                acl='commit', branch='master'))
+
+        user = FakeFasUserAdmin()
+        user.username = 'kevin'
+        msg = pkgdblib.set_monitor_package(
+            session=self.session,
+            pkg_name='guake',
+            status=False,
+            user=FakeFasUser()
+        )
+        self.assertEqual(msg, 'Monitoring status of guake set to False')
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
