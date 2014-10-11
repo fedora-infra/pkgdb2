@@ -561,7 +561,7 @@ List package monitored
     pkgs = pkgdblib.get_monitored_package(SESSION)
 
     if out_format == 'json':
-        output = {"packages": pkgs}
+        output = {"packages": [pkg.name for pkg in pkgs]}
         output['total_packages'] = len(pkgs)
         return flask.jsonify(output)
     else:
