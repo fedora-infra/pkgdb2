@@ -422,7 +422,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
         pkglisting.status = 'Orphaned'
         # Remove commit and watchcommits if the user has them
         for acl in ['commit', 'approveacls']:
-            if has_acls(session, user.username, pkg_name, pkg_branch, acl):
+            if has_acls(session, user.username, pkg_name, acl=acl,
+                        branch=pkg_branch):
                 set_acl_package(
                     session,
                     pkg_name=pkg_name,
@@ -1254,7 +1255,7 @@ def get_acl_user_package(session, user, package, status=None):
     return output
 
 
-def has_acls(session, user, package, branch, acl):
+def has_acls(session, user, package, acl, branch=None):
     """ Return wether the specified user has the specified acl on the
     specified package.
 
@@ -1263,6 +1264,7 @@ def has_acls(session, user, package, branch, acl):
     :arg package: the name of the package on which the acl should be
         checked.
     :arg acl: the acl to check for the user on the package.
+    :kwarg branch: restrict the check to the specified branch
     :returns: a boolean specifying whether specified user has this ACL on
         this package and branch.
     :rtype: bool()
@@ -1272,7 +1274,11 @@ def has_acls(session, user, package, branch, acl):
                                 package=package, status='Approved')
     user_has_acls = False
     for user_acl in acls:
-        if user_acl['collection'] == branch and user_acl['acl'] == acl:
+        if not branch and user_acl['acl'] == acl:
+            user_has_acls = True
+            break
+        elif branch and user_acl['collection'] == branch \
+                and user_acl['acl'] == acl:
             user_has_acls = True
             break
     return user_has_acls

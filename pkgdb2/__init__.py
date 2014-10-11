@@ -129,7 +129,7 @@ def is_pkg_admin(session, user, package, branch):
     else:
         return pkgdblib.has_acls(
             session, user=user.username,
-            package=package, branch=branch, acl='approveacls')
+            package=package, acl='approveacls', branch=branch)
 
 
 def fas_login_required(function):
