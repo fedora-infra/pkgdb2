@@ -1830,7 +1830,7 @@ def set_monitor_package(session, pkg_name, status, user):
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
-    msg = None
+    msg = 'Monitoring status un-changed'
     if package.monitor != status:
         package.monitor = status
         session.add(package)
