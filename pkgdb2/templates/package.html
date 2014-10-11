@@ -28,9 +28,13 @@ confusing what the difference is between that status an the per-branch status)
         <th><a target="_blank" href="https://fedoraproject.org/wiki/Upstream_release_monitoring">Monitoring</a></th>
         <td>
             <div class="switch">
-                <input type="radio" class="switch-input" name="monitor" value="on" id="monitoron"{%if package.monitor %} checked="checked"{% endif %}>
+                <input type="radio" class="switch-input" name="monitor" value="on" id="monitoron"
+                    {%if package.monitor %} checked="checked"{% endif %}
+                    {% if not(g.fas_user.username in admins or g.fas_user.username in commiters or is_admin) %} disabled="disabled"{% endif %}>
                 <label for="monitoron" class="switch-label switch-label-off">On</label>
-                <input type="radio" class="switch-input" name="monitor" value="off" id="monitoroff"{%if not package.monitor %} checked="checked"{% endif %}>
+                <input type="radio" class="switch-input" name="monitor" value="off" id="monitoroff"
+                    {%if not package.monitor %} checked="checked"{% endif %}
+                    {% if not(g.fas_user.username in admins or g.fas_user.username in commiters or is_admin) %} disabled="disabled"{% endif %}>
                 <label for="monitoroff" class="switch-label switch-label-on">Off</label>
                 <span class="switch-selection"></span>
             </div>
