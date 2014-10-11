@@ -1256,14 +1256,16 @@ def get_acl_user_package(session, user, package, status=None):
 
 
 def has_acls(session, user, package, acl, branch=None):
-    """ Return wether the specified user has the specified acl on the
-    specified package.
+    """ Return wether the specified user has *one of* the specified acl on
+    the specified package.
+
+    If several ACLs are specified, having one of them will return True.
 
     :arg session: session with which to connnect to the database.
     :arg user: the name of the user for which to check the acl.
     :arg package: the name of the package on which the acl should be
         checked.
-    :arg acl: the acl to check for the user on the package.
+    :arg acl: one or more ACLs to check for the user on the package.
     :kwarg branch: restrict the check to the specified branch
     :returns: a boolean specifying whether specified user has this ACL on
         this package and branch.
@@ -1272,13 +1274,17 @@ def has_acls(session, user, package, acl, branch=None):
     """
     acls = get_acl_user_package(session, user=user,
                                 package=package, status='Approved')
+
+    if isinstance(acl, basestring):
+        acl = [acl]
+
     user_has_acls = False
     for user_acl in acls:
-        if not branch and user_acl['acl'] == acl:
+        if not branch and user_acl['acl'] in acl:
             user_has_acls = True
             break
         elif branch and user_acl['collection'] == branch \
-                and user_acl['acl'] == acl:
+                and user_acl['acl'] in acl:
             user_has_acls = True
             break
     return user_has_acls
