@@ -1818,8 +1818,12 @@ def set_monitor_package(session, pkg_name, status, user):
 
     """
 
-    if not pkgdb2.is_pkgdb_admin(user):
-        raise PkgdbException('You are not allowed to edit packages')
+    pkger = has_acls(
+        session, user.username, pkg_name, ['commit', 'approveacls'])
+    if not (pkger or pkgdb2.is_pkgdb_admin(user)):
+        raise PkgdbException(
+            'You are not allowed to update the monitor flag on this package'
+        )
 
     try:
         package = model.Package.by_name(session, pkg_name)
