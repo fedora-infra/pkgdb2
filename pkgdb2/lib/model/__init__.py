@@ -895,11 +895,13 @@ class PackageListing(BASE):
 
         """
         # Get all the packages matching the name
-        stmt = session.query(Package).subquery()
+        stmt = session.query(Package)
         if '%' in pkg_name:
             stmt = stmt.filter(Package.name.like(pkg_name))
         else:
             stmt = stmt.filter(Package.name == pkg_name)
+
+        stmt = stmt.subquery()
 
         # Match the other criteria
         query = session.query(cls).filter(
