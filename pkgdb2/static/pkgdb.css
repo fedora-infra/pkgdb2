@@ -558,3 +558,16 @@ th.headerSortDown {
 #pendingAcl .pkg_button_blue {
     margin-right: 10px;
 }
+
+.user_list li {
+    list-style-type: none;
+    display: inline-block;
+    width: 25em;
+    margin: 0 .5em;
+}
+
+.user_list a {
+    display: inline-block;
+    width: 100%;
+    padding: .5em;
+}
