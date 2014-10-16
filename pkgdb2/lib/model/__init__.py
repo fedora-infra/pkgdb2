@@ -678,10 +678,17 @@ class Collection(BASE):
             if true, returns the data if false (default).
 
         """
-        # Get all the packages matching the name
-        query = session.query(Collection).filter(
-            Collection.branchname.like(clt_name)
-        )
+        query = session.query(Collection)
+
+        if '%' in clt_name:
+            query = query.filter(
+                Collection.branchname.like(clt_name)
+            )
+        else:
+            query = query.filter(
+                Collection.branchname == clt_name
+            )
+
         if clt_status:
             query = query.filter(Collection.status == clt_status)
 
@@ -888,9 +895,12 @@ class PackageListing(BASE):
 
         """
         # Get all the packages matching the name
-        stmt = session.query(Package).filter(
-            Package.name.like(pkg_name)
-        ).subquery()
+        stmt = session.query(Package).subquery()
+        if '%' in pkg_name:
+            stmt = stmt.filter(Package.name.like(pkg_name))
+        else:
+            stmt = stmt.filter(Package.name == pkg_name)
+
         # Match the other criteria
         query = session.query(cls).filter(
             PackageListing.package_id == stmt.c.id
@@ -939,12 +949,15 @@ class PackageListing(BASE):
         query = session.query(
             sa.func.distinct(PackageListingAcl.fas_name)
         ).filter(
-            PackageListingAcl.fas_name.like(pattern)
-        ).filter(
             PackageListingAcl.status == 'Approved'
         ).order_by(
             PackageListingAcl.fas_name
         )
+
+        if '%' in pattern:
+            query = query.filter(PackageListingAcl.fas_name.like(pattern))
+        else:
+            query = query.filter(PackageListingAcl.fas_name == pattern)
 
         if not eol:
             query = query.filter(
@@ -1181,9 +1194,17 @@ class Package(BASE):
         query = session.query(
             sa.func.distinct(Package.id)
         )
-        if case_sensitive:
+        if '%' not in pkg_name and case_sensitive:
+            query = query.filter(
+                Package.name == pkg_name
+            )
+        elif '%' in pkg_name and case_sensitive:
             query = query.filter(
                 Package.name.like(pkg_name)
+            )
+        elif '%' not in pkg_name and not case_sensitive:
+            query = query.filter(
+                sa.func.lower(Package.name) == sa.func.lower(pkg_name)
             )
         else:
             query = query.filter(
