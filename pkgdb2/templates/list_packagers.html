@@ -35,13 +35,15 @@
 </table>
 {% endif %}
 
+<section class="user_list">
 <ul>
 {% if total_page >= page and page > 0 %}
     {% for packager in packagers %}
         <li>
-            {{ packager | avatar(24) | safe }}
             <a href="{{url_for('.packager_info', packager=packager)}}">
-                {{ packager }}</a>
+              {{ packager | avatar(32) | safe }}
+              {{ packager }}
+            </a>
         </li>
     {% endfor %}
 {% elif total_page %}
@@ -54,5 +56,6 @@
     <p class='error'>No packagers found in the database.</p>
 {% endif %}
 </ul>
+</section>
 
 {% endblock %}
