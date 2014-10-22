@@ -535,16 +535,16 @@ List group maintainer
 @API.route('/monitored')
 def api_monitored():
     '''
-List package monitored
+List packages monitored
 ----------------------
-    Return the list package in pkgdb that have been flagged to be monitored
-    by `anitya <http://release-monitoring.org>`_.
+    Return the list of packages in pkgdb that have been flagged to
+    monitored by `anitya <http://release-monitoring.org>`_.
 
     ::
 
         /api/monitored
 
-    :kwarg format: Specify if the output if text or json.
+    :kwarg format: Specify if the output is text or json (default: text).
 
     '''
 

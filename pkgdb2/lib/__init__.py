@@ -1799,7 +1799,7 @@ def get_monitored_package(session):
 
 def set_monitor_package(session, pkg_name, status, user):
     """ Set the provided status on the monitoring flag of the specified
-    pacakge.
+    package.
 
     :arg session: the session with which to connect to the database.
     :arg pkg_name: The name of the package to update.
@@ -1809,7 +1809,7 @@ def set_monitor_package(session, pkg_name, status, user):
         updated.
     :rtype: str()
     :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
-        this exception beeing raised:
+        this exception being raised:
             - You are not allowed to edit a package, only pkgdb admin can.
             - The package cannot be found in the database.
             - An error occured while updating the package in the database
