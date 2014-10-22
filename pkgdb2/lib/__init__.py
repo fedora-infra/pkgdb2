@@ -1836,15 +1836,17 @@ def set_monitor_package(session, pkg_name, status, user):
         session.add(package)
         msg = 'Monitoring status of %s set to %s' % (pkg_name, status)
 
-    try:
-        session.flush()
-        pkgdb2.lib.utils.log(session, None, 'package.monitor.update', dict(
-            agent=user.username,
-            status=status,
-            package=package.to_json(acls=False),
-        ))
-    except SQLAlchemyError, err:  # pragma: no cover
-        pkgdb2.LOG.exception(err)
-        raise PkgdbException('Could not update monitoring status.')
+        try:
+            session.flush()
+            pkgdb2.lib.utils.log(
+                session, None, 'package.monitor.update', dict(
+                    agent=user.username,
+                    status=status,
+                    package=package.to_json(acls=False),
+                )
+            )
+        except SQLAlchemyError, err:  # pragma: no cover
+            pkgdb2.LOG.exception(err)
+            raise PkgdbException('Could not update monitoring status.')
 
     return msg
