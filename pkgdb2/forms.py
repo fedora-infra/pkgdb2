@@ -40,11 +40,11 @@ import wtforms
 class AddCollectionForm(wtf.Form):
     """ Form to add or edit collections. """
     clt_name = wtforms.TextField(
-        'Collection name <span class="error">*</span>',
+        'Collection name',
         [wtforms.validators.Required()]
     )
     version = wtforms.TextField(
-        'version <span class="error">*</span>',
+        'version',
         [wtforms.validators.Required()]
     )
     clt_status = wtforms.SelectField(
@@ -53,15 +53,15 @@ class AddCollectionForm(wtf.Form):
         choices=[(item, item) for item in []]
     )
     branchname = wtforms.TextField(
-        'Branch name <span class="error">*</span>',
+        'Branch name',
         [wtforms.validators.Required()]
     )
     kojiname = wtforms.TextField(
-        'Koji name <span class="error">*</span>',
+        'Koji name',
         [wtforms.validators.Required()]
     )
     dist_tag = wtforms.TextField(
-        'Dist tag <span class="error">*</span>',
+        'Dist tag',
         [wtforms.validators.Required()]
     )
 
@@ -95,7 +95,7 @@ class AddCollectionForm(wtf.Form):
 class CollectionStatusForm(wtf.Form):
     """ Form to update the status of a collection. """
     branch = wtforms.TextField(
-        'Branch name <span class="error">*</span>',
+        'Branch name',
         [wtforms.validators.Required()]
     )
     clt_status = wtforms.SelectField(
@@ -120,11 +120,11 @@ class CollectionStatusForm(wtf.Form):
 class AddPackageForm(wtf.Form):
     """ Form to add or edit packages. """
     pkgname = wtforms.TextField(
-        'Package name <span class="error">*</span>',
+        'Package name',
         [wtforms.validators.Required()]
     )
     summary = wtforms.TextField(
-        'Summary <span class="error">*</span>',
+        'Summary',
         [wtforms.validators.Required()]
     )
     description = wtforms.TextField(
@@ -150,7 +150,7 @@ class AddPackageForm(wtf.Form):
         choices=[(item, item) for item in []]
     )
     poc = wtforms.TextField(
-        'Point of contact <span class="error">*</span>',
+        'Point of contact',
         [wtforms.validators.Required()]
     )
     upstream_url = wtforms.TextField(
@@ -179,11 +179,11 @@ class AddPackageForm(wtf.Form):
 class EditPackageForm(wtf.Form):
     """ Form to edit packages. """
     pkgname = wtforms.TextField(
-        'Package name <span class="error">*</span>',
+        'Package name',
         [wtforms.validators.Required()]
     )
     summary = wtforms.TextField(
-        'Summary <span class="error">*</span>',
+        'Summary',
         [wtforms.validators.optional()]
     )
     description = wtforms.TextField(
@@ -219,7 +219,7 @@ class EditPackageForm(wtf.Form):
 class SetAclPackageForm(wtf.Form):
     """ Form to set ACLs to someone on a package. """
     pkgname = wtforms.TextField(
-        'Package name <span class="error">*</span>',
+        'Package name',
         [wtforms.validators.Required()]
     )
     branches = wtforms.SelectMultipleField(
@@ -233,7 +233,7 @@ class SetAclPackageForm(wtf.Form):
         choices=[(item, item) for item in []]
     )
     user = wtforms.TextField(
-        'Packager name <span class="error">*</span>',
+        'Packager name',
         [wtforms.validators.Required()]
     )
     acl_status = wtforms.SelectField(
@@ -308,7 +308,7 @@ class GivePoCForm(wtf.Form):
         [wtforms.validators.Required()],
         choices=[('', '')])
     poc = wtforms.TextField(
-        'New point of contact <span class="error">*</span>',
+        'New point of contact',
         [wtforms.validators.Required()]
     )
 
