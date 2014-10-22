@@ -404,7 +404,7 @@ def comaintain_package(package):
         pkg_branchs2 = []
         for pkg_branch in pkg_branchs:
             if pkgdblib.has_acls(SESSION, flask.g.fas_user.username, pkg.name,
-                                 pkg_branch, 'commit'):
+                                 acl='commit', branch=pkg_branch):
                 flask.flash(
                     'You are already a co-maintainer on %s' % pkg_branch,
                     'error')

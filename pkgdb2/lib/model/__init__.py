@@ -1055,6 +1055,7 @@ class Package(BASE):
     description = sa.Column(sa.Text, nullable=True)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
+    monitor = sa.Column(sa.Boolean, default=False, nullable=False)
     status = sa.Column(
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
@@ -1090,13 +1091,14 @@ class Package(BASE):
         return session.query(cls).filter(Package.name == pkgname).one()
 
     def __init__(self, name, summary, description, status,
-                 review_url=None, upstream_url=None):
+                 review_url=None, upstream_url=None, monitor=False):
         self.name = name
         self.summary = summary
         self.description = description
         self.status = status
         self.review_url = review_url
         self.upstream_url = upstream_url
+        self.monitor=monitor
 
     def __hash__(self):
         """ Returns the name of the package as hash. """
@@ -1136,13 +1138,30 @@ class Package(BASE):
 
     @classmethod
     def all(cls, session):
-        """ Return the list of all Collections present in the database.
+        """ Return the list of all Packages present in the database.
 
         :arg cls: the class object
         :arg session: the database session used to query the information.
 
         """
         return session.query(cls).all()
+
+    @classmethod
+    def get_monitored(cls, session):
+        """ Return the list of all Packages present in the database and
+        listed are `monitor`.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        """
+        return session.query(
+            cls
+        ).filter(
+            Package.monitor == True
+        ).order_by(
+            Package.name
+        ).all()
 
     @classmethod
     def get_latest_package(cls, session, limit=10):

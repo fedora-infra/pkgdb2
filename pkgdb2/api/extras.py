@@ -529,3 +529,47 @@ List group maintainer
             '\n'.join(output),
             content_type="text/plain;charset=UTF-8"
         )
+
+
+@API.route('/monitored/')
+@API.route('/monitored')
+def api_monitored():
+    '''
+List packages monitored
+----------------------
+    Return the list of packages in pkgdb that have been flagged to
+    monitored by `anitya <http://release-monitoring.org>`_.
+
+    ::
+
+        /api/monitored
+
+    :kwarg format: Specify if the output is text or json (default: text).
+
+    '''
+
+    out_format = flask.request.args.get('format', 'text')
+
+    if out_format not in ('text', 'json'):
+        out_format = 'text'
+
+    if request_wants_json():
+        out_format = 'json'
+
+    output = {}
+
+    pkgs = pkgdblib.get_monitored_package(SESSION)
+
+    if out_format == 'json':
+        output = {"packages": [pkg.name for pkg in pkgs]}
+        output['total_packages'] = len(pkgs)
+        return flask.jsonify(output)
+    else:
+        output = [
+            "# Number of packages: %s" % len(pkgs)]
+        for pkg in pkgs:
+            output.append("%s" % (pkg.name))
+        return flask.Response(
+            '\n'.join(output),
+            content_type="text/plain;charset=UTF-8"
+        )

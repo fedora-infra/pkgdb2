@@ -422,7 +422,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
         pkglisting.status = 'Orphaned'
         # Remove commit and watchcommits if the user has them
         for acl in ['commit', 'approveacls']:
-            if has_acls(session, user.username, pkg_name, pkg_branch, acl):
+            if has_acls(session, user.username, pkg_name, acl=acl,
+                        branch=pkg_branch):
                 set_acl_package(
                     session,
                     pkg_name=pkg_name,
@@ -1254,15 +1255,18 @@ def get_acl_user_package(session, user, package, status=None):
     return output
 
 
-def has_acls(session, user, package, branch, acl):
-    """ Return wether the specified user has the specified acl on the
-    specified package.
+def has_acls(session, user, package, acl, branch=None):
+    """ Return wether the specified user has *one of* the specified acl on
+    the specified package.
+
+    If several ACLs are specified, having one of them will return True.
 
     :arg session: session with which to connnect to the database.
     :arg user: the name of the user for which to check the acl.
     :arg package: the name of the package on which the acl should be
         checked.
-    :arg acl: the acl to check for the user on the package.
+    :arg acl: one or more ACLs to check for the user on the package.
+    :kwarg branch: restrict the check to the specified branch
     :returns: a boolean specifying whether specified user has this ACL on
         this package and branch.
     :rtype: bool()
@@ -1270,9 +1274,17 @@ def has_acls(session, user, package, branch, acl):
     """
     acls = get_acl_user_package(session, user=user,
                                 package=package, status='Approved')
+
+    if isinstance(acl, basestring):
+        acl = [acl]
+
     user_has_acls = False
     for user_acl in acls:
-        if user_acl['collection'] == branch and user_acl['acl'] == acl:
+        if not branch and user_acl['acl'] in acl:
+            user_has_acls = True
+            break
+        elif branch and user_acl['collection'] == branch \
+                and user_acl['acl'] in acl:
             user_has_acls = True
             break
     return user_has_acls
@@ -1769,5 +1781,72 @@ def set_critpath_packages(
     except SQLAlchemyError, err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not edit package.')
+
+    return msg
+
+
+def get_monitored_package(session):
+    """ Return the list of packaged flag as `to monitor`.
+
+    :arg session: the session with which to connect to the database.
+    :returns: a list of Ppackage.
+    :rtype: list()
+
+    """
+
+    return model.Package.get_monitored(session)
+
+
+def set_monitor_package(session, pkg_name, status, user):
+    """ Set the provided status on the monitoring flag of the specified
+    package.
+
+    :arg session: the session with which to connect to the database.
+    :arg pkg_name: The name of the package to update.
+    :arg status: boolean specifying the monitor status to set
+    :arg user: The user performing the update.
+    :returns: a message informing that the package was successfully
+        updated.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception being raised:
+            - You are not allowed to edit a package, only pkgdb admin can.
+            - The package cannot be found in the database.
+            - An error occured while updating the package in the database
+                the message returned is a dummy information message to
+                return to the user, the trace back is in the logs.
+
+    """
+
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    pkger = has_acls(
+        session, user.username, pkg_name, ['commit', 'approveacls'])
+    if not (pkger or pkgdb2.is_pkgdb_admin(user)):
+        raise PkgdbException(
+            'You are not allowed to update the monitor flag on this package'
+        )
+
+    msg = 'Monitoring status un-changed'
+    if package.monitor != status:
+        package.monitor = status
+        session.add(package)
+        msg = 'Monitoring status of %s set to %s' % (pkg_name, status)
+
+        try:
+            session.flush()
+            pkgdb2.lib.utils.log(
+                session, None, 'package.monitor.update', dict(
+                    agent=user.username,
+                    status=status,
+                    package=package.to_json(acls=False),
+                )
+            )
+        except SQLAlchemyError, err:  # pragma: no cover
+            pkgdb2.LOG.exception(err)
+            raise PkgdbException('Could not update monitoring status.')
 
     return msg

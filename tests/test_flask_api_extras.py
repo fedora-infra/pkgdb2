@@ -418,7 +418,6 @@ avail | @provenpackager, | rpms/offlineimap/master"""
         output = self.app.get('/api/vcs/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
-        print output.data
 
         expected = {
             "packageAcls": {
@@ -670,7 +669,7 @@ guake:master has toshio waiting for commit"""
         self.assertEqual(data, expected)
 
     def test_api_groups_empty(self):
-        """ Test the api_groups function with a filled database. """
+        """ Test the api_groups function with an empty database. """
 
         output = self.app.get('/api/groups/')
         self.assertEqual(output.status_code, 200)
@@ -727,6 +726,76 @@ kernel-maint"""
 
         output = self.app.get(
             '/api/groups/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+    def test_api_monitored_empty(self):
+        """ Test the api_monitored function with an empty database. """
+
+        output = self.app.get('/api/monitored/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 0"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/monitored/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/monitored/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'packages': [
+            ],
+            'total_packages': 0
+        }
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/monitored/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+    def test_api_monitored_filled(self):
+        """ Test the api_monitored function with a filled database. """
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        output = self.app.get('/api/monitored/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 1\nkernel"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/monitored/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/monitored/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            "total_packages": 1,
+            "packages": [
+                "kernel",
+            ],
+        }
+
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/monitored/',
             environ_base={'HTTP_ACCEPT': 'application/json'})
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
