@@ -1491,7 +1491,7 @@ def add_branch(session, clt_from, clt_to, user):
     messages = []
     for pkglist in model.PackageListing.by_collectionid(
             session, clt_from.id):
-        if pkglist.status == 'Approved':
+        if pkglist.status in ('Approved','Orphaned'):
             try:
                 pkglist.branch(session, clt_to)
                 # Should not fail since the flush() passed
