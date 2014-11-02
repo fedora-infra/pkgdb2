@@ -123,6 +123,7 @@ def packager_info(packager):
 
     return flask.render_template(
         'packager.html',
+        select='packagers',
         packager=packager,
         packages=packages,
         packages_co=packages_co,
