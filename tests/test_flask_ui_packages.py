@@ -939,14 +939,14 @@ class FlaskUiPackagesTest(Modeltests):
         create_package_acl(self.session)
 
         data = {
-            'pkgname': 'guake',
-            'summary': 'Drop down terminal for GNOME',
+            'pkgname': 'gnome-terminal',
+            'summary': 'terminal for GNOME',
             'description': 'desc',
             'review_url': 'https://bz.rh.c/123',
             'status': 'Approved',
             'critpath': False,
             'poc': 'pingou',
-            'upstream_url': 'http://guake.org',
+            'upstream_url': 'http://gnome.org',
             'branches': 'master',
         }
 
@@ -979,8 +979,8 @@ class FlaskUiPackagesTest(Modeltests):
                 follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">user: pingou request package: guake '
-                'on branch master</li>' in output.data)
+                '<li class="message">user: pingou request package: '
+                'gnome-terminal on branch master</li>' in output.data)
 
 
 if __name__ == '__main__':
