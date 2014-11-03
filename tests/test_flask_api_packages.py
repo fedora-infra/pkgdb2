@@ -608,6 +608,24 @@ class FlaskApiPackagesTest(Modeltests):
                 }
             )
 
+        # Check before
+        output = self.app.get('/api/package/guake/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(data.keys(), ['output', 'packages'])
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['packages'][0]['collection']['branchname'],
+                         'f18')
+        self.assertEqual(data['packages'][0]['point_of_contact'],
+                         'pingou')
+        self.assertEqual(data['packages'][1]['collection']['branchname'],
+                         'master')
+        self.assertEqual(data['packages'][1]['point_of_contact'],
+                         'pingou')
+        for acl in data['packages'][0]['acls']:
+            self.assertEqual(acl['status'], 'Approved')
+
         # Retire the package
         user = FakeFasUserAdmin()
         data = {
@@ -625,6 +643,27 @@ class FlaskApiPackagesTest(Modeltests):
                     "output": "ok"
                 }
             )
+
+        # Check after retiring
+        output = self.app.get('/api/package/guake/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(data.keys(), ['output', 'packages'])
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['packages'][0]['collection']['branchname'],
+                         'f18')
+        self.assertEqual(data['packages'][0]['point_of_contact'],
+                         'orphan')
+        self.assertEqual(data['packages'][1]['collection']['branchname'],
+                         'master')
+        self.assertEqual(data['packages'][1]['point_of_contact'],
+                         'orphan')
+        for acl in data['packages'][0]['acls']:
+            if acl['fas_name'] == 'group::provenpackager':
+                continue
+            self.assertEqual(acl['status'], 'Obsolete')
+
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
@@ -663,6 +702,29 @@ class FlaskApiPackagesTest(Modeltests):
         self.session.add(pkgltg)
         self.session.commit()
 
+        # Check before
+        output = self.app.get('/api/package/guake/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(data.keys(), ['output', 'packages'])
+        self.assertEqual(len(data['packages']), 3)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['packages'][0]['collection']['branchname'],
+                         'f18')
+        self.assertEqual(data['packages'][0]['point_of_contact'],
+                         'pingou')
+        self.assertEqual(data['packages'][1]['collection']['branchname'],
+                         'master')
+        self.assertEqual(data['packages'][1]['point_of_contact'],
+                         'pingou')
+        self.assertEqual(data['packages'][2]['collection']['branchname'],
+                         'epel7')
+        self.assertEqual(data['packages'][2]['point_of_contact'],
+                         'pingou')
+        for acl in data['packages'][1]['acls']:
+            self.assertTrue(acl['status'] in ['Awaiting Review','Approved'])
+        self.assertFalse('acls' in data['packages'][2])
+
         # Retire the package on an EPEL branch
         user = FakeFasUser()
         data = {
@@ -680,6 +742,32 @@ class FlaskApiPackagesTest(Modeltests):
                     "output": "ok"
                 }
             )
+
+        # Check after retiring
+        output = self.app.get('/api/package/guake/')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(data.keys(), ['output', 'packages'])
+        self.assertEqual(len(data['packages']), 3)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(data['packages'][0]['collection']['branchname'],
+                         'f18')
+        self.assertEqual(data['packages'][0]['point_of_contact'],
+                         'pingou')
+        self.assertEqual(data['packages'][1]['collection']['branchname'],
+                         'master')
+        self.assertEqual(data['packages'][1]['point_of_contact'],
+                         'orphan')
+        self.assertEqual(data['packages'][2]['collection']['branchname'],
+                         'epel7')
+        self.assertEqual(data['packages'][2]['point_of_contact'],
+                         'orphan')
+
+        for acl in data['packages'][1]['acls']:
+            if acl['fas_name'] == 'group::provenpackager':
+                continue
+            self.assertEqual(acl['status'], 'Obsolete')
+        self.assertFalse('acls' in data['packages'][2])
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
