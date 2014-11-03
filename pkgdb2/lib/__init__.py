@@ -526,6 +526,10 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
             pkglisting.status = 'Retired'
             pkglisting.point_of_contact = 'orphan'
             session.add(pkglisting)
+            # Remove all ACLs
+            for acl in pkglisting.acls:
+                acl.status = 'Obsolete'
+                session.add(acl)
             session.flush()
             if prev_status != 'Orphaned':
                 # Update Bugzilla about new owner
