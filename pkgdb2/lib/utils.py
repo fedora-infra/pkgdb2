@@ -286,7 +286,7 @@ def log(session, package, topic, message):
         'collection.update': 'user: %(agent)s edited collection: '
                              '%(collection.name)s',
         'package.monitor.update': 'user: %(agent)s updated the monitoring '
-                               'status of %(package.name)s to %(status)s'
+                               'status of %(package.name)s to %(status)s',
         'admin.action.status.update': 'user: %(agent)s updated action: '
                                '%(action.id)s from %(old_status)s to '
                                '%(new_status)s',
