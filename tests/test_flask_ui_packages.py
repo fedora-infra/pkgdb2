@@ -368,6 +368,11 @@ class FlaskUiPackagesTest(Modeltests):
         login_func.return_value = None
         create_package_acl(self.session)
 
+        # Check at the very beginning
+        output = self.app.get('/package/guake/')
+        self.assertEqual(output.data.count('Obsolete'), 0)
+        self.assertEqual(output.data.count('Awaiting Review'), 3)
+
         data = {
             'branches': ['foobar'],
         }
@@ -409,6 +414,12 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="message">You are no longer point of contact on '
                 'branch: f18</li>' in output.data)
 
+            # Check after orphaning
+            # Orphaning already drops the ACLs of the person doing the action
+            output = self.app.get('/package/guake/')
+            self.assertEqual(output.data.count('Obsolete'), 8)
+            self.assertEqual(output.data.count('Awaiting Review'), 3)
+
         data = {
             'branches': ['master'],
             'csrf_token': csrf_token,
@@ -446,6 +457,7 @@ class FlaskUiPackagesTest(Modeltests):
                 '<td class="errors">&#39;foobar&#39; is not a valid choice '
                 'for this field</td>' in output.data)
 
+            # Retire F18 that has been orphaned before
             data['branches'] = ['f18']
             output = self.app.post(
                 '/package/guake/retire', follow_redirects=True,
@@ -454,6 +466,26 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertTrue(
                 '<li class="message">This package has been retired on '
                 'branch: f18</li>' in output.data)
+
+            # Package retired, clear all the ACLs on branch f18
+            output = self.app.get('/package/guake/')
+            self.assertEqual(output.data.count('Obsolete'), 8)
+            self.assertEqual(output.data.count('Awaiting Review'), 3)
+
+            # Retire branch master
+            data['branches'] = ['master']
+            output = self.app.post(
+                '/package/guake/retire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">This package has been retired on '
+                'branch: master</li>' in output.data)
+
+            # Package retired, clear all the ACLs on master
+            output = self.app.get('/package/guake/')
+            self.assertEqual(output.data.count('Obsolete'), 12)
+            self.assertEqual(output.data.count('Awaiting Review'), 0)
 
         with user_set(pkgdb2.APP, user):
             output = self.app.post(

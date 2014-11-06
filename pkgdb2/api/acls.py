@@ -84,7 +84,7 @@ Update package ACL
           "error": ["You are not allowed to update ACLs of someone else."]
         }
 
-     '''
+    '''
     httpcode = 200
     output = {}
 
