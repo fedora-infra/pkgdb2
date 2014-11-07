@@ -1,0 +1,101 @@
+From 05052a47a4f4665739b69081c068bd44a1bb9460 Mon Sep 17 00:00:00 2001
+From: Pierre-Yves Chibon <pingou@pingoured.fr>
+Date: Fri, 7 Nov 2014 17:26:23 +0100
+Subject: [PATCH] Fix the api to orphan package of a specified user
+
+---
+ pkgdb2/api/packages.py |  4 ++++
+ pkgdb2/lib/__init__.py |  9 ++++++++-
+ tests/test_pkgdblib.py | 13 +++++++++++++
+ 3 files changed, 25 insertions(+), 1 deletion(-)
+
+diff --git a/pkgdb2/api/packages.py b/pkgdb2/api/packages.py
+index d4d3ef2..7a07265 100644
+--- a/pkgdb2/api/packages.py
++++ b/pkgdb2/api/packages.py
+@@ -275,6 +275,8 @@ Orphan package
+     :arg pkgnames: Comma separated list of string of the packages name.
+     :arg branches: Comma separated list of string of the branches name in
+         which these packages will be orphaned.
++    :kwarg former_poc: Use to restrict orphaning the branches maintained by
++        a specific user while providing a broader list of branches.
+ 
+ 
+     Sample response:
+@@ -298,6 +300,7 @@ Orphan package
+ 
+     pkgnames = flask.request.form.getlist('pkgnames', None)
+     branches = flask.request.form.getlist('branches', None)
++    former_poc = flask.request.form.getlist('former_poc', None)
+ 
+     if pkgnames and branches:
+         messages = []
+@@ -310,6 +313,7 @@ Orphan package
+                     pkg_name=pkg_name,
+                     pkg_branch=pkg_branch,
+                     pkg_poc='orphan',
++                    former_poc=former_poc,
+                     user=flask.g.fas_user,
+                 )
+ 
+diff --git a/pkgdb2/lib/__init__.py b/pkgdb2/lib/__init__.py
+index 19462fd..2adce74 100644
+--- a/pkgdb2/lib/__init__.py
++++ b/pkgdb2/lib/__init__.py
+@@ -354,7 +354,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
+     ))
+ 
+ 
+-def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
++def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
++                   former_poc=None):
+     """ Change the point of contact of a package.
+ 
+     :arg session: session with which to connect to the database.
+@@ -362,6 +363,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
+     :arg pkg_branch: the branchname of the collection.
+     :arg pkg_poc: name of the new point of contact for the package.
+     :arg user: the user making the action.
++    :kwarg former_poc: used to restrict orphaning the package of a specified
++        user which may or may not be the POC of the specified branch.
+     :returns: a message informing that the point of contact has been
+         successfully changed.
+     :rtype: str()
+@@ -417,6 +420,10 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
+                 'You are not part of the group "%s", you are not allowed to'
+                 ' change the point of contact.' % group)
+ 
++    if former_poc and former_poc != prev_poc:
++        raise PkgdbException(
++            'Orphaning restricted to the packages of user %s' % prev_poc)
++
+     pkglisting.point_of_contact = pkg_poc
+     if pkg_poc == 'orphan':
+         pkglisting.status = 'Orphaned'
+diff --git a/tests/test_pkgdblib.py b/tests/test_pkgdblib.py
+index d0fe60b..338dd59 100644
+--- a/tests/test_pkgdblib.py
++++ b/tests/test_pkgdblib.py
+@@ -527,6 +527,19 @@ class PkgdbLibtests(Modeltests):
+                           )
+         self.session.rollback()
+ 
++        # User must be in the POC of the branch specified
++        user = FakeFasUser()
++        user.username = 'ralph'
++        self.assertRaises(pkgdblib.PkgdbException,
++                          pkgdblib.update_pkg_poc,
++                          self.session,
++                          pkg_name='guake',
++                          pkg_branch='f18',
++                          user=user,
++                          pkg_poc='orphan',
++                          former_poc='toshio',
++                          )
++
+         user.groups.append('perl-sig')
+         pkgdblib.update_pkg_poc(
+             self.session,
+-- 
+1.9.3
+

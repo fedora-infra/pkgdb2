@@ -3,12 +3,13 @@
 
 Name:           pkgdb2
 Version:        1.20.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
 URL:            http://fedorahosted.org/pkgdb2/
 Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.tar.gz
+Patch1:         0001-Fix-the-api-to-orphan-package-of-a-specified-user.patch
 
 BuildArch:      noarch
 
@@ -65,6 +66,9 @@ for changes in the git, builds or bugs.
 %prep
 %setup -q
 
+%patch1 -p1 -b .
+
+
 %build
 %{__python} setup.py build
 
@@ -111,6 +115,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Nov 07 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20.1-2
+- Backport into 1.20.1 the changes from
+  https://github.com/fedora-infra/pkgdb2/pull/109
+
 * Sun Oct 05 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20.1-1
 - Update to 1.20.1
 - Better email handler for the logs
