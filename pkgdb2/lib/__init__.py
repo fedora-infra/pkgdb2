@@ -354,7 +354,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     ))
 
 
-def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
+def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
+                   former_poc=None):
     """ Change the point of contact of a package.
 
     :arg session: session with which to connect to the database.
@@ -362,6 +363,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
     :arg pkg_branch: the branchname of the collection.
     :arg pkg_poc: name of the new point of contact for the package.
     :arg user: the user making the action.
+    :kwarg former_poc: used to restrict orphaning the package of a specified
+        user which may or may not be the POC of the specified branch.
     :returns: a message informing that the point of contact has been
         successfully changed.
     :rtype: str()
@@ -416,6 +419,10 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user):
             raise PkgdbException(
                 'You are not part of the group "%s", you are not allowed to'
                 ' change the point of contact.' % group)
+
+    if former_poc and former_poc != prev_poc:
+        raise PkgdbException(
+            'Orphaning restricted to the packages of user %s' % prev_poc)
 
     pkglisting.point_of_contact = pkg_poc
     if pkg_poc == 'orphan':
