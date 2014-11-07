@@ -242,8 +242,8 @@ Bugzilla information
 @API.route('/notify')
 def api_notify():
     '''
-Notification information
-------------------------
+    Notification information
+    ------------------------
     List of usernames that have commit or approveacls ACL for each package.
 
     ::
@@ -288,8 +288,8 @@ Notification information
 @API.route('/notify/all')
 def api_notify_all():
     '''
-Notification information 2
---------------------------
+    Notification information 2
+    --------------------------
     List of usernames that should be notified of changes to a package.
 
     ::
@@ -332,8 +332,8 @@ Notification information 2
 @API.route('/vcs')
 def api_vcs():
     '''
-Version Control System ACLs
----------------------------
+    Version Control System ACLs
+    ---------------------------
     Return ACLs for the version control system.
 
     ::
@@ -374,8 +374,8 @@ Version Control System ACLs
 @API.route('/critpath')
 def api_critpath():
     '''
-Critical path packages
-----------------------
+    Critical path packages
+    ----------------------
     Return the list of package marked as critpath for some or all active
     releases of fedora.
 
@@ -442,8 +442,8 @@ Critical path packages
 @API.route('/pendingacls')
 def api_pendingacls():
     '''
-Pending ACLs requests
----------------------
+    Pending ACLs requests
+    ---------------------
     Return the list ACLs request that are ``Awaiting Approval``.
 
     ::
@@ -492,8 +492,8 @@ Pending ACLs requests
 @API.route('/groups')
 def api_groups():
     '''
-List group maintainer
----------------------
+    List group maintainer
+    ---------------------
     Return the list FAS groups which have ACLs on one or more packages.
 
     ::
@@ -535,8 +535,8 @@ List group maintainer
 @API.route('/monitored')
 def api_monitored():
     '''
-List packages monitored
-----------------------
+    List packages monitored
+    -----------------------
     Return the list of packages in pkgdb that have been flagged to
     monitored by `anitya <http://release-monitoring.org>`_.
 

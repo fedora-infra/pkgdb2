@@ -634,8 +634,8 @@ Unretire packages
 @API.route('/package/<pkgname>')
 def api_package_info(pkgname=None):
     '''
-Package information
--------------------
+    Package information
+    -------------------
     Return information about a specific package.
 
     ::
@@ -776,8 +776,8 @@ Package information
 @API.route('/packages/<pattern>')
 def api_package_list(pattern=None):
     '''
-List packages
--------------
+    List packages
+    -------------
     List packages based on a pattern. If no pattern is provided, return all
     the package.
 
@@ -1002,8 +1002,8 @@ List packages
 @is_admin
 def api_package_critpath():
     '''
-Critpath status
----------------
+    Critpath status
+    ---------------
     Update the critpath status of a package.
 
     ::

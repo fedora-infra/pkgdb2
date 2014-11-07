@@ -45,8 +45,8 @@ from pkgdb2.lib import model
 @is_admin
 def api_collection_new():
     '''
-New collection
---------------
+    New collection
+    --------------
     Create a new collection.
 
     ::
@@ -138,8 +138,8 @@ New collection
 @is_admin
 def api_collection_status(collection):
     '''
-Update collection status
-------------------------
+    Update collection status
+    ------------------------
     Update the status of collection.
 
     ::
@@ -222,8 +222,8 @@ Update collection status
 @API.route('/collections/<pattern>')
 def api_collection_list(pattern=None):
     '''
-List collections
-----------------
+    List collections
+    ----------------
     List the collections based on a pattern. If no pattern is provided, it
     will return all the collection.
 

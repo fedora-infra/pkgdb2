@@ -53,8 +53,8 @@ from pkgdb2.api import API, get_limit
 @API.route('/packager/acl/<packagername>')
 def api_packager_acl(packagername=None):
     '''
-User's ACL
-----------
+    User's ACL
+    ----------
     List the ACLs of the user.
 
     ::
@@ -241,8 +241,8 @@ User's ACL
 @API.route('/packager/package/<packagername>')
 def api_packager_package(packagername=None):
     '''
-User's packages
----------------
+    User's packages
+    ---------------
     List the packages of the user.
 
     ::
@@ -379,8 +379,8 @@ User's packages
 @API.route('/packager/stats/<packagername>')
 def api_packager_stats(packagername=None):
     '''
-User's stats
-------------
+    User's stats
+    ------------
     Give some stats about the ACLs of the user.
 
     ::
@@ -498,8 +498,8 @@ User's stats
 @API.route('/packagers/<pattern>')
 def api_packager_list(pattern=None):
     '''
-List packagers
---------------
+    List packagers
+    --------------
     List packagers based on a pattern. If no pattern is provided, return
     all the packagers.
 

@@ -151,8 +151,8 @@ def api():
 @API.route('/version')
 def api_version():
     '''
-API Version
------------
+    API Version
+    -----------
     Display the api version information.
 
     ::

@@ -46,8 +46,8 @@ from pkgdb2.api import API
 @pkgdb2.packager_login_required
 def api_acl_update():
     '''
-Update package ACL
-------------------
+    Update package ACL
+    ------------------
     Update the ACL for a given package.
 
     ::
@@ -160,8 +160,8 @@ Update package ACL
 @pkgdb2.packager_login_required
 def api_acl_reassign():
     '''
-Reassign packages
------------------
+    Reassign packages
+    -----------------
     Reassign the specified packages from one user to another.
 
     ::
