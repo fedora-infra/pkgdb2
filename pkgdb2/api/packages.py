@@ -57,7 +57,7 @@ New package
 
         /api/package/new/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgname: String of the package name to be created.
     :arg summary: String of the summary description of the package.
@@ -161,7 +161,7 @@ Edit a package
 
         /api/package/edit/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgname: String of the package name to be created.
     :arg summary: String of the summary description of the package.
@@ -270,7 +270,7 @@ Orphan package
 
         /api/package/orphan/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
@@ -365,7 +365,7 @@ Unorphan packages
 
         /api/package/unorphan/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
@@ -466,7 +466,7 @@ Retire packages
 
         /api/package/retire/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
@@ -560,7 +560,7 @@ Unretire packages
 
         /api/package/unretire/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgnames: Comma separated list of the packages names.
     :arg branches: Comma separated list of string of the branches names in
@@ -644,7 +644,7 @@ def api_package_info(pkgname=None):
 
         /api/package/?pkgname=<pkg_name>
 
-    Accept GET queries only
+    Accepts GET queries only
 
     :arg pkgname: The name of the package to retrieve the information of.
     :kwarg branches: Restricts the package information to one or more
@@ -787,7 +787,7 @@ def api_package_list(pattern=None):
 
         /api/packages/?pattern=<pattern>
 
-    Accept GET queries only
+    Accepts GET queries only
 
     :arg pattern: Pattern to list packages from their name.
     :arg branches: List of string of the branches name in which these
@@ -1010,7 +1010,7 @@ def api_package_critpath():
 
         /api/package/critpath/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgnames: A list of string of the packages name.
     :arg branches: A list of string of the branches name in which the

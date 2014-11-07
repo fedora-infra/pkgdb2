@@ -53,7 +53,7 @@ def api_collection_new():
 
         /api/collection/new/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg clt_name: String of the collection name to be created.
     :arg version: String of the version of the collection.
@@ -146,7 +146,7 @@ def api_collection_status(collection):
 
         /api/collection/<collection branchname>/status/
 
-    Accept POST query only.
+    Accepts POST query only.
 
     :arg branch: String of the collection branch name to change.
     :arg clt_status: String of the status to change the collection to
@@ -233,7 +233,7 @@ def api_collection_list(pattern=None):
 
         /api/collections/?pattern=<pattern>
 
-    Accept GET queries only.
+    Accepts GET queries only.
 
     :arg pattern: a pattern to which the collection searched should match.
     :arg clt_status: restrict the search to one or more collection status.

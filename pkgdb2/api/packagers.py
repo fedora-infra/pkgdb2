@@ -63,7 +63,7 @@ def api_packager_acl(packagername=None):
 
         /api/packager/acl/?packagername=<username>
 
-    Accept GET queries only.
+    Accepts GET queries only.
 
     :arg packagername: String of the packager name.
     :kwarg acls: One or more ACL to filter the ACLs retrieved. Options are:
@@ -251,7 +251,7 @@ def api_packager_package(packagername=None):
 
         /api/packager/package/?packagername=<username>
 
-    Accept GET queries only.
+    Accepts GET queries only.
 
     :arg packagername: String of the packager name.
     :kwarg eol: a boolean to specify whether to include results for
@@ -389,7 +389,7 @@ def api_packager_stats(packagername=None):
 
         /api/packager/stats/?packagername=<username>
 
-    Accept GET queries only.
+    Accepts GET queries only.
 
     :arg packagername: String of the packager name.
     :kwarg eol: a boolean to specify whether to include results for

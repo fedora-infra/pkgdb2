@@ -54,7 +54,7 @@ def api_acl_update():
 
         /api/package/acl/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgname: String of the package name.
     :arg branches: List of strings with the name of the branches to change,
@@ -168,7 +168,7 @@ def api_acl_reassign():
 
         /api/package/acl/reassign/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgnames: List of strings of the package name to reassign.
     :arg branches: List of strings of the branchname of the Collection on

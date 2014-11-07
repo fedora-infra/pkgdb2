@@ -158,7 +158,7 @@ def api_version():
 
         /api/version
 
-    Accept GET queries only.
+    Accepts GET queries only.
 
     Sample response:
 
