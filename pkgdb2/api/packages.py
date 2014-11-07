@@ -49,8 +49,8 @@ from pkgdb2.api import API, get_limit
 @is_admin
 def api_package_new():
     '''
-New package
------------
+    New package
+    -----------
     Create a new package.
 
     ::
@@ -153,8 +153,8 @@ New package
 @is_admin
 def api_package_edit():
     '''
-Edit a package
---------------
+    Edit a package
+    --------------
     Edit a package.
 
     ::
@@ -262,8 +262,8 @@ Edit a package
 @packager_login_required
 def api_package_orphan():
     '''
-Orphan package
---------------
+    Orphan package
+    --------------
     Orphan one or more packages.
 
     ::
@@ -361,8 +361,8 @@ Orphan package
 @packager_login_required
 def api_package_unorphan():
     '''
-Unorphan packages
------------------
+    Unorphan packages
+    -----------------
     Unorphan one or more packages.
 
     ::
@@ -462,8 +462,8 @@ Unorphan packages
 @packager_login_required
 def api_package_retire():
     '''
-Retire packages
----------------
+    Retire packages
+    ---------------
     Retire one or more packages.
 
     ::
@@ -556,8 +556,8 @@ Retire packages
 @packager_login_required
 def api_package_unretire():
     '''
-Unretire packages
------------------
+    Unretire packages
+    -----------------
     Un-retire one or more packages.
 
     ::
