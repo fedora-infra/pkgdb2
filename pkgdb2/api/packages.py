@@ -300,7 +300,7 @@ Orphan package
 
     pkgnames = flask.request.form.getlist('pkgnames', None)
     branches = flask.request.form.getlist('branches', None)
-    former_poc = flask.request.form.getlist('former_poc', None)
+    former_poc = flask.request.form.get('former_poc', None)
 
     if pkgnames and branches:
         messages = []
