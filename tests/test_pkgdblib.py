@@ -527,6 +527,19 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
+        # User must be in the POC of the branch specified
+        user = FakeFasUser()
+        user.username = 'ralph'
+        self.assertRaises(pkgdblib.PkgdbException,
+                          pkgdblib.update_pkg_poc,
+                          self.session,
+                          pkg_name='guake',
+                          pkg_branch='f18',
+                          user=user,
+                          pkg_poc='orphan',
+                          former_poc='toshio',
+                          )
+
         user.groups.append('perl-sig')
         pkgdblib.update_pkg_poc(
             self.session,
