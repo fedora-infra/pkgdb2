@@ -45,15 +45,15 @@ from pkgdb2.lib import model
 @is_admin
 def api_collection_new():
     '''
-New collection
---------------
+    New collection
+    --------------
     Create a new collection.
 
     ::
 
         /api/collection/new/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg clt_name: String of the collection name to be created.
     :arg version: String of the version of the collection.
@@ -138,15 +138,15 @@ New collection
 @is_admin
 def api_collection_status(collection):
     '''
-Update collection status
-------------------------
+    Update collection status
+    ------------------------
     Update the status of collection.
 
     ::
 
         /api/collection/<collection branchname>/status/
 
-    Accept POST query only.
+    Accepts POST query only.
 
     :arg branch: String of the collection branch name to change.
     :arg clt_status: String of the status to change the collection to
@@ -222,8 +222,8 @@ Update collection status
 @API.route('/collections/<pattern>')
 def api_collection_list(pattern=None):
     '''
-List collections
-----------------
+    List collections
+    ----------------
     List the collections based on a pattern. If no pattern is provided, it
     will return all the collection.
 
@@ -233,7 +233,7 @@ List collections
 
         /api/collections/?pattern=<pattern>
 
-    Accept GET queries only.
+    Accepts GET queries only.
 
     :arg pattern: a pattern to which the collection searched should match.
     :arg clt_status: restrict the search to one or more collection status.

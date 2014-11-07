@@ -46,15 +46,15 @@ from pkgdb2.api import API
 @pkgdb2.packager_login_required
 def api_acl_update():
     '''
-Update package ACL
-------------------
+    Update package ACL
+    ------------------
     Update the ACL for a given package.
 
     ::
 
         /api/package/acl/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgname: String of the package name.
     :arg branches: List of strings with the name of the branches to change,
@@ -160,15 +160,15 @@ Update package ACL
 @pkgdb2.packager_login_required
 def api_acl_reassign():
     '''
-Reassign packages
------------------
+    Reassign packages
+    -----------------
     Reassign the specified packages from one user to another.
 
     ::
 
         /api/package/acl/reassign/
 
-    Accept POST queries only.
+    Accepts POST queries only.
 
     :arg pkgnames: List of strings of the package name to reassign.
     :arg branches: List of strings of the branchname of the Collection on

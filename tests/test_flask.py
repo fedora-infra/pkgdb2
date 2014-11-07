@@ -280,21 +280,19 @@ engineers need to create packages and spin them into a distribution."""
         expected = """
 <h2>
     Collections
-    <a name="collections" class="headerlink" title="Permalink to this """ \
-"""headline" href="#collections">
+    <a name="collections" class="headerlink" title="Permalink to this headline" href="#collections">
     <img src="/static/link.png" />
     </a>
 </h2>
 <div class="accordion">
 
 
-<h3 class="title">New collection</h3>
-<div>
+<h3 class="title">New collection</h3><div>
 <p>Create a new collection.</p>
 <pre class="literal-block">
 /api/collection/new/
 </pre>
-<p>Accept POST queries only.</p>
+<p>Accepts POST queries only.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

@@ -67,8 +67,7 @@ def insert_div(content):
             continue
         output.append(row)
     output = "\n".join(output)
-    output = output.replace('<blockquote>', '<div>')
-    output = output.replace('</blockquote>', '')
+    output = output.replace('</h1>', '</h1><div>')
     output = output.replace('h1', 'h3')
 
     return output
@@ -151,15 +150,15 @@ def api():
 @API.route('/version')
 def api_version():
     '''
-API Version
------------
+    API Version
+    -----------
     Display the api version information.
 
     ::
 
         /api/version
 
-    Accept GET queries only.
+    Accepts GET queries only.
 
     Sample response:
 
