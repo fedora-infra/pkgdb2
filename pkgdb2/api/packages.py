@@ -275,6 +275,8 @@ Orphan package
     :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
         which these packages will be orphaned.
+    :kwarg former_poc: Use to restrict orphaning the branches maintained by
+        a specific user while providing a broader list of branches.
 
 
     Sample response:
@@ -298,6 +300,7 @@ Orphan package
 
     pkgnames = flask.request.form.getlist('pkgnames', None)
     branches = flask.request.form.getlist('branches', None)
+    former_poc = flask.request.form.getlist('former_poc', None)
 
     if pkgnames and branches:
         messages = []
@@ -310,6 +313,7 @@ Orphan package
                     pkg_name=pkg_name,
                     pkg_branch=pkg_branch,
                     pkg_poc='orphan',
+                    former_poc=former_poc,
                     user=flask.g.fas_user,
                 )
 
