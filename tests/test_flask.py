@@ -292,7 +292,7 @@ engineers need to create packages and spin them into a distribution."""
 <pre class="literal-block">
 /api/collection/new/
 </pre>
-<p>Accept POST queries only.</p>
+<p>Accepts POST queries only.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
