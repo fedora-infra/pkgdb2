@@ -3,13 +3,14 @@
 
 Name:           pkgdb2
 Version:        1.20.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
 URL:            http://fedorahosted.org/pkgdb2/
 Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.tar.gz
 Patch1:         0001-Fix-the-api-to-orphan-package-of-a-specified-user.patch
+Patch2:         0001-Add-the-former_poc-keyword-argument-to-api_acl_reass.patch
 
 BuildArch:      noarch
 
@@ -67,6 +68,7 @@ for changes in the git, builds or bugs.
 %setup -q
 
 %patch1 -p1 -b .
+%patch2 -p1 -b .
 
 
 %build
@@ -115,6 +117,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Sat Nov 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20.1-4
+- Backport into 1.20.1 fix to api_acl_reassign from
+  https://github.com/fedora-infra/pkgdb2/pull/110
+
 * Fri Nov 07 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20.1-3
 - Fix patch 0001-Fix-the-api-to-orphan-package-of-a-specified-user.patch
   former_poc is single element, not a list
