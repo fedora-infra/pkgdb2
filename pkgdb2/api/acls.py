@@ -174,6 +174,9 @@ def api_acl_reassign():
     :arg branches: List of strings of the branchname of the Collection on
         which to reassign the point of contact.
     :arg poc: User name of the new point of contact.
+    :kwarg former_poc: Specify the former poc of the packages you want to
+        reassign. This allows to specify more branches than the former_poc
+        had while still only reassigning the branches the former_poc had.
 
     Sample response:
 
@@ -196,6 +199,7 @@ def api_acl_reassign():
 
     packages = flask.request.form.getlist('pkgnames', None)
     branches = flask.request.form.getlist('branches', None)
+    former_poc = flask.request.form.get('former_poc', None)
     user_target = flask.request.form.get('poc', None)
 
     if not packages or not branches or not user_target:
@@ -213,6 +217,7 @@ def api_acl_reassign():
                     pkg_name=package,
                     pkg_branch=branch,
                     pkg_poc=user_target,
+                    former_poc=former_poc,
                     user=flask.g.fas_user
                 )
                 SESSION.commit()
