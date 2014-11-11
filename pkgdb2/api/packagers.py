@@ -205,7 +205,12 @@ def api_packager_acl(packagername=None):
             if count:
                 output['acls_count'] = packagers
             else:
-                output['acls'] = [pkg.to_json() for pkg in packagers]
+                tmp = []
+                for pkg in packagers:
+                    dic = pkg[0].to_json(pkglist=False)
+                    dic['packagelist'] = pkg[1].to_json(acls=False)
+                    tmp.append(dic)
+                output['acls'] = tmp
 
             total_acl = pkgdblib.get_acl_packager(
                 SESSION,
