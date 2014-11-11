@@ -57,7 +57,7 @@ class PackageListingAcltests(Modeltests):
         packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
         self.assertEqual(5, len(packager))
-        output = packager[0].to_json()
+        output = packager[0][0].to_json()
 
         # Because matching times in tests is hard.
         del output['packagelist']['package']['creation_date']
@@ -99,7 +99,7 @@ class PackageListingAcltests(Modeltests):
         packager = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
         self.assertEqual(5, len(packager))
-        output = packager[0].__repr__()
+        output = packager[0][0].__repr__()
         self.assertEqual(
             output,
             "PackageListingAcl(id:1, u'pingou', "
@@ -118,52 +118,54 @@ class PackageListingAcltests(Modeltests):
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
         self.assertEqual(11, len(acls))
-        self.assertEqual(acls[0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[2].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[3].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[2][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[3][0].packagelist.collection.branchname, 'master')
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', eol=True)
-        self.assertEqual(11, len(acls))
-        self.assertEqual(acls[0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[2].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[3].packagelist.collection.branchname, 'master')
+        self.assertEqual(99, len(acls))
+        for acl in acls:
+            self.assertTrue(
+                acl[0].packagelist.package.name in
+                ['guake', 'geany', 'fedocal'])
+            self.assertTrue(
+                acl[0].packagelist.collection.branchname
+                in ['f17', 'f18', 'master'])
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', poc=True)
         self.assertEqual(7, len(acls))
-        self.assertEqual(acls[0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[0].acl, 'commit')
-        self.assertEqual(acls[1].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[1].acl, 'watchcommits')
-        self.assertEqual(acls[2].packagelist.package.name, 'guake')
-        self.assertEqual(acls[2].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[2].acl, 'commit')
-        self.assertEqual(acls[3].packagelist.package.name, 'guake')
-        self.assertEqual(acls[3].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[3].acl, 'watchcommits')
+        self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[0][0].acl, 'commit')
+        self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[1][0].acl, 'watchcommits')
+        self.assertEqual(acls[2][0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[2][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[2][0].acl, 'commit')
+        self.assertEqual(acls[3][0].packagelist.package.name, 'guake')
+        self.assertEqual(acls[3][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[3][0].acl, 'watchcommits')
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', poc=False)
         self.assertEqual(4, len(acls))
-        self.assertEqual(acls[0].packagelist.package.name, 'geany')
-        self.assertEqual(acls[0].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[0].acl, 'commit')
-        self.assertEqual(acls[1].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[1].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[1].acl, 'commit')
-        self.assertEqual(acls[2].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[2].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[2].acl, 'commit')
-        self.assertEqual(acls[3].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[3].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[3].acl, 'watchbugzilla')
+        self.assertEqual(acls[0][0].packagelist.package.name, 'geany')
+        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[0][0].acl, 'commit')
+        self.assertEqual(acls[1][0].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].acl, 'commit')
+        self.assertEqual(acls[2][0].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[2][0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[2][0].acl, 'commit')
+        self.assertEqual(acls[3][0].packagelist.package.name, 'fedocal')
+        self.assertEqual(acls[3][0].packagelist.collection.branchname, 'f18')
+        self.assertEqual(acls[3][0].acl, 'watchbugzilla')
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'toshio', poc=True)
