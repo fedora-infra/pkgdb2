@@ -566,7 +566,7 @@ class PackageListingAcl(BASE):
                 self.id, self.fas_name, self.packagelisting_id, self.acl,
                 self.status)
 
-    def to_json(self, _seen=None):
+    def to_json(self, _seen=None, pkglist=True):
         """ Return a dictionnary representation of this object.
 
         """
@@ -578,7 +578,7 @@ class PackageListingAcl(BASE):
             acl=self.acl,
             status=self.status,
         )
-        if type(self.packagelist) not in _seen:
+        if type(self.packagelist) not in _seen and pkglist:
             infos['packagelist'] = self.packagelist.to_json(_seen)
         return infos
 
