@@ -118,16 +118,24 @@ class PackageListingAcltests(Modeltests):
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou')
         self.assertEqual(11, len(acls))
-        self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[2][0].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[3][0].packagelist.collection.branchname, 'master')
+        for acl in acls:
+            self.assertEqual(acl[0].fas_name, 'pingou')
+            self.assertTrue(
+                acl[0].acl in ['commit', 'watchcommits', 'watchbugzilla'])
+            self.assertTrue(
+                acl[0].packagelist.package.name in
+                ['guake', 'geany', 'fedocal'])
+            self.assertTrue(
+                acl[0].packagelist.collection.branchname
+                in ['f17', 'f18', 'master'])
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', eol=True)
         self.assertEqual(99, len(acls))
         for acl in acls:
+            self.assertEqual(acl[0].fas_name, 'pingou')
+            self.assertTrue(
+                acl[0].acl in ['commit', 'watchcommits', 'watchbugzilla'])
             self.assertTrue(
                 acl[0].packagelist.package.name in
                 ['guake', 'geany', 'fedocal'])
@@ -138,18 +146,16 @@ class PackageListingAcltests(Modeltests):
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', poc=True)
         self.assertEqual(7, len(acls))
-        self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[0][0].acl, 'commit')
-        self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[1][0].acl, 'watchcommits')
-        self.assertEqual(acls[2][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[2][0].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[2][0].acl, 'commit')
-        self.assertEqual(acls[3][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[3][0].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[3][0].acl, 'watchcommits')
+        for acl in acls:
+            self.assertEqual(acl[0].fas_name, 'pingou')
+            self.assertTrue(
+                acl[0].acl in ['commit', 'watchcommits', 'watchbugzilla'])
+            self.assertTrue(
+                acl[0].packagelist.package.name in
+                ['guake', 'geany', 'fedocal'])
+            self.assertTrue(
+                acl[0].packagelist.collection.branchname
+                in ['f17', 'f18', 'master'])
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', poc=False)
