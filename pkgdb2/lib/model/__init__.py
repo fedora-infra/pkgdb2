@@ -350,7 +350,7 @@ class PackageListingAcl(BASE):
             acls = [acls]
 
         query = session.query(
-            cls
+            cls, PackageListing
         ).filter(
             PackageListingAcl.fas_name == packager
         )
