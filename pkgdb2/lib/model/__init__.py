@@ -1473,7 +1473,8 @@ class Package(BASE):
             'status': self.status,
             'review_url': self.review_url,
             'upstream_url': self.upstream_url,
-            'creation_date': time.mktime(self.date_created.timetuple())
+            'creation_date': time.mktime(self.date_created.timetuple()),
+            'monitor': self.monitor,
         }
 
         _seen.append(cls)

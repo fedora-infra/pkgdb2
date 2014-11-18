@@ -1444,6 +1444,12 @@ class FlaskApiPackagesTest(Modeltests):
         # Works
         user.username = 'pingou'
         with user_set(pkgdb2.APP, user):
+            # Ensure that GETs show that it is *not* monitored
+            output = self.app.get('/api/package/guake/')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(data['packages'][0]['package']['monitor'], False)
+
             output = self.app.post('/api/package/guake/monitor/1')
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
@@ -1469,6 +1475,12 @@ class FlaskApiPackagesTest(Modeltests):
 
             self.assertEqual(
                 data['output'], "ok")
+
+            # Ensure that subsequent GETs show that it is monitored
+            output = self.app.get('/api/package/guake/')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(data['packages'][0]['package']['monitor'], True)
 
         # User is not a packager but is admin
         user = FakeFasUserAdmin()
