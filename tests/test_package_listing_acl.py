@@ -87,6 +87,7 @@ class PackageListingAcltests(Modeltests):
                     'acls': [],
                     'summary': u'Top down terminal for GNOME',
                     'description': u'Top down terminal...',
+                    'monitor': False,
                 }
             }
         }

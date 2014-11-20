@@ -63,7 +63,7 @@ class Packagetests(Modeltests):
         self.assertEqual(
             set(package.keys()),
             set(['status', 'upstream_url', 'name', 'summary', 'acls',
-                 'creation_date', 'review_url', 'description']))
+                 'creation_date', 'review_url', 'description', 'monitor']))
         self.assertEqual(package['acls'], [])
 
         package = model.Package.by_name(self.session, 'guake')
@@ -71,7 +71,7 @@ class Packagetests(Modeltests):
         self.assertEqual(
             set(package.keys()),
             set(['status', 'upstream_url', 'name', 'summary', 'acls',
-                 'creation_date', 'review_url', 'description']))
+                 'creation_date', 'review_url', 'description', 'monitor']))
         self.assertEqual(package['acls'], [])
 
     def test_to_json_acls(self):
@@ -84,7 +84,7 @@ class Packagetests(Modeltests):
         self.assertEqual(
             set(package.keys()),
             set(['status', 'upstream_url', 'name', 'summary', 'acls',
-                 'creation_date', 'review_url', 'description']))
+                 'creation_date', 'review_url', 'description', 'monitor']))
         self.assertNotEqual(package['acls'], [])
 
     def test_search(self):
