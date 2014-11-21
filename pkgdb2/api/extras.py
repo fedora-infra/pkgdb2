@@ -537,7 +537,7 @@ def api_monitored():
     '''
     List packages monitored
     -----------------------
-    Return the list of packages in pkgdb that have been flagged to
+    Return the list of packages in pkgdb that have been flagged to be
     monitored by `anitya <http://release-monitoring.org>`_.
 
     ::
