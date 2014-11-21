@@ -29,8 +29,18 @@ if 'PKGDB2_CONFIG' not in os.environ \
     os.environ['PKGDB2_CONFIG'] = '/etc/pkgdb2/pkgdb2.cfg'
 
 
-BASE_URL = 'https://dl.fedoraproject.org/pub/fedora/linux/development/' + \
-    'rawhide/source/SRPMS/'
+BASE_URL = 'https://dl.fedoraproject.org/pub/%s/SRPMS/'
+VERSIONS = [
+    ('rawhide', 'fedora/linux/development/rawhide/source'),
+    ('f21_up', 'fedora/linux/updates/21'),
+    ('f20_up', 'fedora/linux/updates/20'),
+    ('f20_rel', 'fedora/linux/releases/20/Everything/source'),
+    ('f19_up', 'fedora/linux/updates/19'),
+    ('f19_rel', 'fedora/linux/releases/19/Everything/source'),
+    ('el7', 'epel/7'),
+    ('el6', 'epel/6'),
+    ('el5', 'epel/5'),
+]
 
 
 from sqlalchemy import Column, ForeignKey, Integer, Text, create_engine
@@ -64,10 +74,10 @@ class User(object):
     groups = ['sysadmin-main']
 
 
-def get_primary_db_location():
+def get_primary_db_location(base_url):
     ''' Retrieve the latest primary_db from the rawhide repo metadata.
     '''
-    data = requests.get(BASE_URL + 'repodata/repomd.xml')
+    data = requests.get(base_url + 'repodata/repomd.xml')
     primary_db = False
     location = None
     for row in data.text.split('\n'):
@@ -79,9 +89,9 @@ def get_primary_db_location():
     return location
 
 
-def download_primary_db(location, target):
+def download_primary_db(base_url, location, target):
     ''' Download the provided location at the specified target. '''
-    data = requests.get(BASE_URL + location, stream=True)
+    data = requests.get(base_url + location, stream=True)
     with open(target, 'wb') as stream:
         for chunk in data.iter_content(chunk_size=1024):
             if chunk:
@@ -92,10 +102,26 @@ def download_primary_db(location, target):
 
 def decompress_primary_db(archive, location):
     ''' Decompress the given XZ archive at the specified location. '''
-    with contextlib.closing(lzma.LZMAFile(archive)) as stream_xz:
-        data = stream_xz.read()
-    with open(location, 'wb') as stream:
-        stream.write(data)
+    if archive.endswith('.xz'):
+        import lzma
+        with contextlib.closing(lzma.LZMAFile(archive)) as stream_xz:
+            data = stream_xz.read()
+        with open(location, 'wb') as stream:
+            stream.write(data)
+    elif archive.endswith('.gz'):
+        import tarfile
+        with tarfile.open(archive) as tar:
+            tar.extractall(path=location)
+    elif archive.endswith('.bz2'):
+        import bz2
+        with open(location, 'w') as out:
+            bzar = bz2.BZ2File(archive)
+            out.write(bzar.read())
+            bzar.close()
+    elif archive.endswith('.sqlite'):
+        with open(location, 'w') as out:
+            with open(archive) as inp:
+                out.write(inp.read())
 
 
 def get_pkg_info(session, pkg_name):
@@ -108,50 +134,98 @@ def main():
     working_dir = tempfile.mkdtemp()
     print working_dir
 
-    primary_db_location = get_primary_db_location()
+    UNKNOWN = set()
+    KNOWN = set()
+    for name, version in VERSIONS:
+        print '%s: %s' % (name, version)
+        base_url = BASE_URL % version
 
-    dbfile_xz = os.path.join(working_dir, 'primary_db.sqlite.xz')
-    download_primary_db(primary_db_location, dbfile_xz)
+        primary_db_location = get_primary_db_location(base_url)
 
-    dbfile = os.path.join(working_dir, 'primary_db.sqlite')
-    decompress_primary_db(dbfile_xz, dbfile)
+        db_ext = primary_db_location.split('primary.')[1]
+        dbfile_xz = os.path.join(working_dir, 'primary_db.%s' % db_ext)
+        download_primary_db(base_url, primary_db_location, dbfile_xz)
 
-    db_url = 'sqlite:///%s' % dbfile
-    db_session = sessionmaker(bind=create_engine(db_url))
-    session = db_session()
-    print db_url
+        dbfile = os.path.join(working_dir, 'primary_db_%s.sqlite' % name)
+        decompress_primary_db(dbfile_xz, dbfile)
 
-    # Update the package in pkgdb
-    count = 0
-    updated = 0
-    cnt = 0
-    for cnt, pkg in enumerate(pkgdb2.lib.search_package(
-            pkgdb2.SESSION, '*', status='Approved')):
-        try:
-            pkgobj = get_pkg_info(session, pkg.name)
-        except Exception, err:
-            print 'No such package %s found in yum\'s metadata.' % pkg.name
-            continue
+        db_url = 'sqlite:///%s' % dbfile
+        db_session = sessionmaker(bind=create_engine(db_url))
+        session = db_session()
 
-        if not pkgobj:
-            print 'No such package %s found in yum\'s metadata.' % pkg.name
-            continue
+        # Update the package in pkgdb
+        count = 0
+        updated = 0
+        if name == 'rawhide':
+            for pkg in pkgdb2.lib.search_package(
+                    pkgdb2.SESSION, '*', status='Approved'):
 
-        msg = pkgdb2.lib.edit_package(
-            session=pkgdb2.SESSION,
-            package=pkg,
-            pkg_summary=pkgobj.summary,
-            pkg_description=pkgobj.description,
-            pkg_upstream_url=pkgobj.url,
-            user=User()
-        )
-        if msg:
-            updated += 1
+                try:
+                    pkgobj = get_pkg_info(session, pkg.name)
+                except Exception, err:
+                    UNKNOWN.add(pkg.name)
+                    continue
 
-    pkgdb2.SESSION.commit()
+                if not pkgobj:
+                    UNKNOWN.add(pkg.name)
+                    continue
 
-    print '%s packages checked' % cnt
+                KNOWN.add(pkg.name)
+                msg = pkgdb2.lib.edit_package(
+                    session=pkgdb2.SESSION,
+                    package=pkg,
+                    pkg_summary=pkgobj.summary,
+                    pkg_description=pkgobj.description,
+                    pkg_upstream_url=pkgobj.url,
+                    user=User()
+                )
+                if msg:
+                    updated += 1
+        else:
+            tmp = set()
+            for pkgname in UNKNOWN:
+                pkg = pkgdb2.lib.search_package(
+                    pkgdb2.SESSION, pkgname, status='Approved')
+
+                if len(pkg) == 1:
+                    pkg = pkg[0]
+                else:
+                    print pkgname, pkg
+
+                try:
+                    pkgobj = get_pkg_info(session, pkg.name)
+                except Exception, err:
+                    tmp.add(pkg.name)
+                    continue
+
+                if not pkgobj:
+                    tmp.add(pkg.name)
+                    continue
+
+                KNOWN.add(pkg.name)
+                msg = pkgdb2.lib.edit_package(
+                    session=pkgdb2.SESSION,
+                    package=pkg,
+                    pkg_summary=pkgobj.summary,
+                    pkg_description=pkgobj.description,
+                    pkg_upstream_url=pkgobj.url,
+                    user=User()
+                )
+                if msg:
+                    updated += 1
+            # Add the package we didn't find here (in case)
+            UNKNOWN.update(tmp)
+            # Remove the ones we found
+            UNKNOWN.difference_update(KNOWN)
+
+        pkgdb2.SESSION.commit()
+
+    print '%s packages found' % len(KNOWN)
     print '%s packages updated' % updated
+    print '%s packages not found' % len(UNKNOWN)
+    for pkg in sorted(UNKNOWN)[:5]:
+        print "No such package %s found in yum's metadata." % pkg
+
 
     # Drop the temp directory
     shutil.rmtree(working_dir)
