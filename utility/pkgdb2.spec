@@ -2,15 +2,13 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.20.1
-Release:        4%{?dist}
+Version:        1.21
+Release:        1%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
 URL:            http://fedorahosted.org/pkgdb2/
 Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.tar.gz
-Patch1:         0001-Fix-the-api-to-orphan-package-of-a-specified-user.patch
-Patch2:         0001-Add-the-former_poc-keyword-argument-to-api_acl_reass.patch
 
 BuildArch:      noarch
 
@@ -67,10 +65,6 @@ for changes in the git, builds or bugs.
 %prep
 %setup -q
 
-%patch1 -p1 -b .
-%patch2 -p1 -b .
-
-
 %build
 %{__python} setup.py build
 
@@ -117,6 +111,29 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Nov 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.21-1
+- Update to 1.21
+- DB optimization: do not use LIKE in queries where there is no '%'
+- Update the layout of the user list page
+- Add flag to set/update the monitoring flag on packages. This flag tells
+  the-new-hotness whether the maintainers are interested in getting bugzilla
+  tickets about updates available on their package (updates being monitored
+  via anitya: release-monitoring.org)
+- Clean(er) logic to mark the fields mandatory in the forms
+- Fix indentation in the mail_logging module
+- Branch orphaned packages as well as we branch for new releases (Subho-bcrec)
+- Auto select packagers search in packager details page. (Ratnadeep Debnath)
+- Obsolete all ACLs on a package that is retired
+- Nicer docstring and API documentation by using textwrap.dedent()
+- Add a `former_poc` argument to the orphan API endpoint allowing to restrict
+  the orphan to only the package of a certain packager
+- Add the former_poc keyword argument to api_acl_reassign, same principle as
+  when orphaning a package
+- DB optimization: optimize the API endpoint returning the packager's ACLs
+- Include the monitoring state in the GET API. (Ralph Bean)
+- Include the api_groups and api_monitored in the API documentation
+- Update the update_package_info script to include other releases than rawhide
+
 * Sat Nov 08 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.20.1-4
 - Backport into 1.20.1 fix to api_acl_reassign from
   https://github.com/fedora-infra/pkgdb2/pull/110

@@ -8,12 +8,16 @@ On October 5, 2014 (release 1.20.1), the list looks as follow:
 =================  ===========
 Number of commits  Contributor
 =================  ===========
-  1760              Pierre-Yves Chibon <pingou@pingoured.fr>
-    18              Ralph Bean <rbean@redhat.com>
+  1850              Pierre-Yves Chibon <pingou@pingoured.fr>
+    19              Ralph Bean <rbean@redhat.com>
      3              Chaoyi Zha <Cydrobolt@users.noreply.github.com>
+     3              Johan Cwiklinski <johan@x-tnd.be>
      1              Christopher Meng <cickumqt@gmail.com>
      1              Michael Haynes <mhaynes.linux@gmail.com>
+     1              Ralph Bean <ralph.bean@gmail.com>
+     1              Ratnadeep Debnath <ratnadeep.debnath@ibibogroup.com>
      1              Ricky Elrod <ricky@elrod.me>
+     1              Subho-bcrec <subho.prp@gmail.com>
      1              mhaynes121 <mhaynes.linux@gmail.com>
 
 =================  ===========
