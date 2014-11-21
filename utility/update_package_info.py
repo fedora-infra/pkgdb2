@@ -31,15 +31,15 @@ if 'PKGDB2_CONFIG' not in os.environ \
 
 BASE_URL = 'https://dl.fedoraproject.org/pub/%s/SRPMS/'
 VERSIONS = [
-    'fedora/linux/development/rawhide/source',
-    'fedora/linux/updates/21',
-    'fedora/linux/updates/20',
-    'fedora/linux/releases/20/Everything/source',
-    'fedora/linux/updates/19',
-    'fedora/linux/releases/19/Everything/source',
-    'epel/7',
-    'epel/6',
-    'epel/5',
+    ('rawhide', 'fedora/linux/development/rawhide/source'),
+    ('f21_up', 'fedora/linux/updates/21'),
+    ('f20_up', 'fedora/linux/updates/20'),
+    ('f20_rel', 'fedora/linux/releases/20/Everything/source'),
+    ('f19_up', 'fedora/linux/updates/19'),
+    ('f19_rel', 'fedora/linux/releases/19/Everything/source'),
+    ('el7', 'epel/7'),
+    ('el6', 'epel/6'),
+    ('el5', 'epel/5'),
 ]
 
 
@@ -136,8 +136,8 @@ def main():
 
     UNKNOWN = set()
     KNOWN = set()
-    for gbl_cnt, version in enumerate(VERSIONS):
-        print gbl_cnt, version
+    for name, version in VERSIONS:
+        print '%s: %s' % (name, version)
         base_url = BASE_URL % version
 
         primary_db_location = get_primary_db_location(base_url)
@@ -146,7 +146,7 @@ def main():
         dbfile_xz = os.path.join(working_dir, 'primary_db.%s' % db_ext)
         download_primary_db(base_url, primary_db_location, dbfile_xz)
 
-        dbfile = os.path.join(working_dir, 'primary_db.sqlite')
+        dbfile = os.path.join(working_dir, 'primary_db_%s.sqlite' % name)
         decompress_primary_db(dbfile_xz, dbfile)
 
         db_url = 'sqlite:///%s' % dbfile
@@ -156,7 +156,7 @@ def main():
         # Update the package in pkgdb
         count = 0
         updated = 0
-        if gbl_cnt == 0:
+        if name == 'rawhide':
             for pkg in pkgdb2.lib.search_package(
                     pkgdb2.SESSION, '*', status='Approved'):
 
