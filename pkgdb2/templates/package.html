@@ -510,7 +510,8 @@ confusing what the difference is between that status an the per-branch status)
 
 <script type="text/javascript">
     function toggle_monitor(status){
-        var _url = "{{ url_for('api_ns.monitor_package', package=package.name, status='') }}";
+        var _url = "{{ url_for(
+            'api_ns.monitor_package', package=package.name, status='') }}";
         $.ajax({
             url: _url + status,
             type: 'POST',
@@ -538,7 +539,8 @@ confusing what the difference is between that status an the per-branch status)
         });
 
         $('#givebutton').click(function(){
-            var _url = "{{ url_for('.package_give', package=package.name, full=0) }}";
+            var _url = "{{
+                url_for('.package_give', package=package.name, full=0) }}";
             $.ajax({
                 url: _url,
                 type: 'GET',
@@ -555,7 +557,8 @@ confusing what the difference is between that status an the per-branch status)
             return false;
         });
         $('#orphanbutton').click(function(){
-            var _url = "{{ url_for('.package_orphan', package=package.name, full=0) }}";
+            var _url = "{{
+                url_for('.package_orphan', package=package.name, full=0) }}";
             $.ajax({
                 url: _url,
                 type: 'GET',
@@ -573,7 +576,8 @@ confusing what the difference is between that status an the per-branch status)
             return false;
         });
         $('#takebutton').click(function(){
-            var _url = "{{ url_for('.package_take', package=package.name, full=0) }}";
+            var _url = "{{
+                url_for('.package_take', package=package.name, full=0) }}";
             $.ajax({
                 url: _url,
                 type: 'GET',
@@ -590,7 +594,8 @@ confusing what the difference is between that status an the per-branch status)
             return false;
         });
         $('#retirebutton').click(function(){
-            var _url = "{{ url_for('.package_retire', package=package.name, full=0) }}";
+            var _url = "{{
+                url_for('.package_retire', package=package.name, full=0) }}";
             $.ajax({
                 url: _url,
                 type: 'GET',
