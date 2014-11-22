@@ -163,7 +163,6 @@ def main():
     )
 
     for pkg in pkgs:
-        print pkg
 
         args = {
             'pkgnames': pkg,
@@ -171,7 +170,6 @@ def main():
         print pkgdbclient.handle_api_call(
             '/package/%s/monitor/1' % pkg, data=args
         )
-        break
 
 
 if __name__ == '__main__':
