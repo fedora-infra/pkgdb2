@@ -11,6 +11,7 @@ https://fedorapeople.org/cgit/till/public_git/cnucnu.git/
 
 """
 
+import argparse
 import fnmatch
 import logging
 import re
@@ -150,14 +151,41 @@ def get_packages():
     return packages
 
 
+def get_args():
+    ''' Set and return the command line arguments. '''
+    parser = argparse.ArgumentParser(
+        description='Script syncing monitoring flag status from the wiki to'
+        ' pkgdb.'
+    )
+    parser.add_argument(
+        '--url',
+        default='https://admin.stg.fedoraproject.org/pkgdb',
+        help='URL of the pkgdb instance to use, defaults to: '
+        'https://admin.stg.fedoraproject.org/pkgdb'
+    )
+    parser.add_argument(
+        '--prod', default=False, action='store_true',
+        help='If set, changes the URL used to '
+        'https://admin.fedoraproject.org/pkgdb'
+    )
+
+    return parser.parse_args()
+
+
 def main():
     ''' Retrieve the list of packages to monitor and set the monitoring
     flag in pkgdb
     '''
+    args = get_args()
+
     pkgs = get_packages()
 
+    url = arg.url
+    if args.prod:
+        url = 'https://admin.fedoraproject.org/pkgdb'
+
     pkgdbclient = pkgdb2client.PkgDB(
-        'https://admin.stg.fedoraproject.org/pkgdb',
+        url,
         insecure=True,
         login_callback=pkgdb2client.ask_password
     )
