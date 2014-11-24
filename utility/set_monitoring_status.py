@@ -180,7 +180,7 @@ def main():
 
     pkgs = get_packages()
 
-    url = arg.url
+    url = args.url
     if args.prod:
         url = 'https://admin.fedoraproject.org/pkgdb'
 
