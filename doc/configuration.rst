@@ -169,7 +169,7 @@ PackageDB authenticates its users with a FAS instance through `FedOAuth
 ``flask-fas-openid`` plugin which can be configured to usea different endpoint,
 thus allowing other project to use pkgdb2.
 
-Here below are listed the configuration key to use to authenticate your users
+Here below are listed the configuration keys to use to authenticate your users
 against another FedOAuth instance than the default one.
 
 
