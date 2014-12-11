@@ -164,6 +164,21 @@ the FAS server.
 **Default:** ``PKGDB2_FAS_PASSWORD = None``.
 
 
+PackageDB authenticates with a FAS instance through `FedOAuth <https://github.com/FedOAuth/FedOAuth>`_.
+Configuring FedOAuth to use a different endpoint may optionally be defined.
+
+
+``FAS_OPENID_ENDPOINT`` is the URL for the FedOAuth instance.
+
+**Default:** ``FAS_OPENID_ENDPOINT = https://id.fedoraproject.org``
+
+
+``FAS_OPENID_CHECK_CERT`` is a boolean to specify if FedOAuth will verify SSL
+certificates.
+
+**Default:** ``FAS_OPENID_CHECK_CERT = True``
+
+
 Notification settings
 ---------------------
 
