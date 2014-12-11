@@ -164,8 +164,13 @@ the FAS server.
 **Default:** ``PKGDB2_FAS_PASSWORD = None``.
 
 
-PackageDB authenticates with a FAS instance through `FedOAuth <https://github.com/FedOAuth/FedOAuth>`_.
-Configuring FedOAuth to use a different endpoint may optionally be defined.
+PackageDB authenticates its users with a FAS instance through `FedOAuth
+<https://github.com/FedOAuth/FedOAuth>`_. To do so it relies on the
+``flask-fas-openid`` plugin which can be configured to usea different endpoint,
+thus allowing other project to use pkgdb2.
+
+Here below are listed the configuration key to use to authenticate your users
+against another FedOAuth instance than the default one.
 
 
 ``FAS_OPENID_ENDPOINT`` is the URL for the FedOAuth instance.
