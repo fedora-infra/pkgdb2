@@ -14,6 +14,7 @@
 
 import os
 ## Set the environment variable pointing to the configuration file
+# Might required to be adjusted to your setup
 os.environ['PKGDB2_CONFIG'] = '/etc/pkgdb2/pkgdb2.cfg'
 
 ## The most import line to make the wsgi working
