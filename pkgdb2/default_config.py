@@ -28,6 +28,9 @@ from datetime import timedelta
 # Set the time after which the session expires
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
+# Name used to reference ourselves
+PROJECT_NAME = 'Fedora'
+
 # Root of the website url, so for example if you have it running at
 #    http://project/pkgdb
 # SITE_ROOT is http://project

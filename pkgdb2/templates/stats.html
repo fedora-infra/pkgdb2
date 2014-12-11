@@ -6,17 +6,17 @@
 
 {% block content %}
 
-<h1>Fedora Package Database</h1>
+<h1>{{ config['PROJECT_NAME'] }} Package Database</h1>
 
 <p>
     PkgDB stores currently information about {{ collections | length }}
-    active Fedora releases.
+    active {{ config['PROJECT_NAME'] }} releases.
 </p>
 
 
 <table>
     <tr>
-        <th>Fedora branch / release</th>
+        <th>{{ config['PROJECT_NAME'] }} branch / release</th>
         <th>Number of packages</th>
     </tr>
     {% for collec in collections | sort %}
@@ -28,7 +28,7 @@
 </table>
 
 
-<h2>Evolution in Fedora</h2>
+<h2>Evolution in {{ config['PROJECT_NAME'] }}</h2>
 
 <div class="demo-container">
     <div id="placeholder" class="demo-placeholder"></div>
@@ -139,7 +139,7 @@
 
                 if (item.series.label == 'Number of packages') {
                     showTooltip(item.pageX, item.pageY,
-                            y + " packages in Fedora "
+                            y + " packages in {{ config['PROJECT_NAME'] }} "
                             + data[0].ticks[item.dataIndex][0]);
                 }
             } else {
