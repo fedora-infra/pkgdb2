@@ -1693,17 +1693,19 @@ def vcs_acls(session, eol=False, oformat='text'):
                 user = pkg[1]
 
             if pkg[0] not in output:
-                output[pkg[0]] = {}
+                output[pkg[0].encode('utf-8')] = {}
 
             if pkg[2] not in output[pkg[0]]:
-                output[pkg[0]][pkg[2]] = {'commit':
+                output[pkg[0]][pkg[2].encode('utf-8')] = {'commit':
                     {'groups': ['provenpackager'], 'people': []}
                 }
 
             if group:
-                output[pkg[0]][pkg[2]]['commit']['groups'].append(group)
+                output[pkg[0]][pkg[2]]['commit']['groups'].append(
+                    group.encode('utf-8'))
             if user:
-                output[pkg[0]][pkg[2]]['commit']['people'].append(user)
+                output[pkg[0]][pkg[2]]['commit']['people'].append(
+                    user.encode('utf-8'))
 
     else:
         for pkg in pkgs:
