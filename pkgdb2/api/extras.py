@@ -78,22 +78,24 @@ def _bz_acls_cached(name=None, out_format='text'):
                 group = []
                 for ppl in packages[clt][pkg]['cc'].split(','):
                     if ppl.startswith('group::'):
-                        group.append(ppl.replace('group::', '@'))
+                        group.append(ppl.replace('group::', '@').encode('UTF-8'))
                     elif ppl:
-                        user.append(ppl)
+                        user.append(ppl.encode('UTF-8'))
                 poc = packages[clt][pkg]['poc']
                 if poc.startswith('group::'):
                     poc = poc.replace('group::', '@')
+
                 if clt not in output['bugzillaAcls']:
-                    output['bugzillaAcls'][clt] = {}
-                output['bugzillaAcls'][clt][pkg] = {
-                    'owner': poc,
+                    output['bugzillaAcls'][clt.encode('UTF-8')] = {}
+
+                output['bugzillaAcls'][clt][pkg.encode('UTF-8')] = {
+                    'owner': poc.encode('UTF-8'),
                     'cclist': {
                         'groups': group,
                         'people': user,
                     },
                     'qacontact': None,
-                    'summary': packages[clt][pkg]['summary']
+                    'summary': packages[clt][pkg]['summary'].encode('UTF-8')
                 }
             else:
                 output.append(
@@ -216,7 +218,10 @@ Bugzilla information
     acls = _bz_acls_cached(name, out_format)
 
     if out_format == 'json':
-        return flask.jsonify(acls)
+        return flask.Response(
+            str(acls).replace("'", '"').replace('None', 'null'),
+            content_type="text/plain;charset=UTF-8"
+        )
     else:
         return flask.Response(
             intro + "\n".join(acls),
