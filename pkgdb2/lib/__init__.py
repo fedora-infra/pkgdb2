@@ -1671,54 +1671,81 @@ def bugzilla(session, name=None):
     return output
 
 
-def vcs_acls(session, eol=False):
+def vcs_acls(session, eol=False, oformat='text'):
     """ Return the information to sync ACLs with gitolite.
 
     :arg session: the session to connect to the database with.
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
+    :kwarg oformat: Output format to returned the data as, defaults to `text`
+        can be `JSON`.
 
     """
     output = {}
     pkgs = model.vcs_acls(session=session, eol=eol)
-    for pkg in pkgs:
-        user = None
-        group = None
-        if pkg[1] and pkg[1].startswith('group::'):
-            group = pkg[1].replace('group::', '@')
-        else:
-            user = pkg[1]
-
-        if pkg[0] in output:
-            if pkg[2] in output[pkg[0]]:
-                if user:
-                    if output[pkg[0]][pkg[2]]['user']:
-                        output[pkg[0]][pkg[2]]['user'] += ','
-                    output[pkg[0]][pkg[2]]['user'] += user
-                elif group:  # pragma: no cover
-                    if output[pkg[0]][pkg[2]]['group']:
-                        output[pkg[0]][pkg[2]]['group'] += ','
-                    output[pkg[0]][pkg[2]]['group'] += group
+    if oformat == 'json':
+        for pkg in pkgs:
+            user = None
+            group = None
+            if pkg[1] and pkg[1].startswith('group::'):
+                    group = pkg[1].replace('group::', '')
             else:
-                if group:  # pragma: no cover
-                    group = ',' + group
-                output[pkg[0]][pkg[2]] = {
-                    'name': pkg[0],
-                    'user': user or '',
-                    'group': '@provenpackager' + (group or ''),
-                    'branch': pkg[2],
+                user = pkg[1]
+
+            if pkg[0] not in output:
+                output[pkg[0].encode('utf-8')] = {}
+
+            if pkg[2] not in output[pkg[0]]:
+                output[pkg[0]][pkg[2].encode('utf-8')] = {'commit':
+                    {'groups': ['provenpackager'], 'people': []}
                 }
-        else:
+
             if group:
-                group = ',' + group
-            output[pkg[0]] = {
-                pkg[2]: {
-                    'name': pkg[0],
-                    'user': user or '',
-                    'group': '@provenpackager' + (group or ''),
-                    'branch': pkg[2],
+                output[pkg[0]][pkg[2]]['commit']['groups'].append(
+                    group.encode('utf-8'))
+            if user:
+                output[pkg[0]][pkg[2]]['commit']['people'].append(
+                    user.encode('utf-8'))
+
+    else:
+        for pkg in pkgs:
+            user = None
+            group = None
+            if pkg[1] and pkg[1].startswith('group::'):
+                    group = pkg[1].replace('group::', '@')
+            else:
+                user = pkg[1]
+
+            if pkg[0] in output:
+                if pkg[2] in output[pkg[0]]:
+                    if user:
+                        if output[pkg[0]][pkg[2]]['user']:
+                            output[pkg[0]][pkg[2]]['user'] += ','
+                        output[pkg[0]][pkg[2]]['user'] += user
+                    elif group:  # pragma: no cover
+                        if output[pkg[0]][pkg[2]]['group']:
+                            output[pkg[0]][pkg[2]]['group'] += ','
+                        output[pkg[0]][pkg[2]]['group'] += group
+                else:
+                    if group:  # pragma: no cover
+                        group = ',' + group
+                    output[pkg[0]][pkg[2]] = {
+                        'name': pkg[0],
+                        'user': user or '',
+                        'group': '@provenpackager' + (group or ''),
+                        'branch': pkg[2],
+                    }
+            else:
+                if group:
+                    group = ',' + group
+                output[pkg[0]] = {
+                    pkg[2]: {
+                        'name': pkg[0],
+                        'user': user or '',
+                        'group': '@provenpackager' + (group or ''),
+                        'branch': pkg[2],
+                    }
                 }
-            }
 
     return output
 

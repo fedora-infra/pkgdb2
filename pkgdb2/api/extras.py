@@ -148,33 +148,19 @@ def _vcs_acls_cache(out_format='text', eol=False):
         End Of Life collections or not. Defaults to ``False``.
 
     '''
-    packages = pkgdblib.vcs_acls(session=SESSION, eol=eol)
+    packages = pkgdblib.vcs_acls(
+        session=SESSION, eol=eol, oformat=out_format)
     output = []
     if out_format == 'json':
-        output = {'packageAcls': {},
+        output = {'packageAcls': packages,
                   'title': 'Fedora Package Database -- VCS ACLs'}
-    for package in sorted(packages):
-        for branch in sorted(packages[package]):
-            if out_format == 'json':
-                if package not in output['packageAcls']:
-                    output['packageAcls'][package] = {}
-                groups = []
-                if packages[package][branch]['group']:
-                    groups = packages[package][branch]['group'].replace(
-                        '@', '').split(',')
-                users = []
-                if packages[package][branch]['user']:
-                    users = packages[package][branch]['user'].split(',')
-                output['packageAcls'][package][branch] = {
-                    'commit': {
-                        'groups': groups,
-                        'people': users
-                    }
-                }
-            else:
-                output.append(
-                    'avail | %(group)s,%(user)s | rpms/%(name)s/%(branch)s'
-                    % (packages[package][branch]))
+        output = str(output).replace("'", '"')
+    else:
+        for package in sorted(packages):
+            for branch in sorted(packages[package]):
+                    output.append(
+                        'avail | %(group)s,%(user)s | rpms/%(name)s/%(branch)s'
+                        % (packages[package][branch]))
     return output
 
 
@@ -362,7 +348,11 @@ def api_vcs():
     acls = _vcs_acls_cache(out_format, eol=eol)
 
     if out_format == 'json':
-        return flask.jsonify(acls)
+        return flask.Response(
+            str(acls),
+            content_type="text/plain;charset=UTF-8"
+        )
+
     else:
         return flask.Response(
             intro + "\n".join(acls),

@@ -1749,7 +1749,8 @@ def vcs_acls(session, eol=False):
         Package.name,
         Collection.branchname,
     ).order_by(
-        Package.name
+        Package.name,
+        Collection.branchname
     )
 
     if not eol:
