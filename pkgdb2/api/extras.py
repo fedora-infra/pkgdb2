@@ -156,7 +156,15 @@ def _vcs_acls_cache(out_format='text', eol=False):
     if out_format == 'json':
         output = {'packageAcls': packages,
                   'title': 'Fedora Package Database -- VCS ACLs'}
-        output = str(output).replace("'", '"')
+        output = unicode(output).encode('utf-8')
+        tochange = {
+            "'": '"',
+            'None': 'null',
+            'True': 'true',
+            'False': 'false',
+        }
+        for key in tochange:
+            output = output.replace(key, tochange[key])
     else:
         for package in sorted(packages):
             for branch in sorted(packages[package]):
@@ -363,7 +371,7 @@ def api_vcs():
 
     if out_format == 'json':
         return flask.Response(
-            str(acls),
+            unicode(acls).encode('utf-8'),
             content_type="text/plain;charset=UTF-8"
         )
 
