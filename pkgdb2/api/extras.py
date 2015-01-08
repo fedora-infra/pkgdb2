@@ -78,22 +78,24 @@ def _bz_acls_cached(name=None, out_format='text'):
                 group = []
                 for ppl in packages[clt][pkg]['cc'].split(','):
                     if ppl.startswith('group::'):
-                        group.append(ppl.replace('group::', '@'))
+                        group.append(ppl.replace('group::', '@').encode('UTF-8'))
                     elif ppl:
-                        user.append(ppl)
+                        user.append(ppl.encode('UTF-8'))
                 poc = packages[clt][pkg]['poc']
                 if poc.startswith('group::'):
                     poc = poc.replace('group::', '@')
+
                 if clt not in output['bugzillaAcls']:
-                    output['bugzillaAcls'][clt] = {}
-                output['bugzillaAcls'][clt][pkg] = {
-                    'owner': poc,
+                    output['bugzillaAcls'][clt.encode('UTF-8')] = {}
+
+                output['bugzillaAcls'][clt][pkg.encode('UTF-8')] = {
+                    'owner': poc.encode('UTF-8'),
                     'cclist': {
                         'groups': group,
                         'people': user,
                     },
                     'qacontact': None,
-                    'summary': packages[clt][pkg]['summary']
+                    'summary': packages[clt][pkg]['summary'].encode('UTF-8')
                 }
             else:
                 output.append(
@@ -154,7 +156,15 @@ def _vcs_acls_cache(out_format='text', eol=False):
     if out_format == 'json':
         output = {'packageAcls': packages,
                   'title': 'Fedora Package Database -- VCS ACLs'}
-        output = str(output).replace("'", '"')
+        output = unicode(output).encode('utf-8')
+        tochange = {
+            "'": '"',
+            'None': 'null',
+            'True': 'true',
+            'False': 'false',
+        }
+        for key in tochange:
+            output = output.replace(key, tochange[key])
     else:
         for package in sorted(packages):
             for branch in sorted(packages[package]):
@@ -216,7 +226,19 @@ Bugzilla information
     acls = _bz_acls_cached(name, out_format)
 
     if out_format == 'json':
-        return flask.jsonify(acls)
+        acls = unicode(acls).encode('utf-8')
+        tochange = {
+            "'": '"',
+            'None': 'null',
+            'True': 'true',
+            'False': 'false',
+        }
+        for key in tochange:
+            acls = acls.replace(key, tochange[key])
+        return flask.Response(
+            acls,
+            content_type="text/plain;charset=UTF-8"
+        )
     else:
         return flask.Response(
             intro + "\n".join(acls),
@@ -349,7 +371,7 @@ def api_vcs():
 
     if out_format == 'json':
         return flask.Response(
-            str(acls),
+            unicode(acls).encode('utf-8'),
             content_type="text/plain;charset=UTF-8"
         )
 
