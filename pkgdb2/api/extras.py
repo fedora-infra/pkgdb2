@@ -218,8 +218,17 @@ Bugzilla information
     acls = _bz_acls_cached(name, out_format)
 
     if out_format == 'json':
+        acls = unicode(acls).encode('utf-8')
+        tochange = {
+            "'": '"',
+            'None': 'null',
+            'True': 'true',
+            'False': 'false',
+        }
+        for key in tochange:
+            acls = acls.replace(key, tochange[key])
         return flask.Response(
-            str(acls).replace("'", '"').replace('None', 'null'),
+            acls,
             content_type="text/plain;charset=UTF-8"
         )
     else:
