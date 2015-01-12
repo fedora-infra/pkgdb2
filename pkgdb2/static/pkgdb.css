@@ -585,3 +585,7 @@ table.list thead th,
     background: linear-gradient(to bottom, #426ead 0%,#1e4a88 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#426ead', endColorstr='#1e4a88',GradientType=0 ); /* IE6-9 */
 }
+
+.info_retire {
+    text-decoration: underline
+}
