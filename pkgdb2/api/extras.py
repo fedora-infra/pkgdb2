@@ -157,7 +157,6 @@ def _vcs_acls_cache(out_format='text', eol=False):
     if out_format == 'json':
         output = {'packageAcls': packages,
                   'title': 'Fedora Package Database -- VCS ACLs'}
-        return flask.jsonify(output)
     else:
         for package in sorted(packages):
             for branch in sorted(packages[package]):
@@ -351,11 +350,7 @@ def api_vcs():
     acls = _vcs_acls_cache(out_format, eol=eol)
 
     if out_format == 'json':
-        return flask.Response(
-            unicode(acls).encode('utf-8'),
-            content_type="text/plain;charset=UTF-8"
-        )
-
+        return flask.jsonify(acls)
     else:
         return flask.Response(
             intro + "\n".join(acls),
