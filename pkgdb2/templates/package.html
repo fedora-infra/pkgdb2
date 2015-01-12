@@ -60,7 +60,16 @@ confusing what the difference is between that status an the per-branch status)
     {% if listing.collection.status != 'EOL' %}
     <tr>
         <th>{{ listing.collection.name }} {{ listing.collection.version }}</th>
-        <td>{{ listing.status }} {% if listing.critpath %} -- critpath {% endif %}</td>
+        <td>
+          {% if listing.status == 'Retired' %}
+          <span class="info_retire" data-clt="{{ listing.collection.branchname }}">
+            {{ listing.status }}
+          </span>
+          {% else %}
+            {{ listing.status }}
+          {% endif %}
+          {% if listing.critpath %} -- critpath {% endif %}
+        </td>
     </tr>
     {% endif %}
     {% endfor %}
@@ -612,6 +621,22 @@ confusing what the difference is between that status an the per-branch status)
 
             return false;
         });
+
+        $('.info_retire').click(
+            function() {
+                var clt = $( this ).attr('data-clt');
+                var url = "{{
+                    url_for('api_ns.api_dead_package',
+                            pkg_name=package.name, clt_name='') }}";
+                url = url + clt
+
+                $.get( url , function( data ) {
+                    alert(data)
+                }) .fail(function() {
+                    alert('No `dead.package` file found');
+                });
+            }
+        );
     });
 </script>
 {% endblock %}
