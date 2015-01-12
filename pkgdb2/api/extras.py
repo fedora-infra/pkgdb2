@@ -157,15 +157,7 @@ def _vcs_acls_cache(out_format='text', eol=False):
     if out_format == 'json':
         output = {'packageAcls': packages,
                   'title': 'Fedora Package Database -- VCS ACLs'}
-        output = unicode(output).encode('utf-8')
-        tochange = {
-            "'": '"',
-            'None': 'null',
-            'True': 'true',
-            'False': 'false',
-        }
-        for key in tochange:
-            output = output.replace(key, tochange[key])
+        return flask.jsonify(output)
     else:
         for package in sorted(packages):
             for branch in sorted(packages[package]):
@@ -227,19 +219,7 @@ Bugzilla information
     acls = _bz_acls_cached(name, out_format)
 
     if out_format == 'json':
-        acls = unicode(acls).encode('utf-8')
-        tochange = {
-            "'": '"',
-            'None': 'null',
-            'True': 'true',
-            'False': 'false',
-        }
-        for key in tochange:
-            acls = acls.replace(key, tochange[key])
-        return flask.Response(
-            acls,
-            content_type="text/plain;charset=UTF-8"
-        )
+        return flask.jsonify(acls)
     else:
         return flask.Response(
             intro + "\n".join(acls),
