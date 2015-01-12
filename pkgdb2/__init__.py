@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013-2014  Red Hat, Inc.
+# Copyright © 2013-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -39,8 +39,8 @@ from flask.ext.fas_openid import FAS
 import pkgdb2.mail_logging
 
 
-__version__ = '1.21'
-__api_version__ = '1.13'
+__version__ = '1.22'
+__api_version__ = '1.14'
 
 APP = flask.Flask(__name__)
 

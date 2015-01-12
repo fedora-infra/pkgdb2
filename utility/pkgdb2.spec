@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.21
+Version:        1.22
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -91,6 +91,9 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_createdb.py
 # Install the pkgdb2_branch script
 install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_branch.py
 
+# Install the set_monitoring_script
+install -m 644 utility/set_monitoring_status.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/set_monitoring_status.py
+
 # Install the alembic files
 cp -r alembic $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/
 install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic.ini
@@ -111,6 +114,17 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Jan 12 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.22-1
+- Update to 1.22
+- Add the `set_monitoring_status` utility script (installed on /usr/share/pkgdb2)
+- Improve documentation and default files (Thanks Michael Cronenworth)
+- Optimize the /api/vcs endpoint by generating the JSON output directly
+- Optimize the /api/bugzilla endpoint by generating the JSON output directly
+- Add a dedicated API endpoint to retrieve the content of the dead.package
+  file from cgit
+- Retrieve the content of the dead.package file when clicking on 'Retired'
+  on the package page
+
 * Fri Nov 21 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.21-1
 - Update to 1.21
 - DB optimization: do not use LIKE in queries where there is no '%'
