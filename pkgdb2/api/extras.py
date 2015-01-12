@@ -24,6 +24,7 @@ Extras API endpoints for the Flask application.
 '''
 
 import flask
+import requests
 
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION
@@ -585,3 +586,29 @@ def api_monitored():
             '\n'.join(output),
             content_type="text/plain;charset=UTF-8"
         )
+
+
+@API.route('/dead/package/<pkg_name>/<clt_name>')
+def api_dead_package(pkg_name, clt_name):
+    '''
+    Returned the content of the of dead.package file
+    -----------------------
+    Retired packages should have in their git a ``dead.package`` file
+    containing the explanation as why the package was retired.
+    This method calls cgit to return that explanation.
+
+    ::
+
+        /api/dead/package/acheck/master
+
+    '''
+    req = requests.get(
+        'http://pkgs.fedoraproject.org/cgit/%s.git/plain/'
+        'dead.package?h=%s' % (pkg_name, clt_name)
+    )
+
+    return flask.Response(
+        req.text,
+        content_type="text/plain;charset=UTF-8",
+        status=req.status_code,
+    )
