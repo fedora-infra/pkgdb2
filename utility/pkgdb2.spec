@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.22
+Version:        1.22.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -114,10 +114,19 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Jan 12 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.22.1-1
+- Update to 1.22.1
+- Fix the tooltips on the update ACLs pages
+  fixes https://fedorahosted.org/pkgdb2/ticket/37
+- Revert the changes made to generate the JSON manually and pull back to
+  flask.jsonify() as the JSON we were generated was invalid
+
 * Mon Jan 12 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.22-1
 - Update to 1.22
 - Add the `set_monitoring_status` utility script (installed on /usr/share/pkgdb2)
 - Improve documentation and default files (Thanks Michael Cronenworth)
+- Make the project name configuration for example if you want to run pkgdb
+  for RPMFusion or another organization (Thanks Michael Cronenworth)
 - Optimize the /api/vcs endpoint by generating the JSON output directly
 - Optimize the /api/bugzilla endpoint by generating the JSON output directly
 - Add a dedicated API endpoint to retrieve the content of the dead.package
