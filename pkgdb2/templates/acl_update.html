@@ -72,7 +72,7 @@
         <li class="inline">
           <button type="submit"
             class="bold pkg_button_blue"
-            title="Give the package to someone">
+            title="Update ACLs">
               Apply Changes
           </button>
         </li>
@@ -84,7 +84,8 @@
         </li>
         <li class="inline">
           <a class="bold pkg_button_grey"
-            href="{{ url_for('.package_give_acls', package=package.name) }}">
+            href="{{ url_for('.package_give_acls', package=package.name) }}"
+            title="Give ACLs to someone">
             Add someone
           </a>
         </li>

@@ -351,9 +351,9 @@ ul.nobullet .pkg_button_lightgrey {
     margin-left: 5px;
 }
 
-button.pkg_button_blue, button.pkg_button_blue:hover,
-button.pkg_button_grey, button.pkg_button_grey:hover,
-button.pkg_button_lightgrey, button.pkg_button_lightgrey:hover{
+#pkg_info button.pkg_button_blue, button.pkg_button_blue:hover,
+#pkg_info button.pkg_button_grey, button.pkg_button_grey:hover,
+#pkg_info button.pkg_button_lightgrey, button.pkg_button_lightgrey:hover{
     padding: 0.1em 0.5em 0em 0.5em;
     vertical-align: center;
 }
