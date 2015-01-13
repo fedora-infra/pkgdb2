@@ -163,7 +163,7 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(
             sorted(data.keys()),
             ['action', 'collection', 'date_created', 'date_updated',
-             'from_collection', 'id', 'info', 'output', 'package',
+             'from_collection', 'id', 'info', 'message', 'output', 'package',
              'status', 'user'])
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(data['action'], 'request.unretire')
@@ -179,7 +179,7 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(
             sorted(data.keys()),
             ['action', 'collection', 'date_created', 'date_updated',
-             'from_collection', 'id', 'info', 'output', 'package',
+             'from_collection', 'id', 'info', 'message', 'output', 'package',
              'status', 'user'])
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(data['output'], 'ok')
@@ -275,7 +275,7 @@ class FlaskApiAdminTest(Modeltests):
 
         data = {
             'id': 1,
-            'status': 'Approved',
+            'status': 'Denied',
         }
 
         # User is not an admin
@@ -290,7 +290,7 @@ class FlaskApiAdminTest(Modeltests):
 
             data = {
                 'id': 10,
-                'status': 'Approved',
+                'status': 'Denied',
             }
 
             # Wrong identifier
@@ -307,10 +307,29 @@ class FlaskApiAdminTest(Modeltests):
 
             data = {
                 'id': 1,
-                'status': 'Approved',
+                'status': 'Denied',
             }
 
+            # Missing explanatory message for the user
+            output = self.app.post('/api/admin/action/status', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "You must provide a message explaining why "
+                    "when you deny a request",
+                    "output": "notok"
+                }
+            )
+
             # All good
+            data = {
+                'id': 1,
+                'status': 'Denied',
+                'message': 'Because this is a test suite',
+            }
+
             output = self.app.post('/api/admin/action/status', data=data)
             self.assertEqual(output.status_code, 200)
             data = json.loads(output.data)
@@ -319,13 +338,13 @@ class FlaskApiAdminTest(Modeltests):
                 {
                     "messages": [
                         "user: admin updated action: 1 from Awaiting "
-                        "Review to Approved"
+                        "Review to Denied"
                     ],
                     "output": "ok"
                 }
             )
 
-        # After edit:
+        # After Denying:
         output = self.app.get('/api/admin/actions')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
@@ -337,6 +356,43 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')
+        self.assertEqual(action['status'], 'Denied')
+
+
+        # User is an admin
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            data = {
+                'id': 1,
+                'status': 'Approved',
+            }
+
+            output = self.app.post('/api/admin/action/status', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "messages": [
+                        "user: admin updated action: 1 from Denied to Approved"
+                    ],
+                    "output": "ok"
+                }
+            )
+
+        # After approving:
+        output = self.app.get('/api/admin/actions')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(len(data['actions']), 1)
+        action = data['actions'][0]
+        self.assertEqual(action['action'], "request.branch")
+        self.assertEqual(action['id'], 1)
+        self.assertEqual(action['from_collection']['branchname'], 'master')
+        self.assertEqual(action['collection']['branchname'], 'el6')
+        self.assertEqual(action['package']['name'], 'guake')
+        self.assertEqual(action['user'], 'pingou')
+        self.assertEqual(action['status'], 'Approved')
 
 
 if __name__ == '__main__':
