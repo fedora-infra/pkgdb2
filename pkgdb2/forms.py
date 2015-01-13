@@ -394,6 +394,7 @@ class EditActionStatusForm(wtf.Form):
         'Action status',
         [wtforms.validators.Required()],
         choices=[('', '')])
+    message = wtforms.TextAreaField('Message')
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal arguments.
