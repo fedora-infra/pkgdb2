@@ -30,9 +30,10 @@
     <tr><td>From branch:</td><td>{{ admin_action.from_collection.branchname }}</td></tr>
     <tr><td>To branch:</td><td>{{ admin_action.collection.branchname }}</td></tr>
     {{ render_field_in_row(form.status) }}
+    {{ render_field_in_row(form.message, placeholder='Required if the action is denied') }}
   </table>
   <p class="buttons indent">
-    <input type="submit" class="submit positive button" value="Create">
+    <input type="submit" class="submit positive button" value="Update">
     <input type="button" value="Cancel" class="button" onclick="history.back();">
     {{ form.csrf_token }}
   </p>

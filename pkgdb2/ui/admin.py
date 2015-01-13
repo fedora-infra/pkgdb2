@@ -205,7 +205,8 @@ def admin_action_edit_status(action_id):
                 SESSION,
                 admin_action,
                 action_status=form.status.data,
-                user=flask.g.fas_user
+                user=flask.g.fas_user,
+                message=form.message.data,
             )
             SESSION.commit()
             flask.flash(message)
