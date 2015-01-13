@@ -319,7 +319,8 @@ Edit Admin Action status update
                     SESSION,
                     admin_action,
                     action_status=form.status.data,
-                    user=flask.g.fas_user
+                    user=flask.g.fas_user,
+                    message=form.message.data,
                 )
                 SESSION.commit()
                 output['output'] = 'ok'
