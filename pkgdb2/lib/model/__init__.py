@@ -1622,6 +1622,7 @@ class AdminAction(BASE):
             'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=True)
     info = sa.Column(sa.Text, nullable=True)
+    message = sa.Column(sa.Text, nullable=True)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
@@ -1682,6 +1683,7 @@ class AdminAction(BASE):
             'date_created': time.mktime(self.date_created.timetuple()),
             'date_updated': time.mktime(self.date_change.timetuple()),
             'info': self.info_data,
+            'message': self.message,
         }
 
         return result
