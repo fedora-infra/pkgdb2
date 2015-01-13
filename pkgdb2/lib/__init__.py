@@ -2189,7 +2189,8 @@ def get_admin_action(session, action_id):
     return model.AdminAction.get(session, action_id)
 
 
-def edit_action_status(session, admin_action, action_status, user):
+def edit_action_status(
+        session, admin_action, action_status, user, message=None):
     """ Update the status of the given Admin Action if the user is allowed
     to.
 
@@ -2197,6 +2198,8 @@ def edit_action_status(session, admin_action, action_status, user):
     :arg admin_action: a AdminAction object whose status is to update.
     :arg action_status: the status to update the provided AdminAdction to.
     :arg user: the user doing the action.
+    :kwarg message: the message required when an action is denied explaining
+        why it was denied.
     :returns: a string informing if the action was successfull
     :rtype: str
     :raises pkgdb2.lib.PkgdbException: This exception is raised when the
@@ -2207,11 +2210,19 @@ def edit_action_status(session, admin_action, action_status, user):
     if not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to edit admin action')
 
+    if action_status == 'Denied' and not message:
+        raise PkgdbException(
+            'You must provide a message explaining why when you deny a '
+            'request')
+
     edit = []
     old_status = admin_action.status
     if admin_action.status != action_status:
         admin_action.status = action_status
         edit.append('status')
+
+    if admin_action.message != message:
+        admin_action.message = message
 
     if edit:
         try:
