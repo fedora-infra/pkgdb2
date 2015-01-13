@@ -62,7 +62,9 @@ confusing what the difference is between that status an the per-branch status)
         <th>{{ listing.collection.name }} {{ listing.collection.version }}</th>
         <td>
           {% if listing.status == 'Retired' %}
-          <span class="info_retire" data-clt="{{ listing.collection.branchname }}">
+          <span class="info_retire"
+            title="Click to see content of the dead.package file"
+            data-clt="{{ listing.collection.branchname }}">
             {{ listing.status }}
           </span>
           {% else %}
