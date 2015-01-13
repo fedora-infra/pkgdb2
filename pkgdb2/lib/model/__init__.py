@@ -1788,6 +1788,8 @@ def get_groups(session):
     ).filter(
         PackageListing.collection_id == Collection.id
     ).filter(
+        PackageListingAcl.packagelisting_id == PackageListing.id
+    ).filter(
         PackageListing.status == 'Approved'
     ).filter(
         Collection.status != 'EOL'
