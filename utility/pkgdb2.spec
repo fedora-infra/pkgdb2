@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.22.1
+Version:        1.22.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -114,6 +114,13 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Jan 13 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.22.2-1
+- Update to 1.22.2
+- Fix the get_groups query to actually return all the groups in a timely
+  manner (Thanks Patrick Uiterwijk)
+- Fix the CSS on the blue buttons on the update ACLs page when hovering over
+- Add a title to the 'Retired' status to mention they are clickable.
+
 * Mon Jan 12 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.22.1-1
 - Update to 1.22.1
 - Fix the tooltips on the update ACLs pages
