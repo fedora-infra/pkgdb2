@@ -1130,6 +1130,16 @@ class Package(BASE):
                 requests.append(req)
         return requests
 
+    @property
+    def requests_awaiting_review(self):
+        """ Returns the list of awaiting review requests
+        """
+        requests = []
+        for req in self.requests:
+            if req.status == 'Awaiting Review':
+                requests.append(req)
+        return requests
+
     def __init__(self, name, summary, description, status,
                  review_url=None, upstream_url=None, monitor=False):
         self.name = name
