@@ -154,6 +154,14 @@ def create_status(session):
         except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
+    for status in ['Approved', 'Denied', 'Awaiting Review', 'Blocked']:
+        obj = ActionStatus(status)
+        session.add(obj)
+        try:
+            session.commit()
+        except SQLAlchemyError:  # pragma: no cover
+            session.rollback()
+
 
 class PkgAcls(BASE):
     ''' Table storing the ACLs a package can have. '''
