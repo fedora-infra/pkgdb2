@@ -1638,7 +1638,7 @@ class AdminAction(BASE):
         nullable=False)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('AclStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('action_status.status', onupdate='CASCADE'),
         nullable=False,
         index=True)
     user = sa.Column(sa.Text, nullable=False, index=True)
