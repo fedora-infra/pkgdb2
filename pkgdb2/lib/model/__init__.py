@@ -1120,6 +1120,16 @@ class Package(BASE):
         """
         return session.query(cls).filter(Package.name == pkgname).one()
 
+    @property
+    def requests_pending(self):
+        """ Returns the list of pending branch requests
+        """
+        requests = []
+        for req in self.requests:
+            if req.status == 'Pending':
+                requests.append(req)
+        return requests
+
     def __init__(self, name, summary, description, status,
                  review_url=None, upstream_url=None, monitor=False):
         self.name = name
