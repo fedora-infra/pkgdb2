@@ -212,6 +212,25 @@ class AclStatus(BASE):
             session.query(cls).order_by(cls.status).all()]
 
 
+class ActionStatus(BASE):
+    ''' Table storing the statuses for the AdminActions. '''
+    __tablename__ = 'action_status'
+
+    status = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, status):
+        """ Constructor. """
+        self.status = status
+
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the status in plain text. """
+        return [
+            item.status
+            for item in
+            session.query(cls).order_by(cls.status).all()]
+
+
 class CollecStatus(BASE):
     ''' Table storing the statuses a collection can have. '''
     __tablename__ = 'CollecStatus'
