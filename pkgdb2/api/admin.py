@@ -298,7 +298,8 @@ Edit Admin Action status update
     httpcode = 200
     output = {}
 
-    action_status = pkgdblib.get_status(SESSION, 'acl_status')['acl_status']
+    action_status = pkgdblib.get_status(
+        SESSION, 'admin_status')['admin_status']
 
     form = pkgdb2.forms.EditActionStatusForm(
         csrf_enabled=False,
