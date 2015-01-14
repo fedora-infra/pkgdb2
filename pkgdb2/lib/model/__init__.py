@@ -154,7 +154,8 @@ def create_status(session):
         except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
-    for status in ['Approved', 'Denied', 'Awaiting Review', 'Blocked']:
+    for status in ['Approved', 'Denied', 'Awaiting Review',
+                   'Blocked', 'Pending']:
         obj = ActionStatus(status)
         session.add(obj)
         try:
