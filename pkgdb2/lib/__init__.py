@@ -1384,7 +1384,10 @@ def get_status(session, status='all'):
     output = {}
 
     if status == 'all':
-        status = ['clt_status', 'pkg_status', 'pkg_acl', 'acl_status']
+        status = [
+            'clt_status', 'pkg_status', 'pkg_acl', 'acl_status',
+            'admin_status',
+        ]
     elif isinstance(status, basestring):
         status = [status]
 
@@ -1396,6 +1399,9 @@ def get_status(session, status='all'):
         output['pkg_acl'] = model.PkgAcls.all_txt(session)
     if 'acl_status' in status:
         output['acl_status'] = model.AclStatus.all_txt(session)
+    if 'admin_status' in status:
+        output['admin_status'] = model.ActionStatus.all_txt(session)
+
     return output
 
 
