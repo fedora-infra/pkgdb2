@@ -277,8 +277,8 @@ Edit Admin Action status update
         action to update in the database. The identifier is returned in the
         API, see ``List admin actions``.
     :arg status: The status to which the action should be updated.
-        Can be any of: ``Approved``, ``Awaiting Review``, ``Denied``,
-        ``Obsolete``, ``Removed``.
+        Can be any of: ``Approved``, ``Awaiting Review``, ``Blocked``,
+        ``Denied``, ``Pending``.
 
     Sample response:
 
