@@ -161,9 +161,9 @@ def admin_actions():
 
     total_page = int(ceil(cnt_actions / float(limit)))
 
-    statues = pkgdblib.get_status(SESSION)
-    acl_status = list(set(statues['acl_status']))
-    acl_status.insert(0, 'All')
+    action_status = pkgdblib.get_status(
+        SESSION, 'admin_status')['admin_status']
+    action_status.insert(0, 'All')
 
     return flask.render_template(
         'list_actions.html',
@@ -175,7 +175,7 @@ def admin_actions():
         packager=packager or '',
         action=action,
         status=status,
-        statuses=acl_status,
+        statuses=action_status,
     )
 
 
@@ -190,7 +190,8 @@ def admin_action_edit_status(action_id):
         flask.flash('No action found with this identifier.', 'errors')
         return flask.render_template('msg.html')
 
-    action_status = pkgdblib.get_status(SESSION, 'acl_status')['acl_status']
+    action_status = pkgdblib.get_status(
+        SESSION, 'admin_status')['admin_status']
 
     form = pkgdb2.forms.EditActionStatusForm(
         status=action_status,
