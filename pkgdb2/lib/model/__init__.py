@@ -36,6 +36,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import backref
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation
@@ -1663,7 +1664,10 @@ class AdminAction(BASE):
             'user', 'action', 'status', 'package_id', 'collection_id'),
     )
 
-    package = relation("Package")
+    package = relation(
+        "Package",
+        backref=backref("requests", order_by=collection_id)
+    )
     collection = relation(
         "Collection",
         foreign_keys=[collection_id], remote_side=[Collection.id],
