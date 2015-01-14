@@ -76,6 +76,13 @@ confusing what the difference is between that status an the per-branch status)
     {% endif %}
     {% endfor %}
 
+    {% for req in package.requests | reverse %}
+    <tr>
+        <th>{{ req.collection.name }} {{ req.collection.version }}</th>
+        <td>{{ req.status }}</td>
+    </tr>
+    {% endfor %}
+
     {% if g.fas_user and branches_possible %}
     <tr>
       <td colspan="2" align="center">
