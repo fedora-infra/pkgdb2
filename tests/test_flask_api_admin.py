@@ -318,7 +318,7 @@ class FlaskApiAdminTest(Modeltests):
                 data,
                 {
                     "error": "You must provide a message explaining why "
-                    "when you deny a request",
+                    "when you block or deny a request",
                     "output": "notok"
                 }
             )
@@ -337,8 +337,7 @@ class FlaskApiAdminTest(Modeltests):
                 data,
                 {
                     "messages": [
-                        "user: admin updated action: 1 from Awaiting "
-                        "Review to Denied"
+                        "user: admin updated action: 1 from Pending to Denied"
                     ],
                     "output": "ok"
                 }
