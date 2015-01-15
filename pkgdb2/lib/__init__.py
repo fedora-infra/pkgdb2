@@ -1763,7 +1763,7 @@ def add_new_package_request(
         collection_id=clt.id,
         from_collection_id=None,
         user=user.username,
-        status='Awaiting Review',
+        _status='Awaiting Review',
         action='request.package',
         info=str(info),
     )
