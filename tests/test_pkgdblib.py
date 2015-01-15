@@ -1924,6 +1924,41 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUserAdmin()
         )
 
+        # Pending status but unknown user
+        user = FakeFasUser()
+        user.username = 'shaiton'
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='Pending',
+            user=user
+        )
+
+        # Awaiting Review status but user is requester
+        user = FakeFasUser()
+        user.username = 'toshio'
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='Awaiting Review',
+            user=user
+        )
+
+        # Obsolete status but user is not requester
+        user = FakeFasUserAdmin()
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='Obsolete',
+            user=user
+        )
+
         action = pkgdblib.get_admin_action(self.session, 1)
 
         msg = pkgdblib.edit_action_status(
