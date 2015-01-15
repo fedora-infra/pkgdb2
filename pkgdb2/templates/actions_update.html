@@ -3,7 +3,7 @@
 
 {% block title %} Update action | PkgDB {% endblock %}
 
-{%block tag %}admin{% endblock %}
+{%block tag %}{% if package %}packages{% else %}admin{% endif %}{% endblock %}
 
 {% block content %}
 
