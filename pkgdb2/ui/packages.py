@@ -341,6 +341,13 @@ def package_request_edit(package, action_id):
             flask.url_for('.package_info', package=package)
         )
 
+    if admin_action.status in ['Accepted', 'Blocked', 'Denied']:
+        return flask.render_template(
+            'actions_update_ro.html',
+            admin_action=admin_action,
+            action_id=action_id,
+        )
+
     # Check user is the pkg/pkgdb admin
     if not is_pkgdb_admin(flask.g.fas_user) and not pkgdblib.has_acls(
             SESSION, flask.g.fas_user.username, package, 'approveacls') \

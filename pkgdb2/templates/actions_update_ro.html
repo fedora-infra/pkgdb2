@@ -1,0 +1,33 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %} Branch Request {{ admin_action.id }} | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>Request: {{ admin_action.id }}</h1>
+
+<table>
+  <tr><td>User:</td><td>{{ admin_action.user }}</td></tr>
+  <tr>
+    <td>Package:</td>
+    <td>
+      {% if admin_action.package %}
+        <a href="{{url_for('.package_info', package=admin_action.package.name)}}">
+          {{ admin_action.package.name }}
+        </a>
+      {% else %}
+        {{ admin_action.info_data['pkg_name'] }}
+      {% endif %}
+    </td>
+  </tr>
+  <tr><td>Action:</td><td>{{ admin_action.action }}</td></tr>
+  <tr><td>From branch:</td><td>{{ admin_action.from_collection.branchname }}</td></tr>
+  <tr><td>To branch:</td><td>{{ admin_action.collection.branchname }}</td></tr>
+  <tr><td>Status</td><td>{{ admin_action.status }}</td></tr>
+<tr><td>Message</td><td>{{ admin_action.message }}</td></tr>
+</table>
+
+{% endblock %}
