@@ -174,19 +174,22 @@ confusing what the difference is between that status an the per-branch status)
 
   </ul>
 
-  {% if g.fas_user and package.requests_pending %}
+  {% if g.fas_user and package.requests_pending and (
+        g.fas_user.username in admins or requester or is_admin) %}
   <div id="pkg_req_pending">
   <p>
       There are some requests pending for this package, please review them:
   </p>
   <ul>
       {% for req in package.requests_pending %}
+      {% if g.fas_user.username in admins or requester or is_admin %}
       <li>
           <a href="{{ url_for(
             '.package_request_edit', package=package.name, action_id=req.id) }}">
               {{ req.user }} requested the branch {{ req.collection.branchname }}
           </a>
       </li>
+      {% endif %}
       {% endfor %}
   </ul>
   </div>
