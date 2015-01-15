@@ -2225,6 +2225,12 @@ def edit_action_status(
             'You must provide a message explaining why when you block or '
             'deny a request')
 
+    if action_status == 'Obsolete' \
+            and admin_action.user.username != user.username:
+        raise PkgdbException(
+            'Only the person having made the request can change its status '
+            'to obsolete')
+
     edit = []
     old_status = admin_action.status
     if admin_action.status != action_status:
