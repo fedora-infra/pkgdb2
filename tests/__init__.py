@@ -680,6 +680,24 @@ def create_package_acl2(session):
     session.commit()
 
 
+def create_admin_actions(session):
+    """ Add an Admin Actions for the tests. """
+    guake_pkg = model.Package.by_name(session, 'guake')
+    el6_collec = model.Collection.by_name(session, 'el6')
+
+    action = model.AdminAction(
+        package_id=guake_pkg.id,
+        collection_id=el6_collec.id,
+        user='ralph',
+        _status='Pending',
+        action='request.branch',
+    )
+
+    session.add(action)
+
+    session.commit()
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Modeltests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
