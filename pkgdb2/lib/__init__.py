@@ -1637,6 +1637,10 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
 
     _validate_poc(user.username)
 
+    status = 'Awaiting Review'
+    if clt_to.name == 'Fedora EPEL':
+        status = 'Pending'
+
     action = model.AdminAction(
         package_id=package.id,
         collection_id=clt_to.id,
