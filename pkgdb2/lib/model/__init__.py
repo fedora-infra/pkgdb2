@@ -42,6 +42,7 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import backref
 from sqlalchemy.sql import or_
+from sqlalchemy.sql import and_
 
 BASE = declarative_base()
 
@@ -1784,7 +1785,19 @@ class AdminAction(BASE):
             query = query.filter(cls.action == action)
 
         if status:
-            query = query.filter(cls.status == status)
+            if status != 'Awaiting Review':
+                query = query.filter(cls._status == status)
+            else:
+                query = query.filter(
+                    or_(
+                        cls._status == status,
+                        and_(
+                            cls._status == 'Pending',
+                            cls.date_created < (datetime.datetime.utcnow(
+                                ).date() - datetime.timedelta(days=6)),
+                        )
+                    )
+                )
 
         query = query.order_by(cls.date_created.asc())
 
