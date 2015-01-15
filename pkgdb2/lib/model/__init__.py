@@ -1658,9 +1658,10 @@ class AdminAction(BASE):
         sa.ForeignKey(
             'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False)
-    status = sa.Column(
+    _status = sa.Column(
         sa.String(50),
         sa.ForeignKey('action_status.status', onupdate='CASCADE'),
+        name='status',
         nullable=False,
         index=True)
     user = sa.Column(sa.Text, nullable=False, index=True)
@@ -1707,6 +1708,16 @@ class AdminAction(BASE):
             return ast.literal_eval(self.info)
         else:
             return {}
+
+    @property
+    def status(self):
+        """ Returns the status of the admin action. """
+        if self._status == 'Pending':
+            if (datetime.datetime.utcnow() - self.date_created).days < 7:
+                return self._status
+            else:
+                return 'Awaiting Review'
+        return self._status
 
     def to_json(self, _seen=None, acls=True, package=True, collection=None):
         """ Return a dictionnary representation of the object.
