@@ -328,19 +328,18 @@ def package_request_edit(package, action_id):
     """ Edit an Admin Action status for the specified package
     """
 
-    packagename = package
-    package = None
-    try:
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
-    except (NoResultFound, IndexError):
-        SESSION.rollback()
-        flask.flash('No package of this name found.', 'errors')
-        return flask.render_template('msg.html')
-
     admin_action = pkgdblib.get_admin_action(SESSION, action_id)
     if not admin_action:
         flask.flash('No action found with this identifier.', 'errors')
         return flask.render_template('msg.html')
+
+    if admin_action.package.name != package:
+        flask.flash(
+            'The specified action (id:%s) is not related to the specified '
+            'package: %s.' % (action_id, package), 'errors')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package)
+        )
 
     action_status = ['Pending', 'Awaiting Review', 'Blocked']
     if admin_action.user == flask.g.fas_user.username:
@@ -375,7 +374,7 @@ def package_request_edit(package, action_id):
             return flask.render_template('msg.html')
 
         return flask.redirect(
-            flask.url_for('.package_info', package=packagename)
+            flask.url_for('.package_info', package=package)
         )
 
     return flask.render_template(
