@@ -314,6 +314,69 @@ def package_timeline(package):
     )
 
 
+@UI.route('/package/<package>/requests/<action_id>', methods=['GET', 'POST'])
+@packager_login_required
+def package_request_edit(package, action_id):
+    """ Edit an Admin Action status for the specified package
+    """
+
+    packagename = package
+    package = None
+    try:
+        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    admin_action = pkgdblib.get_admin_action(SESSION, action_id)
+    if not admin_action:
+        flask.flash('No action found with this identifier.', 'errors')
+        return flask.render_template('msg.html')
+
+    action_status = ['Pending', 'Awaiting Review', 'Blocked']
+
+    form = pkgdb2.forms.EditActionStatusForm(
+        status=action_status,
+        obj=admin_action
+    )
+    form.id.data = action_id
+
+    if form.validate_on_submit():
+
+        try:
+            message = pkgdblib.edit_action_status(
+                SESSION,
+                admin_action,
+                action_status=form.status.data,
+                user=flask.g.fas_user,
+                message=form.message.data,
+            )
+            SESSION.commit()
+            flask.flash(message)
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We can only reach here in two cases:
+            # 1) the user is not an admin, but that's taken care of
+            #    by the decorator
+            # 2) we have a SQLAlchemy problem when storing the info
+            #    in the DB which we cannot test
+            SESSION.rollback()
+            flask.flash(err, 'errors')
+            return flask.render_template('msg.html')
+
+        return flask.redirect(
+            flask.url_for('.package_info', package=packagename)
+        )
+
+    return flask.render_template(
+        'actions_update.html',
+        admin_action=admin_action,
+        action_id=action_id,
+        form=form,
+        package=package,
+    )
+
+
 @UI.route('/new/package/', methods=('GET', 'POST'))
 @is_admin
 def package_new():
