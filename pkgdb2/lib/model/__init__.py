@@ -157,7 +157,7 @@ def create_status(session):
             session.rollback()
 
     for status in ['Approved', 'Denied', 'Awaiting Review',
-                   'Blocked', 'Pending']:
+                   'Blocked', 'Pending', 'Obsolete']:
         obj = ActionStatus(status)
         session.add(obj)
         try:
