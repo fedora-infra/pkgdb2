@@ -7,11 +7,32 @@
 
 {% block content %}
 
+{% if package %}
+<h1>Update request: {{ admin_action.id }}</h1>
+{% else %}
 <h1>Update admin action: {{ admin_action.id }}</h1>
+{% endif %}
 
 
+{% if package %}
+<p>
+    As current admin of the package {{ package.name }} you have the possibility
+    for 7 days to block a branch request for EPEL branches.
+</p>
+<p>
+    During these 7 days, you can 'Block' the new branch process by setting
+    the request to <span class="italic bold">Blocked</span> or 'Approve' it by
+    setting it to <span class="italic bold">Awaiting Review</span> to inform
+    admins that they can now review this request.
+</p>
+<form action="{{ url_for('.package_request_edit',
+                package=package.name, action_id=action_id) }}"
+    method="post">
+{% else %}
 <form action="{{ url_for('.admin_action_edit_status', action_id=action_id) }}"
     method="post">
+{% endif %}
+
   <table>
     <tr><td>User:</td><td>{{ admin_action.user }}</td></tr>
     <tr>
@@ -30,7 +51,9 @@
     <tr><td>From branch:</td><td>{{ admin_action.from_collection.branchname }}</td></tr>
     <tr><td>To branch:</td><td>{{ admin_action.collection.branchname }}</td></tr>
     {{ render_field_in_row(form.status) }}
-    {{ render_field_in_row(form.message, placeholder='Required if the action is denied') }}
+    {{ render_field_in_row(
+        form.message,
+        placeholder='Required if the action is blocked or denied') }}
   </table>
   <p class="buttons indent">
     <input type="submit" class="submit positive button" value="Update">
