@@ -278,7 +278,10 @@ Edit Admin Action status update
         API, see ``List admin actions``.
     :arg status: The status to which the action should be updated.
         Can be any of: ``Approved``, ``Awaiting Review``, ``Blocked``,
-        ``Denied``, ``Pending``.
+        ``Denied``, ``Pending`` and ``Obsolete``.
+
+    ..note:: The ``Obsolete`` status can only be set by the person who made
+             the request.
 
     Sample response:
 
