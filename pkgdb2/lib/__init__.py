@@ -2216,8 +2216,23 @@ def edit_action_status(
         user performing the action is not a pkgdb admin.
 
     """
+    pkgdb_admin = pkgdb2.is_pkgdb_admin(user)
+    pkg_admin = has_acls(session, user.username,
+                         admin_action.package.name, 'approveacls')
+    requester = admin_action.user != user.username
 
-    if not pkgdb2.is_pkgdb_admin(user):
+    if action_status == 'Pending':
+        if not pkg_admin and not pkgdb_admin and not requester:
+            raise PkgdbException(
+                'You are not allowed to edit this request')
+    elif action_status in ['Awaiting Review', 'Blocked']:
+        if not pkg_admin and not pkgdb_admin:
+            raise PkgdbException(
+                'You are not allowed to review this request')
+    elif action_status in ['Obsolete']:
+        if not requester:
+            raise PkgdbException('You are not allowed to edit this request')
+    elif not pkgdb_admin:
         raise PkgdbException('You are not allowed to edit admin action')
 
     if action_status in ['Blocked', 'Denied'] and not message:
