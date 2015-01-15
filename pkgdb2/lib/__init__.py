@@ -2216,10 +2216,10 @@ def edit_action_status(
     if not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to edit admin action')
 
-    if action_status == 'Denied' and not message:
+    if action_status in ['Blocked', 'Denied'] and not message:
         raise PkgdbException(
-            'You must provide a message explaining why when you deny a '
-            'request')
+            'You must provide a message explaining why when you block or '
+            'deny a request')
 
     edit = []
     old_status = admin_action.status
