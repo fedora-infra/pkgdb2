@@ -38,7 +38,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb2
 from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
-                   create_package_acl, user_set)
+                   create_package_acl, create_admin_actions, user_set)
 
 
 class FlaskUiPackagesTest(Modeltests):
@@ -981,6 +981,101 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertTrue(
                 '<li class="message">user: pingou request package: '
                 'gnome-terminal on branch master</li>' in output.data)
+
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
+    def test_package_request_edit(self, login_func, mock_func):
+        """ Test the package_request_edit function. """
+        login_func.return_value = None
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        mock_func.log.return_value = 'foo bar'
+        create_package_acl(self.session)
+
+        data = {
+            'branches': ['epel7'],
+        }
+
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/foobar/requests/1', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No action found with this identifier.</li>'
+                in output.data)
+
+            create_admin_actions(self.session)
+
+            # Package name / Admin Action do not match
+            output = self.app.post(
+                '/package/foobar/requests/1', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">The specified action (id:1) is not '
+                'related to the specified package: foobar.</li>'
+                in output.data)
+
+            # User not allowed to view request
+            output = self.app.post(
+                '/package/guake/requests/1', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">Only package adminitrators (`approveacls`)'
+                ' and the requester can review pending branch requests</li>'
+                in output.data)
+
+        # Before the edit
+        user = FakeFasUser()
+        user.username = 'ralph'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/requests/1')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Update request: 1</h1>' in output.data)
+            self.assertTrue(
+                '<option selected value="Pending">' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            data = {
+                'status': 'Awaiting Review',
+                'csrf_token': csrf_token,
+            }
+
+            # User cannot approve their own request
+            output = self.app.post(
+                '/package/guake/requests/1',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">Not a valid choice</td>' in output.data)
+
+        data = {
+            'status': 'Obsolete',
+            'csrf_token': csrf_token,
+        }
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            # Admin cannot obsolete a request that is not their
+            output = self.app.post(
+                '/package/guake/requests/1',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">Not a valid choice</td>' in output.data)
+
+            data['status'] = 'Awaiting Review'
+            # All good
+            output = self.app.post(
+                '/package/guake/requests/1',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<li class="message">foo bar</li>'in output.data)
 
 
 if __name__ == '__main__':
