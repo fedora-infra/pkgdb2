@@ -2219,7 +2219,7 @@ def edit_action_status(
     pkgdb_admin = pkgdb2.is_pkgdb_admin(user)
     pkg_admin = has_acls(session, user.username,
                          admin_action.package.name, 'approveacls')
-    requester = admin_action.user != user.username
+    requester = admin_action.user == user.username
 
     if action_status == 'Pending':
         if not pkg_admin and not pkgdb_admin and not requester:
@@ -2231,7 +2231,9 @@ def edit_action_status(
                 'You are not allowed to review this request')
     elif action_status in ['Obsolete']:
         if not requester:
-            raise PkgdbException('You are not allowed to edit this request')
+            raise PkgdbException(
+                'Only the person having made the request can change its '
+                'status to obsolete')
     elif not pkgdb_admin:
         raise PkgdbException('You are not allowed to edit admin action')
 
@@ -2239,12 +2241,6 @@ def edit_action_status(
         raise PkgdbException(
             'You must provide a message explaining why when you block or '
             'deny a request')
-
-    if action_status == 'Obsolete' \
-            and admin_action.user != user.username:
-        raise PkgdbException(
-            'Only the person having made the request can change its status '
-            'to obsolete')
 
     edit = []
     old_status = admin_action.status
