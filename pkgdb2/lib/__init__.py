@@ -2226,7 +2226,7 @@ def edit_action_status(
             'deny a request')
 
     if action_status == 'Obsolete' \
-            and admin_action.user.username != user.username:
+            and admin_action.user != user.username:
         raise PkgdbException(
             'Only the person having made the request can change its status '
             'to obsolete')
