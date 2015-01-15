@@ -341,6 +341,16 @@ def package_request_edit(package, action_id):
             flask.url_for('.package_info', package=package)
         )
 
+    # Check user is the pkg/pkgdb admin
+    if not is_pkgdb_admin(flask.g.fas_user) and not pkgdblib.has_acls(
+            SESSION, flask.g.fas_user.username, package, 'approveacls'):
+        flask.flash(
+            'Only package adminitrators (`approveacls`) can review pending '
+            'branch requests', 'errors')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package)
+        )
+
     action_status = ['Pending', 'Awaiting Review', 'Blocked']
     if admin_action.user == flask.g.fas_user.username:
         action_status.append('Obsolete')
