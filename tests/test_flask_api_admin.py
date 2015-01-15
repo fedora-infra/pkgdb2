@@ -323,6 +323,25 @@ class FlaskApiAdminTest(Modeltests):
                 }
             )
 
+            #Only the person creating the request can obsolete it
+            data = {
+                'id': 1,
+                'status': 'Obsolete',
+                'message': 'Because this is a test suite',
+            }
+
+            output = self.app.post('/api/admin/action/status', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "Only the person having made the request can "
+                    "change its status to obsolete",
+                    "output": "notok"
+                }
+            )
+
             # All good
             data = {
                 'id': 1,
