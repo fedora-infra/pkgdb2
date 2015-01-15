@@ -1744,7 +1744,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the add_new_branch_request method of pkgdblib. """
         create_package_acl(self.session)
 
-        mock_func.get_packagers.return_value = ['pingou']
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
 
         # Invalid package
         self.assertRaises(
@@ -1781,6 +1781,7 @@ class PkgdbLibtests(Modeltests):
 
         # valid entry
         user = FakeFasUser()
+        user.username = 'toshio'
         pkgdblib.add_new_branch_request(
             session=self.session,
             pkg_name='guake',
@@ -1873,7 +1874,7 @@ class PkgdbLibtests(Modeltests):
         action = pkgdblib.get_admin_action(self.session, 1)
         self.assertNotEqual(action, None)
         self.assertEqual(action.action, 'request.branch')
-        self.assertEqual(action.user, 'pingou')
+        self.assertEqual(action.user, 'toshio')
         self.assertEqual(action.status, 'Pending')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
@@ -1896,7 +1897,7 @@ class PkgdbLibtests(Modeltests):
         action = pkgdblib.get_admin_action(self.session, 1)
         self.assertNotEqual(action, None)
         self.assertEqual(action.action, 'request.branch')
-        self.assertEqual(action.user, 'pingou')
+        self.assertEqual(action.user, 'toshio')
         self.assertEqual(action.status, 'Pending')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
@@ -1950,7 +1951,7 @@ class PkgdbLibtests(Modeltests):
 
         self.assertNotEqual(action, None)
         self.assertEqual(action.action, 'request.branch')
-        self.assertEqual(action.user, 'pingou')
+        self.assertEqual(action.user, 'toshio')
         self.assertEqual(action.status, 'Approved')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
