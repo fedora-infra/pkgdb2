@@ -1642,7 +1642,7 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
         collection_id=clt_to.id,
         from_collection_id=clt_from.id,
         user=user.username,
-        status='Awaiting Review',
+        _status=status,
         action='request.branch',
     )
 
@@ -1806,7 +1806,7 @@ def add_unretire_request(session, pkg_name, pkg_branch, user):
         package_id=package.id,
         collection_id=pkg_branch.id,
         user=user.username,
-        status='Awaiting Review',
+        _status='Awaiting Review',
         action='request.unretire',
     )
 
@@ -2224,7 +2224,7 @@ def edit_action_status(
     edit = []
     old_status = admin_action.status
     if admin_action.status != action_status:
-        admin_action.status = action_status
+        admin_action._status = action_status
         edit.append('status')
 
     if admin_action.message != message:
