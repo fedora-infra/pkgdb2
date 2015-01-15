@@ -32,7 +32,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin, \
-    packager_login_required
+    packager_login_required, is_authenticated
 from pkgdb2.ui import UI
 
 
@@ -230,6 +230,13 @@ def package_info(package):
         for collec in collections
         if '%s %s' % (collec.name, collec.version) not in branches]
 
+    requester = False
+    if is_authenticated():
+        for req in package.requests:
+            if req.user == flask.g.fas_user.username:
+                requester = True
+                break
+
     return flask.render_template(
         'package.html',
         package=package,
@@ -243,6 +250,7 @@ def package_info(package):
         branches_possible=branches_possible,
         committers=committers,
         form=pkgdb2.forms.ConfirmationForm(),
+        requester=requester,
     )
 
 
