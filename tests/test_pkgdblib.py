@@ -1837,9 +1837,20 @@ class PkgdbLibtests(Modeltests):
         )
 
         # Check after insert
+        # Nothing awaiting review:
         actions = pkgdblib.search_actions(
             self.session,
             package='guake',
+            page=1,
+            limit=50,
+        )
+        self.assertEqual(len(actions), 0)
+
+        # But something is in
+        actions = pkgdblib.search_actions(
+            self.session,
+            package='guake',
+            status=None,
             page=1,
             limit=50,
         )
@@ -1863,7 +1874,7 @@ class PkgdbLibtests(Modeltests):
         self.assertNotEqual(action, None)
         self.assertEqual(action.action, 'request.branch')
         self.assertEqual(action.user, 'pingou')
-        self.assertEqual(action.status, 'Awaiting Review')
+        self.assertEqual(action.status, 'Pending')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
         self.assertEqual(action.from_collection.branchname, 'master')
@@ -1886,7 +1897,7 @@ class PkgdbLibtests(Modeltests):
         self.assertNotEqual(action, None)
         self.assertEqual(action.action, 'request.branch')
         self.assertEqual(action.user, 'pingou')
-        self.assertEqual(action.status, 'Awaiting Review')
+        self.assertEqual(action.status, 'Pending')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
         self.assertEqual(action.from_collection.branchname, 'master')
@@ -1917,7 +1928,7 @@ class PkgdbLibtests(Modeltests):
         msg = pkgdblib.edit_action_status(
             self.session,
             admin_action=action,
-            action_status='Awaiting Review',
+            action_status='Pending',
             user=FakeFasUserAdmin()
         )
 
@@ -1932,7 +1943,7 @@ class PkgdbLibtests(Modeltests):
 
         self.assertEqual(
             msg,
-            'user: admin updated action: 1 from Awaiting Review to Approved'
+            'user: admin updated action: 1 from Pending to Approved'
         )
 
         action = pkgdblib.get_admin_action(self.session, 1)
