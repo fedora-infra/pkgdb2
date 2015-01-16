@@ -312,6 +312,7 @@ def log(session, package, topic, message):
     if topic == 'admin.action.status.update' \
             and 'action' in message \
             and 'info' in message['action'] \
+            and 'pkg_name' in message['action']['info'] \
             and message['action']['info']['pkg_name']:
         templates[topic] = 'user: %(agent)s updated action: ' \
            '%(action.id)s of %(action.info.pkg_name)s ' \
