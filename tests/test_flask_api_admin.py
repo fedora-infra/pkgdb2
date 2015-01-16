@@ -356,7 +356,9 @@ class FlaskApiAdminTest(Modeltests):
                 data,
                 {
                     "messages": [
-                        "user: admin updated action: 1 from Pending to Denied"
+                        "user: admin updated action: 1 of guake from "
+                        "`Pending` to `Denied` with message: Because this "
+                        "is a test suite"
                     ],
                     "output": "ok"
                 }
@@ -392,7 +394,8 @@ class FlaskApiAdminTest(Modeltests):
                 data,
                 {
                     "messages": [
-                        "user: admin updated action: 1 from Denied to Approved"
+                        "user: admin updated action: 1 of guake from "
+                        "`Denied` to `Approved`"
                     ],
                     "output": "ok"
                 }

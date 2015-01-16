@@ -218,8 +218,8 @@ class FlaskUiAdminTest(Modeltests):
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">user: admin updated action: 1 from '
-                'Pending to Approved</li>' in output.data)
+                '<li class="message">user: admin updated action: 1 of guake '
+                'from `Pending` to `Approved`</li>' in output.data)
 
             # After
             output = self.app.get('/admin/actions/')

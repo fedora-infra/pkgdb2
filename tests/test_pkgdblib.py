@@ -1979,7 +1979,8 @@ class PkgdbLibtests(Modeltests):
 
         self.assertEqual(
             msg,
-            'user: admin updated action: 1 from Pending to Approved'
+            'user: admin updated action: 1 of guake from `Pending` to '
+            '`Approved`'
         )
 
         action = pkgdblib.get_admin_action(self.session, 1)
