@@ -1652,12 +1652,17 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
 
     session.add(action)
 
-    pkgdb2.lib.utils.log(session, None, 'package.branch.request', dict(
-        agent=user.username,
-        package=package.to_json(acls=False),
-        collection_from=clt_from.to_json(),
-        collection_to=clt_to.to_json(),
-    ))
+    pkgdb2.lib.utils.log(
+        session,
+        package=package,
+        topic='package.branch.request',
+        message=dict(
+            agent=user.username,
+            package=package.to_json(acls=False),
+            collection_from=clt_from.to_json(),
+            collection_to=clt_to.to_json(),
+        )
+    )
 
     msg = 'Branch %s requested for user %s' % (
         clt_to.branchname, user.username)
@@ -2256,7 +2261,10 @@ def edit_action_status(
             session.add(admin_action)
             session.flush()
             msg = pkgdb2.lib.utils.log(
-                session, None, 'admin.action.status.update', dict(
+                session,
+                package=admin_action.package,
+                topic='admin.action.status.update',
+                message=dict(
                     agent=user.username,
                     old_status=old_status,
                     new_status=action_status,
