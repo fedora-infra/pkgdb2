@@ -308,6 +308,12 @@ def log(session, package, topic, message):
                           '%(package_listing.collection.branchname)s]',
     }
     substitutions = _construct_substitutions(message)
+    if topic == 'admin.action.status.update' \
+            and 'action' in message \
+            and 'message' in message['action'] \
+            and message['action']['message']:
+        templates[topic] += ' with message: %(action.message)s'
+
     final_msg = templates[topic] % substitutions
     subject = None
     if topic in subject_templates:
