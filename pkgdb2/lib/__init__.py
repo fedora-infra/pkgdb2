@@ -2222,8 +2222,11 @@ def edit_action_status(
 
     """
     pkgdb_admin = pkgdb2.is_pkgdb_admin(user)
-    pkg_admin = has_acls(session, user.username,
-                         admin_action.package.name, 'approveacls')
+    if admin_action.package:
+        pkg_admin = has_acls(session, user.username,
+                             admin_action.package.name, 'approveacls')
+    else:
+        pkg_admin = False
     requester = admin_action.user == user.username
 
     if action_status == 'Pending':
