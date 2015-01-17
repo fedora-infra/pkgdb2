@@ -24,6 +24,7 @@ UI namespace for the Flask application.
 '''
 
 import flask
+from dateutil import parser
 from math import ceil
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.exc import NoResultFound
@@ -233,6 +234,74 @@ def package_info(package):
         branches=branches,
         committers=committers,
         form=pkgdb2.forms.ConfirmationForm(),
+    )
+
+
+@UI.route('/package/<package>/logs')
+def package_logs(package):
+    """ Return the logs of the specified package as requested by the user.
+    """
+    from_date = flask.request.args.get('from_date', None)
+    packager = flask.request.args.get('packager', None)
+    limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
+    page = flask.request.args.get('page', 1)
+
+    try:
+        page = abs(int(page))
+    except ValueError:
+        page = 1
+
+    try:
+        limit = abs(int(limit))
+    except ValueError:
+        limit = APP.config['ITEMS_PER_PAGE']
+        flask.flash('Incorrect limit provided, using default', 'errors')
+
+    if from_date:
+        try:
+            from_date = parser.parse(from_date)
+        except (ValueError, TypeError):
+            flask.flash(
+                'Incorrect from_date provided, using default', 'errors')
+            from_date = None
+
+    ## Could not infer the date() function
+    # pylint: disable=E1103
+    if from_date:
+        from_date = from_date.date()
+
+    logs = []
+    cnt_logs = 0
+    try:
+        logs = pkgdblib.search_logs(
+            SESSION,
+            package=package or None,
+            packager=packager or None,
+            from_date=from_date,
+            page=page,
+            limit=limit,
+        )
+        cnt_logs = pkgdblib.search_logs(
+            SESSION,
+            package=package or None,
+            packager=packager or None,
+            from_date=from_date,
+            count=True
+        )
+    except pkgdblib.PkgdbException, err:
+        flask.flash(err, 'errors')
+
+    total_page = int(ceil(cnt_logs / float(limit)))
+
+    return flask.render_template(
+        'pkg_logs.html',
+        logs=logs,
+        cnt_logs=cnt_logs,
+        total_page=total_page,
+        page=page,
+        package=package,
+        from_date=from_date or '',
+        packager=packager or '',
     )
 
 

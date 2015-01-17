@@ -1,0 +1,101 @@
+{% extends "master.html" %}
+
+{% block title %} Logs {{ package }} - {{ super() }} {% endblock %}
+
+{%block header %}
+{% if refresh %}
+<meta http-equiv="refresh" content="5" >
+{% endif %}
+{% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+
+{% set options = True %}
+{%block options %}
+<form action="{{ url_for('.admin_log') }}" method="get">
+    Restrict to packager: <input type="text" name="packager" /> <br />
+    From date: <input id="from_date" type="text" name="from_date" /> <br />
+    <input type="submit" class="submit positive button" value="filter">
+</form>
+{% endblock %}
+
+{% block content %}
+
+<h1>Logs {{ package }}</h1>
+
+{% if refresh %}
+This page should refresh automatically every 5 seconds
+{% endif %}
+
+{% if total_page and total_page > 1 and total_page >= page %}
+<table>
+    <tr>
+        <td>
+        {% if page > 1%}
+            <a href="{{ url_for(
+                '.package_logs', package=package, from_date=from_date,
+                packager=packager, page=page-1) }}">
+                < Previous
+            </a>
+        {% else %}
+            < Previous
+        {% endif %}
+        </td>
+        <td>{{ page }} / {{ total_page }}</td>
+        <td>
+            {% if page < total_page %}
+            <a href="{{ url_for(
+                '.package_logs', package=package, from_date=from_date,
+                packager=packager, page=page+1) }}">
+                Next >
+            </a>
+            {% else %}
+            Next >
+            {% endif %}
+        </td>
+    </tr>
+</table>
+{% endif %}
+
+{% if total_page >= page and page > 0 %}
+    <table>
+    {% for log in logs %}
+        <tr>
+            <td>
+                {{ log.change_time.strftime('%Y-%m-%d %H:%M:%S') }}
+            </td>
+            <td>
+            {{ log.description }}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+{% elif total_page %}
+    <p>
+        Sorry, but the page you are requesting is unavailable. <br />
+        <a href="{{ url_for('.package_logs', package=package) }}">
+            Back to the list
+        </a>
+    </p>
+{% else %}
+    <p class='error'>No logs found in the database.</p>
+{% endif %}
+
+
+{% endblock %}
+
+{% block jscripts %}
+{{ super() }}
+<script type="text/javascript"
+    src="{{ url_for('static',
+        filename='jquery-ui-timespinner.js') }}">
+</script>
+<script type="text/javascript">
+    $(function(){
+        $('#from_date').datepicker({
+            dateFormat: "yy-mm-dd",
+        });
+    });
+</script>
+{% endblock %}
