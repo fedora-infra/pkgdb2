@@ -496,12 +496,12 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
-    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
     def test_package_take(self, login_func, mock_func):
         """ Test the package_take function. """
         login_func.return_value = None
-        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        mock_func.return_value = ['pingou', 'toshio']
         create_package_acl(self.session)
 
         data = {
