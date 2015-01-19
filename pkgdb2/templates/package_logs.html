@@ -61,12 +61,12 @@ This page should refresh automatically every 5 seconds
 {% if total_page >= page and page > 0 %}
     <table>
     {% for log in logs %}
-        <tr>
+        <tr id="n{{ loop.index }}" class="log_row">
             <td>
                 {{ log.change_time.strftime('%Y-%m-%d %H:%M:%S') }}
             </td>
             <td>
-            {{ log.description }}
+                {{ log.description }}
             </td>
         </tr>
     {% endfor %}
@@ -92,9 +92,35 @@ This page should refresh automatically every 5 seconds
         filename='jquery-ui-timespinner.js') }}">
 </script>
 <script type="text/javascript">
+
+    $(window.onload=function(){
+        var _hash = window.location.hash;
+        if (_hash && _hash != '#') {
+            var row = $(_hash);
+            row.css('background', '#dddddd');
+            return false;
+        };
+    });
+
     $(function(){
         $('#from_date').datepicker({
             dateFormat: "yy-mm-dd",
+        });
+
+        $('.log_row').click(function () {
+            var _hash = window.location.hash;
+            if (_hash && _hash != '#') {
+                var row = $(_hash);
+                row.css('background', 'white');
+            }
+            if(this.style.backgroundColor == "" || this.style.backgroundColor =="white") {
+                $(this).css('background', '#dddddd');
+                window.location.hash = this.id;
+            }
+            else {
+                $(this).css('background', 'white');
+                window.location.hash = '';
+            }
         });
     });
 </script>
