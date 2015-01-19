@@ -22,7 +22,11 @@
 
 {% block content %}
 
-<h1>Logs {{ package }}</h1>
+<h1>
+    <a property="doap:name" href="{{ url_for('.package_info', package=package) }}">
+      {{ package }}
+    </a> > Timeline
+</h1>
 
 {% if refresh %}
 This page should refresh automatically every 5 seconds
