@@ -103,7 +103,7 @@ def _validate_pkg(session, rhel_ver, pkg_name):
     rhel_pkgs = pkgdb2.lib.utils.get_rhel_pkg(rhel_vers)
 
     if rhel_ver in rhel_pkgs and rhel_pkgs[rhel_ver]:
-        if pkg_name in rhel_pkgs[rhel_ver]:
+        if pkg_name in rhel_pkgs[rhel_ver]['packages']:
             raise PkgdbException(
                 'There is already a package named %s in RHEL-%s. '
                 'If you really wish to have an EPEL branch for it '
