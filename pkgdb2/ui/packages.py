@@ -294,7 +294,7 @@ def package_logs(package):
     total_page = int(ceil(cnt_logs / float(limit)))
 
     return flask.render_template(
-        'package_logs.html',
+        'package_timeline.html',
         logs=logs,
         cnt_logs=cnt_logs,
         total_page=total_page,
