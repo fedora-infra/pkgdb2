@@ -78,6 +78,15 @@ confusing what the difference is between that status an the per-branch status)
     {% if is_admin %}
     <tr>
       <td colspan="2" align="center">
+        <a href="{{ url_for('.admin_log', package=package.name) }}">
+          <button class="bold pkg_button_blue inline" >
+            Logs
+          </button>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
         <form action="{{ url_for('.delete_package', package=package.name) }}"
           method="POST">
           <button class="bold pkg_button_grey inline" type="submit"
