@@ -13,7 +13,7 @@
 
 {% set options = True %}
 {%block options %}
-<form action="{{ url_for('.admin_log') }}" method="get">
+<form action="{{ url_for('.package_logs') }}" method="get">
     Restrict to packager: <input type="text" name="packager" /> <br />
     From date: <input id="from_date" type="text" name="from_date" /> <br />
     <input type="submit" class="submit positive button" value="filter">
