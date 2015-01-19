@@ -496,12 +496,12 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
-    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
     def test_package_take(self, login_func, mock_func):
         """ Test the package_take function. """
         login_func.return_value = None
-        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        mock_func.return_value = ['pingou', 'toshio']
         create_package_acl(self.session)
 
         data = {
@@ -660,6 +660,63 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
+                in output.data)
+
+    def test_package_timeline(self):
+        """ Test the package_timeline function. """
+
+        output = self.app.get('/package/guake/timeline')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('</a> > Timeline' in output.data)
+        self.assertTrue(
+            'Restrict to packager: <input type="text" name="packager" />'
+            in output.data)
+
+        output = self.app.get(
+            '/package/guake/timeline?page=abc&limit=def&from_date=ghi'
+            '&package=test')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('</a> > Timeline' in output.data)
+        self.assertTrue(
+            'Restrict to packager: <input type="text" name="packager" />'
+            in output.data)
+        self.assertTrue(
+            'class="errors">Incorrect limit provided, using default</'
+            in output.data)
+        self.assertTrue(
+            'class="errors">Incorrect from_date provided, using default</'
+            in output.data)
+        self.assertTrue(
+            '<li class="errors">No package exists</li>' in output.data)
+
+        output = self.app.get('/package/guake/timeline?from_date=2013-10-19')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('</a> > Timeline' in output.data)
+        self.assertTrue(
+            'Restrict to packager: <input type="text" name="packager" />'
+            in output.data)
+        self.assertTrue(
+            '<p class=\'error\'>No logs found in the database.</p>'
+            in output.data)
+
+        # Put some data in the database
+        self.test_package_take()
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/timeline')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('</a> > Timeline' in output.data)
+            self.assertTrue(
+                'Restrict to packager: <input type="text" name="packager" />'
+                in output.data)
+            self.assertTrue(
+                'user: pingou set for pingou acl: commit of package: guake '
+                'from: Approved to: Obsolete on branch: master'
+                in output.data)
+            self.assertTrue(
+                'user: pingou set for pingou acl: approveacls of package: '
+                'guake from: Obsolete to: Approved on branch: master'
                 in output.data)
 
 
