@@ -667,7 +667,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         output = self.app.get('/package/guake/timeline')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Logs guake</h1>' in output.data)
+        self.assertTrue('</a> > Timeline' in output.data)
         self.assertTrue(
             'Restrict to packager: <input type="text" name="packager" />'
             in output.data)
@@ -676,7 +676,7 @@ class FlaskUiPackagesTest(Modeltests):
             '/package/guake/timeline?page=abc&limit=def&from_date=ghi'
             '&package=test')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Logs guake</h1>' in output.data)
+        self.assertTrue('</a> > Timeline' in output.data)
         self.assertTrue(
             'Restrict to packager: <input type="text" name="packager" />'
             in output.data)
@@ -691,7 +691,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         output = self.app.get('/package/guake/timeline?from_date=2013-10-19')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Logs guake</h1>' in output.data)
+        self.assertTrue('</a> > Timeline' in output.data)
         self.assertTrue(
             'Restrict to packager: <input type="text" name="packager" />'
             in output.data)
@@ -706,7 +706,7 @@ class FlaskUiPackagesTest(Modeltests):
         with user_set(pkgdb2.APP, user):
             output = self.app.get('/package/guake/timeline')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h1>guake</h1>' in output.data)
+            self.assertTrue('</a> > Timeline' in output.data)
             self.assertTrue(
                 'Restrict to packager: <input type="text" name="packager" />'
                 in output.data)
