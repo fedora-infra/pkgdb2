@@ -23,8 +23,11 @@
 Utilities for all classes to use
 '''
 
+import datetime
 import hashlib
 import urllib
+
+import requests
 
 import pkgdb2
 import pkgdb2.lib.exceptions
@@ -46,6 +49,8 @@ from fedora.client.fas2 import AccountSystem
 _BUGZILLA = None
 # Have a global connection to FAS open.
 _FAS = None
+# Have a global dict with all the RHEL versions in
+_RHEL_PKGS = None
 
 
 def get_fas():  # pragma: no cover
@@ -368,3 +373,33 @@ def avatar_url_from_openid(openid, size=64, default='retro', dns=False):
         query = urllib.urlencode({'s': size, 'd': default})
         hash = hashlib.sha256(openid).hexdigest()
         return "https://seccdn.libravatar.org/avatar/%s?%s" % (hash, query)
+
+
+def get_rhel_pkg(rhel_vers):  # pragma: no cover
+    ''' Retrieve and store in memory the packages present in RHEL for the
+    specified versions of RHEL.
+
+    :arg rhel_vers: a list of RHEL release (for example: [5, 6, 7])
+    :type rhel_vers: list
+    :returns: a dict of the JSON of the RHEL packages and the date so that
+        the cache gets invalidated after a day.
+    '''
+    global _RHEL_PKGS
+    today = datetime.datetime.utcnow().date()
+    if _RHEL_PKGS is not None and _RHEL_PKGS['date'] == today:
+        return _RHEL_PKGS
+
+    _RHEL_PKGS = {'date': today}
+    base_url = 'https://infrastructure.fedoraproject.org/repo/json/'\
+    'pkg_el%s.json'
+
+    for rhel_ver in rhel_vers:
+        url = base_url % rhel_ver
+        req = requests.get(url)
+        if req.status_code != 200:
+            data = {}
+        else:
+            data = req.json()
+        _RHEL_PKGS['%s' % rhel_ver] = data
+
+    return _RHEL_PKGS
