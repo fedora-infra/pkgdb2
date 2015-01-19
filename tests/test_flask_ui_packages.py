@@ -665,7 +665,7 @@ class FlaskUiPackagesTest(Modeltests):
     def test_package_timeline(self):
         """ Test the package_timeline function. """
 
-        output = self.app.get('/package/guake/logs')
+        output = self.app.get('/package/guake/timeline')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Logs guake</h1>' in output.data)
         self.assertTrue(
@@ -673,7 +673,8 @@ class FlaskUiPackagesTest(Modeltests):
             in output.data)
 
         output = self.app.get(
-            '/package/guake/logs?page=abc&limit=def&from_date=ghi&package=test')
+            '/package/guake/timeline?page=abc&limit=def&from_date=ghi'
+            '&package=test')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Logs guake</h1>' in output.data)
         self.assertTrue(
@@ -688,7 +689,7 @@ class FlaskUiPackagesTest(Modeltests):
         self.assertTrue(
             '<li class="errors">No package exists</li>' in output.data)
 
-        output = self.app.get('/package/guake/logs?from_date=2013-10-19')
+        output = self.app.get('/package/guake/timeline?from_date=2013-10-19')
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Logs guake</h1>' in output.data)
         self.assertTrue(
@@ -703,9 +704,9 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/logs')
+            output = self.app.get('/package/guake/timeline')
             self.assertEqual(output.status_code, 200)
-            self.assertTrue('<h1>Logs guake</h1>' in output.data)
+            self.assertTrue('<h1>guake</h1>' in output.data)
             self.assertTrue(
                 'Restrict to packager: <input type="text" name="packager" />'
                 in output.data)

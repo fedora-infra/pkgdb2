@@ -237,7 +237,7 @@ def package_info(package):
     )
 
 
-@UI.route('/package/<package>/logs')
+@UI.route('/package/<package>/timeline')
 def package_timeline(package):
     """ Return the timeline of a specified package.
     """
