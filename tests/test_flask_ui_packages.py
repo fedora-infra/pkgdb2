@@ -496,12 +496,13 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
-    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
     def test_package_take(self, login_func, mock_func):
         """ Test the package_take function. """
         login_func.return_value = None
-        mock_func.return_value = ['pingou', 'toshio']
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+
         create_package_acl(self.session)
 
         data = {
@@ -700,7 +701,40 @@ class FlaskUiPackagesTest(Modeltests):
             in output.data)
 
         # Put some data in the database
-        self.test_package_take()
+        create_package_acl(self.session)
+        guake_pkg = model.Package.by_name(self.session, 'guake')
+        pkgdb2.lib.utils.log(
+            self.session,
+            guake_pkg,
+            'acl.update',
+            dict(
+                agent='pingou',
+                username='pingou',
+                acl='commit',
+                previous_status='Approved',
+                status='Obsolete',
+                package_name='guake',
+                package_listing={
+                    'collection': {'branchname': 'master'}
+                },
+            )
+        )
+        pkgdb2.lib.utils.log(
+            self.session,
+            guake_pkg,
+            'acl.update',
+            dict(
+                agent='pingou',
+                username='pingou',
+                acl='approveacls',
+                previous_status='Obsolete',
+                status='Approved',
+                package_name='guake',
+                package_listing={
+                    'collection': {'branchname': 'master'}
+                },
+            )
+        )
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
