@@ -1764,6 +1764,22 @@ def add_new_package_request(
         raise PkgdbException(
             'There is already a package named: %s' % pkg_name)
 
+    if pkg_collection.startswith(('el', 'epel')):
+        rhel_vers = [
+            item.version
+            for item in search_collection(session, pattern='*el*')
+        ]
+        rhel_pkgs = pkgdb2.lib.utils.get_rhel_pkg(rhel_vers)
+
+        rhel_ver = pkg_collection[-1:]
+        if rhel_ver in rhel_pkgs and rhel_pkgs[rhel_ver]:
+            if pkg_name in rhel_pkgs[rhel_ver]:
+                raise PkgdbException(
+                    'There is already a package named %s in RHEL-%s. '
+                    'If you really wish to have an EPEL branch for it '
+                    'open a ticket on the rel-eng trac' % (pkg_name,
+                    rhel_ver))
+
     info = {
         'pkg_name': pkg_name,
         'pkg_summary': pkg_summary,
