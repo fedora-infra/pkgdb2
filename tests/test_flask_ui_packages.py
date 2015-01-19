@@ -102,7 +102,7 @@ class FlaskUiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.is_admin')
-    def test_package_new(self, login_func, mock_func):
+    def test_package_new(self, login_func, utils_module):
         """ Test the package_new function. """
         login_func.return_value = None
         create_package_acl(self.session)
@@ -144,8 +144,8 @@ class FlaskUiPackagesTest(Modeltests):
                     '<td class="errors">This field is required.</td>'
                 ), 5)
 
-            mock_func.get_packagers.return_value = ['mclasen']
-            mock_func.log.return_value = ''
+            utils_module.get_packagers.return_value = ['mclasen']
+            utils_module.log.return_value = ''
 
             data = {
                 'pkgname': 'gnome-terminal',
@@ -172,7 +172,7 @@ class FlaskUiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
-    def test_package_give(self, login_func, mock_func):
+    def test_package_give(self, login_func, utils_module):
         """ Test the package_give function. """
         login_func.return_value = None
         create_package_acl(self.session)
@@ -235,8 +235,8 @@ class FlaskUiPackagesTest(Modeltests):
                 'class="error">User &#34;limb&#34; is not in the packager '
                 'group</' in output.data)
 
-        mock_func.get_packagers.return_value = ['spot']
-        mock_func.log.return_value = ''
+        utils_module.get_packagers.return_value = ['spot']
+        utils_module.log.return_value = ''
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get('/package/guake/give')
@@ -299,7 +299,7 @@ class FlaskUiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
-    def test_package_orphan(self, login_func, mock_func):
+    def test_package_orphan(self, login_func, utils_module):
         """ Test the package_orphan function. """
         login_func.return_value = None
         create_package_acl(self.session)
@@ -363,7 +363,7 @@ class FlaskUiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
-    def test_package_retire(self, login_func, mock_func):
+    def test_package_retire(self, login_func, utils_module):
         """ Test the package_retire function. """
         login_func.return_value = None
         create_package_acl(self.session)
@@ -498,10 +498,10 @@ class FlaskUiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
-    def test_package_take(self, login_func, mock_func):
+    def test_package_take(self, login_func, utils_module):
         """ Test the package_take function. """
         login_func.return_value = None
-        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        utils_module.get_packagers.return_value = ['pingou', 'toshio']
 
         create_package_acl(self.session)
 
@@ -587,10 +587,10 @@ class FlaskUiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
-    def test_delete_package(self, login_func, mock_func):
+    def test_delete_package(self, login_func, utils_module):
         """ Test the delete_package function. """
         login_func.return_value = None
-        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        utils_module.get_packagers.return_value = ['pingou', 'toshio']
         create_package_acl(self.session)
 
         data = {}
