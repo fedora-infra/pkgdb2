@@ -238,8 +238,8 @@ def package_info(package):
 
 
 @UI.route('/package/<package>/logs')
-def package_logs(package):
-    """ Return the logs of the specified package as requested by the user.
+def package_timeline(package):
+    """ Return the timeline of a specified package.
     """
     from_date = flask.request.args.get('from_date', None)
     packager = flask.request.args.get('packager', None)

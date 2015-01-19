@@ -77,7 +77,7 @@ confusing what the difference is between that status an the per-branch status)
     {% endfor %}
     <tr>
       <td colspan="2" align="center">
-        <a href="{{ url_for('.package_logs', package=package.name) }}">
+        <a href="{{ url_for('.package_timeline', package=package.name) }}">
           <button class="bold pkg_button_blue inline" >
             Timeline
           </button>

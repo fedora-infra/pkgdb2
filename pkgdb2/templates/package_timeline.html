@@ -13,7 +13,7 @@
 
 {% set options = True %}
 {%block options %}
-<form action="{{ url_for('.package_logs') }}" method="get">
+<form action="{{ url_for('.package_timeline') }}" method="get">
     Restrict to packager: <input type="text" name="packager" /> <br />
     From date: <input id="from_date" type="text" name="from_date" /> <br />
     <input type="submit" class="submit positive button" value="filter">
@@ -34,7 +34,7 @@ This page should refresh automatically every 5 seconds
         <td>
         {% if page > 1%}
             <a href="{{ url_for(
-                '.package_logs', package=package, from_date=from_date,
+                '.package_timeline', package=package, from_date=from_date,
                 packager=packager, page=page-1) }}">
                 < Previous
             </a>
@@ -46,7 +46,7 @@ This page should refresh automatically every 5 seconds
         <td>
             {% if page < total_page %}
             <a href="{{ url_for(
-                '.package_logs', package=package, from_date=from_date,
+                '.package_timeline', package=package, from_date=from_date,
                 packager=packager, page=page+1) }}">
                 Next >
             </a>
@@ -74,7 +74,7 @@ This page should refresh automatically every 5 seconds
 {% elif total_page %}
     <p>
         Sorry, but the page you are requesting is unavailable. <br />
-        <a href="{{ url_for('.package_logs', package=package) }}">
+        <a href="{{ url_for('.package_timeline', package=package) }}">
             Back to the list
         </a>
     </p>
