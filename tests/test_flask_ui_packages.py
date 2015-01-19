@@ -562,7 +562,7 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="error">User &#34;admin&#34; is not in the '
                 'packager group</li>' in output.data)
 
-        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        utils_module.get_packagers.return_value = ['pingou', 'toshio']
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
