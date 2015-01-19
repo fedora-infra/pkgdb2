@@ -1640,6 +1640,19 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
     status = 'Awaiting Review'
     if clt_to.name == 'Fedora EPEL':
         status = 'Pending'
+        rhel_vers = [
+            item.version
+            for item in search_collection(session, pattern='*el*')
+        ]
+        rhel_pkgs = pkgdb2.lib.utils.get_rhel_pkg(rhel_vers)
+
+        if clt_to.version in rhel_pkgs and rhel_pkgs[clt_to.version]:
+            if package.name in rhel_pkgs[clt_to.version]:
+                raise PkgdbException(
+                    'There is already a package named %s in RHEL-%s. '
+                    'If you really wish to have an EPEL branch for it '
+                    'open a ticket on the rel-eng trac' % (package.name,
+                    clt_to.version))
 
     action = model.AdminAction(
         package_id=package.id,
