@@ -92,6 +92,24 @@ def _validate_poc(pkg_poc):
                 'User "%s" is not in the packager group' % pkg_poc)
 
 
+def _validate_pkg(session, rhel_ver, pkg_name):
+    """ Validate if the specified package is in the specified RHEL version
+    or not.
+    """
+    rhel_vers = [
+        item.version
+        for item in search_collection(session, pattern='*el*')
+    ]
+    rhel_pkgs = pkgdb2.lib.utils.get_rhel_pkg(rhel_vers)
+
+    if rhel_ver in rhel_pkgs and rhel_pkgs[rhel_ver]:
+        if pkg_name in rhel_pkgs[rhel_ver]:
+            raise PkgdbException(
+                'There is already a package named %s in RHEL-%s. '
+                'If you really wish to have an EPEL branch for it '
+                'open a ticket on the rel-eng trac' % (pkg_name, rhel_ver))
+
+
 def create_session(db_url, debug=False, pool_recycle=3600):
     """ Create the Session object to use to query the database.
 
@@ -1640,19 +1658,7 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
     status = 'Awaiting Review'
     if clt_to.name == 'Fedora EPEL':
         status = 'Pending'
-        rhel_vers = [
-            item.version
-            for item in search_collection(session, pattern='*el*')
-        ]
-        rhel_pkgs = pkgdb2.lib.utils.get_rhel_pkg(rhel_vers)
-
-        if clt_to.version in rhel_pkgs and rhel_pkgs[clt_to.version]:
-            if package.name in rhel_pkgs[clt_to.version]:
-                raise PkgdbException(
-                    'There is already a package named %s in RHEL-%s. '
-                    'If you really wish to have an EPEL branch for it '
-                    'open a ticket on the rel-eng trac' % (package.name,
-                    clt_to.version))
+        _validate_pkg(session, clt_from.version, package.name)
 
     action = model.AdminAction(
         package_id=package.id,
@@ -1765,20 +1771,7 @@ def add_new_package_request(
             'There is already a package named: %s' % pkg_name)
 
     if pkg_collection.startswith(('el', 'epel')):
-        rhel_vers = [
-            item.version
-            for item in search_collection(session, pattern='*el*')
-        ]
-        rhel_pkgs = pkgdb2.lib.utils.get_rhel_pkg(rhel_vers)
-
-        rhel_ver = pkg_collection[-1:]
-        if rhel_ver in rhel_pkgs and rhel_pkgs[rhel_ver]:
-            if pkg_name in rhel_pkgs[rhel_ver]:
-                raise PkgdbException(
-                    'There is already a package named %s in RHEL-%s. '
-                    'If you really wish to have an EPEL branch for it '
-                    'open a ticket on the rel-eng trac' % (pkg_name,
-                    rhel_ver))
+        _validate_pkg(session, pkg_collection[-1:], pkg_name)
 
     info = {
         'pkg_name': pkg_name,
