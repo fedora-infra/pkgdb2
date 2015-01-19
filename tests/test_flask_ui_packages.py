@@ -662,8 +662,8 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">No package of this name found.</li>'
                 in output.data)
 
-    def test_package_logs(self):
-        """ Test the package_logs function. """
+    def test_package_timeline(self):
+        """ Test the package_timeline function. """
 
         output = self.app.get('/package/guake/logs')
         self.assertEqual(output.status_code, 200)
