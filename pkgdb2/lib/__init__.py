@@ -104,10 +104,34 @@ def _validate_pkg(session, rhel_ver, pkg_name):
 
     if rhel_ver in rhel_pkgs and rhel_pkgs[rhel_ver]:
         if pkg_name in rhel_pkgs[rhel_ver]['packages']:
-            raise PkgdbException(
-                'There is already a package named %s in RHEL-%s. '
-                'If you really wish to have an EPEL branch for it '
-                'open a ticket on the rel-eng trac' % (pkg_name, rhel_ver))
+            arches = set([
+                'i686' if arch == 'i386' else arch
+                for arch in rhel_pkgs[rhel_ver]['arches']
+            ])
+            pkg_arches = set([
+                'i686' if arch == 'i386' else arch
+                for arch in rhel_pkgs[rhel_ver]['packages'][pkg_name]['arch']
+            ])
+
+            valid = True
+            if pkg_arches == ['noarch']:
+                # noarch == all arches
+                valid = False
+            else:
+                diff = arches.symmetric_difference(pkg_arches)
+                if len(diff) == 1 and sorted(diff) == ['noarch']:
+                    # Present on all compiled arches
+                    valid = False
+                elif len(diff) == 0:
+                    # Present on all arches
+                    valid = False
+
+            if valid is False:
+                raise PkgdbException(
+                    'There is already a package named %s in RHEL-%s. '
+                    'If you really wish to have an EPEL branch for it '
+                    'open a ticket on the rel-eng trac' % (
+                        pkg_name, rhel_ver))
 
 
 def create_session(db_url, debug=False, pool_recycle=3600):
