@@ -1647,8 +1647,6 @@ def add_branch(session, clt_from, clt_to, user):
 def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
     """ Register a new branch request.
 
-    This method only flushes the new objects.
-
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package for which to create the branch.
     :arg clt_from: the ``branchname`` of the collection to branch from.
