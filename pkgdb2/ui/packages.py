@@ -333,7 +333,7 @@ def package_request_edit(package, action_id):
         flask.flash('No action found with this identifier.', 'errors')
         return flask.render_template('msg.html')
 
-    if admin_action.package.name != package:
+    if not admin_action.package or admin_action.package.name != package:
         flask.flash(
             'The specified action (id:%s) is not related to the specified '
             'package: %s.' % (action_id, package), 'errors')
