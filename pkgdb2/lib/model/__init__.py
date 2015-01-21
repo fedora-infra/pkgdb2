@@ -1125,20 +1125,22 @@ class Package(BASE):
     def requests_pending(self):
         """ Returns the list of pending branch requests
         """
-        requests = []
-        for req in self.requests:
-            if req.status == 'Pending':
-                requests.append(req)
+        requests = [
+            req
+            for req in self.requests
+            if req.status == 'Pending'
+        ]
         return requests
 
     @property
     def requests_awaiting_review(self):
         """ Returns the list of awaiting review requests
         """
-        requests = []
-        for req in self.requests:
-            if req.status == 'Awaiting Review':
-                requests.append(req)
+        requests = [
+            req
+            for req in self.requests
+            if req.status == 'Awaiting Review'
+        ]
         return requests
 
     def __init__(self, name, summary, description, status,
