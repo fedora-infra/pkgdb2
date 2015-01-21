@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.22.2
+Version:        1.23
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -114,6 +114,12 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Jan 21 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-1
+- Update to 1.23
+- Increase the max width of the page
+- Added a public timeline to access the history of the package according to
+  pkgdb (button in the package page)
+
 * Tue Jan 13 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.22.2-1
 - Update to 1.22.2
 - Fix the get_groups query to actually return all the groups in a timely
