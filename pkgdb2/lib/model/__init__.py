@@ -26,8 +26,8 @@ Mapping of python classes to Database Tables.
 __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
-import ast
 import datetime
+import json
 import logging
 import time
 
@@ -1708,7 +1708,7 @@ class AdminAction(BASE):
 
         """
         if self.info:
-            return ast.literal_eval(self.info)
+            return json.loads(self.info)
         else:
             return {}
 
