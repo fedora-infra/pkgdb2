@@ -24,6 +24,7 @@ PkgDB internal API to interact with the database.
 '''
 
 import operator
+import json
 
 import sqlalchemy
 
@@ -1814,7 +1815,7 @@ def add_new_package_request(
         user=user.username,
         _status='Awaiting Review',
         action='request.package',
-        info=str(info),
+        info=json.dumps(info),
     )
 
     session.add(action)
