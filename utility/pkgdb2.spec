@@ -2,8 +2,8 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.23
-Release:        2%{?dist}
+Version:        1.23.99
+Release:        1%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
@@ -118,6 +118,11 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Jan 26 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.99-1
+- Update to 1.23.99 (pre-release for 1.24)
+- New processes to request a new package or a new branch of a package directly
+  in pkgdb instead of relying on bugzilla
+
 * Wed Jan 21 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-2
 - Test running the unit-tests at build time but doesn't work with EPEL6
 - Bump requirement to python-sqlalchemy 0.8+
