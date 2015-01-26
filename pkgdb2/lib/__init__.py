@@ -1765,7 +1765,7 @@ def add_new_package_request(
     :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
         being in critpath.
-    :returns: a message informating that the request has been successfully
+    :returns: a message informing that the request has been successfully
         created.
     :rtype: str()
     :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
