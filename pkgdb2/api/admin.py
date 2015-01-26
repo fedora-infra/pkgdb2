@@ -50,7 +50,7 @@ List admin actions
     :kwarg package: restrict the actions to a specific package.
     :kwarg packager: restrict the actions to a specific packager.
     :kwarg action: restrict the actions to a specific action, options are:
-        ``request.branch``.
+        ``request.branch``, ``request.package``.
     :kwarg status: restrict the actions depending on their status, options
         are: ``Awaiting Review``, ``Approved``, ``Denied``, ``Obsolete``,
         ``Removed``.
