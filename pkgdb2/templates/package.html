@@ -75,6 +75,28 @@ confusing what the difference is between that status an the per-branch status)
     </tr>
     {% endif %}
     {% endfor %}
+
+    {% for req in package.requests | reverse %}
+    <tr>
+        <th>{{ req.collection.name }} {{ req.collection.version }}</th>
+        <td>{{ req.status }}</td>
+    </tr>
+    {% endfor %}
+
+    {% if g.fas_user and branches_possible %}
+    <tr>
+      <td colspan="2" align="center">
+        <a href="{{ url_for('.package_request_branch', package=package.name) }}"
+            title="Request a new branch for this package"
+            id="requestbranch">
+          <button class="bold pkg_button_blue inline" type="submit">
+            Request new branch
+          </button>
+        </a>
+      </td>
+    </tr>
+    {% endif %}
+
     <tr>
       <td colspan="2" align="center">
         <a href="{{ url_for('.package_timeline', package=package.name) }}">
@@ -152,6 +174,27 @@ confusing what the difference is between that status an the per-branch status)
 
   </ul>
 
+  {% if g.fas_user and package.requests_pending and (
+        g.fas_user.username in admins or requester or is_admin) %}
+  <div id="pkg_req_pending">
+  <p>
+      There are some requests pending for this package, please review them:
+  </p>
+  <ul>
+      {% for req in package.requests_pending %}
+      {% if g.fas_user.username in admins or requester or is_admin %}
+      <li>
+          <a href="{{ url_for(
+            '.package_request_edit', package=package.name, action_id=req.id) }}">
+              {{ req.user }} requested the branch {{ req.collection.branchname }}
+          </a>
+      </li>
+      {% endif %}
+      {% endfor %}
+  </ul>
+  </div>
+  {% endif %}
+
   <div class="h_line" style="width:81%"></div>
 
   <section id="pkg_ppl_table">
@@ -176,6 +219,7 @@ confusing what the difference is between that status an the per-branch status)
           {% endfor %}
         </ul>
 
+        {% if g.fas_user %}
         <table id="pkg_actions">
           <tr>
           {% if g.fas_user.username in pocs or is_admin %}
@@ -185,6 +229,16 @@ confusing what the difference is between that status an the per-branch status)
                 href="{{ url_for('.package_give', package=package.name) }}">
                 <button  class="bold pkg_button_blue">
                 + Give Package
+                </button>
+              </a>
+            </td>
+          {% elif ('Retired' in statuses) %}
+            <td>
+              <a title="Ask an admin to un-retire the package for you"
+                 id="unretirebutton"
+                 href="{{ url_for('.package_unretire', package=package.name) }}">
+                <button class="bold pkg_button_blue">
+                  + Ask Unretirement
                 </button>
               </a>
             </td>
@@ -206,9 +260,7 @@ confusing what the difference is between that status an the per-branch status)
           {% endif %}
           </tr>
           <tr>
-          {% if g.fas_user and (
-                (is_admin and 'Retired' in statuses) or 'Orphaned' in statuses
-            ) %}
+          {% if ('Orphaned' in statuses) %}
             <td>
               <a title="This package is orphaned, take it!..."
                  id="takebutton"
@@ -236,6 +288,7 @@ confusing what the difference is between that status an the per-branch status)
           {% endif %}
           </tr>
         </table>
+        {% endif %}
       </div>
 
       <div id="pkg_admins">
@@ -632,6 +685,23 @@ confusing what the difference is between that status an the per-branch status)
 
             return false;
         });
+        $('#unretirebutton').click(function(){
+            var _url = "{{ url_for('.package_unretire', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    var _height = $(window).height() * 0.8;
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+            return false;
+        });
 
         $('.info_retire').click(
             function() {
@@ -648,6 +718,25 @@ confusing what the difference is between that status an the per-branch status)
                 });
             }
         );
+
+        $('#requestbranch').click(function(){
+            var _url = "{{ url_for('.package_request_branch', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    var _height = $(window).height() * 0.8;
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+
+            return false;
+        });
     });
 </script>
 {% endblock %}

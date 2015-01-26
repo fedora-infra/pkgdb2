@@ -23,8 +23,11 @@
 Utilities for all classes to use
 '''
 
+import datetime
 import hashlib
 import urllib
+
+import requests
 
 import pkgdb2
 import pkgdb2.lib.exceptions
@@ -46,6 +49,8 @@ from fedora.client.fas2 import AccountSystem
 _BUGZILLA = None
 # Have a global connection to FAS open.
 _FAS = None
+# Have a global dict with all the RHEL versions in
+_RHEL_PKGS = None
 
 
 def get_fas():  # pragma: no cover
@@ -256,6 +261,13 @@ def log(session, package, topic, message):
         'package.branch.new': 'user: %(agent)s created branch '
                               '%(package_listing.collection.'
                               'branchname)s on package %(package.name)s',
+        'package.branch.request': 'user: %(agent)s requested branch: '
+                                 '%(collection_to.branchname)s from branch '
+                                 '%(collection_from.branchname)s '
+                                 'for package %(package.name)s',
+        'package.new.request': 'user: %(agent)s request package: '
+                               '%(info.pkg_name)s on branch '
+                               '%(collection.branchname)s',
         'package.delete': 'user: %(agent)s deleted package %(package.name)s',
         'package.new': 'user: %(agent)s created package: '
                        '%(package_name)s on branch: '
@@ -264,6 +276,9 @@ def log(session, package, topic, message):
         'package.critpath.update': 'user: %(agent)s updated critpath status'
                                    'for package: %(package.name)s on '
                                    'branches %(branches)s',
+        'package.unretire.request': 'user: %(agent)s requested branch: '
+                                    '%(collection.branchname)s to be '
+                                    'unretired for package %(package.name)s',
         'package.update': 'user: %(agent)s updated %(fields)s package: '
                           '%(package.name)s',
         'package.update.status': 'user: %(agent)s updated package: '
@@ -276,12 +291,20 @@ def log(session, package, topic, message):
         'collection.update': 'user: %(agent)s edited collection: '
                              '%(collection.name)s',
         'package.monitor.update': 'user: %(agent)s updated the monitoring '
-                               'status of %(package.name)s to %(status)s'
+                               'status of %(package.name)s to %(status)s',
+        'admin.action.status.update': 'user: %(agent)s updated action: '
+                               '%(action.id)s of %(action.package.name)s '
+                               'from `%(old_status)s` to `%(new_status)s`',
     }
     subject_templates = {
         'acl.update': '%(agent)s:%(package_name)s %(acl)s  set to %(status)s',
         'owner.update': '%(agent)s:%(package_name)s set point of contact to: '
                         '%(username)s',
+        'package.branch.request': '%(agent)s:%(package.name)s requested new '
+                                  'branch %(collection_to.branchname)s',
+        'package.unretire.request': '%(agent)s:%(package.name)s requested '
+                                    'that branch %(collection.branchname)s '
+                                    'be unretired',
         'package.update': '%(agent)s updated package: '
                           '%(package.name)s',
         'package.update.status': '%(agent)s updated package: '
@@ -290,6 +313,22 @@ def log(session, package, topic, message):
                           '%(package_listing.collection.branchname)s]',
     }
     substitutions = _construct_substitutions(message)
+
+    if topic == 'admin.action.status.update' \
+            and 'action' in message \
+            and 'info' in message['action'] \
+            and 'pkg_name' in message['action']['info'] \
+            and message['action']['info']['pkg_name']:
+        templates[topic] = 'user: %(agent)s updated action: ' \
+           '%(action.id)s of %(action.info.pkg_name)s ' \
+           'from `%(old_status)s` to `%(new_status)s`'
+
+    if topic == 'admin.action.status.update' \
+            and 'action' in message \
+            and 'message' in message['action'] \
+            and message['action']['message']:
+        templates[topic] += ' with message: %(action.message)s'
+
     final_msg = templates[topic] % substitutions
     subject = None
     if topic in subject_templates:
@@ -334,3 +373,33 @@ def avatar_url_from_openid(openid, size=64, default='retro', dns=False):
         query = urllib.urlencode({'s': size, 'd': default})
         hash = hashlib.sha256(openid).hexdigest()
         return "https://seccdn.libravatar.org/avatar/%s?%s" % (hash, query)
+
+
+def get_rhel_pkg(rhel_vers):  # pragma: no cover
+    ''' Retrieve and store in memory the packages present in RHEL for the
+    specified versions of RHEL.
+
+    :arg rhel_vers: a list of RHEL release (for example: [5, 6, 7])
+    :type rhel_vers: list
+    :returns: a dict of the JSON of the RHEL packages and the date so that
+        the cache gets invalidated after a day.
+    '''
+    global _RHEL_PKGS
+    today = datetime.datetime.utcnow().date()
+    if _RHEL_PKGS is not None and _RHEL_PKGS['date'] == today:
+        return _RHEL_PKGS
+
+    _RHEL_PKGS = {'date': today}
+    base_url = 'https://infrastructure.fedoraproject.org/repo/json/'\
+    'pkg_el%s.json'
+
+    for rhel_ver in rhel_vers:
+        url = base_url % rhel_ver
+        req = requests.get(url)
+        if req.status_code != 200:
+            data = {}
+        else:
+            data = req.json()
+        _RHEL_PKGS['%s' % rhel_ver] = data
+
+    return _RHEL_PKGS

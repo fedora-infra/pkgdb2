@@ -26,26 +26,20 @@ pkgdb tests for the Collection object.
 __requires__ = ['SQLAlchemy >= 0.7']
 import pkg_resources
 
-import mock
 import json
 import unittest
 import sys
 import os
 
-from datetime import date
 from mock import patch
-
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.exc import IntegrityError
 
 sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 import pkgdb2
-import pkgdb2.lib as pkgdblib
 import pkgdb2.lib.model as model
-from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
-                   FakeFasGroupValid, FakeFasGroupValid, create_package_acl,
+from tests import (Modeltests, FakeFasUser,
+                   FakeFasGroupValid, create_package_acl,
                    create_package_acl2, user_set)
 
 

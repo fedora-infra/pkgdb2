@@ -205,7 +205,7 @@ def convert_packagelisting(pkg1_sess, pkg2_sess):
                 pkg2_sess.add(new_pkglistacl)
         try:
             pkg2_sess.commit()
-        except Exception, err:
+        except Exception:
             pkg2_sess.rollback()
             failed_pkg.add(str(pkg.packageid))
             failed_pkglist.add(str(new_pkglist.id))
@@ -223,7 +223,6 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
     '''
     cnt = 0
     total = pkg1_sess.query(P1PersonPackagelistingAcl).count()
-    done = set()
     widgets = ['ACLs: ', Percentage(), ' ', Bar(marker=RotatingMarker()),
                ' ', ETA()]
     pbar = ProgressBar(widgets=widgets, maxval=total).start()
@@ -242,8 +241,7 @@ def convert_packagelistingacl(pkg1_sess, pkg2_sess):
         try:
             pkg2_sess.add(new_pkglistacl)
             pkg2_sess.commit()
-        except sqlalchemy.exc.IntegrityError, err:
-            # print err
+        except sqlalchemy.exc.IntegrityError:
             pkg2_sess.rollback()
         cnt += 1
         pbar.update(cnt)

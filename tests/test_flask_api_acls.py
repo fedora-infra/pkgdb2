@@ -23,7 +23,7 @@
 pkgdb tests for the Flask API regarding collections.
 '''
 
-__requires__ = ['SQLAlchemy >= 0.7']
+__requires__ = ['SQLAlchemy >= 0.8']
 import pkg_resources
 
 import json
@@ -38,7 +38,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb2
 from pkgdb2 import APP
-from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
                    create_package_acl, user_set)
 

@@ -23,7 +23,7 @@
 pkgdb tests for the Collection object.
 '''
 
-__requires__ = ['SQLAlchemy >= 0.7']
+__requires__ = ['SQLAlchemy >= 0.8']
 import pkg_resources
 
 import mock
@@ -33,6 +33,7 @@ import os
 
 from datetime import date
 
+from mock import patch
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
 
@@ -43,8 +44,7 @@ import pkgdb2
 import pkgdb2.lib as pkgdblib
 from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
                    FakeFasGroupValid, FakeFasGroupInvalid,
-                   create_collection, create_package,
-                   create_package_listing, create_package_acl,
+                   create_collection, create_package_acl,
                    create_package_acl2, create_package_critpath)
 
 
@@ -1738,6 +1738,351 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUser()
         )
         self.assertEqual(msg, 'Monitoring status of guake set to False')
+
+    @patch('pkgdb2.lib.utils')
+    def test_add_new_branch_request(self, mock_func):
+        """ Test the add_new_branch_request method of pkgdblib. """
+        create_package_acl(self.session)
+
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+
+        # Invalid package
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_branch_request,
+            session=self.session,
+            pkg_name='foobar',
+            clt_from='master',
+            clt_to='el6',
+            user=FakeFasUserAdmin()
+        )
+
+        # Invalid collection_to
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_branch_request,
+            session=self.session,
+            pkg_name='guake',
+            clt_from='master',
+            clt_to='foobar',
+            user=FakeFasUserAdmin()
+        )
+
+        # Invalid collection_from
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_branch_request,
+            session=self.session,
+            pkg_name='guake',
+            clt_from='foobar',
+            clt_to='el6',
+            user=FakeFasUserAdmin()
+        )
+
+        # valid entry
+        user = FakeFasUser()
+        user.username = 'toshio'
+        pkgdblib.add_new_branch_request(
+            session=self.session,
+            pkg_name='guake',
+            clt_from='master',
+            clt_to='el6',
+            user=user
+        )
+
+    def test_search_actions(self):
+        """ Test the search_actions method of pkgdblib. """
+        create_package_acl(self.session)
+
+        # Wrong limit
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.search_actions,
+            self.session,
+            limit='a'
+        )
+
+        # Wrong offset
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.search_actions,
+            self.session,
+            page='a'
+        )
+
+        # Wrong package name
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.search_actions,
+            self.session,
+            package='asdads'
+        )
+
+        # Check before insert
+        actions = pkgdblib.search_actions(
+            self.session,
+            package='guake'
+        )
+        self.assertEqual(actions, [])
+
+        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
+        pkgdb2.lib.utils.get_packagers.return_value = ['pingou']
+
+        # Insert
+        pkgdblib.add_new_branch_request(
+            session=self.session,
+            pkg_name='guake',
+            clt_from='master',
+            clt_to='el6',
+            user=FakeFasUser()
+        )
+
+        # Check after insert
+        # Nothing awaiting review:
+        actions = pkgdblib.search_actions(
+            self.session,
+            package='guake',
+            page=1,
+            limit=50,
+        )
+        self.assertEqual(len(actions), 0)
+
+        # But something is in
+        actions = pkgdblib.search_actions(
+            self.session,
+            package='guake',
+            status=None,
+            page=1,
+            limit=50,
+        )
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(actions[0].user, 'pingou')
+        self.assertEqual(actions[0].package.name, 'guake')
+        self.assertEqual(actions[0].collection.branchname, 'el6')
+        self.assertEqual(actions[0].from_collection.branchname, 'master')
+
+    def test_get_admin_action(self):
+        """ Test the get_admin_action method of pkgdblib. """
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+        self.assertEqual(action, None)
+
+        # Unretire the package
+        self.test_add_new_branch_request()
+        self.session.commit()
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+        self.assertNotEqual(action, None)
+        self.assertEqual(action.action, 'request.branch')
+        self.assertEqual(action.user, 'toshio')
+        self.assertEqual(action.status, 'Pending')
+        self.assertEqual(action.package.name, 'guake')
+        self.assertEqual(action.collection.branchname, 'el6')
+        self.assertEqual(action.from_collection.branchname, 'master')
+        self.assertEqual(action.info, None)
+
+        action = pkgdblib.get_admin_action(self.session, 2)
+        self.assertEqual(action, None)
+
+    def test_edit_action_status(self):
+        """ Test the edit_action_status method of pkgdblib. """
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+        self.assertEqual(action, None)
+
+        # Unretire the package
+        self.test_add_new_branch_request()
+        self.session.commit()
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+        self.assertNotEqual(action, None)
+        self.assertEqual(action.action, 'request.branch')
+        self.assertEqual(action.user, 'toshio')
+        self.assertEqual(action.status, 'Pending')
+        self.assertEqual(action.package.name, 'guake')
+        self.assertEqual(action.collection.branchname, 'el6')
+        self.assertEqual(action.from_collection.branchname, 'master')
+        self.assertEqual(action.info, None)
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='foo',
+            user=FakeFasUser()
+        )
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='foo',
+            user=FakeFasUserAdmin()
+        )
+
+        # Pending status but unknown user
+        user = FakeFasUser()
+        user.username = 'shaiton'
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='Pending',
+            user=user
+        )
+
+        # Awaiting Review status but user is requester
+        user = FakeFasUser()
+        user.username = 'toshio'
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='Awaiting Review',
+            user=user
+        )
+
+        # Obsolete status but user is not requester
+        user = FakeFasUserAdmin()
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.edit_action_status,
+            self.session,
+            admin_action=action,
+            action_status='Obsolete',
+            user=user
+        )
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+
+        msg = pkgdblib.edit_action_status(
+            self.session,
+            admin_action=action,
+            action_status='Pending',
+            user=FakeFasUserAdmin()
+        )
+
+        self.assertEqual(msg, 'Nothing to change.')
+
+        msg = pkgdblib.edit_action_status(
+            self.session,
+            admin_action=action,
+            action_status='Approved',
+            user=FakeFasUserAdmin()
+        )
+
+        self.assertEqual(
+            msg,
+            'user: admin updated action: 1 of guake from `Pending` to '
+            '`Approved`'
+        )
+
+        action = pkgdblib.get_admin_action(self.session, 1)
+
+        self.assertNotEqual(action, None)
+        self.assertEqual(action.action, 'request.branch')
+        self.assertEqual(action.user, 'toshio')
+        self.assertEqual(action.status, 'Approved')
+        self.assertEqual(action.package.name, 'guake')
+        self.assertEqual(action.collection.branchname, 'el6')
+        self.assertEqual(action.from_collection.branchname, 'master')
+        self.assertEqual(action.info, None)
+
+    def test_add_unretire_request(self):
+        """ Test the add_unretire_request method of pkgdblib. """
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_unretire_request,
+            self.session,
+            pkg_name='foo',
+            pkg_branch='master',
+            user=FakeFasUser()
+        )
+
+        self.test_add_new_branch_request()
+        self.session.commit()
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_unretire_request,
+            self.session,
+            pkg_name='guake',
+            pkg_branch='foo',
+            user=FakeFasUser()
+        )
+
+        msg = pkgdblib.add_unretire_request(
+            self.session,
+            pkg_name='guake',
+            pkg_branch='master',
+            user=FakeFasUser()
+        )
+        self.assertEqual(
+            msg, 'user: pingou requested branch: master to be unretired '
+            'for package guake')
+
+    @patch('pkgdb2.lib.utils.get_packagers')
+    def test_add_new_package_request(self, mock_func):
+        """ Test the add_new_package_request method to pkgdblib. """
+
+        mock_func.return_value = ['pingou']
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_package_request,
+            session=self.session,
+            pkg_name='guake',
+            pkg_summary='Drop-down terminal for GNOME',
+            pkg_description='desc',
+            pkg_status='Approved',
+            pkg_collection='foo',
+            pkg_poc='pingou',
+            user=FakeFasUser(),
+            pkg_review_url='https://bz.rh.c/123',
+            pkg_upstream_url=None,
+            pkg_critpath=False,
+        )
+
+        self.test_add_new_branch_request()
+        self.session.commit()
+
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_package_request,
+            session=self.session,
+            pkg_name='guake',
+            pkg_summary='Drop-down terminal for GNOME',
+            pkg_description='desc',
+            pkg_status='Approved',
+            pkg_collection='foo',
+            pkg_poc='pingou',
+            user=FakeFasUser(),
+            pkg_review_url='https://bz.rh.c/123',
+            pkg_upstream_url=None,
+            pkg_critpath=False,
+        )
+
+        msg = pkgdblib.add_new_package_request(
+            session=self.session,
+            pkg_name='zsh',
+            pkg_summary='Powerful interactive shell',
+            pkg_description='desc',
+            pkg_status='Approved',
+            pkg_collection='master',
+            pkg_poc='pingou',
+            user=FakeFasUser(),
+            pkg_review_url='https://bz.rh.c/123',
+            pkg_upstream_url=None,
+            pkg_critpath=False,
+        )
+        self.assertEqual(
+            msg, 'user: pingou request package: zsh on branch master')
 
 
 if __name__ == '__main__':

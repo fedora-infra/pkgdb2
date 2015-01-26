@@ -23,10 +23,9 @@
 pkgdb tests for the Flask application.
 '''
 
-__requires__ = ['SQLAlchemy >= 0.7']
+__requires__ = ['SQLAlchemy >= 0.8']
 import pkg_resources
 
-import json
 import unittest
 import sys
 import os
@@ -39,7 +38,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 import pkgdb2
 from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin,
-                   create_package_acl, user_set)
+                   create_package_acl, create_admin_actions, user_set)
 
 
 class FlaskUiPackagesTest(Modeltests):
@@ -498,6 +497,101 @@ class FlaskUiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
+    def test_package_unretire(self, login_func, utils_module):
+        """ Test the package_unretire function. """
+        login_func.return_value = None
+        create_package_acl(self.session)
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/orphan')
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        # Oprhan and retire guake on F18
+        data = {
+            'branches': ['f18'],
+            'csrf_token': csrf_token,
+        }
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/orphan', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">You are no longer point of contact on '
+                'branch: f18</li>' in output.data)
+
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+
+            output = self.app.post(
+                '/package/guake/retire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">This package has been retired on '
+                'branch: f18</li>' in output.data)
+
+        # Start testing unretire
+
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/package/random/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No package of this name found.</li>'
+                in output.data)
+
+            output = self.app.post(
+                '/package/random/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No package of this name found.</li>'
+                in output.data)
+
+            output = self.app.post(
+                '/package/guake/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">User &#34;admin&#34; is not in the '
+                'packager group</li>' in output.data)
+
+        utils_module.get_packagers.return_value = ['pingou', 'toshio']
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/package/guake/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td><select id="branches" multiple name="branches">'
+                '<option value="f18">f18</option></select></td>'
+                in output.data)
+
+            output = self.app.post(
+                '/package/guake/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Admins have been asked to un-retire '
+                'branch: f18</li>' in output.data)
+
+            output = self.app.post(
+                '/package/guake/unretire/0', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">Could not save the request for branch: '
+                'f18, has it already been requested?</li>' in output.data)
+
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
     def test_package_take(self, login_func, utils_module):
         """ Test the package_take function. """
         login_func.return_value = None
@@ -752,6 +846,236 @@ class FlaskUiPackagesTest(Modeltests):
                 'user: pingou set for pingou acl: approveacls of package: '
                 'guake from: Obsolete to: Approved on branch: master'
                 in output.data)
+
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
+    def test_package_request_branch(self, login_func, mock_func):
+        """ Test the package_request_branch function. """
+        login_func.return_value = None
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        create_package_acl(self.session)
+
+        data = {
+            'branches': ['epel7'],
+        }
+
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/foobar/request_branch', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No package of this name found.</li>'
+                in output.data)
+
+            output = self.app.post(
+                '/package/guake/request_branch', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">&#39;epel7&#39; is not a valid choice '
+                'for this field</td>' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data = {
+            'branches': ['el6'],
+            'csrf_token': csrf_token,
+        }
+
+        # Missing one input
+        user = FakeFasUser()
+        user.username = 'kevin'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/request_branch',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">Not a valid choice</td>' in output.data)
+
+        data = {
+            'branches': ['el6'],
+            'from_branch': 'master',
+            'csrf_token': csrf_token,
+        }
+
+        # Input correct but user is not allowed
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/request_branch/0',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">User &#34;kevin&#34; is not in the '
+                'packager group</li>' in output.data)
+
+        data = {
+            'branches': ['el6'],
+            'from_branch': 'master',
+            'csrf_token': csrf_token,
+        }
+
+        # All good
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/guake/request_branch',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Branch el6 requested for user pingou</'
+                in output.data)
+
+    @patch('pkgdb2.lib.utils.get_packagers')
+    @patch('pkgdb2.packager_login_required')
+    def test_package_request_new(self, login_func, mock_func):
+        """ Test the package_request_new function. """
+        login_func.return_value = None
+        mock_func.return_value = ['pingou', 'toshio']
+        create_package_acl(self.session)
+
+        data = {
+            'pkgname': 'gnome-terminal',
+            'summary': 'terminal for GNOME',
+            'description': 'desc',
+            'review_url': 'https://bz.rh.c/123',
+            'status': 'Approved',
+            'critpath': False,
+            'poc': 'pingou',
+            'upstream_url': 'http://gnome.org',
+            'branches': 'master',
+        }
+
+        user = FakeFasUser()
+
+        user.username = 'toshio'
+        data['branches'] = 'epel7'
+        with user_set(pkgdb2.APP, user):
+
+            # Branch EPEL7 does not exist
+            output = self.app.post(
+                '/request/package/', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">&#39;epel7&#39; is not a valid choice'
+                in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+        data['csrf_token'] = csrf_token
+        data['branches'] = 'master'
+
+        # All good
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/request/package/',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">user: pingou request package: '
+                'gnome-terminal on branch master</li>' in output.data)
+
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
+    def test_package_request_edit(self, login_func, mock_func):
+        """ Test the package_request_edit function. """
+        login_func.return_value = None
+        mock_func.get_packagers.return_value = ['pingou', 'toshio']
+        mock_func.log.return_value = 'foo bar'
+        create_package_acl(self.session)
+
+        data = {
+            'branches': ['epel7'],
+        }
+
+        user = FakeFasUser()
+        user.username = 'toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/foobar/requests/1', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">No action found with this identifier.</li>'
+                in output.data)
+
+            create_admin_actions(self.session)
+
+            # Package name / Admin Action do not match
+            output = self.app.post(
+                '/package/foobar/requests/1', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">The specified action (id:1) is not '
+                'related to the specified package: foobar.</li>'
+                in output.data)
+
+            # User not allowed to view request
+            output = self.app.post(
+                '/package/guake/requests/1', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="errors">Only package adminitrators (`approveacls`)'
+                ' and the requester can review pending branch requests</li>'
+                in output.data)
+
+        # Before the edit
+        user = FakeFasUser()
+        user.username = 'ralph'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/requests/1')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Update request: 1</h1>' in output.data)
+            self.assertTrue(
+                '<option selected value="Pending">' in output.data)
+
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+
+            data = {
+                'status': 'Awaiting Review',
+                'csrf_token': csrf_token,
+            }
+
+            # User cannot approve their own request
+            output = self.app.post(
+                '/package/guake/requests/1',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">Not a valid choice</td>' in output.data)
+
+        data = {
+            'status': 'Obsolete',
+            'csrf_token': csrf_token,
+        }
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            # Admin cannot obsolete a request that is not their
+            output = self.app.post(
+                '/package/guake/requests/1',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td class="errors">Not a valid choice</td>' in output.data)
+
+            data['status'] = 'Awaiting Review'
+            # All good
+            output = self.app.post(
+                '/package/guake/requests/1',
+                follow_redirects=True, data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<li class="message">foo bar</li>'in output.data)
 
 
 if __name__ == '__main__':

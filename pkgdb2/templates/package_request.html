@@ -1,0 +1,32 @@
+{% extends "master.html" %}
+{% from "_formhelpers.html" import render_field_in_row %}
+
+{% block title %} Request package | PkgDB {% endblock %}
+
+{%block tag %}packages{% endblock %}
+
+{% block content %}
+
+<h1>Request a new package</h1>
+
+
+<form action="{{ url_for('.package_request_new') }}" method="post">
+  <table>
+    {{ render_field_in_row(form.pkgname) }}
+    {{ render_field_in_row(form.summary) }}
+    {{ render_field_in_row(form.description) }}
+    {{ render_field_in_row(form.status) }}
+    {{ render_field_in_row(form.branches) }}
+    {{ render_field_in_row(form.poc) }}
+    {{ render_field_in_row(form.critpath) }}
+    {{ render_field_in_row(form.review_url) }}
+    {{ render_field_in_row(form.upstream_url) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Create">
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {{ form.csrf_token }}
+  </p>
+
+</form>
+{% endblock %}

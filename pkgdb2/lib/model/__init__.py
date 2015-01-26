@@ -27,6 +27,7 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 import datetime
+import json
 import logging
 import time
 
@@ -35,11 +36,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import backref
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation
 from sqlalchemy.orm import backref
 from sqlalchemy.sql import or_
+from sqlalchemy.sql import and_
 
 BASE = declarative_base()
 
@@ -153,9 +156,18 @@ def create_status(session):
         except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
+    for status in ['Approved', 'Denied', 'Awaiting Review',
+                   'Blocked', 'Pending', 'Obsolete']:
+        obj = ActionStatus(status)
+        session.add(obj)
+        try:
+            session.commit()
+        except SQLAlchemyError:  # pragma: no cover
+            session.rollback()
+
 
 class PkgAcls(BASE):
-    ''' Table storing the ACLs a package can have. '''
+    """ Table storing the ACLs a package can have. """
     __tablename__ = 'PkgAcls'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -174,7 +186,7 @@ class PkgAcls(BASE):
 
 
 class PkgStatus(BASE):
-    ''' Table storing the statuses a package can have. '''
+    """ Table storing the statuses a package can have. """
     __tablename__ = 'PkgStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -193,7 +205,7 @@ class PkgStatus(BASE):
 
 
 class AclStatus(BASE):
-    ''' Table storing the statuses ACLs a package can have. '''
+    """ Table storing the statuses ACLs a package can have. """
     __tablename__ = 'AclStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -211,8 +223,27 @@ class AclStatus(BASE):
             session.query(cls).order_by(cls.status).all()]
 
 
+class ActionStatus(BASE):
+    """ Table storing the statuses for the AdminActions. """
+    __tablename__ = 'action_status'
+
+    status = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, status):
+        """ Constructor. """
+        self.status = status
+
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the status in plain text. """
+        return [
+            item.status
+            for item in
+            session.query(cls).order_by(cls.status).all()]
+
+
 class CollecStatus(BASE):
-    ''' Table storing the statuses a collection can have. '''
+    """ Table storing the statuses a collection can have. """
     __tablename__ = 'CollecStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -1090,6 +1121,28 @@ class Package(BASE):
         """
         return session.query(cls).filter(Package.name == pkgname).one()
 
+    @property
+    def requests_pending(self):
+        """ Returns the list of pending branch requests
+        """
+        requests = [
+            req
+            for req in self.requests
+            if req.status == 'Pending'
+        ]
+        return requests
+
+    @property
+    def requests_awaiting_review(self):
+        """ Returns the list of awaiting review requests
+        """
+        requests = [
+            req
+            for req in self.requests
+            if req.status == 'Awaiting Review'
+        ]
+        return requests
+
     def __init__(self, name, summary, description, status,
                  review_url=None, upstream_url=None, monitor=False):
         self.name = name
@@ -1588,6 +1641,192 @@ class Log(BASE):
             log = Log(user, None, description)
         session.add(log)
         session.flush()
+
+
+class AdminAction(BASE):
+    """This table stores the actions asked by user and requiring an
+    intervention from an admin (often a rel-eng person).
+
+    Table -- admin_actions
+    """
+
+    __tablename__ = 'admin_actions'
+    id = sa.Column(sa.Integer, nullable=False, primary_key=True)
+    package_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=True)
+    collection_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False)
+    _status = sa.Column(
+        sa.String(50),
+        sa.ForeignKey('action_status.status', onupdate='CASCADE'),
+        name='status',
+        nullable=False,
+        index=True)
+    user = sa.Column(sa.Text, nullable=False, index=True)
+    action = sa.Column(sa.Text, nullable=False, index=True)
+    from_collection_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey(
+            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=True)
+    info = sa.Column(sa.Text, nullable=True)
+    message = sa.Column(sa.Text, nullable=True)
+
+    date_created = sa.Column(sa.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow)
+    date_change = sa.Column(sa.DateTime, nullable=False,
+                            default=datetime.datetime.utcnow,
+                            onupdate=sa.func.now())
+
+    __table_args__ = (
+        sa.UniqueConstraint(
+            'user', 'action', 'status', 'package_id', 'collection_id'),
+    )
+
+    package = relation(
+        "Package",
+        backref=backref("requests", order_by=collection_id)
+    )
+    collection = relation(
+        "Collection",
+        foreign_keys=[collection_id], remote_side=[Collection.id],
+    )
+    from_collection = relation(
+        "Collection",
+        foreign_keys=[from_collection_id], remote_side=[Collection.id],
+    )
+
+    @property
+    def info_data(self):
+        """ Return the dict stored as string in the database as an actual
+        dict object.
+
+        """
+        if self.info:
+            return json.loads(self.info)
+        else:
+            return {}
+
+    @property
+    def status(self):
+        """ Returns the status of the admin action. """
+        if self._status == 'Pending':
+            if (datetime.datetime.utcnow() - self.date_created).days < 7:
+                return self._status
+            else:
+                return 'Awaiting Review'
+        return self._status
+
+    def to_json(self, _seen=None, acls=True, package=True, collection=None):
+        """ Return a dictionnary representation of the object.
+
+        """
+        _seen = _seen or []
+
+        ## pylint complains about timetuple() but it is a method
+        # pylint: disable=E1102
+
+        from_collection = None
+        if self.from_collection:
+            from_collection = self.from_collection.to_json()
+        pkg = None
+        if self.package:
+            pkg = self.package.to_json(acls=False)
+
+        result = {
+            'id': self.id,
+            'action': self.action,
+            'user': self.user,
+            'status': self.status,
+            'package': pkg,
+            'collection': self.collection.to_json(),
+            'from_collection': from_collection,
+            'date_created': time.mktime(self.date_created.timetuple()),
+            'date_updated': time.mktime(self.date_change.timetuple()),
+            'info': self.info_data,
+            'message': self.message,
+        }
+
+        return result
+
+    @classmethod
+    def search(cls, session, package_id=None, packager=None, action=None,
+               status=None, offset=None, limit=None, count=False):
+        """ Return the list of actions present in the database and
+        matching these criterias.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+        :kwarg package: retrict the logs to a certain package.
+        :kwarg packager: restrict the logs to a certain user/packager.
+        :kwarg action: a type of action to search for.
+        :kwarg status: restrict the requests returned to the ones with this
+            status.
+        :kwarg limit: limit the result to X row
+        :kwarg offset: start the result at row X
+        :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+
+        """
+        query = session.query(
+            cls
+        )
+
+        if package_id:
+            query = query.filter(cls.package_id == package_id)
+
+        if packager:
+            query = query.filter(cls.user == packager)
+
+        if action:
+            query = query.filter(cls.action == action)
+
+        if status:
+            if status != 'Awaiting Review':
+                query = query.filter(cls._status == status)
+            else:
+                query = query.filter(
+                    or_(
+                        cls._status == status,
+                        and_(
+                            cls._status == 'Pending',
+                            cls.date_created < (datetime.datetime.utcnow(
+                                ).date() - datetime.timedelta(days=6)),
+                        )
+                    )
+                )
+
+        query = query.order_by(cls.date_created.asc())
+
+        if count:
+            return query.count()
+
+        if offset:
+            query = query.offset(offset)
+        if limit:
+            query = query.limit(limit)
+
+        return query.all()
+
+    @classmethod
+    def get(cls, session, action_id):
+        """ Return the admin action object having the specified identifier.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+        :arg action_id: the identifier of the Admin Action object to return.
+
+        """
+
+        query = session.query(cls).filter(cls.id == action_id)
+
+        return query.first()
 
 
 def notify(session, eol=False, name=None, version=None, acls=None):

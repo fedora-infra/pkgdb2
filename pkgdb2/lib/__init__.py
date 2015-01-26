@@ -24,6 +24,7 @@ PkgDB internal API to interact with the database.
 '''
 
 import operator
+import json
 
 import sqlalchemy
 
@@ -90,6 +91,48 @@ def _validate_poc(pkg_poc):
         if pkg_poc not in packagers:
             raise PkgdbException(
                 'User "%s" is not in the packager group' % pkg_poc)
+
+
+def _validate_pkg(session, rhel_ver, pkg_name):
+    """ Validate if the specified package is in the specified RHEL version
+    or not.
+    """
+    rhel_vers = [
+        item.version
+        for item in search_collection(session, pattern='*el*')
+    ]
+    rhel_pkgs = pkgdb2.lib.utils.get_rhel_pkg(rhel_vers)
+
+    if rhel_ver in rhel_pkgs and rhel_pkgs[rhel_ver]:
+        if pkg_name in rhel_pkgs[rhel_ver]['packages']:
+            arches = set([
+                'i686' if arch == 'i386' else arch
+                for arch in rhel_pkgs[rhel_ver]['arches']
+            ])
+            pkg_arches = set([
+                'i686' if arch == 'i386' else arch
+                for arch in rhel_pkgs[rhel_ver]['packages'][pkg_name]['arch']
+            ])
+
+            valid = True
+            if pkg_arches == ['noarch']:
+                # noarch == all arches
+                valid = False
+            else:
+                diff = arches.symmetric_difference(pkg_arches)
+                if len(diff) == 1 and sorted(diff) == ['noarch']:
+                    # Present on all compiled arches
+                    valid = False
+                elif len(diff) == 0:
+                    # Present on all arches
+                    valid = False
+
+            if valid is False:
+                raise PkgdbException(
+                    'There is already a package named %s in RHEL-%s. '
+                    'If you really wish to have an EPEL branch for it '
+                    'open a ticket on the rel-eng trac' % (
+                        pkg_name, rhel_ver))
 
 
 def create_session(db_url, debug=False, pool_recycle=3600):
@@ -252,7 +295,7 @@ def get_acl_package(session, pkg_name, pkg_clt=None, eol=False):
 
 
 def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
-                    user):
+                    user, force=False):
     """ Set the specified ACLs for the specified package.
 
     :arg session: session with which to connect to the database.
@@ -261,6 +304,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     :arg pkg_user: the FAS user for which the ACL should be set/change.
     :arg status: the status of the ACLs.
     :arg user: the user making the action.
+    :kwarg force: a boolean to force creating the ACLs w/o checking if the
+        user is an admin or not
     :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The ``pkg_name`` does not correspond to any package in the
@@ -291,7 +336,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         raise PkgdbException('No collection found by the name of %s'
                              % pkg_branch)
 
-    if not pkgdb2.is_pkg_admin(session, user, package.name, pkg_branch):
+    if not force and not pkgdb2.is_pkg_admin(
+            session, user, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
@@ -759,6 +805,70 @@ def search_packagers(session, pattern, eol=False, page=None, limit=None,
         count=count)
 
     return packagers
+
+
+def search_actions(
+        session, package=None, packager=None,
+        action=None, status='Awaiting Review', page=None,
+        limit=None, count=False):
+    """ Return the list of actions requiring an admin and matching the
+    given criteria.
+
+    :arg session: session with which to connect to the database.
+    :kwarg package: retrict the logs to a certain package.
+    :kwarg packager: restrict the logs to a certain user/packager.
+    :kwarg action: restrict the actions to this specific category.
+    :kwarg status: restrict the actions to this specific status.
+        Defaults to ``Awaiting Review``.
+    :kwarg page: the page number to apply to the results.
+    :kwarg limit: the number of results to return.
+    :kwarg count: a boolean to return the result of a COUNT query
+            if true, returns the data if false (default).
+    :returns: a list of ``Log`` entry corresponding to the given criterias.
+    :rtype: list(Log)
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - The provided ``limit`` is not an integer.
+            - The provided ``page`` is not an integer.
+            - The ``package`` name specified does not correspond to any
+                package.
+
+    """
+    if limit is not None:
+        try:
+            limit = abs(int(limit))
+        except ValueError:
+            raise PkgdbException('Wrong limit provided')
+
+    if page is not None:
+        try:
+            page = abs(int(page))
+        except ValueError:
+            raise PkgdbException('Wrong page provided')
+
+    package_id = None
+    if package is not None:
+        package = search_package(session, package, limit=1)
+        if not package:
+            raise PkgdbException('No package exists')
+        else:
+            package_id = package[0].id
+
+    if page is not None and page > 0 and limit is not None and limit > 0:
+        page = (page - 1) * limit
+
+    if status and status.lower() == 'all':
+        status = None
+
+    return model.AdminAction.search(
+        session,
+        package_id=package_id,
+        packager=packager,
+        action=action,
+        status=status,
+        offset=page,
+        limit=limit,
+        count=count)
 
 
 def search_logs(session, package=None, packager=None,
@@ -1317,7 +1427,10 @@ def get_status(session, status='all'):
     output = {}
 
     if status == 'all':
-        status = ['clt_status', 'pkg_status', 'pkg_acl', 'acl_status']
+        status = [
+            'clt_status', 'pkg_status', 'pkg_acl', 'acl_status',
+            'admin_status',
+        ]
     elif isinstance(status, basestring):
         status = [status]
 
@@ -1329,6 +1442,9 @@ def get_status(session, status='all'):
         output['pkg_acl'] = model.PkgAcls.all_txt(session)
     if 'acl_status' in status:
         output['acl_status'] = model.AclStatus.all_txt(session)
+    if 'admin_status' in status:
+        output['admin_status'] = model.ActionStatus.all_txt(session)
+
     return output
 
 
@@ -1527,6 +1643,236 @@ def add_branch(session, clt_from, clt_to, user):
     ))
 
     return messages
+
+
+def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
+    """ Register a new branch request.
+
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package for which to create the branch.
+    :arg clt_from: the ``branchname`` of the collection to branch from.
+    :arg clt_to: the ``branchname`` of the collection to branch to.
+    :arg user: the user making the action.
+    :raises pkgdb2.lib.PkgdbException: There are three conditions leading to
+        this exception beeing raised:
+            - The specified package does not exists.
+            - The specified branch from is invalid (does not exist)
+            - The specified branch to is invalid (does not exist)
+            - The user requesting is not a packager
+
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('Package %s not found' % pkg_name)
+
+    try:
+        clt_from = model.Collection.by_name(session, clt_from)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % clt_from)
+
+    try:
+        clt_to = model.Collection.by_name(session, clt_to)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % clt_to)
+
+    _validate_poc(user.username)
+
+    status = 'Awaiting Review'
+    if clt_to.name == 'Fedora EPEL':
+        status = 'Pending'
+        _validate_pkg(session, clt_to.version, package.name)
+
+    action = model.AdminAction(
+        package_id=package.id,
+        collection_id=clt_to.id,
+        from_collection_id=clt_from.id,
+        user=user.username,
+        _status=status,
+        action='request.branch',
+    )
+
+    session.add(action)
+
+    pkgdb2.lib.utils.log(
+        session,
+        package=package,
+        topic='package.branch.request',
+        message=dict(
+            agent=user.username,
+            package=package.to_json(acls=False),
+            collection_from=clt_from.to_json(),
+            collection_to=clt_to.to_json(),
+        )
+    )
+
+    msg = 'Branch %s requested for user %s' % (
+        clt_to.branchname, user.username)
+
+    # If user is packager -> checked with _validate_poc()
+    # If clt_to is Fedora
+    # If user has commit/approveacls on pkg_name
+    # Then automatically grant the branch request
+    if clt_to.name == 'Fedora':
+        maintainer = False
+        for pkglist in get_acl_package(session, package.name):
+            for acl in pkglist.acls:
+                if acl.fas_name == user.username \
+                        and acl.acl in ['commit', 'approveacls']:
+                    maintainer = True
+                    break
+            if maintainer:
+                break
+
+        if maintainer:
+            for acl in ['commit', 'watchbugzilla',
+                        'watchcommits', 'approveacls']:
+                set_acl_package(
+                    session,
+                    pkg_name=package.name,
+                    pkg_branch=clt_to.branchname,
+                    pkg_user=user.username,
+                    acl=acl,
+                    status='Approved',
+                    user=user,
+                    force=True,
+                )
+            msg = 'Branch %s created for user %s' % (
+                clt_to.branchname, user.username)
+
+            # The branch is created, so the action has been approved
+            action.status = 'Approved'
+            session.add(action)
+
+    return msg
+
+
+def add_new_package_request(
+        session, pkg_name, pkg_summary, pkg_description, pkg_status,
+        pkg_collection, pkg_poc, user, pkg_review_url,
+        pkg_upstream_url=None, pkg_critpath=False):
+    """ Create a new Package request in the database.
+
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package.
+    :arg pkg_summary: a summary description of the package.
+    :arg pkg_description: the description of the package.
+    :arg pkg_status: the status of the package.
+    :arg pkg_collection: the collection in which had the package.
+    :arg pkg_poc: the point of contact for this package in this collection
+    :arg user: the user performing the action
+    :kwarg pkg_review_url: the url of the review-request on the bugzilla
+    :kwarg pkg_upstream_url: the url of the upstream project.
+    :kwarg pkg_critpath: a boolean specifying if the package is marked as
+        being in critpath.
+    :returns: a message informing that the request has been successfully
+        created.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - Invallid pkg_poc provided
+            - Something went wrong when adding the request to the database
+    :raises sqlalchemy.orm.exc.NoResultFound: when there is no collection
+        found in the database with the name ``pkg_collection``.
+
+    """
+    _validate_poc(pkg_poc)
+
+    try:
+        clt = model.Collection.by_name(session, pkg_collection)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % pkg_collection)
+
+    # Prevent asking for an existing package
+    package = None
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        pass
+    if package:
+        raise PkgdbException(
+            'There is already a package named: %s' % pkg_name)
+
+    if pkg_collection.startswith(('el', 'epel')):
+        _validate_pkg(session, pkg_collection[-1:], pkg_name)
+
+    info = {
+        'pkg_name': pkg_name,
+        'pkg_summary': pkg_summary,
+        'pkg_description': pkg_description,
+        'pkg_status': pkg_status,
+        'pkg_collection': pkg_collection,
+        'pkg_poc': pkg_poc,
+        'pkg_review_url': pkg_review_url,
+        'pkg_upstream_url': pkg_upstream_url,
+        'pkg_critpath': pkg_critpath,
+    }
+
+    action = model.AdminAction(
+        package_id=None,
+        collection_id=clt.id,
+        from_collection_id=None,
+        user=user.username,
+        _status='Awaiting Review',
+        action='request.package',
+        info=json.dumps(info),
+    )
+
+    session.add(action)
+
+    return pkgdb2.lib.utils.log(session, None, 'package.new.request', dict(
+        agent=user.username,
+        package=None,
+        collection=clt.to_json(),
+        info=info,
+    ))
+
+
+def add_unretire_request(session, pkg_name, pkg_branch, user):
+    """ Register a new request to un-retire a package.
+
+    This method only flushes the new objects.
+
+    :arg session: session with which to connect to the database.
+    :arg pkg_name: the name of the package to unretire.
+    :arg clt_to: the ``branchname`` of the collection to unretire.
+    :arg user: the user making the action.
+    :raises pkgdb2.lib.PkgdbException: There are three conditions leading to
+        this exception beeing raised:
+            - The specified package does not exists.
+            - The specified branch is invalid (does not exist)
+            - The user requesting is not a packager
+
+    """
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('Package %s not found' % pkg_name)
+
+    try:
+        pkg_branch = model.Collection.by_name(session, pkg_branch)
+    except NoResultFound:
+        raise PkgdbException('Branch %s not found' % pkg_branch)
+
+    _validate_poc(user.username)
+
+    action = model.AdminAction(
+        package_id=package.id,
+        collection_id=pkg_branch.id,
+        user=user.username,
+        _status='Awaiting Review',
+        action='request.unretire',
+    )
+
+    session.add(action)
+
+    return pkgdb2.lib.utils.log(
+        session, None, 'package.unretire.request', dict(
+            agent=user.username,
+            package=package.to_json(),
+            collection=pkg_branch.to_json(),
+        )
+    )
 
 
 def count_collection(session):
@@ -1886,5 +2232,97 @@ def set_monitor_package(session, pkg_name, status, user):
         except SQLAlchemyError, err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not update monitoring status.')
+
+    return msg
+
+
+def get_admin_action(session, action_id):
+    """ For a given Admin Action identifier, return the Admin Action object
+    having this identifier.
+
+    :arg session: the session with which to connect to the database.
+    :arg action_id: The identifier of the admin action to retrieve.
+    :returns: an Admin Action object having the specified identifier.
+    :rtype: AdminAction()
+
+    """
+    return model.AdminAction.get(session, action_id)
+
+
+def edit_action_status(
+        session, admin_action, action_status, user, message=None):
+    """ Update the status of the given Admin Action if the user is allowed
+    to.
+
+    :arg session: the session with which to connect to the database.
+    :arg admin_action: a AdminAction object whose status is to update.
+    :arg action_status: the status to update the provided AdminAdction to.
+    :arg user: the user doing the action.
+    :kwarg message: the message required when an action is denied explaining
+        why it was denied.
+    :returns: a string informing if the action was successfull
+    :rtype: str
+    :raises pkgdb2.lib.PkgdbException: This exception is raised when the
+        user performing the action is not a pkgdb admin.
+
+    """
+    pkgdb_admin = pkgdb2.is_pkgdb_admin(user)
+    if admin_action.package:
+        pkg_admin = has_acls(session, user.username,
+                             admin_action.package.name, 'approveacls')
+    else:
+        pkg_admin = False
+    requester = admin_action.user == user.username
+
+    if action_status == 'Pending':
+        if not pkg_admin and not pkgdb_admin and not requester:
+            raise PkgdbException(
+                'You are not allowed to edit this request')
+    elif action_status in ['Awaiting Review', 'Blocked']:
+        if not pkg_admin and not pkgdb_admin:
+            raise PkgdbException(
+                'You are not allowed to review this request')
+    elif action_status in ['Obsolete']:
+        if not requester:
+            raise PkgdbException(
+                'Only the person having made the request can change its '
+                'status to obsolete')
+    elif not pkgdb_admin:
+        raise PkgdbException('You are not allowed to edit admin action')
+
+    if action_status in ['Blocked', 'Denied'] and not message:
+        raise PkgdbException(
+            'You must provide a message explaining why when you block or '
+            'deny a request')
+
+    edit = []
+    old_status = admin_action.status
+    if admin_action.status != action_status:
+        admin_action._status = action_status
+        edit.append('status')
+
+    if admin_action.message != message:
+        admin_action.message = message
+
+    if edit:
+        try:
+            session.add(admin_action)
+            session.flush()
+            msg = pkgdb2.lib.utils.log(
+                session,
+                package=admin_action.package,
+                topic='admin.action.status.update',
+                message=dict(
+                    agent=user.username,
+                    old_status=old_status,
+                    new_status=action_status,
+                    action=admin_action.to_json(),
+                ))
+        except SQLAlchemyError, err:
+            session.rollback()
+            pkgdb2.LOG.exception(err)
+            raise PkgdbException('Could not edit action.')
+    else:
+        msg = 'Nothing to change.'
 
     return msg

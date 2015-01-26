@@ -388,7 +388,7 @@ ul.nobullet .pkg_button_lightgrey {
     min-width: 10px;
 }
 
-#pkg_committers td, #pkg_watchers td {
+#pkg_committers td, #pkg_watchers td, #actiontable td {
     border-top: 1px solid #BBBBBB;
     border-left: 1px solid #BBBBBB;
     margin: 0;
@@ -396,7 +396,13 @@ ul.nobullet .pkg_button_lightgrey {
     text-align: center;
     padding-top: 7px;
     padding-bottom: 7px;
+    padding-left: 5px;
+    padding-right: 5px;
     line-height: 13px;
+}
+
+#actiontable th{
+    text-align: center;
 }
 
 #edit_acl #pkg_committers td{
@@ -588,4 +594,17 @@ table.list thead th,
 
 .info_retire {
     text-decoration: underline
+}
+
+#requestpackage {
+    float:none;
+}
+
+#pkg_req_pending {
+    background-color:  rgba(255, 0, 0, 0.05);
+    border: rgba(255, 0, 0, 0.5) 3px solid;
+    border-radius: 10px 10px 10px 10px;
+    width: 23em;
+    margin: 0 auto;
+    padding: 0 7px 0 7px;
 }

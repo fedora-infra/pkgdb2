@@ -37,6 +37,18 @@ from flask.ext import wtf
 import wtforms
 
 
+## Yes we do nothing with the form argument but they are required...
+# pylint: disable=W0613
+def is_number(form, field):
+    ''' Check if the data in the field is a number and raise an exception
+    if it is not.
+    '''
+    try:
+        float(field.data)
+    except ValueError:
+        raise wtforms.ValidationError('Field must contain a number')
+
+
 class AddCollectionForm(wtf.Form):
     """ Form to add or edit collections. """
     clt_name = wtforms.TextField(
@@ -127,7 +139,7 @@ class AddPackageForm(wtf.Form):
         'Summary',
         [wtforms.validators.Required()]
     )
-    description = wtforms.TextField(
+    description = wtforms.TextAreaField(
         'Description',
     )
     review_url = wtforms.TextField(
@@ -346,3 +358,51 @@ class BranchForm(wtf.Form):
 class ConfirmationForm(wtf.Form):
     """ The simplest form we can do but that ensures CSRF protection. """
     pass
+
+
+class NewRequestForm(BranchForm):
+    """ Form to perform an action on one or more branches of a package. """
+    from_branch = wtforms.SelectField(
+        'Branch from which to create this or these new branches',
+        [wtforms.validators.Required()],
+        choices=[('', '')])
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(NewRequestForm, self).__init__(*args, **kwargs)
+        if 'collections' in kwargs:
+            self.branches.choices = [
+                (collec, collec)
+                for collec in kwargs['collections']
+            ]
+        if 'from_branch' in kwargs:
+            self.from_branch.choices = [
+                (collec, collec)
+                for collec in kwargs['from_branch']
+            ]
+
+
+class EditActionStatusForm(wtf.Form):
+    """ Form to update the status of an admin action. """
+    id = wtforms.TextField(
+        'Action identifier <span class="error">*</span>',
+        [wtforms.validators.Required(), is_number]
+    )
+    status = wtforms.SelectField(
+        'Action status',
+        [wtforms.validators.Required()],
+        choices=[('', '')])
+    message = wtforms.TextAreaField('Message')
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal arguments.
+        Fill the SelectField using the additionnal arguments provided.
+        """
+        super(EditActionStatusForm, self).__init__(*args, **kwargs)
+        if 'status' in kwargs:
+            self.status.choices = [
+                (status, status)
+                for status in kwargs['status']
+            ]

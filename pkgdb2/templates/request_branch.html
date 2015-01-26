@@ -1,0 +1,41 @@
+{% if full %}
+  {% extends "master.html" %}
+  {% block title %} Select branches | PkgDB {% endblock %}
+  {%block tag %}packages{% endblock %}
+{% endif %}
+
+{% from "_formhelpers.html" import render_field_in_row %}
+
+
+{% block content %}
+{% if not full %}
+<div title="{{ action.capitalize() }} package">
+{% endif %}
+
+<h1>
+  Request new branch for package:
+  <a href="{{ url_for('.package_info', package=package.name) }}">
+    {{ package.name }}
+  </a>
+</h1>
+
+<form action="{{ url_for(
+    '.package_request_branch', package=package.name, full=full) }}" method="post">
+  <table>
+    {{ render_field_in_row(form.branches) }}
+    {{ render_field_in_row(form.from_branch) }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Select">
+    {% if full %}
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {% endif %}
+    {{ form.csrf_token }}
+  </p>
+  <p class="small">Use your mouse or the control key to select multiple
+    branch at once</p>
+</form>
+{% if not full %}
+</div>
+{% endif %}
+{% endblock %}

@@ -32,7 +32,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin, \
-    packager_login_required
+    packager_login_required, is_authenticated
 from pkgdb2.ui import UI
 
 
@@ -222,6 +222,21 @@ def package_info(package):
         if listing.collection.status != 'EOL'
     ])
 
+    collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    branches_possible = [
+        collec.branchname
+        for collec in collections
+        if '%s %s' % (collec.name, collec.version) not in branches]
+
+    requester = False
+    if is_authenticated():
+        for req in package.requests:
+            if req.user == flask.g.fas_user.username:
+                requester = True
+                break
+
     return flask.render_template(
         'package.html',
         package=package,
@@ -232,8 +247,10 @@ def package_info(package):
         statuses=statuses,
         pending_admins=pending_admins,
         branches=branches,
+        branches_possible=branches_possible,
         committers=committers,
         form=pkgdb2.forms.ConfirmationForm(),
+        requester=requester,
     )
 
 
@@ -302,6 +319,88 @@ def package_timeline(package):
         package=package,
         from_date=from_date or '',
         packager=packager or '',
+    )
+
+
+@UI.route('/package/<package>/requests/<action_id>', methods=['GET', 'POST'])
+@packager_login_required
+def package_request_edit(package, action_id):
+    """ Edit an Admin Action status for the specified package
+    """
+
+    admin_action = pkgdblib.get_admin_action(SESSION, action_id)
+    if not admin_action:
+        flask.flash('No action found with this identifier.', 'errors')
+        return flask.render_template('msg.html')
+
+    if not admin_action.package or admin_action.package.name != package:
+        flask.flash(
+            'The specified action (id:%s) is not related to the specified '
+            'package: %s.' % (action_id, package), 'errors')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package)
+        )
+
+    if admin_action.status in ['Accepted', 'Blocked', 'Denied']:
+        return flask.render_template(
+            'actions_update_ro.html',
+            admin_action=admin_action,
+            action_id=action_id,
+        )
+
+    # Check user is the pkg/pkgdb admin
+    if not is_pkgdb_admin(flask.g.fas_user) and not pkgdblib.has_acls(
+            SESSION, flask.g.fas_user.username, package, 'approveacls') \
+            and not admin_action.user == flask.g.fas_user.username:
+        flask.flash(
+            'Only package adminitrators (`approveacls`) and the requester '
+            'can review pending branch requests', 'errors')
+        return flask.redirect(
+            flask.url_for('.package_info', package=package)
+        )
+
+    action_status = ['Pending', 'Awaiting Review', 'Blocked']
+    if admin_action.user == flask.g.fas_user.username:
+        action_status = ['Pending', 'Obsolete']
+
+    form = pkgdb2.forms.EditActionStatusForm(
+        status=action_status,
+        obj=admin_action
+    )
+    form.id.data = action_id
+
+    if form.validate_on_submit():
+
+        try:
+            message = pkgdblib.edit_action_status(
+                SESSION,
+                admin_action,
+                action_status=form.status.data,
+                user=flask.g.fas_user,
+                message=form.message.data,
+            )
+            SESSION.commit()
+            flask.flash(message)
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We can only reach here in two cases:
+            # 1) the user is not an admin, but that's taken care of
+            #    by the decorator
+            # 2) we have a SQLAlchemy problem when storing the info
+            #    in the DB which we cannot test
+            SESSION.rollback()
+            flask.flash(err, 'errors')
+            return flask.render_template('msg.html')
+
+        return flask.redirect(
+            flask.url_for('.package_info', package=package)
+        )
+
+    return flask.render_template(
+        'actions_update.html',
+        admin_action=admin_action,
+        action_id=action_id,
+        form=form,
+        package=package,
     )
 
 
@@ -596,6 +695,82 @@ def package_retire(package, full=True):
     )
 
 
+@UI.route('/package/<package>/unretire', methods=('GET', 'POST'))
+@UI.route('/package/<package>/unretire/<full>', methods=('GET', 'POST'))
+@packager_login_required
+def package_unretire(package, full=True):
+    ''' Asks an admin to unretire the package. '''
+
+    if not bool(full) or str(full) in ['0', 'False']:
+        full = False
+
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    collections = [
+        acl.collection.branchname
+        for acl in package_acl
+        if acl.collection.status in ['Active', 'Under Development']
+        and acl.status == 'Retired'
+    ]
+
+    form = pkgdb2.forms.BranchForm(collections=collections)
+
+    if form.validate_on_submit():
+        for acl in package_acl:
+            if acl.collection.branchname in form.branches.data:
+                if acl.point_of_contact == 'orphan':
+                    try:
+                        pkgdblib.add_unretire_request(
+                            session=SESSION,
+                            pkg_name=package.name,
+                            pkg_branch=acl.collection.branchname,
+                            user=flask.g.fas_user,
+                        )
+                        flask.flash(
+                            'Admins have been asked to un-retire branch: %s'
+                            % acl.collection.branchname)
+                    except pkgdblib.PkgdbException, err:  # pragma: no cover
+                        # We should never hit this
+                        flask.flash(str(err), 'error')
+                        SESSION.rollback()
+                    except SQLAlchemyError, err:
+                        SESSION.rollback()
+                        flask.flash(
+                            'Could not save the request for branch: %s, has '
+                            'it already been requested?'
+                            % acl.collection.branchname, 'error')
+                else:  # pragma: no cover
+                    flask.flash(
+                        'This package is not orphaned on branch: %s'
+                        % acl.collection.branchname)
+
+        try:
+            SESSION.commit()
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We should never hit this
+            SESSION.rollback()
+            APP.logger.exception(err)
+            flask.flash(str(err), 'error')
+
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    return flask.render_template(
+        'branch_selection.html',
+        full=full,
+        package=package,
+        form=form,
+        action='unretire',
+    )
+
+
 @UI.route('/package/<package>/take', methods=('GET', 'POST'))
 @UI.route('/package/<package>/take/<full>', methods=('GET', 'POST'))
 @packager_login_required
@@ -776,7 +951,8 @@ def update_acl(package, update_acl):
                                 not in commit_acls[lcl_user]:
                             cnt += 1
                             continue
-                        elif branches_inv[lcl_branch] in commit_acls[lcl_user] \
+                        elif branches_inv[lcl_branch] \
+                                in commit_acls[lcl_user] \
                                 and username != lcl_user:
                             flask.flash(
                                 'Only the user can remove his/her ACL',
@@ -879,3 +1055,130 @@ def delete_package(package):
 
     return flask.redirect(
         flask.url_for('.list_packages'))
+
+
+@UI.route('/package/<package>/request_branch', methods=('GET', 'POST'))
+@UI.route('/package/<package>/request_branch/<full>', methods=('GET', 'POST'))
+@packager_login_required
+def package_request_branch(package, full=True):
+    ''' Gives the possibility to request a new branch for this package. '''
+
+    if not bool(full) or str(full) in ['0', 'False']:
+        full = False
+
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
+    branches = [
+        pkg.collection.branchname
+        for pkg in package_acl
+        if pkg.collection.status != 'EOL'
+    ]
+
+    collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    branches_possible = [
+        collec.branchname
+        for collec in collections
+        if collec.branchname not in branches]
+
+    form = pkgdb2.forms.NewRequestForm(
+        collections=branches_possible,
+        from_branch=branches)
+
+    if form.validate_on_submit():
+        for branch in form.branches.data:
+            try:
+                msg = pkgdblib.add_new_branch_request(
+                    session=SESSION,
+                    pkg_name=package.name,
+                    clt_from=form.from_branch.data,
+                    clt_to=branch,
+                    user=flask.g.fas_user)
+                SESSION.commit()
+                flask.flash(msg)
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
+                flask.flash(str(err), 'error')
+                SESSION.rollback()
+            except SQLAlchemyError, err:  # pragma: no cover
+                APP.logger.exception(err)
+                flask.flash(
+                    'Could not save the request to the database for '
+                    'branch: %s' % branch, 'error')
+                SESSION.rollback()
+
+        return flask.redirect(
+            flask.url_for('.package_info', package=package.name))
+
+    return flask.render_template(
+        'request_branch.html',
+        full=full,
+        package=package,
+        form=form,
+        action='request_branch',
+    )
+
+
+@UI.route('/request/package/', methods=('GET', 'POST'))
+@packager_login_required
+def package_request_new():
+    ''' Page to request a new package. '''
+
+    collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    pkg_status = pkgdb2.lib.get_status(SESSION, 'pkg_status')['pkg_status']
+
+    form = pkgdb2.forms.AddPackageForm(
+        collections=collections,
+        pkg_status_list=pkg_status,
+    )
+
+    if form.validate_on_submit():
+        pkg_name = form.pkgname.data
+        pkg_summary = form.summary.data
+        pkg_description = form.description.data
+        pkg_review_url = form.review_url.data
+        pkg_status = form.status.data
+        pkg_critpath = form.critpath.data
+        pkg_collection = form.branches.data
+        pkg_poc = form.poc.data
+        pkg_upstream_url = form.upstream_url.data
+
+        try:
+            messages = []
+            for clt in pkg_collection:
+                message = pkgdblib.add_new_package_request(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    pkg_summary=pkg_summary,
+                    pkg_description=pkg_description,
+                    pkg_review_url=pkg_review_url,
+                    pkg_status=pkg_status,
+                    pkg_critpath=pkg_critpath,
+                    pkg_collection=clt,
+                    pkg_poc=pkg_poc,
+                    pkg_upstream_url=pkg_upstream_url,
+                    user=flask.g.fas_user,
+                )
+                if message:
+                    messages.append(message)
+            SESSION.commit()
+            for message in messages:
+                flask.flash(message)
+            return flask.redirect(flask.url_for('.index'))
+        # Keep it in, but normally we shouldn't hit this
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            SESSION.rollback()
+            flask.flash(str(err), 'error')
+
+    return flask.render_template(
+        'package_request.html',
+        form=form,
+    )

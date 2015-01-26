@@ -18,27 +18,36 @@ implementation is focused on the data that package developers and release
 engineers need to create packages and spin them into a distribution.
 </p>
 
+<p>
+  <a href="{{ url_for('.package_request_new') }}"
+      title="Request a new package">
+    <button class="bold pkg_button_blue" type="submit" id="requestpackage">
+      Request new package
+    </button>
+  </a>
+</p>
+
 <h3>Recent packages added</h3>
 <table id="recent_package">
-    <tr>
-        <th>Package</th>
-        <th>Summary</th>
-        <th>Branches</th>
-    </tr>
-    {% for pkg in latest_pkgs %}
-    <tr class="{{ loop.cycle('col_odd', 'col_even') }}">
-        <td><a href="{{url_for('.package_info', package=pkg.name)}}">
-            {{ pkg.name }}</a>
-        </td>
-        <td>{{ pkg.summary }}</td>
-        <td>
-            {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
-            %} {% if listing.collection.status != 'EOL' %}
-                {{ listing.collection.branchname }}
-            {% endif %}{% endfor %}
-        </td>
-    </tr>
-    {% endfor %}
+  <tr>
+    <th>Package</th>
+    <th>Summary</th>
+    <th>Branches</th>
+  </tr>
+  {% for pkg in latest_pkgs %}
+  <tr class="{{ loop.cycle('col_odd', 'col_even') }}">
+    <td><a href="{{url_for('.package_info', package=pkg.name)}}">
+      {{ pkg.name }}</a>
+    </td>
+    <td>{{ pkg.summary }}</td>
+    <td>
+      {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
+      %} {% if listing.collection.status != 'EOL' %}
+          {{ listing.collection.branchname }}
+      {% endif %}{% endfor %}
+    </td>
+  </tr>
+  {% endfor %}
 </table>
 
 {% endblock %}

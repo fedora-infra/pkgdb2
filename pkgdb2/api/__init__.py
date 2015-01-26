@@ -46,6 +46,7 @@ def get_limit():
     return limit
 
 
+from pkgdb2.api import admin
 from pkgdb2.api import acls
 from pkgdb2.api import collections
 from pkgdb2.api import extras
@@ -106,6 +107,10 @@ def api():
     api_acl_update = load_doc(acls.api_acl_update)
     api_acl_reassign = load_doc(acls.api_acl_reassign)
 
+    api_admin_actions = load_doc(admin.api_admin_actions)
+    api_admin_action = load_doc(admin.api_admin_action)
+    api_admin_update_actions = load_doc(admin.api_admin_action_edit_status)
+
     api_version_doc = load_doc(api_version)
     api_extras_bugzilla = load_doc(extras.api_bugzilla)
     api_extras_critpath = load_doc(extras.api_critpath)
@@ -139,6 +144,9 @@ def api():
         ],
         other=[
             api_version_doc,
+        ],
+        admin=[
+            api_admin_actions, api_admin_action, api_admin_update_actions
         ],
         extras=[
             api_extras_bugzilla, api_extras_critpath,
