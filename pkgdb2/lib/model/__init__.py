@@ -167,7 +167,7 @@ def create_status(session):
 
 
 class PkgAcls(BASE):
-    ''' Table storing the ACLs a package can have. '''
+    """ Table storing the ACLs a package can have. """
     __tablename__ = 'PkgAcls'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -186,7 +186,7 @@ class PkgAcls(BASE):
 
 
 class PkgStatus(BASE):
-    ''' Table storing the statuses a package can have. '''
+    """ Table storing the statuses a package can have. """
     __tablename__ = 'PkgStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -205,7 +205,7 @@ class PkgStatus(BASE):
 
 
 class AclStatus(BASE):
-    ''' Table storing the statuses ACLs a package can have. '''
+    """ Table storing the statuses ACLs a package can have. """
     __tablename__ = 'AclStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -224,7 +224,7 @@ class AclStatus(BASE):
 
 
 class ActionStatus(BASE):
-    ''' Table storing the statuses for the AdminActions. '''
+    """ Table storing the statuses for the AdminActions. """
     __tablename__ = 'action_status'
 
     status = sa.Column(sa.String(50), primary_key=True)
@@ -243,7 +243,7 @@ class ActionStatus(BASE):
 
 
 class CollecStatus(BASE):
-    ''' Table storing the statuses a collection can have. '''
+    """ Table storing the statuses a collection can have. """
     __tablename__ = 'CollecStatus'
 
     status = sa.Column(sa.String(50), primary_key=True)
