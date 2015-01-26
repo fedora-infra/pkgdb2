@@ -1644,7 +1644,8 @@ class Log(BASE):
 
 
 class AdminAction(BASE):
-    """This associates a package with a particular collection.
+    """This table stores the actions asked by user and requiring an
+    intervention from an admin (often a rel-eng person).
 
     Table -- admin_actions
     """
