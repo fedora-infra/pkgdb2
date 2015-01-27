@@ -178,7 +178,7 @@ error or failure. For example, the command could be:
 
 ::
 
-  PKGDB_CONFIG=tests/pkgd2b_test.cfg python -m unittest -f -v pkgdb2.tests.test_collection
+  PKGDB2_CONFIG=tests/pkgd2b_test.cfg python -m unittest -f -v pkgdb2.tests.test_collection
 
 
 .. note:: In order to have coverage information you might have to install

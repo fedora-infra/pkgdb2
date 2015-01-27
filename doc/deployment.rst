@@ -25,7 +25,7 @@ See :doc:`configuration` for detailed information about the configuration.
 
 Create the database scheme::
 
-   PKGDB_CONFIG=/path/to/pkgdb2.cfg python createdb.py
+   PKGDB2_CONFIG=/path/to/pkgdb2.cfg python createdb.py
 
 Set up the WSGI as described below.
 
@@ -46,7 +46,7 @@ Find the file used to create the database::
 
 Create the database scheme::
 
-   PKGDB_CONFIG=/etc/pkgdb2/pkgdb2.cfg python path/to/createdb.py
+   PKGDB2_CONFIG=/etc/pkgdb2/pkgdb2.cfg python path/to/createdb.py
 
 Set up the WSGI as described below.
 
