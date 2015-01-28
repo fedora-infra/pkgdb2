@@ -8,14 +8,20 @@
 {% endif %}
 {% endblock %}
 
-{%block tag %}admin{% endblock %}
+{%block tag %}{% if select %}{{ select }}{% else %}admin{% endif %}{% endblock %}
 
 
 {% set options = True %}
 {%block options %}
+{% if select %}
+<form action="{{ url_for('.packager_requests', packager=packager) }}" method="get">
+{% else %}
 <form action="{{ url_for('.admin_actions') }}" method="get">
+{% endif %}
     Restrict to package: <input type="text" name="package" /> <br />
+    {% if not select %}
     Restrict to packager: <input type="text" name="packager" /> <br />
+    {% endif %}
     Restrict to action: <input id="action" type="text" name="action" /> <br />
     Restrict to Status:
     <select id="status" name="status">
@@ -33,7 +39,11 @@
 
 {% block content %}
 
+{% if select %}
+<h1>{{ packager }}'s requests</h1>
+{% else %}
 <h1>Actions</h1>
+{% endif %}
 
 {% if total_page and total_page > 1 %}
 <table>
@@ -70,7 +80,9 @@
     <th>Branch</th>
     <th>From branch</th>
     <th>Status</th>
+    {% if not select %}
     <th></th>
+    {% endif %}
   </tr>
 {% for action in actions %}
  {% if loop.last %}
@@ -99,11 +111,13 @@
     <td>{{ action.collection.branchname }}</td>
     <td class="col_odd">{{ action.from_collection.branchname }}</td>
     <td class="lastcel" >{{ action.status }}</td>
+    {% if not select %}
     <td>
       <a href="{{ url_for('.admin_action_edit_status', action_id=action.id) }}">
         Update
       </a>
     </td>
+    {% endif %}
   </tr>
 {% endfor %}
 </table>
