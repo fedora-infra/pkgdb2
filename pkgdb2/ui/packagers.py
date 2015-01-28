@@ -139,23 +139,41 @@ def packager_requests(packager):
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
     page = flask.request.args.get('page', 1)
 
-    actions = pkgdblib.search_actions(
-        SESSION,
-        packager=packager,
-        action=action,
-        status=status,
-        page=page,
-        limit=limit,
-    )
-    cnt_actions = pkgdblib.search_actions(
-        SESSION,
-        packager=packager,
-        action=action,
-        status=status,
-        page=page,
-        limit=limit,
-        count=True,
-    )
+    try:
+        page = abs(int(page))
+    except ValueError:
+        page = 1
+
+    try:
+        limit = abs(int(limit))
+    except ValueError:
+        limit = APP.config['ITEMS_PER_PAGE']
+        flask.flash('Incorrect limit provided, using default', 'errors')
+
+    actions = []
+    cnt_actions = 0
+    try:
+        actions = pkgdblib.search_actions(
+            SESSION,
+            packager=packager,
+            package=package,
+            action=action,
+            status=status,
+            page=page,
+            limit=limit,
+        )
+        cnt_actions = pkgdblib.search_actions(
+            SESSION,
+            packager=packager,
+            package=package,
+            action=action,
+            status=status,
+            page=page,
+            limit=limit,
+            count=True,
+        )
+    except pkgdblib.PkgdbException, err:
+        flask.flash(err, 'errors')
 
     total_page = int(ceil(cnt_actions / float(limit)))
 
