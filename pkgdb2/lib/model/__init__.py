@@ -1788,8 +1788,16 @@ class AdminAction(BASE):
             query = query.filter(cls.action == action)
 
         if status:
-            if status != 'Awaiting Review':
+            if status not in ['Awaiting Review', 'Pending']:
                 query = query.filter(cls._status == status)
+            elif status == 'Pending':
+                query = query.filter(
+                    and_(
+                        cls._status == status,
+                        cls.date_created > (datetime.datetime.utcnow(
+                            ).date() - datetime.timedelta(days=6)),
+                    )
+                )
             else:
                 query = query.filter(
                     or_(
