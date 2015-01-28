@@ -80,6 +80,36 @@ class FlaskUiPackagersTest(Modeltests):
             '<li class="errors">No packager of this name found.</li>'
             in output.data)
 
+    def test_packager_requests(self):
+        """ Test the packager_requests function. """
+
+        output = self.app.get('/packager/pingou/requests')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue("<h1>pingou's requests</h1>" in output.data)
+        self.assertTrue(
+            'Restrict to package: <input type="text" name="package" />'
+            in output.data)
+
+        output = self.app.get(
+            'packager/pingou/requests?page=abc&limit=def&status=ghi&package=test')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue("<h1>pingou's requests</h1>" in output.data)
+        self.assertTrue(
+            'Restrict to package: <input type="text" name="package" />'
+            in output.data)
+        self.assertTrue(
+            'class="errors">Incorrect limit provided, using default</'
+            in output.data)
+        self.assertTrue(
+            '<li class="errors">No package exists</li>' in output.data)
+
+        output = self.app.get('packager/pingou/requests?package=guake')
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue("<h1>pingou's requests</h1>" in output.data)
+        self.assertTrue(
+            'Restrict to package: <input type="text" name="package" />'
+            in output.data)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskUiPackagersTest)
