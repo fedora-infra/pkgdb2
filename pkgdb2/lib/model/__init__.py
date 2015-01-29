@@ -1790,7 +1790,15 @@ class AdminAction(BASE):
         if status:
             if status not in ['Awaiting Review', 'Pending']:
                 query = query.filter(cls._status == status)
+            # Pending and Awaiting Review status are peculiar.
+            # After 7 days a Pending request is automatically converted
+            # to Awaiting Review.
+            # This gives 7 days to the packagers with approveacls on the
+            # package to block or set the request to Awaiting Review (ie
+            # ask rel-eng to review it)
             elif status == 'Pending':
+                # To be pending a request should be Pending and less than
+                # 7 days old
                 query = query.filter(
                     and_(
                         cls._status == status,
@@ -1799,6 +1807,8 @@ class AdminAction(BASE):
                     )
                 )
             else:
+                # To be Awaiting Review, a request should be Awaiting Review
+                # or Pending and 7 days old or more.
                 query = query.filter(
                     or_(
                         cls._status == status,
