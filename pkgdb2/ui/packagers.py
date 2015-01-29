@@ -129,3 +129,68 @@ def packager_info(packager):
         packages_co=packages_co,
         packages_watch=packages_watch,
     )
+
+@UI.route('/packager/<packager>/requests')
+def packager_requests(packager):
+    ''' Display the requests made by the specified packager. '''
+    action = flask.request.args.get('action', None)
+    package = flask.request.args.get('package', None)
+    status = flask.request.args.get('status', 'All')
+    limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
+    page = flask.request.args.get('page', 1)
+
+    try:
+        page = abs(int(page))
+    except ValueError:
+        page = 1
+
+    try:
+        limit = abs(int(limit))
+    except ValueError:
+        limit = APP.config['ITEMS_PER_PAGE']
+        flask.flash('Incorrect limit provided, using default', 'errors')
+
+    actions = []
+    cnt_actions = 0
+    try:
+        actions = pkgdblib.search_actions(
+            SESSION,
+            packager=packager,
+            package=package,
+            action=action,
+            status=status,
+            page=page,
+            limit=limit,
+        )
+        cnt_actions = pkgdblib.search_actions(
+            SESSION,
+            packager=packager,
+            package=package,
+            action=action,
+            status=status,
+            page=page,
+            limit=limit,
+            count=True,
+        )
+    except pkgdblib.PkgdbException, err:
+        flask.flash(err, 'errors')
+
+    total_page = int(ceil(cnt_actions / float(limit)))
+
+    action_status = pkgdblib.get_status(
+        SESSION, 'admin_status')['admin_status']
+    action_status.insert(0, 'All')
+
+    return flask.render_template(
+        'list_actions.html',
+        select='packagers',
+        actions=actions,
+        cnt_actions=cnt_actions,
+        total_page=total_page,
+        page=page,
+        package=package or '',
+        packager=packager,
+        action=action,
+        status=status,
+        statuses=action_status,
+    )

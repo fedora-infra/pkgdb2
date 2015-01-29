@@ -141,7 +141,7 @@ class FlaskUiAdminTest(Modeltests):
                 'Restrict to package: <input type="text" name="package" />'
                 in output.data)
             self.assertTrue(
-                '<th>Status</th>\n    <th></th>\n  </tr>\n\n</table>'
+                '<th>Status</th>\n    \n    <th></th>\n    \n  </tr>\n\n</table>'
                 in output.data)
 
     @patch('pkgdb2.fas_login_required')

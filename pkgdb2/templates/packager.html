@@ -15,7 +15,10 @@
     {% else %}
         href="https://admin.fedoraproject.org/accounts/user/view/{{ packager }}"
     {% endif %}
-    >fas</a>)
+    >fas</a> -
+    <a href="{{ url_for('.packager_requests', packager=packager) }}">
+        requests
+    </a>)
 </span>
 
 <table>
