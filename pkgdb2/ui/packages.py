@@ -1132,8 +1132,19 @@ def package_request_new():
 
     collections = pkgdb2.lib.search_collection(SESSION, '*', 'Under Development')
     collections.reverse()
-    collections.extend(list(reversed(
-        pkgdb2.lib.search_collection(SESSION, '*', 'Active'))))
+    active_collections = pkgdb2.lib.search_collection(SESSION, '*', 'Active')
+    active_collections.reverse()
+    # We want all the branch `Under Development` as well as all the `Active`
+    # branch but we can only have at max 2 Fedora branch active at the same
+    # time. In other words, when Fedora n+1 is released one can no longer
+    # request a package to be added to Fedora n-1
+    cnt = 0
+    for collection in active_collections:
+        if collection.name.lower() == 'fedora':
+            if cnt >= 2:
+                continue
+            cnt += 1
+        collections.append(collection)
 
     form = pkgdb2.forms.RequestPackageForm(
         collections=collections,
