@@ -1133,11 +1133,9 @@ def package_request_new():
     collections = pkgdb2.lib.search_collection(
         SESSION, '*', 'Under Development')
     collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
-    pkg_status = pkgdb2.lib.get_status(SESSION, 'pkg_status')['pkg_status']
 
-    form = pkgdb2.forms.AddPackageForm(
+    form = pkgdb2.forms.RequestPackageForm(
         collections=collections,
-        pkg_status_list=pkg_status,
     )
 
     if form.validate_on_submit():
@@ -1145,10 +1143,10 @@ def package_request_new():
         pkg_summary = form.summary.data
         pkg_description = form.description.data
         pkg_review_url = form.review_url.data
-        pkg_status = form.status.data
-        pkg_critpath = form.critpath.data
+        pkg_status = 'Approved'
+        pkg_critpath = False
         pkg_collection = form.branches.data
-        pkg_poc = form.poc.data
+        pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
 
         try:
