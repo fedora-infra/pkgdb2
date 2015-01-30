@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013-2014  Red Hat, Inc.
+# Copyright © 2013-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -129,8 +129,8 @@ class CollectionStatusForm(wtf.Form):
             ]
 
 
-class AddPackageForm(wtf.Form):
-    """ Form to add or edit packages. """
+class RequestPackageForm(wtf.Form):
+    """ Form to request a new package. """
     pkgname = wtforms.TextField(
         'Package name',
         [wtforms.validators.Required()]
@@ -146,24 +146,10 @@ class AddPackageForm(wtf.Form):
         'Review URL',
         [wtforms.validators.Required()]
     )
-    status = wtforms.SelectField(
-        'Status',
-        [wtforms.validators.Required()],
-        choices=[(item, item) for item in []]
-    )
-    critpath = wtforms.BooleanField(
-        'Package in critpath',
-        [wtforms.validators.optional()],
-        default=False,
-    )
     branches = wtforms.SelectMultipleField(
         'Collection',
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
-    )
-    poc = wtforms.TextField(
-        'Point of contact',
-        [wtforms.validators.Required()]
     )
     upstream_url = wtforms.TextField(
         'Upstream URL',
@@ -175,12 +161,37 @@ class AddPackageForm(wtf.Form):
         uses the list of collection provided to fill the choices of the
         drop-down list.
         """
-        super(AddPackageForm, self).__init__(*args, **kwargs)
+        super(RequestPackageForm, self).__init__(*args, **kwargs)
         if 'collections' in kwargs:
             self.branches.choices = [
                 (collec.branchname, collec.branchname)
                 for collec in kwargs['collections']
             ]
+
+
+class AddPackageForm(RequestPackageForm):
+    """ Form to add or edit packages. """
+    status = wtforms.SelectField(
+        'Status',
+        [wtforms.validators.Required()],
+        choices=[(item, item) for item in []]
+    )
+    critpath = wtforms.BooleanField(
+        'Package in critpath',
+        [wtforms.validators.optional()],
+        default=False,
+    )
+    poc = wtforms.TextField(
+        'Point of contact',
+        [wtforms.validators.Required()]
+    )
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of collection provided to fill the choices of the
+        drop-down list.
+        """
+        super(AddPackageForm, self).__init__(*args, **kwargs)
         if 'pkg_status_list' in kwargs:
             self.status.choices = [
                 (status, status)
