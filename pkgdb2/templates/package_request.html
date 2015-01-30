@@ -16,8 +16,9 @@
     {{ render_field_in_row(form.summary) }}
     {{ render_field_in_row(form.description) }}
     {{ render_field_in_row(form.branches) }}
-    {{ render_field_in_row(form.review_url) }}
-    {{ render_field_in_row(form.upstream_url) }}
+    {{ render_field_in_row(form.review_url, title="URL pointing directly to the
+ location where the package review happened") }}
+    {{ render_field_in_row(form.upstream_url, title="URL of the upstream project (if any)") }}
   </table>
   <p class="buttons indent">
     <input type="submit" class="submit positive button" value="Create">
