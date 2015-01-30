@@ -1130,9 +1130,10 @@ def package_request_branch(package, full=True):
 def package_request_new():
     ''' Page to request a new package. '''
 
-    collections = pkgdb2.lib.search_collection(
-        SESSION, '*', 'Under Development')
-    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+    collections = pkgdb2.lib.search_collection(SESSION, '*', 'Under Development')
+    collections.reverse()
+    collections.extend(list(reversed(
+        pkgdb2.lib.search_collection(SESSION, '*', 'Active'))))
 
     form = pkgdb2.forms.RequestPackageForm(
         collections=collections,
