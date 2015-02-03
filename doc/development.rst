@@ -188,6 +188,15 @@ error or failure. For example, the command could be:
 
             yum install python-coverage
 
+One of our test requires network access, which means when you are working
+offline (when traveling for example) the test will fail. In order to have the
+whole test suite succeed when working offline, you can skip this test by setting
+an ``OFFLINE`` environment variable.
+For example:
+
+::
+
+    OFFLINE=1 ./runtests.sh -x
 
 
 Troubleshooting

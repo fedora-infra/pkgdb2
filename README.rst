@@ -47,8 +47,18 @@ You should run the test suite to make sure nothing is broken before proceeding::
 
     (my-pkgdb2-env)$ ./runtests.sh
 
-They'll take a little while (since they interact with the awesome `faitout
-<https://github.com/fedora-infra/faitout>`_ project).
+By default the tests are ran against a local sqlite database, but you can have
+them run against `faitout <https://github.com/fedora-infra/faitout>`_ by setting
+an environment variable ``BUILD_ID``, for example::
+
+    (my-pkgdb2-env)$ BUILD_ID=1 ./runtests.sh
+
+Similarly, you can set the environment variable ``OFFLINE`` to skip tests
+requiring network access (handy if you are, for example, working on a plane),
+for example::
+
+    (my-pkgdb2-env)$ OFFLINE=2 ./runtests.sh
+
 
 You should then create your own sqlite database for your development instance of
 pkgdb2::

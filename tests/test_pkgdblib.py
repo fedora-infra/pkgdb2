@@ -1828,38 +1828,39 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_packagers = mock.MagicMock()
         pkgdb2.lib.utils.get_packagers.return_value = ['pingou']
 
-        # Insert
-        pkgdblib.add_new_branch_request(
-            session=self.session,
-            pkg_name='guake',
-            clt_from='master',
-            clt_to='el6',
-            user=FakeFasUser()
-        )
+        if not os.environ.get('OFFLINE'):
+            # Insert
+            pkgdblib.add_new_branch_request(
+                session=self.session,
+                pkg_name='guake',
+                clt_from='master',
+                clt_to='el6',
+                user=FakeFasUser()
+            )
 
-        # Check after insert
-        # Nothing awaiting review:
-        actions = pkgdblib.search_actions(
-            self.session,
-            package='guake',
-            page=1,
-            limit=50,
-        )
-        self.assertEqual(len(actions), 0)
+            # Check after insert
+            # Nothing awaiting review:
+            actions = pkgdblib.search_actions(
+                self.session,
+                package='guake',
+                page=1,
+                limit=50,
+            )
+            self.assertEqual(len(actions), 0)
 
-        # But something is in
-        actions = pkgdblib.search_actions(
-            self.session,
-            package='guake',
-            status=None,
-            page=1,
-            limit=50,
-        )
-        self.assertEqual(len(actions), 1)
-        self.assertEqual(actions[0].user, 'pingou')
-        self.assertEqual(actions[0].package.name, 'guake')
-        self.assertEqual(actions[0].collection.branchname, 'el6')
-        self.assertEqual(actions[0].from_collection.branchname, 'master')
+            # But something is in
+            actions = pkgdblib.search_actions(
+                self.session,
+                package='guake',
+                status=None,
+                page=1,
+                limit=50,
+            )
+            self.assertEqual(len(actions), 1)
+            self.assertEqual(actions[0].user, 'pingou')
+            self.assertEqual(actions[0].package.name, 'guake')
+            self.assertEqual(actions[0].collection.branchname, 'el6')
+            self.assertEqual(actions[0].from_collection.branchname, 'master')
 
     def test_get_admin_action(self):
         """ Test the get_admin_action method of pkgdblib. """

@@ -1130,14 +1130,24 @@ def package_request_branch(package, full=True):
 def package_request_new():
     ''' Page to request a new package. '''
 
-    collections = pkgdb2.lib.search_collection(
-        SESSION, '*', 'Under Development')
-    collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
-    pkg_status = pkgdb2.lib.get_status(SESSION, 'pkg_status')['pkg_status']
+    collections = pkgdb2.lib.search_collection(SESSION, '*', 'Under Development')
+    collections.reverse()
+    active_collections = pkgdb2.lib.search_collection(SESSION, '*', 'Active')
+    active_collections.reverse()
+    # We want all the branch `Under Development` as well as all the `Active`
+    # branch but we can only have at max 2 Fedora branch active at the same
+    # time. In other words, when Fedora n+1 is released one can no longer
+    # request a package to be added to Fedora n-1
+    cnt = 0
+    for collection in active_collections:
+        if collection.name.lower() == 'fedora':
+            if cnt >= 2:
+                continue
+            cnt += 1
+        collections.append(collection)
 
-    form = pkgdb2.forms.AddPackageForm(
+    form = pkgdb2.forms.RequestPackageForm(
         collections=collections,
-        pkg_status_list=pkg_status,
     )
 
     if form.validate_on_submit():
@@ -1145,10 +1155,10 @@ def package_request_new():
         pkg_summary = form.summary.data
         pkg_description = form.description.data
         pkg_review_url = form.review_url.data
-        pkg_status = form.status.data
-        pkg_critpath = form.critpath.data
+        pkg_status = 'Approved'
+        pkg_critpath = False
         pkg_collection = form.branches.data
-        pkg_poc = form.poc.data
+        pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
 
         try:
