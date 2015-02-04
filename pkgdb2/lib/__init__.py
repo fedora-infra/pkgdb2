@@ -325,6 +325,9 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             and status not in ('Removed', 'Obsolete'):
         _validate_poc(pkg_user)
 
+    if pkg_user.startswith('group:'):
+        _validate_poc(pkg_user)
+
     try:
         package = model.Package.by_name(session, pkg_name)
     except NoResultFound:
