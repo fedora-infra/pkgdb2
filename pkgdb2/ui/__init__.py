@@ -27,7 +27,7 @@ import flask
 
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import (APP, SESSION, FAS, is_pkgdb_admin, __version__,
-                    is_safe_url)
+                    is_safe_url, is_authenticated)
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
@@ -59,7 +59,7 @@ def branches_filter(branches):
 @APP.template_filter('avatar')
 def avatar(packager, size=64):
     """ Template filter to produce the libravatar of a given packager. """
-    if flask.g.fas_user and packager == flask.g.fas_user.username:
+    if is_authenticated() and packager == flask.g.fas_user.username:
         openid_template = 'http://{packager}.id.fedoraproject.org'
         openid = openid_template.format(packager=packager)
         avatar = pkgdblib.utils.avatar_url(packager, size)
