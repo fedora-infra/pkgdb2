@@ -69,6 +69,7 @@ You will need to set up your postgresql server first.
 Once you postgresql database is running, download the latest database dump::
 
     wget http://infrastructure.fedoraproject.org/infra/db-dumps/pkgdb2.dump.xz
+    unxz pkgdb2.dump.xz
 
 Create the database itself::
 
@@ -76,7 +77,7 @@ Create the database itself::
 
 Load the dump::
 
-    pg_restore -d pkgdb2 pkgdb2.db
+    pg_restore -d pkgdb2 pkgdb2.dump
 
 Please refer to ``createdb --help`` and ``pg_restore --help`` for further
 help on using these commands.
