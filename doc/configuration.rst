@@ -254,3 +254,15 @@ The setting to change is ``SESSION_COOKIE_SECURE``.
 **Default** ``SESSION_COOKIE_SECURE =  False``
 
 To change to ``SESSION_COOKIE_SECURE = True``.
+
+
+Cookie conflicts
+----------------
+
+If you run multiple applications at different level of your server, by default
+the ``path`` of the cookie will be ``/``, eventually leading to cookie conflict
+but providing a working configuration out of the box
+
+To prevent this, adjust the ``APPLICATION_ROOT`` as needed.
+
+**Default** ``APPLICATION_ROOT = '/'``
