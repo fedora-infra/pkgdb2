@@ -65,19 +65,17 @@ and use it for your tests and hacking.
 
 You will need to set up your postgresql server first.
 
-
 Once you postgresql database is running, download the latest database dump::
 
     wget http://infrastructure.fedoraproject.org/infra/db-dumps/pkgdb2.dump.xz
-    unxz pkgdb2.dump.xz
 
 Create the database itself::
 
-    createdb pkgdb2
+    sudo -u postgres createdb pkgdb2
 
 Load the dump::
 
-    pg_restore -d pkgdb2 pkgdb2.dump
+    xzcat pkgdb2.dump.xz | sudo -u postgres psql pkgdb2
 
 Please refer to ``createdb --help`` and ``pg_restore --help`` for further
 help on using these commands.
