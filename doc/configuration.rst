@@ -226,3 +226,16 @@ package or something alike. These emails are sent to the address set
 in the configuration key ``MAIL_ADMIN``
 
 **Default:** ``MAIL_ADMIN = '<my personnal email>'``.
+
+
+Packages not accessible to provenpackagers
+------------------------------------------
+
+On Fedora, some packages are restricted to their maintainers only, even members
+of the provenpackager group cannot access them (while they can access every
+other packages), this mostly when there is trademark regulations involved.
+
+These packages are listed in the configuration under the configuration key
+``PKGS_NOT_PROVENPACKAGER``
+
+**Default** ``PKGS_NOT_PROVENPACKAGER = ['firefox', 'thunderbird', 'xulrunner']``.
