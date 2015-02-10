@@ -104,3 +104,10 @@ MAIL_ADMIN = 'pingou@pingoured.fr'
 
 # List the packages that are not accessible to the provenpackager group
 PKGS_NOT_PROVENPACKAGER = ['firefox', 'thunderbird', 'xulrunner']
+
+# Make browsers send session cookie only via HTTPS
+SESSION_COOKIE_SECURE = True
+
+# Set a default application root to prevent any potential cookie conflict if
+# pgkdb is not deployed at the root of the server
+APPLICATION_ROOT = '/pkgdb/'
