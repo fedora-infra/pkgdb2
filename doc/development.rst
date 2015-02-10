@@ -68,7 +68,7 @@ You will need to set up your postgresql server first.
 
 Once you postgresql database is running, download the latest database dump::
 
-    wget http://infrastructure.fedoraproject.org/infra/db-dumps/pkgdb2.db
+    wget http://infrastructure.fedoraproject.org/infra/db-dumps/pkgdb2.dump.xz
 
 Create the database itself::
 
