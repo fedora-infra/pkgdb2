@@ -58,14 +58,19 @@ def branches_filter(branches):
 
 @APP.template_filter('avatar')
 def avatar(packager, size=64):
-    """ Template filter sorting the given branches, Fedora first then EPEL,
-    then whatever is left.
-    """
-    output = '<img class="avatar circle" src="%s"/>' % (
-        pkgdblib.utils.avatar_url(packager, size)
-    )
-
-    return output
+    """ Template filter to produce the libravatar of a given packager. """
+    if flask.g.fas_user and packager == flask.g.fas_user.username:
+        openid_template = 'http://{packager}.id.fedoraproject.org'
+        openid = openid_template.format(packager=packager)
+        avatar = pkgdblib.utils.avatar_url(packager, size)
+        return """<form method="POST" action="https://www.libravatar.org/openid/login/">
+            <input type="hidden" name="openid_identifier" value="{openid}"/>
+            <input type="image" class="avatar circle" src="{avatar}" style="outline: none;"/>
+        </form>""".format(openid=openid, avatar=avatar)
+    else:
+        return '<img class="avatar circle" src="%s"/>' % (
+            pkgdblib.utils.avatar_url(packager, size)
+        )
 
 
 @UI.context_processor
