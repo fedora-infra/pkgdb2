@@ -226,3 +226,43 @@ package or something alike. These emails are sent to the address set
 in the configuration key ``MAIL_ADMIN``
 
 **Default:** ``MAIL_ADMIN = '<my personnal email>'``.
+
+
+Packages not accessible to provenpackagers
+------------------------------------------
+
+On Fedora, some packages are restricted to their maintainers only, even members
+of the provenpackager group cannot access them (while they can access every
+other packages), this mostly when there is trademark regulations involved.
+
+These packages are listed in the configuration under the configuration key
+``PKGS_NOT_PROVENPACKAGER``
+
+**Default** ``PKGS_NOT_PROVENPACKAGER = ['firefox', 'thunderbird', 'xulrunner']``.
+
+
+Security
+--------
+
+It is a good practice to have the cookies require a https connection for
+security reason. However, while developing this can prevent the authentication
+from working. So by default this is turned off to provide an out-of-the-box
+working configuration, however you will want to change it in production.
+
+The setting to change is ``SESSION_COOKIE_SECURE``.
+
+**Default** ``SESSION_COOKIE_SECURE =  False``
+
+To change to ``SESSION_COOKIE_SECURE = True``.
+
+
+Cookie conflicts
+----------------
+
+If you run multiple applications at different level of your server, by default
+the ``path`` of the cookie will be ``/``, eventually leading to cookie conflict
+but providing a working configuration out of the box
+
+To prevent this, adjust the ``APPLICATION_ROOT`` as needed.
+
+**Default** ``APPLICATION_ROOT = '/'``

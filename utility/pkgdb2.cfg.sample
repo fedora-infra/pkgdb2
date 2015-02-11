@@ -92,3 +92,15 @@ PKGDB2_EMAIL_CC = None
 ## package or something alike. These emails are sent to the address set
 ## here:
 #MAIL_ADMIN = 'admin@pkgdb'
+
+
+## List the packages that are not accessible to the provenpackager group
+PKGS_NOT_PROVENPACKAGER = ['firefox']
+
+## Make browsers send session cookie only via HTTPS
+SESSION_COOKIE_SECURE = True
+
+## Set a default application root to prevent any potential cookie conflict if
+## pgkdb is not deployed at the root of the server. This is used to set the
+## `path` value of the cookie, actually avoiding the cookie conflict.
+APPLICATION_ROOT = '/pkgdb/'
