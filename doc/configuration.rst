@@ -266,3 +266,6 @@ but providing a working configuration out of the box
 To prevent this, adjust the ``APPLICATION_ROOT`` as needed.
 
 **Default** ``APPLICATION_ROOT = '/'``
+
+.. note:: The application root should start with a ``/`` otherwise the ``path``
+          of the cookie is not set correctly
