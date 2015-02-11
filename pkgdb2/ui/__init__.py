@@ -65,7 +65,8 @@ def avatar(packager, size=64):
         avatar = pkgdblib.utils.avatar_url(packager, size)
         return """<form method="POST" action="https://www.libravatar.org/openid/login/">
             <input type="hidden" name="openid_identifier" value="{openid}"/>
-            <input type="image" class="avatar circle" src="{avatar}" style="outline: none;"/>
+            <input type="image" class="avatar circle" src="{avatar}" style="outline: none;"
+            title="Update your avatar"/>
         </form>""".format(openid=openid, avatar=avatar)
     else:
         return '<img class="avatar circle" src="%s"/>' % (
