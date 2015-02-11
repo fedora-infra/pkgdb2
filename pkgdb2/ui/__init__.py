@@ -60,7 +60,7 @@ def branches_filter(branches):
 def avatar(packager, size=64):
     """ Template filter to produce the libravatar of a given packager. """
     if is_authenticated() and packager == flask.g.fas_user.username:
-        openid_template = 'http://{packager}.id.fedoraproject.org'
+        openid_template = 'http://{packager}.id.fedoraproject.org/'
         openid = openid_template.format(packager=packager)
         avatar = pkgdblib.utils.avatar_url(packager, size)
         return """<form method="POST" action="https://www.libravatar.org/openid/login/">
