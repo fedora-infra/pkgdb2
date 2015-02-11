@@ -263,9 +263,13 @@ If you run multiple applications at different level of your server, by default
 the ``path`` of the cookie will be ``/``, eventually leading to cookie conflict
 but providing a working configuration out of the box
 
-To prevent this, adjust the ``APPLICATION_ROOT`` as needed.
+To prevent this, adjust the ``APPLICATION_ROOT`` or ``SESSION_COOKIE_NAME`` as
+needed (in Fedora we used ``APPLICATION_ROOT``).
 
 **Default** ``APPLICATION_ROOT = '/'``
 
 .. note:: The application root should start with a ``/`` otherwise the ``path``
           of the cookie is not set correctly
+
+.. note:: More configuration information are described in the `flask
+          documentation <http://flask.pocoo.org/docs/latest/config/>`_.
