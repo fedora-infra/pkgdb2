@@ -224,11 +224,7 @@ a.wheel, a.wheel:hover, button.wheel, button.wheel:hover {
     line-height: 1.2em;
 }
 
-.inline h1 {
-    display: inline-block;
-}
-
-.inline span {
+.inline h1, .inline span, .inline form {
     display: inline-block;
 }
 

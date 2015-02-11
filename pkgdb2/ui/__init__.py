@@ -27,7 +27,7 @@ import flask
 
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import (APP, SESSION, FAS, is_pkgdb_admin, __version__,
-                    is_safe_url)
+                    is_safe_url, is_authenticated)
 
 
 UI = flask.Blueprint('ui_ns', __name__, url_prefix='')
@@ -58,14 +58,19 @@ def branches_filter(branches):
 
 @APP.template_filter('avatar')
 def avatar(packager, size=64):
-    """ Template filter sorting the given branches, Fedora first then EPEL,
-    then whatever is left.
-    """
-    output = '<img class="avatar circle" src="%s"/>' % (
-        pkgdblib.utils.avatar_url(packager, size)
-    )
-
-    return output
+    """ Template filter to produce the libravatar of a given packager. """
+    if is_authenticated() and packager == flask.g.fas_user.username:
+        openid_template = 'http://{packager}.id.fedoraproject.org/'
+        openid = openid_template.format(packager=packager)
+        avatar = pkgdblib.utils.avatar_url(packager, size)
+        return """<form method="POST" action="https://www.libravatar.org/openid/login/">
+            <input type="hidden" name="openid_identifier" value="{openid}"/>
+            <input type="image" class="avatar circle" src="{avatar}" style="outline: none;"/>
+        </form>""".format(openid=openid, avatar=avatar)
+    else:
+        return '<img class="avatar circle" src="%s"/>' % (
+            pkgdblib.utils.avatar_url(packager, size)
+        )
 
 
 @UI.context_processor
