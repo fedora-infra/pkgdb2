@@ -161,8 +161,11 @@ class Bugzilla(object):
                     'bugzilla_email': group.mailing_list}
             else:
                 person = self.fas.person_by_username(username)
-                self.userCache[username] = {
-                    'bugzilla_email': person.bugzilla_email}
+                bz_email = person.get('bugzilla_email', None)
+                if bz_email is None:
+                    print '%s has no bugzilla email, valid account?' % username
+                else:
+                    self.userCache[username] = {'bugzilla_email': bz_email}
         return self.userCache[username]['bugzilla_email'].lower()
 
     def add_edit_component(self, package, collection, owner, description,
