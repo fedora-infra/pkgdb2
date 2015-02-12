@@ -349,8 +349,9 @@ def package_request_edit(package, action_id):
         )
 
     # Check user is the pkg/pkgdb admin
-    if not is_pkgdb_admin(flask.g.fas_user) and not pkgdblib.has_acls(
-            SESSION, flask.g.fas_user.username, package, 'approveacls') \
+    if not is_pkgdb_admin(flask.g.fas_user) \
+            and not pkgdblib.has_acls(SESSION, flask.g.fas_user.username,
+                                      package, 'approveacls') \
             and not admin_action.user == flask.g.fas_user.username:
         flask.flash(
             'Only package adminitrators (`approveacls`) and the requester '
