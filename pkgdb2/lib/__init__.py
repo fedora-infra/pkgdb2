@@ -1730,41 +1730,6 @@ def add_new_branch_request(session, pkg_name, clt_from, clt_to, user):
     msg = 'Branch %s requested for user %s' % (
         clt_to.branchname, user.username)
 
-    # If user is packager -> checked with _validate_poc()
-    # If clt_to is Fedora
-    # If user has commit/approveacls on pkg_name
-    # Then automatically grant the branch request
-    if clt_to.name == 'Fedora':
-        maintainer = False
-        for pkglist in get_acl_package(session, package.name):
-            for acl in pkglist.acls:
-                if acl.fas_name == user.username \
-                        and acl.acl in ['commit', 'approveacls']:
-                    maintainer = True
-                    break
-            if maintainer:
-                break
-
-        if maintainer:
-            for acl in ['commit', 'watchbugzilla',
-                        'watchcommits', 'approveacls']:
-                set_acl_package(
-                    session,
-                    pkg_name=package.name,
-                    pkg_branch=clt_to.branchname,
-                    pkg_user=user.username,
-                    acl=acl,
-                    status='Approved',
-                    user=user,
-                    force=True,
-                )
-            msg = 'Branch %s created for user %s' % (
-                clt_to.branchname, user.username)
-
-            # The branch is created, so the action has been approved
-            action.status = 'Approved'
-            session.add(action)
-
     return msg
 
 
