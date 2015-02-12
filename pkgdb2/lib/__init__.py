@@ -135,6 +135,23 @@ def _validate_pkg(session, rhel_ver, pkg_name):
                         pkg_name, rhel_ver))
 
 
+def _validate_fas_user(username):
+    """ Validate is the provided ``username`` is associated to a valid FAS
+    account.
+
+    :arg username: the username of the user to search in FAS.
+
+    """
+    if username == 'orphan':
+        return
+
+    user = pkgdb2.lib.utils.get_bz_email_user(username)
+
+    if not user:
+        raise PkgdbException(
+            'User "%s" could not be found in FAS' % username)
+
+
 def create_session(db_url, debug=False, pool_recycle=3600):
     """ Create the Session object to use to query the database.
 
