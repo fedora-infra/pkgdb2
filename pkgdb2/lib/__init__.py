@@ -136,7 +136,7 @@ def _validate_pkg(session, rhel_ver, pkg_name):
 
 
 def _validate_fas_user(username):
-    """ Validate is the provided ``username`` is associated to a valid FAS
+    """ Validate that the provided ``username`` is associated to a valid FAS
     account.
 
     :arg username: the username of the user to search in FAS.
