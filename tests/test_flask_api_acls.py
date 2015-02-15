@@ -56,9 +56,11 @@ class FlaskApiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_acl_update(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_acl_update(self, bz_mail_func, login_func, pkger_func):
         """ Test the api_acl_update function.  """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         output = self.app.post('/api/package/acl')
         self.assertEqual(output.status_code, 301)
@@ -101,7 +103,7 @@ class FlaskApiAclsTest(Modeltests):
 
         # Check if it works authenticated
         user = FakeFasUser()
-        mock_func.return_value = ['pingou', 'ralph', 'toshio']
+        pkger_func.return_value = ['pingou', 'ralph', 'toshio']
 
         with user_set(APP, user):
             exp = {

@@ -58,9 +58,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_request_acl(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_request_acl(self, bz_mail_func, login_func, mock_func):
         """ Test the request_acl function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 
@@ -184,9 +186,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_request_acl_all_branch(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_request_acl_all_branch(self, bz_mail_func, login_func, mock_func):
         """ Test the request_acl_all_branch function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 
@@ -258,9 +262,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_giveup_acl(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_giveup_acl(self, bz_mail_func, login_func, mock_func):
         """ Test the giveup_acl function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 
@@ -336,9 +342,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_watch_package(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_watch_package(self, bz_mail_func, login_func, mock_func):
         """ Test the watch_package function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 
@@ -371,9 +379,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_unwatch_package(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_unwatch_package(self, bz_mail_func, login_func, mock_func):
         """ Test the unwatch_package function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 
@@ -406,9 +416,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_comaintain_package(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_comaintain_package(self, bz_mail_func, login_func, mock_func):
         """ Test the comaintain_package function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 
@@ -483,9 +495,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_dropcommit_package(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_dropcommit_package(self, bz_mail_func, login_func, mock_func):
         """ Test the dropcommit_package function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 
@@ -901,9 +915,11 @@ class FlaskUiAclsTest(Modeltests):
 
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_package_give_acls(self, login_func, mock_func):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_package_give_acls(self, bz_mail_func, login_func, mock_func):
         """ Test the package_give_acls function. """
         login_func.return_value = None
+        bz_mail_func.return_value = 1
 
         create_package_acl(self.session)
 

@@ -135,6 +135,23 @@ def _validate_pkg(session, rhel_ver, pkg_name):
                         pkg_name, rhel_ver))
 
 
+def _validate_fas_user(username):
+    """ Validate that the provided ``username`` is associated to a valid FAS
+    account.
+
+    :arg username: the username of the user to search in FAS.
+
+    """
+    if username == 'orphan':
+        return
+
+    user = pkgdb2.lib.utils.get_bz_email_user(username)
+
+    if not user:
+        raise PkgdbException(
+            'User "%s" could not be found in FAS' % username)
+
+
 def create_session(db_url, debug=False, pool_recycle=3600):
     """ Create the Session object to use to query the database.
 
@@ -324,6 +341,8 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     if acl not in pkgdb2.APP.config['AUTO_APPROVE'] \
             and status not in ('Removed', 'Obsolete'):
         _validate_poc(pkg_user)
+    else:
+        _validate_fas_user(pkg_user)
 
     if pkg_user.startswith('group:'):
         _validate_poc(pkg_user)

@@ -51,9 +51,12 @@ from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
 class PkgdbLibtests(Modeltests):
     """ PkgdbLib tests. """
 
-    def test_add_package(self):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_add_package(self, mock_func):
         """ Test the add_package function. """
         create_collection(self.session)
+
+        mock_func.return_value = 1
 
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
@@ -242,9 +245,12 @@ class PkgdbLibtests(Modeltests):
         pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'unknown')
         self.assertEqual(pkg_acl, [])
 
-    def test_set_acl_package(self):
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
+    def test_set_acl_package(self, mock_func):
         """ Test the set_acl_package function. """
         self.test_add_package()
+
+        mock_func.return_value = 1
 
         # Not allowed to set acl on non-existant package
         self.assertRaises(pkgdblib.PkgdbException,
@@ -457,13 +463,15 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(len(pkg_acl[0].acls), 7)
 
-    def test_update_pkg_poc(self):
+    @patch('pkgdb2.lib.utils')
+    def test_update_pkg_poc(self, mock_func):
         """ Test the update_pkg_poc function. """
         self.test_add_package()
 
-        pkgdb2.lib.utils.get_packagers = mock.MagicMock()
-        pkgdb2.lib.utils.get_packagers.return_value = [
+        mock_func.get_packagers.return_value = [
             'pingou', 'toshio', 'ralph']
+        mock_func.get_bz_email_user.return_value = 1
+        mock_func.get_fas_group.return_value = FakeFasGroupValid()
 
         # Package must exists
         self.assertRaises(pkgdblib.PkgdbException,
@@ -1995,8 +2003,12 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(action.from_collection.branchname, 'master')
         self.assertEqual(action.info, None)
 
-    def test_add_unretire_request(self):
+    @patch('pkgdb2.lib.utils.get_packagers')
+    def test_add_unretire_request(self, mock_func):
         """ Test the add_unretire_request method of pkgdblib. """
+
+        mock_func.return_value = ['pingou']
+
         self.assertRaises(
             pkgdblib.PkgdbException,
             pkgdblib.add_unretire_request,
