@@ -402,6 +402,7 @@ def package_request_edit(package, action_id):
         action_id=action_id,
         form=form,
         package=package,
+        tag='packages',
     )
 
 
