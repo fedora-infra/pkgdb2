@@ -163,7 +163,7 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(
             sorted(data.keys()),
             ['action', 'collection', 'date_created', 'date_updated',
-             'from_collection', 'id', 'info', 'message', 'output', 'package',
+             'id', 'info', 'message', 'output', 'package',
              'status', 'user'])
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(data['action'], 'request.unretire')
@@ -179,7 +179,7 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(
             sorted(data.keys()),
             ['action', 'collection', 'date_created', 'date_updated',
-             'from_collection', 'id', 'info', 'message', 'output', 'package',
+             'id', 'info', 'message', 'output', 'package',
              'status', 'user'])
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(data['output'], 'ok')
