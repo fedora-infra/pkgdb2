@@ -64,6 +64,9 @@
             <li id="statsTab"><a href="{{url_for('ui_ns.stats')}}">Stats</a></li>
             {% if g.fas_user %}
             <li id="pendingAclTab"><a href="{{url_for('ui_ns.pending_acl')}}">Pending ACLs</a></li>
+            <li id="myRequestsTab">
+                <a href="{{ url_for('.packager_requests', packager=g.fas_user.username) }}">My Requests</a>
+            </li>
             {% endif %}
             {% if is_admin %}
             <li id="adminTab"><a href="{{url_for('ui_ns.admin')}}">Admin</a></li>
@@ -110,7 +113,7 @@
         {% endif %}
 
         <p id="footer">
-          Copyright &copy; 2013-2014 Red Hat
+          Copyright &copy; 2013-2015 Red Hat
           <a href="https://fedorahosted.org/pkgdb2/">pkgdb2</a>
           -- {{version}}
           -- <a href="http://pkgdb2.rtfd.org"
