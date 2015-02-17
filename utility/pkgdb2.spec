@@ -3,7 +3,7 @@
 
 Name:           pkgdb2
 Version:        1.23
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
@@ -65,6 +65,7 @@ for changes in the git, builds or bugs.
 %prep
 %setup -q
 
+
 %build
 %{__python} setup.py build
 
@@ -114,6 +115,9 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Feb 17 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-2
+- Turn the monitoring flag on by default
+
 * Wed Jan 21 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-1
 - Update to 1.23
 - Increase the max width of the page
