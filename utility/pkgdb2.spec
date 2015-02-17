@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.23.99
+Version:        1.23.991
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,22 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Feb 17 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.991-1
+- Update to 1.23.991 (pre-release for 1.24)
+- Fix documentation to reflect the correct variable name
+- Add a link to the request made by someone on the user's page (where all the
+  packages of that person are listed)
+- Simplify the form to request a package to be added to pkgdb
+- Ensure we check that a group is valid before giving it some ACLs
+- Make it easier to change one's avatar by simply clicking on it (Ralph Bean)
+- Add a placeholder for the Review URL field when requesting a package to be
+  added to pkgdb
+- When giving watch* ACLs to a FAS user, check that this user exists
+- Per FESCo decision, Fedora branch requests will have by default a 7 days
+  period during which packager with approveacls will be allowed to grant/deny
+  the request, this period does not apply if the requester has approveacls on
+  the package
+
 * Mon Jan 26 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.99-1
 - Update to 1.23.99 (pre-release for 1.24)
 - New processes to request a new package or a new branch of a package directly
