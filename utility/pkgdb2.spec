@@ -9,7 +9,7 @@ Summary:        The Fedora package database
 License:        GPLv2+
 URL:            http://fedorahosted.org/pkgdb2/
 Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.tar.gz
-Patch1:         0001-Bug-fix-build.patch
+Patch1:         0001-Monitor-packages-as-soon-as-they-are-added.patch
 
 BuildArch:      noarch
 
