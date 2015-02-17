@@ -359,9 +359,16 @@ def package_request_edit(action_id, package=None):
         flask.flash(
             'Only package adminitrators (`approveacls`) and the requester '
             'can review pending branch requests', 'errors')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package)
-        )
+        if package:
+            return flask.redirect(
+                flask.url_for('.package_info', package=package)
+            )
+        else:
+            return flask.redirect(
+                flask.url_for(
+                    '.packager_requests',
+                    packager=flask.g.fas_user.username)
+            )
 
     action_status = ['Pending', 'Awaiting Review', 'Blocked']
     if admin_action.user == flask.g.fas_user.username:
@@ -397,9 +404,16 @@ def package_request_edit(action_id, package=None):
             flask.flash(err, 'errors')
             return flask.render_template('msg.html')
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=package)
-        )
+        if package:
+            return flask.redirect(
+                flask.url_for('.package_info', package=package)
+            )
+        else:
+            return flask.redirect(
+                flask.url_for(
+                    '.packager_requests',
+                    packager=flask.g.fas_user.username)
+            )
 
     return flask.render_template(
         'actions_update.html',
