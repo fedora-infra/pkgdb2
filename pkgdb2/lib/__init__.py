@@ -1415,6 +1415,9 @@ def has_acls(session, user, package, acl, branch=None):
     :rtype: bool()
 
     """
+    if package is None or acl is None:
+        return False
+
     acls = get_acl_user_package(session, user=user,
                                 package=package, status='Approved')
 
