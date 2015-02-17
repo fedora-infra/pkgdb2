@@ -1814,7 +1814,6 @@ def add_new_package_request(
     action = model.AdminAction(
         package_id=None,
         collection_id=clt.id,
-        from_collection_id=None,
         user=user.username,
         _status='Awaiting Review',
         action='request.package',
