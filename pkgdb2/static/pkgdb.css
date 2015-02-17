@@ -17,6 +17,7 @@ body#packagers #mainNav li#packagersTab a,
 body#collections #mainNav li#collectionsTab a,
 body#stats #mainNav li#statsTab a,
 body#pendingAcl #mainNav li#pendingAclTab a,
+body#myRequests #mainNav li#myRequestsTab a,
 body#admin #mainNav li#adminTab a {
     background-color: #fff;
     color: #444;
