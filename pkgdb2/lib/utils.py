@@ -262,8 +262,7 @@ def log(session, package, topic, message):
                               '%(package_listing.collection.'
                               'branchname)s on package %(package.name)s',
         'package.branch.request': 'user: %(agent)s requested branch: '
-                                 '%(collection_to.branchname)s from branch '
-                                 '%(collection_from.branchname)s '
+                                 '%(collection_to.branchname)s '
                                  'for package %(package.name)s',
         'package.new.request': 'user: %(agent)s request package: '
                                '%(info.pkg_name)s on branch '

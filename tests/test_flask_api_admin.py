@@ -163,7 +163,7 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(
             sorted(data.keys()),
             ['action', 'collection', 'date_created', 'date_updated',
-             'from_collection', 'id', 'info', 'message', 'output', 'package',
+             'id', 'info', 'message', 'output', 'package',
              'status', 'user'])
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(data['action'], 'request.unretire')
@@ -179,7 +179,7 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(
             sorted(data.keys()),
             ['action', 'collection', 'date_created', 'date_updated',
-             'from_collection', 'id', 'info', 'message', 'output', 'package',
+             'id', 'info', 'message', 'output', 'package',
              'status', 'user'])
         self.assertEqual(data['output'], 'ok')
         self.assertEqual(data['output'], 'ok')
@@ -268,7 +268,6 @@ class FlaskApiAdminTest(Modeltests):
         action = data['actions'][0]
         self.assertEqual(action['action'], "request.branch")
         self.assertEqual(action['id'], 1)
-        self.assertEqual(action['from_collection']['branchname'], 'master')
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')
@@ -372,7 +371,6 @@ class FlaskApiAdminTest(Modeltests):
         action = data['actions'][0]
         self.assertEqual(action['action'], "request.branch")
         self.assertEqual(action['id'], 1)
-        self.assertEqual(action['from_collection']['branchname'], 'master')
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')
@@ -409,7 +407,6 @@ class FlaskApiAdminTest(Modeltests):
         action = data['actions'][0]
         self.assertEqual(action['action'], "request.branch")
         self.assertEqual(action['id'], 1)
-        self.assertEqual(action['from_collection']['branchname'], 'master')
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')

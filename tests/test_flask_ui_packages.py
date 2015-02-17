@@ -886,24 +886,8 @@ class FlaskUiPackagesTest(Modeltests):
             'csrf_token': csrf_token,
         }
 
-        # Missing one input
-        user = FakeFasUser()
-        user.username = 'kevin'
-        with user_set(pkgdb2.APP, user):
-            output = self.app.post(
-                '/package/guake/request_branch',
-                follow_redirects=True, data=data)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                '<td class="errors">Not a valid choice</td>' in output.data)
-
-        data = {
-            'branches': ['el6'],
-            'from_branch': 'master',
-            'csrf_token': csrf_token,
-        }
-
         # Input correct but user is not allowed
+        user.username = 'kevin'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
                 '/package/guake/request_branch/0',
@@ -915,7 +899,6 @@ class FlaskUiPackagesTest(Modeltests):
 
         data = {
             'branches': ['el6'],
-            'from_branch': 'master',
             'csrf_token': csrf_token,
         }
 

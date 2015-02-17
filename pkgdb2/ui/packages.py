@@ -1089,9 +1089,7 @@ def package_request_branch(package, full=True):
         for collec in collections
         if collec.branchname not in branches]
 
-    form = pkgdb2.forms.NewRequestForm(
-        collections=branches_possible,
-        from_branch=branches)
+    form = pkgdb2.forms.BranchForm(collections=branches_possible)
 
     if form.validate_on_submit():
         for branch in form.branches.data:
@@ -1099,7 +1097,6 @@ def package_request_branch(package, full=True):
                 msg = pkgdblib.add_new_branch_request(
                     session=SESSION,
                     pkg_name=package.name,
-                    clt_from=form.from_branch.data,
                     clt_to=branch,
                     user=flask.g.fas_user)
                 SESSION.commit()

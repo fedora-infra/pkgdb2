@@ -1670,11 +1670,6 @@ class AdminAction(BASE):
         index=True)
     user = sa.Column(sa.Text, nullable=False, index=True)
     action = sa.Column(sa.Text, nullable=False, index=True)
-    from_collection_id = sa.Column(
-        sa.Integer,
-        sa.ForeignKey(
-            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
-        nullable=True)
     info = sa.Column(sa.Text, nullable=True)
     message = sa.Column(sa.Text, nullable=True)
 
@@ -1696,10 +1691,6 @@ class AdminAction(BASE):
     collection = relation(
         "Collection",
         foreign_keys=[collection_id], remote_side=[Collection.id],
-    )
-    from_collection = relation(
-        "Collection",
-        foreign_keys=[from_collection_id], remote_side=[Collection.id],
     )
 
     @property
@@ -1732,9 +1723,6 @@ class AdminAction(BASE):
         ## pylint complains about timetuple() but it is a method
         # pylint: disable=E1102
 
-        from_collection = None
-        if self.from_collection:
-            from_collection = self.from_collection.to_json()
         pkg = None
         if self.package:
             pkg = self.package.to_json(acls=False)
@@ -1746,7 +1734,6 @@ class AdminAction(BASE):
             'status': self.status,
             'package': pkg,
             'collection': self.collection.to_json(),
-            'from_collection': from_collection,
             'date_created': time.mktime(self.date_created.timetuple()),
             'date_updated': time.mktime(self.date_change.timetuple()),
             'info': self.info_data,
