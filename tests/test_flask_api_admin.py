@@ -268,7 +268,6 @@ class FlaskApiAdminTest(Modeltests):
         action = data['actions'][0]
         self.assertEqual(action['action'], "request.branch")
         self.assertEqual(action['id'], 1)
-        self.assertEqual(action['from_collection']['branchname'], 'master')
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')
@@ -372,7 +371,6 @@ class FlaskApiAdminTest(Modeltests):
         action = data['actions'][0]
         self.assertEqual(action['action'], "request.branch")
         self.assertEqual(action['id'], 1)
-        self.assertEqual(action['from_collection']['branchname'], 'master')
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')
@@ -409,7 +407,6 @@ class FlaskApiAdminTest(Modeltests):
         action = data['actions'][0]
         self.assertEqual(action['action'], "request.branch")
         self.assertEqual(action['id'], 1)
-        self.assertEqual(action['from_collection']['branchname'], 'master')
         self.assertEqual(action['collection']['branchname'], 'el6')
         self.assertEqual(action['package']['name'], 'guake')
         self.assertEqual(action['user'], 'pingou')

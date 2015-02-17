@@ -1760,7 +1760,6 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.add_new_branch_request,
             session=self.session,
             pkg_name='foobar',
-            clt_from='master',
             clt_to='el6',
             user=FakeFasUserAdmin()
         )
@@ -1771,7 +1770,6 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.add_new_branch_request,
             session=self.session,
             pkg_name='guake',
-            clt_from='master',
             clt_to='foobar',
             user=FakeFasUserAdmin()
         )
@@ -1782,7 +1780,6 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.add_new_branch_request,
             session=self.session,
             pkg_name='guake',
-            clt_from='foobar',
             clt_to='el6',
             user=FakeFasUserAdmin()
         )
@@ -1793,7 +1790,6 @@ class PkgdbLibtests(Modeltests):
         pkgdblib.add_new_branch_request(
             session=self.session,
             pkg_name='guake',
-            clt_from='master',
             clt_to='el6',
             user=user
         )
@@ -1841,7 +1837,6 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.add_new_branch_request(
                 session=self.session,
                 pkg_name='guake',
-                clt_from='master',
                 clt_to='el6',
                 user=FakeFasUser()
             )
@@ -1868,7 +1863,6 @@ class PkgdbLibtests(Modeltests):
             self.assertEqual(actions[0].user, 'pingou')
             self.assertEqual(actions[0].package.name, 'guake')
             self.assertEqual(actions[0].collection.branchname, 'el6')
-            self.assertEqual(actions[0].from_collection.branchname, 'master')
 
     def test_get_admin_action(self):
         """ Test the get_admin_action method of pkgdblib. """
@@ -1887,7 +1881,6 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(action.status, 'Pending')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
-        self.assertEqual(action.from_collection.branchname, 'master')
         self.assertEqual(action.info, None)
 
         action = pkgdblib.get_admin_action(self.session, 2)
@@ -1910,7 +1903,6 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(action.status, 'Pending')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
-        self.assertEqual(action.from_collection.branchname, 'master')
         self.assertEqual(action.info, None)
 
         self.assertRaises(
@@ -2000,7 +1992,6 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(action.status, 'Approved')
         self.assertEqual(action.package.name, 'guake')
         self.assertEqual(action.collection.branchname, 'el6')
-        self.assertEqual(action.from_collection.branchname, 'master')
         self.assertEqual(action.info, None)
 
     @patch('pkgdb2.lib.utils.get_packagers')
