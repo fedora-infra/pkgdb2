@@ -8,7 +8,15 @@
 {% endif %}
 {% endblock %}
 
-{%block tag %}{% if select %}{{ select }}{% else %}admin{% endif %}{% endblock %}
+
+{%block tag %}{%
+    if select %}{%
+        if g.fas_user and g.fas_user.username == packager %}myRequests{%
+        else %}{{ select }}{%
+        endif %}{%
+    else %}admin{%
+    endif
+%}{% endblock %}
 
 
 {% set options = True %}
