@@ -3,12 +3,13 @@
 
 Name:           pkgdb2
 Version:        1.23
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
 URL:            http://fedorahosted.org/pkgdb2/
 Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.tar.gz
+Patch1:         0001-Bug-fix-build.patch
 
 BuildArch:      noarch
 
@@ -64,6 +65,7 @@ for changes in the git, builds or bugs.
 
 %prep
 %setup -q
+%patch1 -p1 -b .
 
 
 %build
@@ -115,6 +117,9 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Feb 17 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-3
+- Actually turn on the monitoring flag with the proper patch
+
 * Tue Feb 17 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-2
 - Turn the monitoring flag on by default
 
