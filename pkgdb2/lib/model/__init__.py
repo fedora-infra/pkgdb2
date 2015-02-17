@@ -1055,7 +1055,7 @@ class Package(BASE):
     description = sa.Column(sa.Text, nullable=True)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
-    monitor = sa.Column(sa.Boolean, default=False, nullable=False)
+    monitor = sa.Column(sa.Boolean, default=True, nullable=False)
     status = sa.Column(
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
