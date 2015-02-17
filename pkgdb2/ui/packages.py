@@ -351,9 +351,10 @@ def package_request_edit(action_id, package=None):
         )
 
     # Check user is the pkg/pkgdb admin
+    pkg_admin = pkgdblib.has_acls(
+        SESSION, flask.g.fas_user.username, package, 'approveacls')
     if not is_pkgdb_admin(flask.g.fas_user) \
-            and not pkgdblib.has_acls(SESSION, flask.g.fas_user.username,
-                                      package, 'approveacls') \
+            and not pkg_admin \
             and not admin_action.user == flask.g.fas_user.username:
         flask.flash(
             'Only package adminitrators (`approveacls`) and the requester '
@@ -365,6 +366,8 @@ def package_request_edit(action_id, package=None):
     action_status = ['Pending', 'Awaiting Review', 'Blocked']
     if admin_action.user == flask.g.fas_user.username:
         action_status = ['Pending', 'Obsolete']
+        if pkg_admin:
+            action_status.append('Awaiting Review')
 
     form = pkgdb2.forms.EditActionStatusForm(
         status=action_status,
