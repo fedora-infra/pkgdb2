@@ -605,3 +605,12 @@ table.list thead th,
     margin: 0 auto;
     padding: 0 7px 0 7px;
 }
+
+#new_pkg input[type="text"] {
+    width: 250px;
+}
+
+#new_pkg textarea {
+    width: 250px;
+    rows: 5;
+}
