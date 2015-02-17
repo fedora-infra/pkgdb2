@@ -88,9 +88,7 @@
     <th>Action</th>
     <th>Branch</th>
     <th>Status</th>
-    {% if not select %}
     <th></th>
-    {% endif %}
   </tr>
 {% for action in actions %}
  {% if loop.last %}
@@ -117,14 +115,20 @@
     </td>
     <td class="col_odd">{{ action.action }}</td>
     <td>{{ action.collection.branchname }}</td>
-    <td class="lastcel" >{{ action.status }}</td>
+    <td class="col_odd" >{{ action.status }}</td>
+    <td class="lastcel">
     {% if not select %}
-    <td>
       <a href="{{ url_for('.admin_action_edit_status', action_id=action.id) }}">
         Update
       </a>
-    </td>
+    {% elif select and g.fas_user and g.fas_user.username == action.user and
+      action.status in ['Pending', 'Awaiting Review'] %}
+      <a href="{{ url_for(
+        '.package_request_edit', package=action.package.name or None, action_id=action.id) }}">
+          Update
+      </a>
     {% endif %}
+    </td>
   </tr>
 {% endfor %}
 </table>

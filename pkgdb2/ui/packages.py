@@ -322,9 +322,10 @@ def package_timeline(package):
     )
 
 
+@UI.route('/package/requests/<action_id>', methods=['GET', 'POST'])
 @UI.route('/package/<package>/requests/<action_id>', methods=['GET', 'POST'])
 @packager_login_required
-def package_request_edit(package, action_id):
+def package_request_edit(action_id, package=None):
     """ Edit an Admin Action status for the specified package
     """
 
@@ -333,7 +334,8 @@ def package_request_edit(package, action_id):
         flask.flash('No action found with this identifier.', 'errors')
         return flask.render_template('msg.html')
 
-    if not admin_action.package or admin_action.package.name != package:
+    if package is not None and (
+            not admin_action.package or admin_action.package.name != package):
         flask.flash(
             'The specified action (id:%s) is not related to the specified '
             'package: %s.' % (action_id, package), 'errors')
@@ -349,20 +351,30 @@ def package_request_edit(package, action_id):
         )
 
     # Check user is the pkg/pkgdb admin
+    pkg_admin = pkgdblib.has_acls(
+        SESSION, flask.g.fas_user.username, package, 'approveacls')
     if not is_pkgdb_admin(flask.g.fas_user) \
-            and not pkgdblib.has_acls(SESSION, flask.g.fas_user.username,
-                                      package, 'approveacls') \
+            and not pkg_admin \
             and not admin_action.user == flask.g.fas_user.username:
         flask.flash(
             'Only package adminitrators (`approveacls`) and the requester '
             'can review pending branch requests', 'errors')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package)
-        )
+        if package:
+            return flask.redirect(
+                flask.url_for('.package_info', package=package)
+            )
+        else:
+            return flask.redirect(
+                flask.url_for(
+                    '.packager_requests',
+                    packager=flask.g.fas_user.username)
+            )
 
     action_status = ['Pending', 'Awaiting Review', 'Blocked']
     if admin_action.user == flask.g.fas_user.username:
         action_status = ['Pending', 'Obsolete']
+        if pkg_admin:
+            action_status.append('Awaiting Review')
 
     form = pkgdb2.forms.EditActionStatusForm(
         status=action_status,
@@ -392,9 +404,16 @@ def package_request_edit(package, action_id):
             flask.flash(err, 'errors')
             return flask.render_template('msg.html')
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=package)
-        )
+        if package:
+            return flask.redirect(
+                flask.url_for('.package_info', package=package)
+            )
+        else:
+            return flask.redirect(
+                flask.url_for(
+                    '.packager_requests',
+                    packager=flask.g.fas_user.username)
+            )
 
     return flask.render_template(
         'actions_update.html',
@@ -402,6 +421,7 @@ def package_request_edit(package, action_id):
         action_id=action_id,
         form=form,
         package=package,
+        tag='packages',
     )
 
 

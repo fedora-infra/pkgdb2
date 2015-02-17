@@ -3,7 +3,7 @@
 
 {% block title %} Update action | PkgDB {% endblock %}
 
-{%block tag %}{% if package %}packages{% else %}admin{% endif %}{% endblock %}
+{%block tag %}{% if tag %}{{ tag }}{% else %}admin{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -13,12 +13,13 @@
 <h1>Update admin action: {{ admin_action.id }}</h1>
 {% endif %}
 
-
 {% if package %}
 <p>
     As current admin of the package {{ package.name }} you have the possibility
     for 7 days to block a branch request for EPEL branches.
 </p>
+{% endif %}
+{% if tag %}
 <p>
     During these 7 days, you can 'Block' the new branch process by setting
     the request to <span class="italic bold">Blocked</span> or 'Approve' it by
@@ -26,7 +27,7 @@
     admins that they can now review this request.
 </p>
 <form action="{{ url_for('.package_request_edit',
-                package=package.name, action_id=action_id) }}"
+                package=package.name or None, action_id=action_id) }}"
     method="post">
 {% else %}
 <form action="{{ url_for('.admin_action_edit_status', action_id=action_id) }}"
