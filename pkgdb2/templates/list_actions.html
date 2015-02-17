@@ -79,6 +79,7 @@
 </table>
 {% endif %}
 
+{% if actions %}
 <table id="actiontable">
   <tr>
     <th>Date</th>
@@ -129,6 +130,9 @@
   </tr>
 {% endfor %}
 </table>
+{% else %}
+<p>No actions found for this user</p>
+{% endif %}
 
 {% endblock %}
 
