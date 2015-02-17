@@ -87,7 +87,6 @@
     <th>Package</th>
     <th>Action</th>
     <th>Branch</th>
-    <th>From branch</th>
     <th>Status</th>
     {% if not select %}
     <th></th>
@@ -118,7 +117,6 @@
     </td>
     <td class="col_odd">{{ action.action }}</td>
     <td>{{ action.collection.branchname }}</td>
-    <td class="col_odd">{{ action.from_collection.branchname }}</td>
     <td class="lastcel" >{{ action.status }}</td>
     {% if not select %}
     <td>
