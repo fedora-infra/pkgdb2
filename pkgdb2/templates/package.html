@@ -184,8 +184,7 @@ confusing what the difference is between that status an the per-branch status)
       {% for req in package.requests_pending %}
       {% if g.fas_user.username in admins or requester or is_admin %}
       <li>
-          <a href="{{ url_for(
-            '.package_request_edit', package=package.name, action_id=req.id) }}">
+          <a href="{{ url_for('.package_request_edit', action_id=req.id) }}">
               {{ req.user }} requested the branch {{ req.collection.branchname }}
           </a>
       </li>
