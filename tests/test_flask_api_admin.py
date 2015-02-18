@@ -356,8 +356,8 @@ class FlaskApiAdminTest(Modeltests):
                 {
                     "messages": [
                         "user: admin updated action: 1 of guake from "
-                        "`Pending` to `Denied` with message: Because this "
-                        "is a test suite"
+                        "`Awaiting Review` to `Denied` with message: "
+                        "Because this is a test suite"
                     ],
                     "output": "ok"
                 }
