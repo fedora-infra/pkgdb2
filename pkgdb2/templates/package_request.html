@@ -10,11 +10,11 @@
 <h1>Request a new package</h1>
 
 
-<form action="{{ url_for('.package_request_new') }}" method="post">
+<form action="{{ url_for('.package_request_new') }}" method="post" id="new_pkg">
   <table>
     {{ render_field_in_row(form.pkgname) }}
     {{ render_field_in_row(form.summary) }}
-    {{ render_field_in_row(form.description) }}
+    {{ render_field_in_row(form.description, rows=5) }}
     {{ render_field_in_row(form.branches) }}
     {{ render_field_in_row(form.review_url, title="URL pointing directly to the
  location where the package review happened",
