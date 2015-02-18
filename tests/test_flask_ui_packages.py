@@ -982,7 +982,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/foobar/requests/1', follow_redirects=True,
+                '/package/requests/1', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -991,19 +991,9 @@ class FlaskUiPackagesTest(Modeltests):
 
             create_admin_actions(self.session)
 
-            # Package name / Admin Action do not match
-            output = self.app.post(
-                '/package/foobar/requests/1', follow_redirects=True,
-                data=data)
-            self.assertEqual(output.status_code, 200)
-            self.assertTrue(
-                '<li class="errors">The specified action (id:1) is not '
-                'related to the specified package: foobar.</li>'
-                in output.data)
-
             # User not allowed to view request
             output = self.app.post(
-                '/package/guake/requests/1', follow_redirects=True,
+                '/package/requests/1', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -1015,7 +1005,7 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.username = 'ralph'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/requests/1')
+            output = self.app.get('/package/requests/1')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h1>Update request: 1</h1>' in output.data)
             self.assertTrue(
@@ -1031,7 +1021,7 @@ class FlaskUiPackagesTest(Modeltests):
 
             # User cannot approve their own request
             output = self.app.post(
-                '/package/guake/requests/1',
+                '/package/requests/1',
                 follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -1046,7 +1036,7 @@ class FlaskUiPackagesTest(Modeltests):
         with user_set(pkgdb2.APP, user):
             # Admin cannot obsolete a request that is not their
             output = self.app.post(
-                '/package/guake/requests/1',
+                '/package/requests/1',
                 follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -1055,7 +1045,7 @@ class FlaskUiPackagesTest(Modeltests):
             data['status'] = 'Awaiting Review'
             # All good
             output = self.app.post(
-                '/package/guake/requests/1',
+                '/package/requests/1',
                 follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<li class="message">foo bar</li>'in output.data)

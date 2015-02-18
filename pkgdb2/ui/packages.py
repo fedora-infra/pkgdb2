@@ -323,10 +323,9 @@ def package_timeline(package):
 
 
 @UI.route('/package/requests/<action_id>', methods=['GET', 'POST'])
-@UI.route('/package/<package>/requests/<action_id>', methods=['GET', 'POST'])
 @packager_login_required
-def package_request_edit(action_id, package=None):
-    """ Edit an Admin Action status for the specified package
+def package_request_edit(action_id):
+    """ Edit an Admin Action status
     """
 
     admin_action = pkgdblib.get_admin_action(SESSION, action_id)
@@ -334,14 +333,9 @@ def package_request_edit(action_id, package=None):
         flask.flash('No action found with this identifier.', 'errors')
         return flask.render_template('msg.html')
 
-    if package is not None and (
-            not admin_action.package or admin_action.package.name != package):
-        flask.flash(
-            'The specified action (id:%s) is not related to the specified '
-            'package: %s.' % (action_id, package), 'errors')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package)
-        )
+    package = None
+    if admin_action.package:
+        package = admin_action.package.name
 
     if admin_action.status in ['Accepted', 'Blocked', 'Denied']:
         return flask.render_template(
