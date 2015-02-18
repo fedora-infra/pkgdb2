@@ -1122,6 +1122,17 @@ class Package(BASE):
         return session.query(cls).filter(Package.name == pkgname).one()
 
     @property
+    def requests_open(self):
+        """ Returns the list of open requests (Pending or Awaiting Review)
+        """
+        requests = [
+            req
+            for req in self.requests
+            if req.status in ['Pending', 'Awaiting Review']
+        ]
+        return requests
+
+    @property
     def requests_pending(self):
         """ Returns the list of pending branch requests
         """
