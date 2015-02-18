@@ -76,7 +76,7 @@ confusing what the difference is between that status an the per-branch status)
     {% endif %}
     {% endfor %}
 
-    {% for req in package.requests | reverse %}
+    {% for req in package.requests_open | reverse %}
     <tr>
         <th>{{ req.collection.name }} {{ req.collection.version }}</th>
         <td>{{ req.status }}</td>
