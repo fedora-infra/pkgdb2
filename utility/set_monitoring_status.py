@@ -186,7 +186,6 @@ def main():
 
     pkgdbclient = pkgdb2client.PkgDB(
         url,
-        insecure=not args.prod,
         login_callback=pkgdb2client.ask_password
     )
 
