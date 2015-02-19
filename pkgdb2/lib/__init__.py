@@ -1696,8 +1696,12 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
         raise PkgdbException('Branch %s not found' % clt_to)
 
     _validate_poc(user.username)
+    pkg_admin = has_acls(session, user.username, pkg_name, 'approveacls')
 
     status = 'Pending'
+    if pkg_admin:
+        status = 'Awaiting Review'
+
     if clt_to.name == 'Fedora EPEL':
         _validate_pkg(session, clt_to.version, package.name)
 
@@ -1729,8 +1733,7 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
     # If clt_to is Fedora
     # If user has approveacls on pkg_name
     # Then automatically grant the branch request
-    if clt_to.name == 'Fedora' \
-            and has_acls(session, user.username, pkg_name, 'approveacls'):
+    if clt_to.name == 'Fedora' and pkg_admin:
         for acl in ['commit', 'watchbugzilla',
                     'watchcommits', 'approveacls']:
             set_acl_package(

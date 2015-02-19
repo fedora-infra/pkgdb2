@@ -172,12 +172,14 @@ class FlaskUiAdminTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             # Before
-            # No action awaiting review
-            output = self.app.get('/admin/actions/')
+            # No action Pending
+            output = self.app.get('/admin/actions/?status=Pending')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h1>Actions</h1>' in output.data)
             self.assertFalse(
                 '<td class="col_odd">request.branch</td>' in output.data)
+            self.assertFalse(
+                '<td class="col_odd" >Awaiting Review</td>' in output.data)
 
             # But one action in total
             output = self.app.get('/admin/actions/?status=All')
@@ -189,8 +191,11 @@ class FlaskUiAdminTest(Modeltests):
                 output.data.count('<td class="col_odd">request.branch</td>'),
                 1
             )
-            # One action pending
-            output = self.app.get('/admin/actions/?status=Pending')
+            self.assertTrue(
+                '<td class="col_odd" >Awaiting Review</td>' in output.data)
+
+            # One action Awaiting Review
+            output = self.app.get('/admin/actions/?status=Awaiting Review')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h1>Actions</h1>' in output.data)
             self.assertTrue(
@@ -199,6 +204,8 @@ class FlaskUiAdminTest(Modeltests):
                 output.data.count('<td class="col_odd">request.branch</td>'),
                 1
             )
+            self.assertTrue(
+                '<td class="col_odd" >Awaiting Review</td>' in output.data)
 
             # Update
             output = self.app.get('/admin/action/1/status')
@@ -218,7 +225,7 @@ class FlaskUiAdminTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">user: admin updated action: 1 of guake '
-                'from `Pending` to `Approved`</li>' in output.data)
+                'from `Awaiting Review` to `Approved`</li>' in output.data)
 
             # After
             output = self.app.get('/admin/actions/')

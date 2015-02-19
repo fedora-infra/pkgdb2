@@ -1842,20 +1842,10 @@ class PkgdbLibtests(Modeltests):
             )
 
             # Check after insert
-            # Nothing awaiting review:
+            # One thing awaiting review:
             actions = pkgdblib.search_actions(
                 self.session,
                 package='guake',
-                page=1,
-                limit=50,
-            )
-            self.assertEqual(len(actions), 0)
-
-            # But something is in
-            actions = pkgdblib.search_actions(
-                self.session,
-                package='guake',
-                status=None,
                 page=1,
                 limit=50,
             )
@@ -1863,6 +1853,16 @@ class PkgdbLibtests(Modeltests):
             self.assertEqual(actions[0].user, 'pingou')
             self.assertEqual(actions[0].package.name, 'guake')
             self.assertEqual(actions[0].collection.branchname, 'el6')
+
+            # But nothing pending
+            actions = pkgdblib.search_actions(
+                self.session,
+                package='guake',
+                status='Pending',
+                page=1,
+                limit=50,
+            )
+            self.assertEqual(len(actions), 0)
 
     def test_get_admin_action(self):
         """ Test the get_admin_action method of pkgdblib. """

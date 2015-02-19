@@ -76,7 +76,7 @@ confusing what the difference is between that status an the per-branch status)
     {% endif %}
     {% endfor %}
 
-    {% for req in package.requests | reverse %}
+    {% for req in package.requests_open | reverse %}
     <tr>
         <th>{{ req.collection.name }} {{ req.collection.version }}</th>
         <td>{{ req.status }}</td>
@@ -331,7 +331,7 @@ confusing what the difference is between that status an the per-branch status)
           <ul class="nobullet">
           {% if g.fas_user and (g.fas_user.username in admins
                or g.fas_user.username in pending_admins) %}
-            <li class="inline">
+            <li>
               <form action="{{ url_for('.giveup_acl',
                 package=package.name, acl='approveacls') }}" method="POST">
                 <button class="bold pkg_button_grey inline" type="submit"
