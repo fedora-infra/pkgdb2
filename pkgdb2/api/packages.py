@@ -1099,7 +1099,7 @@ def api_package_critpath():
 @packager_login_required
 def api_monitor_package(package, status):
     '''
-    Update monitoring status
+    Monitoring status
     ------------------------
     Set the monitor status on the specified package.
 
