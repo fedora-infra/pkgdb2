@@ -1097,7 +1097,7 @@ def api_package_critpath():
 
 @API.route('/package/<package>/monitor/<status>', methods=['POST'])
 @packager_login_required
-def monitor_package(package, status):
+def api_monitor_package(package, status):
     '''
     Update monitoring status
     ------------------------
