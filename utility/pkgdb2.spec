@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.23.992
+Version:        1.23.993
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,13 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Feb 19 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.993-1
+- Update to 1.23.993 (pre-release of 1.24)
+- Drop the package name from the URL to edit a request (fix few bugs in the
+  process)
+- If requested is a package admin, request is set to Awaiting Review
+- Use secure=True against prod pkgdb in set_monitoring_status.py (Ralph Bean)
+
 * Wed Feb 18 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.992-1
 - Update to 1.23.992 (pre-release for 1.24)
 - Add a `My Request` tab in the main menu
