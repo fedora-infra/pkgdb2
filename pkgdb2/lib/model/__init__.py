@@ -1154,16 +1154,6 @@ class Package(BASE):
         ]
         return requests
 
-    def __init__(self, name, summary, description, status,
-                 review_url=None, upstream_url=None, monitor=False):
-        self.name = name
-        self.summary = summary
-        self.description = description
-        self.status = status
-        self.review_url = review_url
-        self.upstream_url = upstream_url
-        self.monitor=monitor
-
     def __hash__(self):
         """ Returns the name of the package as hash. """
         ord3 = lambda arg: '%.3d' % ord(arg)
