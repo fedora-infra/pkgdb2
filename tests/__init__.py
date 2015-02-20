@@ -207,6 +207,7 @@ def create_package(session):
         status='Approved',
         review_url='https://bugzilla.redhat.com/450189',
         upstream_url='http://guake.org',
+        monitor=False,
     )
     session.add(package)
 
@@ -217,6 +218,7 @@ def create_package(session):
         status='Approved',
         review_url='https://bugzilla.redhat.com/915074',
         upstream_url='http://fedorahosted.org/fedocal',
+        monitor=False,
     )
     session.add(package)
 
@@ -227,6 +229,7 @@ def create_package(session):
         status='Approved',
         review_url=None,
         upstream_url=None,
+        monitor=False,
     )
     session.add(package)
 
@@ -237,6 +240,7 @@ def create_package(session):
         status='Approved',
         review_url=None,
         upstream_url=None,
+        monitor=False,
     )
     session.add(package)
 
