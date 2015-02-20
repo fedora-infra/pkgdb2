@@ -1097,9 +1097,37 @@ def api_package_critpath():
 
 @API.route('/package/<package>/monitor/<status>', methods=['POST'])
 @packager_login_required
-def monitor_package(package, status):
-    ''' Set the monitor status on the specified package.
+def api_monitor_package(package, status):
     '''
+    Monitoring status
+    ------------------------
+    Set the monitor status on the specified package.
+
+    ::
+
+        /api/package/<package>/monitor/<status>
+
+    Accepts POST queries only.
+
+    :arg package: The name of the package to update.
+    :arg status: The status to set to the monitoring flag.
+
+
+    Sample response:
+
+    ::
+
+        {
+            "output": "ok",
+            "messages": "Monitoring status of guake set to True"
+        }
+
+        {
+          "output": "notok",
+          "error": "No package found by this name"
+        }
+
+     '''
 
     httpcode = 200
     output = {}
