@@ -1,0 +1,49 @@
+From a03413bf4b2aedf5daef211e10f7cfe444111e1e Mon Sep 17 00:00:00 2001
+From: Pierre-Yves Chibon <pingou@pingoured.fr>
+Date: Fri, 20 Feb 2015 15:53:49 +0100
+Subject: [PATCH 2/2] Adjust the unit-tests now that new package *are*
+ monitored by default (for real)
+
+---
+ tests/__init__.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/tests/__init__.py b/tests/__init__.py
+index 23dd401..45ee07d 100644
+--- a/tests/__init__.py
++++ b/tests/__init__.py
+@@ -212,6 +212,7 @@ def create_package(session):
+         status='Approved',
+         review_url='https://bugzilla.redhat.com/450189',
+         upstream_url='http://guake.org',
++        monitor=False,
+     )
+     session.add(package)
+ 
+@@ -222,6 +223,7 @@ def create_package(session):
+         status='Approved',
+         review_url='https://bugzilla.redhat.com/915074',
+         upstream_url='http://fedorahosted.org/fedocal',
++        monitor=False,
+     )
+     session.add(package)
+ 
+@@ -232,6 +234,7 @@ def create_package(session):
+         status='Approved',
+         review_url=None,
+         upstream_url=None,
++        monitor=False,
+     )
+     session.add(package)
+ 
+@@ -242,6 +245,7 @@ def create_package(session):
+         status='Approved',
+         review_url=None,
+         upstream_url=None,
++        monitor=False,
+     )
+     session.add(package)
+ 
+-- 
+2.1.0
+

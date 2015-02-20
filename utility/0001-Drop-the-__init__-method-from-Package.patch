@@ -1,0 +1,38 @@
+From c7ca8d6cec933f14b06e4f0637d633d63b6c6165 Mon Sep 17 00:00:00 2001
+From: Pierre-Yves Chibon <pingou@pingoured.fr>
+Date: Fri, 20 Feb 2015 15:50:05 +0100
+Subject: [PATCH 1/2] Drop the __init__ method from Package
+
+This allows to have the default values be the ones from the database instead of
+being overriden on our back by surprise...
+
+Conflicts:
+	pkgdb2/lib/model/__init__.py
+---
+ pkgdb2/lib/model/__init__.py | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/pkgdb2/lib/model/__init__.py b/pkgdb2/lib/model/__init__.py
+index 4f0a37c..4bb9be8 100644
+--- a/pkgdb2/lib/model/__init__.py
++++ b/pkgdb2/lib/model/__init__.py
+@@ -1090,16 +1090,6 @@ class Package(BASE):
+         """
+         return session.query(cls).filter(Package.name == pkgname).one()
+ 
+-    def __init__(self, name, summary, description, status,
+-                 review_url=None, upstream_url=None, monitor=False):
+-        self.name = name
+-        self.summary = summary
+-        self.description = description
+-        self.status = status
+-        self.review_url = review_url
+-        self.upstream_url = upstream_url
+-        self.monitor=monitor
+-
+     def __hash__(self):
+         """ Returns the name of the package as hash. """
+         ord3 = lambda arg: '%.3d' % ord(arg)
+-- 
+2.1.0
+

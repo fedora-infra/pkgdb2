@@ -3,13 +3,15 @@
 
 Name:           pkgdb2
 Version:        1.23
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
 URL:            http://fedorahosted.org/pkgdb2/
 Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.tar.gz
 Patch1:         0001-Monitor-packages-as-soon-as-they-are-added.patch
+Patch2:         0001-Drop-the-__init__-method-from-Package.patch
+Patch3:         0002-Adjust-the-unit-tests-now-that-new-package-are-monit.patch
 
 BuildArch:      noarch
 
@@ -66,6 +68,8 @@ for changes in the git, builds or bugs.
 %prep
 %setup -q
 %patch1 -p1 -b .
+%patch2 -p1 -b .
+%patch3 -p1 -b .
 
 
 %build
@@ -117,6 +121,9 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Feb 20 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-4
+- Fix setting the monitoring flag to true by dropping the __init__ for Package
+
 * Tue Feb 17 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-3
 - Actually turn on the monitoring flag with the proper patch
 
