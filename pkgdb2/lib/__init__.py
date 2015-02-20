@@ -2231,7 +2231,7 @@ def set_monitor_package(session, pkg_name, status, user):
         try:
             session.flush()
             pkgdb2.lib.utils.log(
-                session, None, 'package.monitor.update', dict(
+                session, package, 'package.monitor.update', dict(
                     agent=user.username,
                     status=status,
                     package=package.to_json(acls=False),
