@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.23.993
+Version:        1.23.994
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,15 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Feb 20 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.994-1
+- Update to 1.23.994 (pre-release of 1.24)
+- Do not use insecure connection to pkgdb in set_monitoring_status (Till Maas)
+- Add documentation for the API endpoint to set the monitoring status of a
+  package
+- Replace the monitoring toggle button by one that might be clearer
+- Fix actually setting the monitoring flag of new package to True (and adjust
+  the tests for this)
+
 * Thu Feb 19 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.993-1
 - Update to 1.23.993 (pre-release of 1.24)
 - Drop the package name from the URL to edit a request (fix few bugs in the
