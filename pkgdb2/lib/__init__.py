@@ -476,13 +476,13 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
             and not pkgdb2.is_pkgdb_admin(user) \
-            and not pkglisting.point_of_contact.startswith('group::'):
+            and not prev_poc.startswith('group::'):
         raise PkgdbException(
             'You are not allowed to change the point of contact.')
 
     # Is current PoC a group?
-    if pkglisting.point_of_contact.startswith('group::'):
-        group = pkglisting.point_of_contact.split('group::')[1]
+    if prev_poc.startswith('group::'):
+        group = prev_poc.split('group::')[1]
         if group not in user.groups:
             raise PkgdbException(
                 'You are not part of the group "%s", you are not allowed to'
