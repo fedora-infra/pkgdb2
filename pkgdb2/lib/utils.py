@@ -167,7 +167,11 @@ def set_bugzilla_owner(
 
     prev_poc_email = ''
     if prev_poc:
-        prev_poc_email = get_bz_email_user(prev_poc).bugzilla_email
+        if prev_poc.startswith('group::'):
+            prev_poc_email = get_fas_group(
+                prev_poc.replace('group::', '')).mailing_list
+        else:
+            prev_poc_email = get_bz_email_user(prev_poc).bugzilla_email
 
     bz_mail = '%s' % user_email
     prev_mail = '%s' % prev_poc_email
