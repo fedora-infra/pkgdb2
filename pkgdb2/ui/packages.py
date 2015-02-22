@@ -31,7 +31,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin, \
+from pkgdb2 import SESSION, APP, is_admin, is_pkgdb_admin, is_pkg_admin, \
     packager_login_required, is_authenticated
 from pkgdb2.ui import UI
 
@@ -585,6 +585,10 @@ def package_orphan(package, full=True):
         and (
             is_pkgdb_admin(flask.g.fas_user)
             or acl.point_of_contact == flask.g.fas_user.username
+            or (
+                acl.point_of_contact.startswith('group::') and
+                is_pkg_admin(SESSION, flask.g.fas_user, package.name)
+            )
         )
     ]
 
