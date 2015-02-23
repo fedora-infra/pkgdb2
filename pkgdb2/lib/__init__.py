@@ -341,11 +341,11 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     if acl not in pkgdb2.APP.config['AUTO_APPROVE'] \
             and status not in ('Removed', 'Obsolete'):
         _validate_poc(pkg_user)
-    else:
-        _validate_fas_user(pkg_user)
 
     if pkg_user.startswith('group:'):
         _validate_poc(pkg_user)
+    else:
+        _validate_fas_user(pkg_user)
 
     try:
         package = model.Package.by_name(session, pkg_name)
@@ -476,13 +476,13 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
     if pkglisting.point_of_contact != user.username \
             and pkglisting.point_of_contact != 'orphan' \
             and not pkgdb2.is_pkgdb_admin(user) \
-            and not pkglisting.point_of_contact.startswith('group::'):
+            and not prev_poc.startswith('group::'):
         raise PkgdbException(
             'You are not allowed to change the point of contact.')
 
     # Is current PoC a group?
-    if pkglisting.point_of_contact.startswith('group::'):
-        group = pkglisting.point_of_contact.split('group::')[1]
+    if prev_poc.startswith('group::'):
+        group = prev_poc.split('group::')[1]
         if group not in user.groups:
             raise PkgdbException(
                 'You are not part of the group "%s", you are not allowed to'
