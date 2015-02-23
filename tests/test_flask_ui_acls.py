@@ -532,11 +532,13 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="error">No package found by this name</li>'
                 in output.data)
 
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.fas_login_required')
-    def test_update_acl(self, login_func, mock_func):
+    def test_update_acl(self, login_func, mock_func, bz_email):
         """ Test the update_acl function. """
         login_func.return_value = None
+        bz_email.return_value = True
 
         create_package_acl(self.session)
 
@@ -829,11 +831,13 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_pending_acl_approve(self, login_func, mock_func):
+    def test_pending_acl_approve(self, login_func, mock_func, bz_email):
         """ Test the pending_acl_approve function. """
         login_func.return_value = None
+        bz_email.return_value = True
 
         create_package_acl(self.session)
         mock_func.return_value = ['pingou', 'ralph', 'kevin', 'toshio']
@@ -871,11 +875,13 @@ class FlaskUiAclsTest(Modeltests):
             self.assertFalse(
                 '<input type="submit" value="Update"/>' in output.data)
 
+    @patch('pkgdb2.lib.utils.get_bz_email_user')
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
-    def test_pending_acl_deny(self, login_func, mock_func):
+    def test_pending_acl_deny(self, login_func, mock_func, bz_email):
         """ Test the pending_acl_deny function. """
         login_func.return_value = None
+        bz_email.return_value = True
 
         create_package_acl(self.session)
         mock_func.return_value = ['pingou', 'ralph', 'kevin', 'toshio']
