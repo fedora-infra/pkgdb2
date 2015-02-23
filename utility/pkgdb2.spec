@@ -3,7 +3,7 @@
 
 Name:           pkgdb2
 Version:        1.23
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
@@ -12,6 +12,10 @@ Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.
 Patch1:         0001-Monitor-packages-as-soon-as-they-are-added.patch
 Patch2:         0001-Drop-the-__init__-method-from-Package.patch
 Patch3:         0002-Adjust-the-unit-tests-now-that-new-package-are-monit.patch
+Patch4:         0001-Figure-out-the-bugzilla-email-of-the-previous-PoC-if.patch
+Patch5:         0002-Validate-the-user-if-it-is-not-a-group.patch
+Patch6:         0003-Add-tests-checking-the-logic-in-pkgdb.lib-for-orphan.patch
+
 
 BuildArch:      noarch
 
@@ -70,6 +74,9 @@ for changes in the git, builds or bugs.
 %patch1 -p1 -b .
 %patch2 -p1 -b .
 %patch3 -p1 -b .
+%patch4 -p1 -b .
+%patch5 -p1 -b .
+%patch6 -p1 -b .
 
 
 %build
@@ -121,6 +128,14 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Feb 23 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-5
+- Add patches
+    0001-Figure-out-the-bugzilla-email-of-the-previous-PoC-if.patch
+    0002-Validate-the-user-if-it-is-not-a-group.patch
+    0003-Add-tests-checking-the-logic-in-pkgdb.lib-for-orphan.patch
+  from https://github.com/fedora-infra/pkgdb2/pull/161 fixing orphaning/retiring
+  a package having a group as PoC
+
 * Fri Feb 20 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23-4
 - Fix setting the monitoring flag to true by dropping the __init__ for Package
 

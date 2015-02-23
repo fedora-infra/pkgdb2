@@ -1,0 +1,33 @@
+From cbadfb28f09ebc41cee08fe6e0c0df100f4f104b Mon Sep 17 00:00:00 2001
+From: Pierre-Yves Chibon <pingou@pingoured.fr>
+Date: Sun, 22 Feb 2015 19:49:02 +0100
+Subject: [PATCH 2/3] Validate the user if it is not a group.
+
+The user check is simpler than the PoC check but we have already checked
+the validity of the PoC if the new status is Approved or Awaiting Review
+
+Conflicts:
+	pkgdb2/lib/__init__.py
+---
+ pkgdb2/lib/__init__.py | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/pkgdb2/lib/__init__.py b/pkgdb2/lib/__init__.py
+index c432a76..926f74b 100644
+--- a/pkgdb2/lib/__init__.py
++++ b/pkgdb2/lib/__init__.py
+@@ -280,6 +280,11 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
+             and status not in ('Removed', 'Obsolete'):
+         _validate_poc(pkg_user)
+ 
++    if pkg_user.startswith('group:'):
++        _validate_poc(pkg_user)
++    else:
++        _validate_fas_user(pkg_user)
++
+     try:
+         package = model.Package.by_name(session, pkg_name)
+     except NoResultFound:
+-- 
+2.1.0
+
