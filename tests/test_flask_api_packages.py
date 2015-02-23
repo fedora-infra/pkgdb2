@@ -501,7 +501,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
             self.assertEqual(pkg_acl[1].status, 'Approved')
 
-    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.lib.utils.set_bugzilla_owner')
     @patch('pkgdb2.packager_login_required')
     def test_api_package_retire(self, login_func, mock_func):
         """ Test the api_package_retire function.  """
@@ -639,7 +639,12 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "messages": ["", ""],
+                    "messages": [
+                        "user: admin updated package: guake status from: "
+                        "Approved to Retired on branch: f18",
+                        "user: admin updated package: guake status from: "
+                        "Approved to Retired on branch: master",
+                    ],
                     "output": "ok"
                 }
             )
