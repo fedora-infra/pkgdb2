@@ -27,7 +27,7 @@ import flask
 import requests
 
 import pkgdb2.lib as pkgdblib
-from pkgdb2 import SESSION
+from pkgdb2 import SESSION, APP
 from pkgdb2.api import API
 
 
@@ -152,7 +152,8 @@ def _vcs_acls_cache(out_format='text', eol=False):
 
     '''
     packages = pkgdblib.vcs_acls(
-        session=SESSION, eol=eol, oformat=out_format)
+        session=SESSION, eol=eol, oformat=out_format,
+        skip_pp=APP.config.get('PKGS_NOT_PROVENPACKAGER', None))
     output = []
     if out_format == 'json':
         output = {'packageAcls': packages,
@@ -160,9 +161,11 @@ def _vcs_acls_cache(out_format='text', eol=False):
     else:
         for package in sorted(packages):
             for branch in sorted(packages[package]):
-                    output.append(
-                        'avail | %(group)s,%(user)s | rpms/%(name)s/%(branch)s'
-                        % (packages[package][branch]))
+                if packages[package][branch]['group']:
+                    packages[package][branch]['group'] += ','
+                output.append(
+                    'avail | %(group)s%(user)s | rpms/%(name)s/%(branch)s'
+                    % (packages[package][branch]))
     return output
 
 
