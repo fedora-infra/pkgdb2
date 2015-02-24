@@ -2025,7 +2025,7 @@ def bugzilla(session, name=None):
     return output
 
 
-def vcs_acls(session, eol=False, oformat='text'):
+def vcs_acls(session, eol=False, oformat='text', skip_pp=None):
     """ Return the information to sync ACLs with gitolite.
 
     :arg session: the session to connect to the database with.
@@ -2050,8 +2050,11 @@ def vcs_acls(session, eol=False, oformat='text'):
                 output[pkg[0].encode('utf-8')] = {}
 
             if pkg[2] not in output[pkg[0]]:
+                groups = []
+                if skip_pp and pkg[0] not in skip_pp:
+                    groups.append('provenpackager')
                 output[pkg[0]][pkg[2].encode('utf-8')] = {'commit':
-                    {'groups': ['provenpackager'], 'people': []}
+                    {'groups': groups, 'people': []}
                 }
 
             if group:
@@ -2070,6 +2073,10 @@ def vcs_acls(session, eol=False, oformat='text'):
             else:
                 user = pkg[1]
 
+            groups = ''
+            if pkg[0] not in skip_pp:
+                groups = '@provenpackager'
+
             if pkg[0] in output:
                 if pkg[2] in output[pkg[0]]:
                     if user:
@@ -2077,26 +2084,28 @@ def vcs_acls(session, eol=False, oformat='text'):
                             output[pkg[0]][pkg[2]]['user'] += ','
                         output[pkg[0]][pkg[2]]['user'] += user
                     elif group:  # pragma: no cover
-                        if output[pkg[0]][pkg[2]]['group']:
+                        if output[pkg[0]][pkg[2]]['group'].strip():
                             output[pkg[0]][pkg[2]]['group'] += ','
                         output[pkg[0]][pkg[2]]['group'] += group
                 else:
-                    if group:  # pragma: no cover
+                    if group and groups:  # pragma: no cover
                         group = ',' + group
+
+
                     output[pkg[0]][pkg[2]] = {
                         'name': pkg[0],
                         'user': user or '',
-                        'group': '@provenpackager' + (group or ''),
+                        'group': groups + (group or ''),
                         'branch': pkg[2],
                     }
             else:
-                if group:
+                if group and groups:
                     group = ',' + group
                 output[pkg[0]] = {
                     pkg[2]: {
                         'name': pkg[0],
                         'user': user or '',
-                        'group': '@provenpackager' + (group or ''),
+                        'group': groups + (group or ''),
                         'branch': pkg[2],
                     }
                 }
