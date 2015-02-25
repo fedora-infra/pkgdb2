@@ -83,6 +83,34 @@ APP.wsgi_app = pkgdb2.proxy.ReverseProxied(APP.wsgi_app)
 SESSION = pkgdblib.create_session(APP.config['DB_URL'])
 
 
+def _monkey_patch_jsonify_jsonp():
+    """ Monkey patch Flask's "jsonify" to also handle JSONP
+
+    This makes it so that all API endpoints that return JSON data can now also
+    return JSONP data.  This is used specifically by some of our apps that want
+    to make ajax calls from one app to pkgdb for more information.
+    """
+
+    original_jsonify = flask.jsonify
+
+    def _jsonify_with_jsonp(*args, **kwargs):
+        response = original_jsonify(*args, **kwargs)
+
+        callback = flask.request.args.get('callback', None)
+
+        if callback and flask.request.method == 'GET':
+            if not isinstance(callback, basestring):
+                callback = callback[0]
+            response.mimetype = 'application/javascript'
+            response.set_data('%s(%s);' % (callback, response.get_data()))
+
+        return response
+
+    flask.jsonify = _jsonify_with_jsonp
+
+_monkey_patch_jsonify_jsonp()
+
+
 def is_authenticated():
     """ Returns wether a user is authenticated or not.
     """
