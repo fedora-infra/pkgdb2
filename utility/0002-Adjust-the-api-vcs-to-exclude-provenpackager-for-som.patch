@@ -1,0 +1,51 @@
+From 3a308452a5f0cac457f11eba8ddf5b56420f73da Mon Sep 17 00:00:00 2001
+From: Pierre-Yves Chibon <pingou@pingoured.fr>
+Date: Tue, 24 Feb 2015 21:47:26 +0100
+Subject: [PATCH 2/2] Adjust the /api/vcs to exclude provenpackager for some
+ packages configured
+
+---
+ pkgdb2/api/extras.py | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/pkgdb2/api/extras.py b/pkgdb2/api/extras.py
+index 21b22ac..a3ce653 100644
+--- a/pkgdb2/api/extras.py
++++ b/pkgdb2/api/extras.py
+@@ -27,7 +27,7 @@ import flask
+ import requests
+ 
+ import pkgdb2.lib as pkgdblib
+-from pkgdb2 import SESSION
++from pkgdb2 import SESSION, APP
+ from pkgdb2.api import API
+ 
+ 
+@@ -152,7 +152,8 @@ def _vcs_acls_cache(out_format='text', eol=False):
+ 
+     '''
+     packages = pkgdblib.vcs_acls(
+-        session=SESSION, eol=eol, oformat=out_format)
++        session=SESSION, eol=eol, oformat=out_format,
++        skip_pp=APP.config.get('PKGS_NOT_PROVENPACKAGER', None))
+     output = []
+     if out_format == 'json':
+         output = {'packageAcls': packages,
+@@ -160,9 +161,11 @@ def _vcs_acls_cache(out_format='text', eol=False):
+     else:
+         for package in sorted(packages):
+             for branch in sorted(packages[package]):
+-                    output.append(
+-                        'avail | %(group)s,%(user)s | rpms/%(name)s/%(branch)s'
+-                        % (packages[package][branch]))
++                if packages[package][branch]['group']:
++                    packages[package][branch]['group'] += ','
++                output.append(
++                    'avail | %(group)s%(user)s | rpms/%(name)s/%(branch)s'
++                    % (packages[package][branch]))
+     return output
+ 
+ 
+-- 
+2.1.0
+
