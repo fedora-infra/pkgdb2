@@ -98,7 +98,7 @@ def _monkey_patch_jsonify_jsonp():
 
         callback = flask.request.args.get('callback', None)
 
-        if callback:
+        if callback and flask.request.method == 'GET':
             if not isinstance(callback, basestring):
                 callback = callback[0]
             response.mimetype = 'application/javascript'
