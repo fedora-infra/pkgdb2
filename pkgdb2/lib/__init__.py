@@ -2038,75 +2038,75 @@ def vcs_acls(session, eol=False, oformat='text', skip_pp=None):
     output = {}
     pkgs = model.vcs_acls(session=session, eol=eol)
     if oformat == 'json':
-        for pkg in pkgs:
+        for pkgname, username, branchname in pkgs:
             user = None
             group = None
-            if pkg[1] and pkg[1].startswith('group::'):
-                    group = pkg[1].replace('group::', '')
+            if username and username.startswith('group::'):
+                    group = username.replace('group::', '')
             else:
-                user = pkg[1]
+                user = username
 
-            if pkg[0] not in output:
-                output[pkg[0].encode('utf-8')] = {}
+            if pkgname not in output:
+                output[pkgname.encode('utf-8')] = {}
 
-            if pkg[2] not in output[pkg[0]]:
+            if branchname not in output[pkgname]:
                 groups = []
-                if skip_pp and pkg[0] not in skip_pp:
+                if skip_pp and pkgname not in skip_pp:
                     groups.append('provenpackager')
-                output[pkg[0]][pkg[2].encode('utf-8')] = {'commit':
+                output[pkgname][branchname.encode('utf-8')] = {'commit':
                     {'groups': groups, 'people': []}
                 }
 
             if group:
-                output[pkg[0]][pkg[2]]['commit']['groups'].append(
+                output[pkgname][branchname]['commit']['groups'].append(
                     group.encode('utf-8'))
             if user:
-                output[pkg[0]][pkg[2]]['commit']['people'].append(
+                output[pkgname][branchname]['commit']['people'].append(
                     user.encode('utf-8'))
 
     else:
-        for pkg in pkgs:
+        for pkgname, username, branchname in pkgs:
             user = None
             group = None
-            if pkg[1] and pkg[1].startswith('group::'):
-                    group = pkg[1].replace('group::', '@')
+            if username and username.startswith('group::'):
+                    group = username.replace('group::', '@')
             else:
-                user = pkg[1]
+                user = username
 
             groups = ''
-            if pkg[0] not in skip_pp:
+            if pkgname not in skip_pp:
                 groups = '@provenpackager'
 
-            if pkg[0] in output:
-                if pkg[2] in output[pkg[0]]:
+            if pkgname in output:
+                if branchname in output[pkgname]:
                     if user:
-                        if output[pkg[0]][pkg[2]]['user']:
-                            output[pkg[0]][pkg[2]]['user'] += ','
-                        output[pkg[0]][pkg[2]]['user'] += user
+                        if output[pkgname][branchname]['user']:
+                            output[pkgname][branchname]['user'] += ','
+                        output[pkgname][branchname]['user'] += user
                     elif group:  # pragma: no cover
-                        if output[pkg[0]][pkg[2]]['group'].strip():
-                            output[pkg[0]][pkg[2]]['group'] += ','
-                        output[pkg[0]][pkg[2]]['group'] += group
+                        if output[pkgname][branchname]['group'].strip():
+                            output[pkgname][branchname]['group'] += ','
+                        output[pkgname][branchname]['group'] += group
                 else:
                     if group and groups:  # pragma: no cover
                         group = ',' + group
 
 
-                    output[pkg[0]][pkg[2]] = {
-                        'name': pkg[0],
+                    output[pkgname][branchname] = {
+                        'name': pkgname,
                         'user': user or '',
                         'group': groups + (group or ''),
-                        'branch': pkg[2],
+                        'branch': branchname,
                     }
             else:
                 if group and groups:
                     group = ',' + group
-                output[pkg[0]] = {
-                    pkg[2]: {
-                        'name': pkg[0],
+                output[pkgname] = {
+                    branchname: {
+                        'name': pkgname,
                         'user': user or '',
                         'group': groups + (group or ''),
-                        'branch': pkg[2],
+                        'branch': branchname,
                     }
                 }
 
