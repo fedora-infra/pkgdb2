@@ -2047,22 +2047,21 @@ def vcs_acls(session, eol=False, oformat='text', skip_pp=None):
                 user = username
 
             if pkgname not in output:
-                output[pkgname.encode('utf-8')] = {}
+                output[pkgname] = {}
 
             if branchname not in output[pkgname]:
                 groups = []
                 if skip_pp and pkgname not in skip_pp:
                     groups.append('provenpackager')
-                output[pkgname][branchname.encode('utf-8')] = {'commit':
-                    {'groups': groups, 'people': []}
+
+                output[pkgname][branchname] = {
+                    'commit': {'groups': groups, 'people': []}
                 }
 
             if group:
-                output[pkgname][branchname]['commit']['groups'].append(
-                    group.encode('utf-8'))
+                output[pkgname][branchname]['commit']['groups'].append(group)
             if user:
-                output[pkgname][branchname]['commit']['people'].append(
-                    user.encode('utf-8'))
+                output[pkgname][branchname]['commit']['people'].append(user)
 
     else:
         for pkgname, username, branchname in pkgs:
