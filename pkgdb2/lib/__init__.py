@@ -2036,14 +2036,14 @@ def _vcs_acls_json(packages, skip_pp=None):
         branch1: {
           name: pkg1,
           branch: branch1,
-          user: [user1, user2],
-          group: [group1, group2]
+          people: [user1, user2],
+          groups: [group1, group2]
         },
         branch2: {
           name: pkg1,
           branch: branch2,
-          user: [user1],
-          group: [group1, group3]
+          people: [user1],
+          groups: [group1, group3]
         },
       },
       pkg2:
