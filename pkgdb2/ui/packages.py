@@ -328,6 +328,9 @@ def package_timeline(package):
 def package_anitya(package, full=True):
     """ Return information anitya integration about this package.
     """
+    if str(full).lower() in ['0', 'false']:
+        full = False
+
     url = '%s/api/project/%s/%s' % (
         APP.config['PKGDB2_ANITYA_URL'],
         APP.config['PKGDB2_ANITYA_DISTRO'],
