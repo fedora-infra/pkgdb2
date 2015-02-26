@@ -2025,7 +2025,7 @@ def bugzilla(session, name=None):
     return output
 
 
-def _vcs_acls_json(packages):
+def _vcs_acls_json(packages, skip_pp=None):
     """ For a given list of package/user/branch build a dict of dict
     representating of who has commit access to which package.
 
@@ -2078,7 +2078,7 @@ def _vcs_acls_json(packages):
     return output
 
 
-def _vcs_acls_text(packages):
+def _vcs_acls_text(packages, skip_pp=None):
     """ For a given list of package/user/branch return a dict of dict of dict
     listing for each package, for each branch who has access to what.
 
@@ -2166,9 +2166,9 @@ def vcs_acls(session, eol=False, oformat='text', skip_pp=None):
     output = {}
     pkgs = model.vcs_acls(session=session, eol=eol)
     if oformat == 'json':
-        output = _vcs_acls_json(pkgs)
+        output = _vcs_acls_json(pkgs, skip_pp)
     else:
-        output = _vcs_acls_text(pkgs)
+        output = _vcs_acls_text(pkgs, skip_pp)
     return output
 
 
