@@ -2025,6 +2025,134 @@ def bugzilla(session, name=None):
     return output
 
 
+def _vcs_acls_json(packages, skip_pp=None):
+    """ For a given list of package/user/branch build a dict of dict
+    representating of who has commit access to which package.
+
+    The output dict is something like:
+
+    {
+      pkg1: {
+        branch1: {
+          name: pkg1,
+          branch: branch1,
+          people: [user1, user2],
+          groups: [group1, group2]
+        },
+        branch2: {
+          name: pkg1,
+          branch: branch2,
+          people: [user1],
+          groups: [group1, group3]
+        },
+      },
+      pkg2:
+      ...
+    }
+    """
+    output = {}
+    for pkgname, username, branchname in packages:
+        user = None
+        group = None
+        if username and username.startswith('group::'):
+                group = username.replace('group::', '')
+        else:
+            user = username
+
+        if pkgname not in output:
+            output[pkgname] = {}
+
+        if branchname not in output[pkgname]:
+            groups = []
+            if skip_pp and pkgname not in skip_pp:
+                groups.append('provenpackager')
+
+            output[pkgname][branchname] = {
+                'commit': {'groups': groups, 'people': []}
+            }
+
+        if group:
+            output[pkgname][branchname]['commit']['groups'].append(group)
+        if user:
+            output[pkgname][branchname]['commit']['people'].append(user)
+    return output
+
+
+def _vcs_acls_text(packages, skip_pp=None):
+    """ For a given list of package/user/branch return a dict of dict of dict
+    listing for each package, for each branch who has access to what.
+
+    The output dict is something like:
+
+    {
+      pkg1: {
+        branch1: {
+          name: "pkg1",
+          branch: "branch1",
+          user: "user1, user2",
+          group: "@group1, @group2",
+        },
+        branch2: {
+          name: "pkg1",
+          branch: "branch2",
+          user: "user1",
+          group: "@group1, @group3"
+        },
+      },
+      pkg2:
+      ...
+      }
+    }
+
+    """
+    output = {}
+    for pkgname, username, branchname in packages:
+        user = None
+        group = None
+        if username and username.startswith('group::'):
+                group = username.replace('group::', '@')
+        else:
+            user = username
+
+        groups = ''
+        if pkgname not in skip_pp:
+            groups = '@provenpackager'
+
+        if pkgname in output:
+            if branchname in output[pkgname]:
+                if user:
+                    if output[pkgname][branchname]['user']:
+                        output[pkgname][branchname]['user'] += ','
+                    output[pkgname][branchname]['user'] += user
+                elif group:  # pragma: no cover
+                    if output[pkgname][branchname]['group'].strip():
+                        output[pkgname][branchname]['group'] += ','
+                    output[pkgname][branchname]['group'] += group
+            else:
+                if group and groups:  # pragma: no cover
+                    group = ',' + group
+
+
+                output[pkgname][branchname] = {
+                    'name': pkgname,
+                    'user': user or '',
+                    'group': groups + (group or ''),
+                    'branch': branchname,
+                }
+        else:
+            if group and groups:
+                group = ',' + group
+            output[pkgname] = {
+                branchname: {
+                    'name': pkgname,
+                    'user': user or '',
+                    'group': groups + (group or ''),
+                    'branch': branchname,
+                }
+            }
+    return output
+
+
 def vcs_acls(session, eol=False, oformat='text', skip_pp=None):
     """ Return the information to sync ACLs with gitolite.
 
@@ -2038,78 +2166,9 @@ def vcs_acls(session, eol=False, oformat='text', skip_pp=None):
     output = {}
     pkgs = model.vcs_acls(session=session, eol=eol)
     if oformat == 'json':
-        for pkg in pkgs:
-            user = None
-            group = None
-            if pkg[1] and pkg[1].startswith('group::'):
-                    group = pkg[1].replace('group::', '')
-            else:
-                user = pkg[1]
-
-            if pkg[0] not in output:
-                output[pkg[0].encode('utf-8')] = {}
-
-            if pkg[2] not in output[pkg[0]]:
-                groups = []
-                if skip_pp and pkg[0] not in skip_pp:
-                    groups.append('provenpackager')
-                output[pkg[0]][pkg[2].encode('utf-8')] = {'commit':
-                    {'groups': groups, 'people': []}
-                }
-
-            if group:
-                output[pkg[0]][pkg[2]]['commit']['groups'].append(
-                    group.encode('utf-8'))
-            if user:
-                output[pkg[0]][pkg[2]]['commit']['people'].append(
-                    user.encode('utf-8'))
-
+        output = _vcs_acls_json(pkgs, skip_pp)
     else:
-        for pkg in pkgs:
-            user = None
-            group = None
-            if pkg[1] and pkg[1].startswith('group::'):
-                    group = pkg[1].replace('group::', '@')
-            else:
-                user = pkg[1]
-
-            groups = ''
-            if pkg[0] not in skip_pp:
-                groups = '@provenpackager'
-
-            if pkg[0] in output:
-                if pkg[2] in output[pkg[0]]:
-                    if user:
-                        if output[pkg[0]][pkg[2]]['user']:
-                            output[pkg[0]][pkg[2]]['user'] += ','
-                        output[pkg[0]][pkg[2]]['user'] += user
-                    elif group:  # pragma: no cover
-                        if output[pkg[0]][pkg[2]]['group'].strip():
-                            output[pkg[0]][pkg[2]]['group'] += ','
-                        output[pkg[0]][pkg[2]]['group'] += group
-                else:
-                    if group and groups:  # pragma: no cover
-                        group = ',' + group
-
-
-                    output[pkg[0]][pkg[2]] = {
-                        'name': pkg[0],
-                        'user': user or '',
-                        'group': groups + (group or ''),
-                        'branch': pkg[2],
-                    }
-            else:
-                if group and groups:
-                    group = ',' + group
-                output[pkg[0]] = {
-                    pkg[2]: {
-                        'name': pkg[0],
-                        'user': user or '',
-                        'group': groups + (group or ''),
-                        'branch': pkg[2],
-                    }
-                }
-
+        output = _vcs_acls_text(pkgs, skip_pp)
     return output
 
 
