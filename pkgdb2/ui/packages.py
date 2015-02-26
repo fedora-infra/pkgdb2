@@ -24,6 +24,7 @@ UI namespace for the Flask application.
 '''
 
 import flask
+import requests
 from dateutil import parser
 from math import ceil
 from sqlalchemy.exc import SQLAlchemyError
@@ -319,6 +320,31 @@ def package_timeline(package):
         package=package,
         from_date=from_date or '',
         packager=packager or '',
+    )
+
+
+@UI.route('/package/<package>/anitya')
+@UI.route('/package/<package>/anitya/<full>')
+def package_anitya(package, full=True):
+    """ Return information anitya integration about this package.
+    """
+    if str(full).lower() in ['0', 'false']:
+        full = False
+
+    url = '%s/api/project/%s/%s' % (
+        APP.config['PKGDB2_ANITYA_URL'],
+        APP.config['PKGDB2_ANITYA_DISTRO'],
+        package
+    )
+
+    req = requests.get(url)
+    data = req.json()
+
+    return flask.render_template(
+        'package_anitya.html',
+        full=full,
+        package=package,
+        data=data,
     )
 
 

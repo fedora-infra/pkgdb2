@@ -113,3 +113,7 @@ SESSION_COOKIE_SECURE = False
 # Set a default application root to prevent any potential cookie conflict if
 # pgkdb is not deployed at the root of the server
 APPLICATION_ROOT = '/'
+
+# Anitya settings
+PKGDB2_ANITYA_DISTRO='Fedora'
+PKGDB2_ANITYA_URL='https://release-monitoring.org'

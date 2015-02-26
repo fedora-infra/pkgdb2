@@ -25,7 +25,12 @@ confusing what the difference is between that status an the per-branch status)
     </tr>
 #}
     <tr>
-        <th><a target="_blank" href="https://fedoraproject.org/wiki/Upstream_release_monitoring">Monitoring</a></th>
+        <th>
+          <a target="_blank"
+          href="https://fedoraproject.org/wiki/Upstream_release_monitoring">
+            Monitoring
+          </a>
+        </th>
         <td class="container" {% if g.fas_user
                 %}title="Toggle bugzilla notification upon new releases found at release-monitoring.org"{%
                 else %}title="Login to change the monitoring status"{% endif %}>
@@ -90,6 +95,17 @@ confusing what the difference is between that status an the per-branch status)
         <a href="{{ url_for('.package_timeline', package=package.name) }}">
           <button class="bold pkg_button_blue inline" >
             Timeline
+          </button>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+        <a href="{{ url_for('.package_anitya', package=package.name) }}"
+            title="Find out what anitya knows about this package"
+            id="anityabutton">
+          <button class="bold pkg_button_blue inline" type="submit">
+            Anitya
           </button>
         </a>
       </td>
@@ -687,8 +703,7 @@ confusing what the difference is between that status an the per-branch status)
             return false;
         });
 
-        $('.info_retire').click(
-            function() {
+        $('.info_retire').click(function() {
                 var clt = $( this ).attr('data-clt');
                 var url = "{{
                     url_for('api_ns.api_dead_package',
@@ -705,6 +720,25 @@ confusing what the difference is between that status an the per-branch status)
 
         $('#requestbranch').click(function(){
             var _url = "{{ url_for('.package_request_branch', package=package.name, full=0) }}";
+            $.ajax({
+                url: _url,
+                type: 'GET',
+                dataType: 'html',
+                success: function(res) {
+                    var _elt = $(res);
+                    var _height = $(window).height() * 0.8;
+                    _elt.dialog({
+                        width: '50%',
+                        modal: true
+                    });
+                },
+            });
+
+            return false;
+        });
+
+        $('#anityabutton').click(function(){
+            var _url = "{{ url_for('.package_anitya', package=package.name, full=0) }}";
             $.ajax({
                 url: _url,
                 type: 'GET',
