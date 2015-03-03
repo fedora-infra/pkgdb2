@@ -289,7 +289,7 @@ class Bugzilla(object):
                     raise
 
 
-def send_email(fromAddress, toAddress, subject, message):
+def send_email(fromAddress, toAddress, subject, message, ccAddress=None):
     '''Send an email if there's an error.
 
     This will be replaced by sending messages to a log later.
@@ -298,6 +298,8 @@ def send_email(fromAddress, toAddress, subject, message):
     msg.add_header('To', ','.join(toAddress))
     msg.add_header('From', fromAddress)
     msg.add_header('Subject', subject)
+    if ccAddress is not None:
+        msg.add_header('Cc', ','.join(ccAddress))
     msg.set_payload(message)
     smtp = smtplib.SMTP('bastion')
     smtp.sendmail(fromAddress, toAddress, msg.as_string())
