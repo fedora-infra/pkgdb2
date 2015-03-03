@@ -364,8 +364,10 @@ if __name__ == '__main__':
 
     # Send notification of errors
     if errors:
-        #print '[DEBUG]', '\n'.join(errors)
-        send_email(
+        if DRY_RUN:
+            print '[DEBUG]', '\n'.join(errors)
+        else:
+            send_email(
                 EMAIL_FROM,
                 NOTIFYEMAIL,
                 'Errors while syncing bugzilla with the PackageDB',
