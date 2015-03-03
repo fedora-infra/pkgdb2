@@ -386,9 +386,8 @@ The Fedora admins.
                     'last_update': time.mktime(now.timetuple())
                 }
 
-    if new_data:
-        with open(DATA_CACHE, 'w') as stream:
-            json.dump(new_data, stream)
+    with open(DATA_CACHE, 'w') as stream:
+        json.dump(new_data, stream)
 
 
 if __name__ == '__main__':
