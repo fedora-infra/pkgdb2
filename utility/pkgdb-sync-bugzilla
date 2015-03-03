@@ -370,6 +370,8 @@ The Fedora admins.
                 # Only notify users once per hour
                 if (now - last_update).seconds >= 3600:
                     notify_user = True
+                else:
+                    new_data[user_email] = data[user_email]
             elif not data or user_email not in data:
                 notify_user = True
 
