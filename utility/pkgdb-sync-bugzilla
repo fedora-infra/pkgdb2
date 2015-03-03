@@ -32,9 +32,12 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 import argparse
+import datetime
+import time
 import sys
 import os
 import itertools
+import json
 import xmlrpclib
 import codecs
 import smtplib
@@ -71,6 +74,7 @@ PKGDBSERVER = pkgdb2.APP.config.get('SITE_URL')
 DRY_RUN = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_DRY_RUN', False)
 
 EMAIL_FROM = 'accounts@fedoraproject.org'
+DATA_CACHE = '/var/tmp/pkgdb_sync_bz.json'
 
 # When querying for current info, take segments of 1000 packages a time
 BZ_PKG_SEGMENT = 1000
@@ -306,6 +310,87 @@ def send_email(fromAddress, toAddress, subject, message, ccAddress=None):
     smtp.quit()
 
 
+def notify_users(errors):
+    ''' Browse the list of errors and when we can retrieve the email
+    address, use it to notify the user about the issue.
+    '''
+    tmpl_email = """Greetings.
+
+You are receiving this email because there's a problem with your
+bugzilla.redhat.com account.
+
+If you recently changed the email address associated with your
+Fedora account in the Fedora Account System, it is now out of sync
+with your bugzilla.redhat.com account. This leads to problems
+with Fedora packages you own or are CC'ed on bug reports for.
+
+Please take one of the following actions:
+
+a) login to your old bugzilla.redhat.com account and change the email
+address to match your current email in the Fedora account system.
+https://bugzilla.redhat.com login, click preferences, account
+information and enter new email address.
+
+b) Create a new account in bugzilla.redhat.com to match your
+email listed in your Fedora account system account.
+https://bugzilla.redhat.com/ click 'new account' and enter email
+address.
+
+c) Change your Fedora Account System email to match your existing
+bugzilla.redhat.com account.
+https://admin.fedoraproject.org/accounts login, click on 'my account',
+then 'edit' and change your email address.
+
+If you have questions or concerns, please let us know.
+
+Your prompt attention in this matter is appreciated.
+
+The Fedora admins.
+"""
+    data = None
+    if os.path.exists(DATA_CACHE):
+        try:
+            with open(DATA_CACHE) as stream:
+                data = json.load(stream)
+        except Exception as err:
+            print 'Could not read the json file', err
+
+    new_data = {}
+    for error in errors:
+        notify_user = False
+        if 'The name ' in error and ' is not a valid username' in error:
+            user_email = error.split(' is not a valid username')[0].split(
+                'The name ')[1].strip()
+            now = datetime.datetime.utcnow()
+
+            # See if we already know about this user
+            if data and user_email in data and data[user_email]['last_update']:
+                last_update = datetime.datetime.fromtimestamp(
+                    int(data[user_email]['last_update']))
+                # Only notify users once per hour
+                if (now - last_update).seconds >= 3600:
+                    notify_user = True
+            elif not data or user_email not in data:
+                notify_user = True
+
+            if notify_user:
+                send_email(
+                    EMAIL_FROM,
+                    [user_email],
+                    subject='Please fix your bugzilla.redhat.com account',
+                    message=tmpl_email,
+                    ccAddress=NOTIFYEMAIL,
+                )
+
+                new_data[user_email] = {
+                    'last_update': time.mktime(now.timetuple())
+                }
+
+    if new_data:
+        with open(DATA_CACHE, 'w') as stream:
+            json.dump(new_data, stream)
+
+
 if __name__ == '__main__':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
@@ -369,6 +454,7 @@ if __name__ == '__main__':
         if DRY_RUN:
             print '[DEBUG]', '\n'.join(errors)
         else:
+            notify_users(errors)
             send_email(
                 EMAIL_FROM,
                 NOTIFYEMAIL,
