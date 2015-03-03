@@ -362,7 +362,7 @@ if __name__ == '__main__':
             except xmlrpclib.Error, e:
                 # An error occurred in the xmlrpc call.  Shouldn't happen but
                 # we better see what it is
-                errors.append(str(e.args))
+                errors.append('%s -- %s' % (pkg, e.args[-1]))
 
     # Send notification of errors
     if errors:
