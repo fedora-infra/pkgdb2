@@ -70,17 +70,22 @@ NOTIFYEMAIL = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_NOTIFY_EMAIL')
 PKGDBSERVER = pkgdb2.APP.config.get('SITE_URL')
 DRY_RUN = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_DRY_RUN', False)
 
+EMAIL_FROM = 'accounts@fedoraproject.org'
+
 # When querying for current info, take segments of 1000 packages a time
 BZ_PKG_SEGMENT = 1000
+
 
 class DataChangedError(Exception):
     '''Raised when data we are manipulating changes while we're modifying it.'''
     pass
 
+
 def segment(iterable, chunk, fill=None):
     '''Collect data into `chunk` sized block'''
     args = [iter(iterable)] * chunk
     return itertools.izip_longest(*args, fillvalue=fill)
+
 
 class ProductCache(dict):
     def __init__(self, bz, acls):
@@ -360,7 +365,8 @@ if __name__ == '__main__':
     # Send notification of errors
     if errors:
         #print '[DEBUG]', '\n'.join(errors)
-        send_email('accounts@fedoraproject.org',
+        send_email(
+                EMAIL_FROM,
                 NOTIFYEMAIL,
                 'Errors while syncing bugzilla with the PackageDB',
 '''
