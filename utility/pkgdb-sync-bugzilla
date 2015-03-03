@@ -333,7 +333,7 @@ if __name__ == '__main__':
     for product in acls.keys():
         if product not in ('Fedora', 'Fedora EPEL'):
             continue
-        for pkg in acls[product]:
+        for pkg in sorted(acls[product]):
             if DRY_RUN:
                 print pkg
             pkgInfo = acls[product][pkg]
