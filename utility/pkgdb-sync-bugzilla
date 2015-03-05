@@ -353,7 +353,8 @@ The Fedora admins.
             with open(DATA_CACHE) as stream:
                 data = json.load(stream)
         except Exception as err:
-            print 'Could not read the json file', err
+            print 'Could not read the json file at %s: \nError:  %s' % (
+                DATA_CACHE, err)
 
     new_data = {}
     for error in errors:
