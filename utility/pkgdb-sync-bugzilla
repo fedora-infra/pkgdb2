@@ -347,7 +347,7 @@ Your prompt attention in this matter is appreciated.
 
 The Fedora admins.
 """
-    data = None
+    data = {}
     if os.path.exists(DATA_CACHE):
         try:
             with open(DATA_CACHE) as stream:
@@ -364,7 +364,7 @@ The Fedora admins.
             now = datetime.datetime.utcnow()
 
             # See if we already know about this user
-            if data and user_email in data and data[user_email]['last_update']:
+            if user_email in data and data[user_email]['last_update']:
                 last_update = datetime.datetime.fromtimestamp(
                     int(data[user_email]['last_update']))
                 # Only notify users once per hour
