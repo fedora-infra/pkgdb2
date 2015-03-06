@@ -440,5 +440,8 @@ from the Package Database.  Please have the problems taken care of:
 
 %s
 ''' % ('\n'.join(errors),))
+    else:
+        with open(DATA_CACHE, 'w') as stream:
+            json.dump({}, stream)
 
     sys.exit(0)
