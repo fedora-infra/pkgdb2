@@ -80,6 +80,14 @@ DATA_CACHE = '/var/tmp/pkgdb_sync_bz.json'
 BZ_PKG_SEGMENT = 1000
 
 
+TMPL_EMAIL_ADMIN = '''
+The following errors were encountered while updating bugzilla with information
+from the Package Database.  Please have the problems taken care of:
+
+%s
+'''
+
+
 class DataChangedError(Exception):
     '''Raised when data we are manipulating changes while we're modifying it.'''
     pass
@@ -434,12 +442,7 @@ if __name__ == '__main__':
                 EMAIL_FROM,
                 NOTIFYEMAIL,
                 'Errors while syncing bugzilla with the PackageDB',
-'''
-The following errors were encountered while updating bugzilla with information
-from the Package Database.  Please have the problems taken care of:
-
-%s
-''' % ('\n'.join(errors),))
+                TMPL_EMAIL_ADMIN % ('\n'.join(errors),))
     else:
         with open(DATA_CACHE, 'w') as stream:
             json.dump({}, stream)
