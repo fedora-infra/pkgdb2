@@ -831,6 +831,93 @@ class FlaskApiPackagesTest(Modeltests):
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
+    def test_api_package_retire4(self, login_func, mock_func):
+        """ Test a fourth time the api_package_retire function.  """
+        login_func.return_value = None
+        create_package_acl(self.session)
+        mock_func.log.return_value = ''
+
+        # Redirect as you are not a packager
+        user = FakeFasUser()
+        user.groups = []
+
+        # Add the EPEL 7 collection
+        collection = model.Collection(
+            name='Fedora EPEL',
+            version='7',
+            status='Active',
+            owner='kevin',
+            branchname='epel7',
+            dist_tag='.el7',
+        )
+        self.session.add(collection)
+        self.session.commit()
+
+        # Add guake to epel7
+        guake_pkg = model.Package.by_name(self.session, 'guake')
+        el7_collec = model.Collection.by_name(self.session, 'epel7')
+
+        pkgltg = model.PackageListing(
+            point_of_contact='kevin',
+            status='Approved',
+            package_id=guake_pkg.id,
+            collection_id=el7_collec.id,
+        )
+        self.session.add(pkgltg)
+        self.session.commit()
+        # No idea but access pkgltg.id later on fails with:
+        # DetachedInstanceError: Instance <PackageListing at ...> is not
+        # bound to a Session; attribute refresh operation cannot proceed
+        pkgltg_id = pkgltg.id
+
+        user = FakeFasUser()
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['epel7'],
+        }
+        # User does not have approveacls and is not PoC on that branch
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/retire/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "You are not allowed to retire this package.",
+                    "output": "notok"
+                }
+            )
+
+        # Give approveacls to pingou on guake branch epel7:
+        packager = model.PackageListingAcl(
+            fas_name='pingou',
+            packagelisting_id=pkgltg_id,
+            acl='approveacls',
+            status='Approved',
+        )
+        self.session.add(packager)
+        self.session.commit()
+
+        data = {
+            'pkgnames': 'guake',
+            'branches': ['epel7'],
+        }
+
+        # Retire a package where user has `approveacls` but is not PoC
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/retire/', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "messages": [""],
+                    "output": "ok"
+                }
+            )
+
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.packager_login_required')
     def test_api_package_unretire(self, login_func, mock_func):
         """ Test the api_package_unretire function.  """
         login_func.return_value = None
