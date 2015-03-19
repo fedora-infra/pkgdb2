@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.23.995
+Version:        1.24
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,14 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Mar 19 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24-1
+- Fix orphaning package having a group as PoC
+- Fix excluding provenpackager from some packages specified in the configuration
+- Monkey patch flask.jsonify to handle JSONP responses on GET requests (Ralph
+  Bean)
+- Anitya integration
+- Allow package admins to retire a package
+
 * Fri Feb 20 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.23.995-1
 - Update to 1.23.995 (pre-release of 1.24)
 - Fix the link to `My Requests` on the API documentation page
