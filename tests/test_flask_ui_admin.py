@@ -141,7 +141,7 @@ class FlaskUiAdminTest(Modeltests):
                 'Restrict to package: <input type="text" name="package" />'
                 in output.data)
             self.assertTrue(
-                '<p>No requests found for this user</p>' in output.data)
+                '<p>No actions found</p>' in output.data)
 
     @patch('pkgdb2.fas_login_required')
     def test_admin_action_edit_status(self, login_func):

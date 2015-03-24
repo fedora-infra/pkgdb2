@@ -110,10 +110,13 @@ $(function(){
         var _val = $(this).children(':selected').val();
         var row = $(this).parent().parent();
         row.children().each(function() {
-            $(this).children().children(
-                'option:contains(' + _val + ')').prop({selected: true});
-            var _val_lbl = _val.replace(' ', '_');
-            $(this).children().attr('class', '').addClass(_val_lbl);
+            var _item = $(this).children();
+            if (_item.val() != 'Approved') {
+                _item.children('option:contains(' + _val + ')').prop(
+                    {selected: true});
+                var _val_lbl = _val.replace(' ', '_');
+                _item.attr('class', '').addClass(_val_lbl);
+            }
         });
     });
 });
