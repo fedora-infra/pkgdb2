@@ -606,10 +606,14 @@ confusing what the difference is between that status an the per-branch status)
     $(function(){
         $("#committers").tablesorter();
 
+        {% if not(g.fas_user.username in admins
+                  or g.fas_user.username in commiters
+                  or is_admin) %}
         $('#monitor_lbl').click(function(){
             var _mon = $('#monitor');
             toggle_monitor(!_mon[0].checked);
         });
+        {% endif %}
 
         $('#givebutton').click(function(){
             var _url = "{{
