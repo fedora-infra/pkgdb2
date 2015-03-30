@@ -32,11 +32,11 @@ if 'PKGDB2_CONFIG' not in os.environ \
 BASE_URL = 'https://dl.fedoraproject.org/pub/%s/SRPMS/'
 VERSIONS = [
     ('rawhide', 'fedora/linux/development/rawhide/source'),
+    ('f22_up', 'fedora/linux/updates/22'),
     ('f21_up', 'fedora/linux/updates/21'),
+    ('f21_rel', 'fedora/linux/releases/21/Everything/source'),
     ('f20_up', 'fedora/linux/updates/20'),
     ('f20_rel', 'fedora/linux/releases/20/Everything/source'),
-    ('f19_up', 'fedora/linux/updates/19'),
-    ('f19_rel', 'fedora/linux/releases/19/Everything/source'),
     ('el7', 'epel/7'),
     ('el6', 'epel/6'),
     ('el5', 'epel/5'),
