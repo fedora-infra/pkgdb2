@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.24
+Version:        1.24.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,13 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Mar 31 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24.1
+- Update to 1.24.1
+- No automatic update of the branch where the user is Approved when editing ACL
+  tables
+- Fix 'undefined' when clicking monitor toggle (Ricky Elrod)
+- Adjust update_package_info for F22, F21 and F19
+
 * Thu Mar 19 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24-1
 - Fix orphaning package having a group as PoC
 - Fix excluding provenpackager from some packages specified in the configuration
