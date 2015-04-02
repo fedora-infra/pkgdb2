@@ -314,7 +314,7 @@ def send_email(fromAddress, toAddress, subject, message, ccAddress=None):
         msg.add_header('Cc', ','.join(ccAddress))
     msg.set_payload(message)
     smtp = smtplib.SMTP('bastion')
-    smtp.sendmail(fromAddress, toAddress, msg.as_string())
+    smtp.sendmail(fromAddress, toAddress + ccAddress, msg.as_string())
     smtp.quit()
 
 
