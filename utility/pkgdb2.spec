@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.24.1
+Version:        1.24.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,7 +118,11 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
-* Tue Mar 31 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24.1
+* Tue Apr 07 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24.2-1
+- Update to 1.24.2
+- Fix the pkgdb-sync-bugzilla script to actually CC who it says it is CC'ing
+
+* Tue Mar 31 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24.1-1
 - Update to 1.24.1
 - No automatic update of the branch where the user is Approved when editing ACL
   tables
