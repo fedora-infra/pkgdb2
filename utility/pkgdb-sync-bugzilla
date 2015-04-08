@@ -339,6 +339,7 @@ def notify_users(errors):
                 DATA_CACHE, err)
 
     new_data = {}
+    seen = []
     for error in errors:
         notify_user = False
         if 'The name ' in error and ' is not a valid username' in error:
@@ -357,6 +358,13 @@ def notify_users(errors):
                     new_data[user_email] = data[user_email]
             elif not data or user_email not in data:
                 notify_user = True
+
+            # Ensure we notify the user only once, no matter how many errors we
+            # got concerning them.
+            if user_email not in seen:
+                seen.append(user_email)
+            else:
+                notify_user = False
 
             if notify_user:
                 send_email(
