@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.24.2
+Version:        1.24.3
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Apr 08 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24.3-1
+- Update to 1.24.3
+- Fix the pkgdb-sync-bugzilla script to notify the user only once per hour
+
 * Tue Apr 07 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24.2-1
 - Update to 1.24.2
 - Fix the pkgdb-sync-bugzilla script to actually CC who it says it is CC'ing
