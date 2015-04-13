@@ -1,3 +1,18 @@
+input {
+    font-size: 100%;
+}
+
+textarea {
+    font-size: 100%;
+}
+
+button {
+    font-size: 100%;
+}
+
+select {
+    font-size: 100%;
+}
 
 .errors, .required {
     color: red;
@@ -595,6 +610,7 @@ table.list thead th,
 
 #requestpackage {
     float:none;
+    font-size: 100%;
 }
 
 #pkg_req_pending {
