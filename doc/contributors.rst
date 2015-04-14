@@ -34,3 +34,7 @@ This list is generated using
 
 The link icon (``static/link.png``) was designed by
 `Máirín Duffy <http://blog.linuxgrrl.com/>`_.
+
+The package review icon (``static/fedora-infra-icon_review.png``) was designed
+by `Micah Denn <http://micahdenn.com/>`_ under CC-BY license.
+
