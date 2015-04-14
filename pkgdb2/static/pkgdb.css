@@ -104,6 +104,11 @@ a.bugz {
   background: url(https://fedoraproject.org/static/images/icons/fedora-infra-icon_bugzilla.png) 0 50% no-repeat;
 }
 
+a.pkg_review {
+  padding-left: 20px;
+  background: url(https://admin.fedoraproject.org/pkgdb/static/fedora-infra-icon_review.png) 0 50% no-repeat;
+}
+
 a.pkgdb {
   padding-left: 20px;
   background: url(https://fedoraproject.org/static/mages/icons/fedora-infra-icon_pkgdb.png) 0 50% no-repeat;
