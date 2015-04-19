@@ -178,8 +178,11 @@ confusing what the difference is between that status an the per-branch status)
 
   </ul>
 
-  {% if g.fas_user and package.requests_pending and (
-        g.fas_user.username in admins or requester or is_admin) %}
+  {% if g.fas_user and package.requests_pending
+        and (
+            g.fas_user.username in admins
+            or g.fas_user.username in requester
+            or is_admin) %}
   <div id="pkg_req_pending">
   <p>
       There are some requests pending for this package, please review them:
