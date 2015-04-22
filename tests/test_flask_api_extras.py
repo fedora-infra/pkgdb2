@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb2
 from tests import (Modeltests, create_package_acl, create_package_acl2,
-                   create_package_critpath)
+                   create_package_critpath, create_retired_pkgs)
 
 
 class FlaskApiExtrasTest(Modeltests):
@@ -800,6 +800,82 @@ kernel-maint"""
 
         self.assertEqual(data, expected)
 
+    def test_api_retired_empty(self):
+        """ Test the api_retired function with an empty database. """
+
+        output = self.app.get('/api/retired/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 0\n# collection: Fedora"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/retired/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/retired/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'collection': 'Fedora',
+            'packages': [
+            ],
+            'total_packages': 0
+        }
+
+        self.assertDictEqual(data, expected)
+
+        output = self.app.get(
+            '/api/retired/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+    def test_api_retired_filled(self):
+        """ Test the api_retired function with a filled database. """
+        create_retired_pkgs(self.session)
+
+        output = self.app.get('/api/retired/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 1\n# collection: Fedora\nfedocal"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/retired/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/retired/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'collection': 'Fedora',
+            "total_packages": 1,
+            "packages": [
+                "fedocal",
+            ],
+        }
+
+        self.assertDictEqual(data, expected)
+
+        output = self.app.get(
+            '/api/retired/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get('/api/retired/?collection=Fedora EPEL')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 1\n"\
+        "# collection: Fedora EPEL\nguake"
+        self.assertEqual(output.data, expected)
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiExtrasTest)
