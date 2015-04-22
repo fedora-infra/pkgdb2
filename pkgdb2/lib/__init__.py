@@ -2404,3 +2404,17 @@ def edit_action_status(
         msg = 'Nothing to change.'
 
     return msg
+
+
+def get_retired_packages(session, collection):
+    """ Return the list of packaged retired on all active collections
+    belonging to the collectin specified.
+
+    :arg session: the session with which to connect to the database.
+    :arg collection: the collection name to filter the package retired.
+    :returns: a list of Package.
+    :rtype: list()
+
+    """
+
+    return model.Package.get_retired(session, collection)
