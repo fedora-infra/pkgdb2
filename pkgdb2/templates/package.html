@@ -178,8 +178,8 @@ confusing what the difference is between that status an the per-branch status)
 
   </ul>
 
-  {% if g.fas_user and package.requests_pending and (
-        g.fas_user.username in admins or requester or is_admin) %}
+  {% if g.fas_user and package.requests_pending
+        and (g.fas_user.username in admins or requester or is_admin) %}
   <div id="pkg_req_pending">
   <p>
       There are some requests pending for this package, please review them:
@@ -606,9 +606,9 @@ confusing what the difference is between that status an the per-branch status)
     $(function(){
         $("#committers").tablesorter();
 
-        {% if not(g.fas_user.username in admins
-                  or g.fas_user.username in commiters
-                  or is_admin) %}
+        {% if g.fas_user.username in admins
+            or g.fas_user.username in commiters
+            or is_admin %}
         $('#monitor_lbl').click(function(){
             var _mon = $('#monitor');
             toggle_monitor(!_mon[0].checked);
