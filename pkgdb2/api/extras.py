@@ -605,7 +605,8 @@ def api_retired():
 
         /api/retired
 
-    :kwarg collection: Either Fedora or EPEL (default: Fedora)
+    :kwarg collection: Either `Fedora` or `Fedora EPEL` or any other
+        collection name (default: Fedora)
     :kwarg format: Specify if the output is text or json (default: text).
 
     '''
