@@ -768,7 +768,7 @@ class PackageListing(BASE):
         sa.UniqueConstraint('package_id', 'collection_id'),
     )
 
-    package = relation("Package")
+    package = relation("Package", backref=backref('listing'),)
     collection = relation("Collection")
     acls = relation(
         PackageListingAcl,
