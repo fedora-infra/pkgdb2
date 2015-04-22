@@ -2251,7 +2251,7 @@ def get_monitored_package(session):
     """ Return the list of packaged flag as `to monitor`.
 
     :arg session: the session with which to connect to the database.
-    :returns: a list of Ppackage.
+    :returns: a list of Package.
     :rtype: list()
 
     """
