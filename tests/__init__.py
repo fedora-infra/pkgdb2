@@ -702,6 +702,74 @@ def create_admin_actions(session):
     session.commit()
 
 
+def create_retired_pkgs(session):
+    """ Add some retired packages. """
+    create_collection(session)
+    create_package(session)
+
+    guake_pkg = model.Package.by_name(session, 'guake')
+    fedocal_pkg = model.Package.by_name(session, 'fedocal')
+    geany_pkg = model.Package.by_name(session, 'geany')
+    offlineimap_pkg = model.Package.by_name(session, 'offlineimap')
+
+    f17_collec = model.Collection.by_name(session, 'f17')
+    f18_collec = model.Collection.by_name(session, 'f18')
+    devel_collec = model.Collection.by_name(session, 'master')
+    el4_collec = model.Collection.by_name(session, 'el4')
+    el6_collec = model.Collection.by_name(session, 'el6')
+
+    # Pkg: guake - Collection: EL4 - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='pingou',
+        status='Approved',
+        package_id=guake_pkg.id,
+        collection_id=el4_collec.id,
+    )
+    session.add(pkgltg)
+    # Pkg: guake - Collection: EL6 - Retired
+    pkgltg = model.PackageListing(
+        point_of_contact='pingou',
+        status='Retired',
+        package_id=guake_pkg.id,
+        collection_id=el6_collec.id,
+    )
+    session.add(pkgltg)
+    # Pkg: guake - Collection: devel - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='pingou',
+        status='Approved',
+        package_id=guake_pkg.id,
+        collection_id=devel_collec.id,
+    )
+    session.add(pkgltg)
+
+    # Pkg: fedocal - Collection: F17 - Retired
+    pkgltg = model.PackageListing(
+        point_of_contact='pingou',
+        status='Retired',
+        package_id=fedocal_pkg.id,
+        collection_id=f17_collec.id,
+    )
+    session.add(pkgltg)
+    # Pkg: fedocal - Collection: F18 - Retired
+    pkgltg = model.PackageListing(
+        point_of_contact='orphan',
+        status='Retired',
+        package_id=fedocal_pkg.id,
+        collection_id=f18_collec.id,
+    )
+    session.add(pkgltg)
+    # Pkg: fedocal - Collection: devel - Retired
+    pkgltg = model.PackageListing(
+        point_of_contact='orphan',
+        status='Retired',
+        package_id=fedocal_pkg.id,
+        collection_id=devel_collec.id,
+    )
+    session.add(pkgltg)
+    session.commit()
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Modeltests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
