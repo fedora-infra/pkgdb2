@@ -88,6 +88,17 @@ def inject_is_admin():
                 version=__version__)
 
 
+@UI.context_processor
+def inject_fedmenu():
+    """ Inject fedmenu url if available. """
+    if 'FEDMENU_URL' in APP.config:
+        return dict(
+            fedmenu_url=APP.config['FEDMENU_URL'],
+            fedmenu_data_url=APP.config['FEDMENU_DATA_URL'],
+        )
+    return dict()
+
+
 @UI.route('/')
 def index():
     ''' Display the index package DB page. '''

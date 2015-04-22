@@ -151,6 +151,26 @@
         });
     </script>
     {% endif %}
+
+    {% if fedmenu_url is defined %}
+    <script src="{{fedmenu_url}}/js/fedora-libravatar.js"></script>
+    <script src="{{fedmenu_url}}/js/fedmenu.js"></script>
+    <script>
+      fedmenu({
+          'url': '{{fedmenu_data_url}}',
+          'mimeType': 'application/javascript',
+          'position': 'bottom-right',
+          {% if packager is defined %}
+            'user': '{{packager}}',
+          {% endif %}
+          {% if package is defined %}
+            'package': '{{package.name}}',
+            'alignment': 'horizontal',
+          {% endif %}
+      });
+    </script>
+    {% endif %}
+
     {% endblock %}
 
   </body>
