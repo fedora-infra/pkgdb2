@@ -34,7 +34,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 from pkgdb2.lib import model
-from tests import Modeltests, create_package, create_package_acl
+from tests import (Modeltests, create_package, create_package_acl,
+                   create_retired_pkgs)
 
 
 class Packagetests(Modeltests):
@@ -174,6 +175,18 @@ class Packagetests(Modeltests):
             pkg_status='Awaiting Review',
         )
         self.assertEqual(len(packages), 0)
+
+    def test_pkg_retired_everywhere(self):
+        """ Test the retired_everywhere property of Package. """
+        create_retired_pkgs(self.session)
+
+        packages = model.Package.search(
+            session=self.session, pkg_name='guake', limit=1)
+        self.assertFalse(packages[0].retired_everywhere)
+
+        packages = model.Package.search(
+            session=self.session, pkg_name='fedocal', limit=1)
+        self.assertTrue(packages[0].retired_everywhere)
 
 
 if __name__ == '__main__':
