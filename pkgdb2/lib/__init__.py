@@ -612,7 +612,6 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
             pkg = pkglisting.package
             if pkg.retired_everywhere:
                 pkg.monitor = False
-                session.add(pkg)
                 session.flush()
             if prev_status != 'Orphaned':
                 # Update Bugzilla about new owner
