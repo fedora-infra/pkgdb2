@@ -768,7 +768,7 @@ class PackageListing(BASE):
         sa.UniqueConstraint('package_id', 'collection_id'),
     )
 
-    package = relation("Package", backref=backref('listing'),)
+    package = relation("Package")
     collection = relation("Collection")
     acls = relation(
         PackageListingAcl,
@@ -1161,7 +1161,7 @@ class Package(BASE):
         or not.
         """
         active = True
-        for pkglist in self.listing:
+        for pkglist in self.listings:
             if pkglist.collection.status != 'EOL' and pkglist.status != 'Retired':
                 active = False
         return active
