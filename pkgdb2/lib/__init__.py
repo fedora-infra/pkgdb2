@@ -608,6 +608,11 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 acl.status = 'Obsolete'
                 session.add(acl)
             session.flush()
+            # If the package is retired everywhere, stop monitoring it
+            pkg = pkglisting.package
+            if pkg.retired_everywhere:
+                pkg.monitor = False
+                session.flush()
             if prev_status != 'Orphaned':
                 # Update Bugzilla about new owner
                 pkgdb2.lib.utils.set_bugzilla_owner(

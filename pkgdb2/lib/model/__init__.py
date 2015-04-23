@@ -1155,6 +1155,17 @@ class Package(BASE):
         ]
         return requests
 
+    @property
+    def retired_everywhere(self):
+        """ Returns whether the package is retired on all active branches
+        or not.
+        """
+        active = True
+        for pkglist in self.listings:
+            if pkglist.collection.status != 'EOL' and pkglist.status != 'Retired':
+                active = False
+        return active
+
     def __hash__(self):
         """ Returns the name of the package as hash. """
         ord3 = lambda arg: '%.3d' % ord(arg)
