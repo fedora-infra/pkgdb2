@@ -590,3 +590,54 @@ def api_dead_package(pkg_name, clt_name):
         content_type="text/plain;charset=UTF-8",
         status=req.status_code,
     )
+
+
+@API.route('/retired/')
+@API.route('/retired')
+def api_retired():
+    '''
+    List packages retired
+    ---------------------
+    Return the list of packages in pkgdb that have been retired on all
+    Fedora or EPEL collections.
+
+    ::
+
+        /api/retired
+
+    :kwarg collection: Either `Fedora` or `Fedora EPEL` or any other
+        collection name (default: Fedora)
+    :kwarg format: Specify if the output is text or json (default: text).
+
+    '''
+
+    collection = flask.request.args.get('collection', 'Fedora')
+    out_format = flask.request.args.get('format', 'text')
+
+    if out_format not in ('text', 'json'):
+        out_format = 'text'
+
+    if request_wants_json():
+        out_format = 'json'
+
+    output = {}
+
+    pkgs = pkgdblib.get_retired_packages(SESSION, collection=collection)
+
+    if out_format == 'json':
+        output = {
+            "packages": [pkg.name for pkg in pkgs],
+            "total_packages": len(pkgs),
+            "collection": collection,
+        }
+        return flask.jsonify(output)
+    else:
+        output = [
+            "# Number of packages: %s" % len(pkgs),
+            "# collection: %s" % collection]
+        for pkg in pkgs:
+            output.append("%s" % (pkg.name))
+        return flask.Response(
+            '\n'.join(output),
+            content_type="text/plain;charset=UTF-8"
+        )

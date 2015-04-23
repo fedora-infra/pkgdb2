@@ -43,6 +43,7 @@ from sqlalchemy.orm import relation
 from sqlalchemy.orm import backref
 from sqlalchemy.sql import or_
 from sqlalchemy.sql import and_
+from sqlalchemy.sql import not_
 
 BASE = declarative_base()
 
@@ -1508,6 +1509,56 @@ class Package(BASE):
 
         if pkg_status:
             query = query.filter(Package.status == pkg_status)
+
+        return query.all()
+
+    @classmethod
+    def get_retired(cls, session, collection):
+        """ Return the list of all Packages present in the database that are
+        retired on all the active branch of the specified collection.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        """
+
+        subq = session.query(
+            Package.id
+        ).filter(
+            Package.id == PackageListing.package_id
+        ).filter(
+            PackageListing.status != 'Retired'
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Collection.name == collection
+        ).filter(
+            Collection.status != 'EOL'
+        ).subquery()
+
+        subq2 = session.query(
+            Package.id
+        ).filter(
+            Package.id == PackageListing.package_id
+        ).filter(
+            PackageListing.status == 'Retired'
+        ).filter(
+            PackageListing.collection_id == Collection.id
+        ).filter(
+            Collection.name == collection
+        ).filter(
+            Collection.status != 'EOL'
+        ).subquery()
+
+        query = session.query(
+            Package
+        ).filter(
+            Package.id.in_(subq2)
+        ).filter(
+            not_(Package.id.in_(subq))
+        ).order_by(
+            Package.name
+        )
 
         return query.all()
 
