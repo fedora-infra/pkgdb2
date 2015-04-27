@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.24.3
+Version:        1.25
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,15 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Apr 27 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.25-1
+- Update to 1.25
+- css fix to make pkgdb2 prettier on high resolution display
+- Add fedmenu (Ralph Bean)
+- Fix toggling the monitoring flag on a package
+- Add a new API endpoint listing the package retired on all active branches of a
+  specified collection
+- Turn off monitoring when the package is retired on all branches
+
 * Wed Apr 08 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.24.3-1
 - Update to 1.24.3
 - Fix the pkgdb-sync-bugzilla script to notify the user only once per hour
