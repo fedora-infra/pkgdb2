@@ -1200,6 +1200,11 @@ def package_request_new():
         pkg_status = 'Approved'
         pkg_critpath = False
         pkg_collection = form.branches.data
+        if not 'master' in pkg_collection:
+            flask.flash(
+                'Adding a request for `master` branch, this branch is '
+                'mandatory')
+            pkg_collection.append('master')
         pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
 
