@@ -39,7 +39,7 @@ from flask.ext.fas_openid import FAS
 import pkgdb2.mail_logging
 
 
-__version__ = '1.25'
+__version__ = '1.25.1'
 __api_version__ = '1.15'
 
 APP = flask.Flask(__name__)
