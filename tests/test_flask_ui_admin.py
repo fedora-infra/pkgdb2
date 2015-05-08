@@ -36,7 +36,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 import pkgdb2
-from tests import (Modeltests, FakeFasUser, FakeFasUserAdmin, user_set)
+from tests import (
+    Modeltests, FakeFasUser, FakeFasUserAdmin, user_set,
+    create_collection, create_package, create_admin_actions,
+)
 
 
 class FlaskUiAdminTest(Modeltests):
@@ -47,6 +50,7 @@ class FlaskUiAdminTest(Modeltests):
         super(FlaskUiAdminTest, self).setUp()
 
         pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.APP.config['ITEMS_PER_PAGE'] = 1
         pkgdb2.SESSION = self.session
         pkgdb2.ui.SESSION = self.session
         pkgdb2.ui.acls.SESSION = self.session
@@ -142,6 +146,21 @@ class FlaskUiAdminTest(Modeltests):
                 in output.data)
             self.assertTrue(
                 '<p>No actions found</p>' in output.data)
+
+            # Create some actions to see
+            create_collection(pkgdb2.SESSION)
+            create_package(pkgdb2.SESSION)
+            create_admin_actions(pkgdb2.SESSION, n=2)
+
+            output = self.app.get('/admin/actions/?status=all')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Actions</h1>' in output.data)
+            self.assertTrue(
+                'Restrict to package: <input type="text" name="package" />'
+                in output.data)
+            # 2 actions = 2 pages
+            self.assertTrue('<td>1 / 2</td>' in output.data)
+
 
     @patch('pkgdb2.fas_login_required')
     def test_admin_action_edit_status(self, login_func):
