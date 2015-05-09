@@ -684,7 +684,7 @@ def create_package_acl2(session):
     session.commit()
 
 
-def create_admin_actions(session):
+def create_admin_actions(session, n=1):
     """ Add an Admin Actions for the tests. """
     guake_pkg = model.Package.by_name(session, 'guake')
     el6_collec = model.Collection.by_name(session, 'el6')
@@ -698,6 +698,20 @@ def create_admin_actions(session):
     )
 
     session.add(action)
+
+    if n > 1:
+        f17_collec = model.Collection.by_name(session, 'f17')
+
+        action = model.AdminAction(
+            package_id=guake_pkg.id,
+            collection_id=f17_collec.id,
+            user='ralph',
+            _status='Pending',
+            action='request.branch',
+        )
+
+        session.add(action)
+
 
     session.commit()
 
