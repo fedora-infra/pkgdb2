@@ -50,7 +50,6 @@ class FlaskUiAdminTest(Modeltests):
         super(FlaskUiAdminTest, self).setUp()
 
         pkgdb2.APP.config['TESTING'] = True
-        pkgdb2.APP.config['ITEMS_PER_PAGE'] = 1
         pkgdb2.SESSION = self.session
         pkgdb2.ui.SESSION = self.session
         pkgdb2.ui.acls.SESSION = self.session
@@ -152,6 +151,10 @@ class FlaskUiAdminTest(Modeltests):
             create_package(pkgdb2.SESSION)
             create_admin_actions(pkgdb2.SESSION, n=2)
 
+            # set the pagination
+            pkgdb2.APP.config['ITEMS_PER_PAGE'] = 1
+
+            # Check the list
             output = self.app.get('/admin/actions/?status=all')
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<h1>Actions</h1>' in output.data)
@@ -160,6 +163,9 @@ class FlaskUiAdminTest(Modeltests):
                 in output.data)
             # 2 actions = 2 pages
             self.assertTrue('<td>1 / 2</td>' in output.data)
+
+            # Reset the pagination
+            pkgdb2.APP.config['ITEMS_PER_PAGE'] = 50
 
 
     @patch('pkgdb2.fas_login_required')
