@@ -1166,6 +1166,18 @@ class Package(BASE):
                 active = False
         return active
 
+    @property
+    def monitoring_status(self):
+        """ Return the monitoring status of the package be it either True,
+        False or nobuild.
+        """
+        monitor = package.monitor
+        if monitor == '1':
+            monitor = True
+        elif monitor == '0':
+            monitor = False
+        return monitor
+
     def __hash__(self):
         """ Returns the name of the package as hash. """
         ord3 = lambda arg: '%.3d' % ord(arg)
@@ -1582,11 +1594,6 @@ class Package(BASE):
 
         ## pylint complains about timetuple() but it is a method
         # pylint: disable=E1102
-        monitor = False
-        if self.monitor == '1':
-            monitor = True
-        elif self.monitor == 'nobuild':
-            monitor = 'nobuild'
 
         result = {
             'name': self.name,
@@ -1596,7 +1603,7 @@ class Package(BASE):
             'review_url': self.review_url,
             'upstream_url': self.upstream_url,
             'creation_date': time.mktime(self.date_created.timetuple()),
-            'monitor': monitor,
+            'monitor': self.monitoring_status,
         }
 
         _seen.append(cls)
