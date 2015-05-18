@@ -331,6 +331,14 @@ def package_anitya(package, full=True):
     if str(full).lower() in ['0', 'false']:
         full = False
 
+    pkg = None
+    try:
+        pkg = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        flask.flash('No package of this name found.', 'errors')
+        return flask.render_template('msg.html')
+
     url = '%s/api/project/%s/%s' % (
         APP.config['PKGDB2_ANITYA_URL'],
         APP.config['PKGDB2_ANITYA_DISTRO'],
@@ -344,6 +352,7 @@ def package_anitya(package, full=True):
         'package_anitya.html',
         full=full,
         package=package,
+        pkg=pkg,
         data=data,
     )
 
