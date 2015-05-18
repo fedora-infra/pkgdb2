@@ -349,7 +349,6 @@ def package_anitya(package, full=True):
 
 
 @UI.route('/package/requests/<action_id>', methods=['GET', 'POST'])
-@packager_login_required
 def package_request_edit(action_id):
     """ Edit an Admin Action status
     """
@@ -364,6 +363,13 @@ def package_request_edit(action_id):
         package = admin_action.package.name
 
     if admin_action.status in ['Accepted', 'Blocked', 'Denied']:
+        return flask.render_template(
+            'actions_update_ro.html',
+            admin_action=admin_action,
+            action_id=action_id,
+        )
+
+    if not is_authenticated() or not 'packager' in flask.g.fas_user.groups:
         return flask.render_template(
             'actions_update_ro.html',
             admin_action=admin_action,
@@ -393,7 +399,7 @@ def package_request_edit(action_id):
     action_status = ['Pending', 'Awaiting Review', 'Blocked']
     if admin_action.user == flask.g.fas_user.username:
         action_status = ['Pending', 'Obsolete']
-        if pkg_admin:
+        if pkg_admin or admin_action.action == 'request.package':
             action_status.append('Awaiting Review')
 
     form = pkgdb2.forms.EditActionStatusForm(

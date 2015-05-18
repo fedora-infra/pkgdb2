@@ -20,12 +20,14 @@
 </p>
 {% endif %}
 {% if tag %}
+{% if admin_action.action != 'request.package' %}
 <p>
-    During these 7 days, you can 'Block' the new branch process by setting
-    the request to <span class="italic bold">Blocked</span> or 'Approve' it by
-    setting it to <span class="italic bold">Awaiting Review</span> to inform
-    admins that they can now review this request.
+    During the 7 days following the request, you can 'Block' the new branch
+    process by setting the request to <span class="italic bold">Blocked</span>
+    or 'Approve' it by setting it to <span class="italic bold">Awaiting Review</span>
+    to inform admins that they can now review this request.
 </p>
+{% endif %}
 <form action="{{ url_for('.package_request_edit',
                 package=package.name or None, action_id=action_id) }}"
     method="post">
