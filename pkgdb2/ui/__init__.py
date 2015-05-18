@@ -84,6 +84,11 @@ def inject_is_admin():
         flask.g.pending_acls = pkgdblib.get_pending_acl_user(
             SESSION, flask.g.fas_user.username)
         flask.session['_justlogedin'] = None
+
+    justlogedout = flask.session.get('_justlogedout', False)
+    if justlogedout:
+        flask.session['_justlogedout'] = None
+
     return dict(is_admin=is_pkgdb_admin(flask.g.fas_user),
                 version=__version__)
 
