@@ -913,6 +913,29 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="message">Branch el6 requested for user pingou</'
                 in output.data)
 
+        # Check the request authenticated
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/requests/1')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Update request: 1</h1>' in output.data)
+            self.assertTrue(
+                'As current admin of the package  you have the possibility'
+                in output.data)
+            self.assertTrue(
+                '<form action="/package/requests/1"' in output.data)
+
+        # Check the request un-authenticated
+        with user_set(pkgdb2.APP, None):
+            output = self.app.get('/package/requests/1')
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<h1>Request: 1</h1>' in output.data)
+            self.assertFalse(
+                'As current admin of the package  you have the possibility'
+                in output.data)
+            self.assertFalse(
+                '<form action="/package/requests/1"' in output.data)
+
     @patch('pkgdb2.lib.utils.get_packagers')
     @patch('pkgdb2.packager_login_required')
     def test_package_request_new(self, login_func, mock_func):
