@@ -166,6 +166,9 @@ def fas_login_required(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):  # pragma: no cover
         """ Do the actual work of the decorator. """
+        if flask.session.get('_justlogedout', False):
+            return flask.redirect(flask.url_for('ui_ns.index'))
+
         if not is_authenticated():
             return flask.redirect(flask.url_for(
                 'ui_ns.login', next=flask.request.url))
@@ -180,6 +183,9 @@ def packager_login_required(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
+        if flask.session.get('_justlogedout', False):
+            return flask.redirect(flask.url_for('ui_ns.index'))
+
         if not is_authenticated():  # pragma: no cover
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
@@ -201,6 +207,9 @@ def is_admin(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
+        if flask.session.get('_justlogedout', False):
+            return flask.redirect(flask.url_for('ui_ns.index'))
+
         if not is_authenticated():  # pragma: no cover
             return flask.redirect(flask.url_for('ui_ns.login',
                                                 next=flask.request.url))
