@@ -393,7 +393,7 @@ def package_request_edit(action_id):
     action_status = ['Pending', 'Awaiting Review', 'Blocked']
     if admin_action.user == flask.g.fas_user.username:
         action_status = ['Pending', 'Obsolete']
-        if pkg_admin:
+        if pkg_admin or admin_action.action == 'request.package':
             action_status.append('Awaiting Review')
 
     form = pkgdb2.forms.EditActionStatusForm(
