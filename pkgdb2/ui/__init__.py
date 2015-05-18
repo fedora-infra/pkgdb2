@@ -79,11 +79,16 @@ def inject_is_admin():
     """ Inject whether the user is a pkgdb2 admin or not in every page
     (every template).
     """
-    justlogedin = flask.session.get('_justlogedin', False)
+    justlogedin = flask.session.get('_justloggedin', False)
     if justlogedin:  # pragma: no cover
         flask.g.pending_acls = pkgdblib.get_pending_acl_user(
             SESSION, flask.g.fas_user.username)
-        flask.session['_justlogedin'] = None
+        flask.session['_justloggedin'] = None
+
+    justlogedout = flask.session.get('_justloggedout', False)
+    if justlogedout:
+        flask.session['_justloggedout'] = None
+
     return dict(is_admin=is_pkgdb_admin(flask.g.fas_user),
                 version=__version__)
 
@@ -196,7 +201,7 @@ def msg():
 @FAS.postlogin
 def check_pending_acls(return_url):  # pragma: no cover
     """ After login check if the user has ACLs awaiting review. """
-    flask.session['_justlogedin'] = True
+    flask.session['_justloggedin'] = True
     return flask.redirect(return_url)
 
 
@@ -235,4 +240,5 @@ def logout():
     if hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None:
         FAS.logout()
         flask.flash("You are no longer logged-in")
+    flask.session['_justloggedout'] = True
     return flask.redirect(next_url)
