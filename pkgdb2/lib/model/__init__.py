@@ -1582,6 +1582,12 @@ class Package(BASE):
 
         ## pylint complains about timetuple() but it is a method
         # pylint: disable=E1102
+        monitor = False
+        if self.monitor == '1':
+            monitor = True
+        elif self.monitor == 'nobuild':
+            monitor = 'nobuild'
+
         result = {
             'name': self.name,
             'summary': self.summary,
@@ -1590,7 +1596,7 @@ class Package(BASE):
             'review_url': self.review_url,
             'upstream_url': self.upstream_url,
             'creation_date': time.mktime(self.date_created.timetuple()),
-            'monitor': self.monitor,
+            'monitor': monitor,
         }
 
         _seen.append(cls)
