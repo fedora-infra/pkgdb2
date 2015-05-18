@@ -2298,9 +2298,15 @@ def set_monitor_package(session, pkg_name, status, user):
         )
 
     msg = 'Monitoring status un-changed'
-    if package.monitor != status:
+    if status == '1':
+        status = True
+    elif status == '0':
+        status = False
+
+    if package.monitoring_status != status:
         package.monitor = status
         session.add(package)
+
         msg = 'Monitoring status of %s set to %s' % (pkg_name, status)
 
         try:
