@@ -2285,6 +2285,7 @@ def set_monitor_package(session, pkg_name, status, user):
 
     """
 
+    package = None
     try:
         package = model.Package.by_name(session, pkg_name)
     except NoResultFound:
@@ -2298,16 +2299,12 @@ def set_monitor_package(session, pkg_name, status, user):
         )
 
     msg = 'Monitoring status un-changed'
-    if status == '1':
-        status = True
-    elif status == '0':
-        status = False
-
     if package.monitoring_status != status:
         package.monitor = status
         session.add(package)
 
-        msg = 'Monitoring status of %s set to %s' % (pkg_name, status)
+        msg = 'Monitoring status of %s set to %s' % (
+            pkg_name, package.monitoring_status)
 
         try:
             session.flush()
