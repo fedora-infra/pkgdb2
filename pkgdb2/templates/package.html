@@ -34,14 +34,20 @@ confusing what the difference is between that status an the per-branch status)
         <td></td>
     </tr>
     <tr>
-        <td colspan="2">
+        <td colspan="2" align="center">
           <div id="monitoring_block">
             <input type="radio" id="no_monitoring" name="monitoring" value="0" />
-                <label for="no_monitoring">No monitoring</label>
+                <label for="no_monitoring" {%-
+                    if package.monitoring_status == False %} class="active"{% endif
+                    -%}>No monitoring</label> <br />
             <input type="radio" id="monitoring" name="monitoring" value="1" />
-                <label for="monitoring">Bugs &amp; builds</label>
+                <label for="monitoring" {%-
+                    if package.monitoring_status == True %} class="active"{% endif
+                    -%}>Bugs &amp; builds</label> <br />
             <input type="radio" id="no_build" name="monitoring" value="nobuild" />
-                <label for="no_build">Bugs only</label>
+                <label for="no_build" {%-
+                    if package.monitoring_status == "nobuild" %} class="active"{% endif
+                    -%}>Bugs only</label>
           </div>
         </td>
     </tr>
@@ -597,6 +603,15 @@ confusing what the difference is between that status an the per-branch status)
                 $('#flashes').append(
                     '<li class="info">' + res.messages + '</li>'
                 );
+                var _mon = $('[name="monitoring"]');
+                for (i = 0; i < _mon.length; i++) {
+                    var _lbl = $("label[for='" + _mon[i].attr("id") + "']");
+                    if (_mon[i].val() == status){
+                        _lbl.addClass('active');
+                    } else {
+                        _lbl.removeClass('active');
+                    }
+                }
             },
         });
 
@@ -611,9 +626,6 @@ confusing what the difference is between that status an the per-branch status)
             or g.fas_user.username in commiters
             or is_admin %}
         $('input[name="monitoring"]').change(function(){
-            var _mon = $('[name="monitoring"]');
-            console.log($(this));
-            console.log($(this).val());
             toggle_monitor($(this).val());
         });
         {% endif %}

@@ -156,6 +156,13 @@ a.wheel, a.wheel:hover, button.wheel, button.wheel:hover {
   background-position: 3px 50%;
 }
 
+label.active, label.active:hover {
+  background-image: url(https://admin.fedoraproject.org/pkgdb/static/arrow.png) !important;
+  background-repeat: no-repeat!important;
+  background-position: 3px 50%!important;
+}
+
+
 #actions {
   line-height: 1;
   list-style: none;
@@ -638,10 +645,15 @@ table.list thead th,
 
 #monitoring_block label {
     font-weight: normal;
-    width: 120px;
+    width: 170px;
+    border-radius: 5px;
+    background: #3b6eb4 none repeat scroll 0 0;
+    border: 1px solid #58595b;
+    color: #fff;
+    margin-bottom: 0.2em;
 }
 
 #monitoring_block label .ui-button-text{
-    text-align: left;
+    text-align: center;
     padding: 0em 1em;
 }
