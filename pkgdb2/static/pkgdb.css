@@ -635,3 +635,13 @@ table.list thead th,
     width: 250px;
     rows: 5;
 }
+
+#monitoring_block label {
+    font-weight: normal;
+    width: 120px;
+}
+
+#monitoring_block label .ui-button-text{
+    text-align: left;
+    padding: 0em 1em;
+}
