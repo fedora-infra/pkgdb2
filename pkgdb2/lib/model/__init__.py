@@ -1236,7 +1236,7 @@ class Package(BASE):
         return session.query(
             cls
         ).filter(
-            Package.monitor == True
+            Package.monitor.in_(['1', 'nobuild'])
         ).order_by(
             Package.name
         ).all()
