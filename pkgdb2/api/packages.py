@@ -1135,11 +1135,11 @@ def api_monitor_package(package, status):
     httpcode = 200
     output = {}
     if str(status).lower() in ['1', 'true']:
-        status = '1'
+        status = True
     elif str(status).lower() == 'nobuild':
         status = 'nobuild'
     else:
-        status = '0'
+        status = False
 
     try:
         msg = pkgdblib.set_monitor_package(
