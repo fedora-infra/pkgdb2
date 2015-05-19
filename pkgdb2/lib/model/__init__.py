@@ -1171,10 +1171,10 @@ class Package(BASE):
         """ Return the monitoring status of the package be it either True,
         False or nobuild.
         """
-        monitor = package.monitor
-        if monitor == '1':
+        monitor = self.monitor
+        if str(monitor).lower() in ['1', 'true']:
             monitor = True
-        elif monitor == '0':
+        elif str(monitor).lower() in ['0', 'false']:
             monitor = False
         return monitor
 
