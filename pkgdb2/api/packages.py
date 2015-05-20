@@ -1110,7 +1110,10 @@ def api_monitor_package(package, status):
     Accepts POST queries only.
 
     :arg package: The name of the package to update.
-    :arg status: The status to set to the monitoring flag.
+    :arg status: The status to set to the monitoring flag, can be either
+        ``1`` or ``true`` for setting full monitoring, ``nobuild`` to set
+        the monitoring but block scratch builds or ``0`` or ``false`` to
+        stop the monitoring entirely.
 
 
     Sample response:
@@ -1131,10 +1134,12 @@ def api_monitor_package(package, status):
 
     httpcode = 200
     output = {}
-    if str(status).lower() not in ['1', 'true']:
-        status = False
-    else:
+    if str(status).lower() in ['1', 'true']:
         status = True
+    elif str(status).lower() == 'nobuild':
+        status = 'nobuild'
+    else:
+        status = False
 
     try:
         msg = pkgdblib.set_monitor_package(

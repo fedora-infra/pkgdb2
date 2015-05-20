@@ -28,21 +28,27 @@ confusing what the difference is between that status an the per-branch status)
         <th>
           <a target="_blank"
           href="https://fedoraproject.org/wiki/Upstream_release_monitoring">
-            Monitoring
+            Monitoring:
           </a>
         </th>
-        <td class="container" {% if g.fas_user
-                %}title="Toggle bugzilla notification upon new releases found at release-monitoring.org"{%
-                else %}title="Login to change the monitoring status"{% endif %}>
-            <label class="switch">
-            <input type="checkbox" class="switch-input" name="monitor" id="monitor"
-                {%if package.monitor %}checked="checked"{% endif %}
-                {% if not(g.fas_user.username in admins
-                          or g.fas_user.username in commiters
-                          or is_admin) %} disabled="disabled"{% endif %}>
-            <span class="switch-label" data-on="On" data-off="Off"  id="monitor_lbl"></span>
-            <span class="switch-handle"></span>
-            </label>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center">
+          <div id="monitoring_block">
+            <input type="radio" id="no_monitoring" name="monitoring" value="0" />
+                <label for="no_monitoring" {%-
+                    if package.monitoring_status == False %} class="active"{% endif
+                    -%}>No monitoring</label> <br />
+            <input type="radio" id="monitoring" name="monitoring" value="1" />
+                <label for="monitoring" {%-
+                    if package.monitoring_status == True %} class="active"{% endif
+                    -%}>Bugs &amp; builds</label> <br />
+            <input type="radio" id="no_build" name="monitoring" value="nobuild" />
+                <label for="no_build" {%-
+                    if package.monitoring_status == "nobuild" %} class="active"{% endif
+                    -%}>Bugs only</label>
+          </div>
         </td>
     </tr>
     <tr>
@@ -597,6 +603,16 @@ confusing what the difference is between that status an the per-branch status)
                 $('#flashes').append(
                     '<li class="info">' + res.messages + '</li>'
                 );
+                var _mon = $('[name="monitoring"]');
+                for (i = 0; i < _mon.length; i++) {
+                    var _obj = $(_mon[i]);
+                    var _lbl = $("label[for='" + _obj.attr("id") + "']");
+                    if (_obj.val() == status){
+                        _lbl.addClass('active');
+                    } else {
+                        _lbl.removeClass('active');
+                    }
+                }
             },
         });
 
@@ -605,13 +621,13 @@ confusing what the difference is between that status an the per-branch status)
 
     $(function(){
         $("#committers").tablesorter();
+        $( "#monitoring_block" ).buttonset();
 
         {% if g.fas_user.username in admins
             or g.fas_user.username in commiters
             or is_admin %}
-        $('#monitor_lbl').click(function(){
-            var _mon = $('#monitor');
-            toggle_monitor(!_mon[0].checked);
+        $('input[name="monitoring"]').change(function(){
+            toggle_monitor($(this).val());
         });
         {% endif %}
 

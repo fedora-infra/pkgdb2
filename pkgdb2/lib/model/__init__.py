@@ -1087,7 +1087,7 @@ class Package(BASE):
     description = sa.Column(sa.Text, nullable=True)
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
-    monitor = sa.Column(sa.Boolean, default=True, nullable=False)
+    monitor = sa.Column(sa.String(10), default=True, nullable=False)
     status = sa.Column(
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
@@ -1166,6 +1166,18 @@ class Package(BASE):
                 active = False
         return active
 
+    @property
+    def monitoring_status(self):
+        """ Return the monitoring status of the package be it either True,
+        False or nobuild.
+        """
+        monitor = self.monitor
+        if str(monitor).lower() in ['1', 'true']:
+            monitor = True
+        elif str(monitor).lower() in ['0', 'false']:
+            monitor = False
+        return monitor
+
     def __hash__(self):
         """ Returns the name of the package as hash. """
         ord3 = lambda arg: '%.3d' % ord(arg)
@@ -1224,7 +1236,7 @@ class Package(BASE):
         return session.query(
             cls
         ).filter(
-            Package.monitor == True
+            Package.monitor.in_(['1', 'true', 'True', 'nobuild'])
         ).order_by(
             Package.name
         ).all()
@@ -1582,6 +1594,7 @@ class Package(BASE):
 
         ## pylint complains about timetuple() but it is a method
         # pylint: disable=E1102
+
         result = {
             'name': self.name,
             'summary': self.summary,
@@ -1590,7 +1603,7 @@ class Package(BASE):
             'review_url': self.review_url,
             'upstream_url': self.upstream_url,
             'creation_date': time.mktime(self.date_created.timetuple()),
-            'monitor': self.monitor,
+            'monitor': self.monitoring_status,
         }
 
         _seen.append(cls)
