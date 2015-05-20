@@ -605,8 +605,9 @@ confusing what the difference is between that status an the per-branch status)
                 );
                 var _mon = $('[name="monitoring"]');
                 for (i = 0; i < _mon.length; i++) {
-                    var _lbl = $("label[for='" + _mon[i].attr("id") + "']");
-                    if (_mon[i].val() == status){
+                    var _obj = $(_mon[i]);
+                    var _lbl = $("label[for='" + _obj.attr("id") + "']");
+                    if (_obj.val() == status){
                         _lbl.addClass('active');
                     } else {
                         _lbl.removeClass('active');
