@@ -19,7 +19,8 @@
     <a href="{{ url_for('.packager_requests', packager=packager) }}">
         requests</a>)
     {% if config['FEDOCAL_URL'] and config['FEDOCAL_CALENDAR_SHIELD'] %}
-    <span id="status"></span>
+    <img src="{{config['FEDOCAL_URL']}}/api/{{ packager }}/shield/{{
+            config['FEDOCAL_CALENDAR_SHIELD']}}" alt="" />
     {% endif %}
 </span>
 
@@ -93,31 +94,3 @@
 {% endif %}
 
 {% endblock %}
-
-{% if config['FEDOCAL_URL'] and config['FEDOCAL_CALENDAR_SHIELD'] %}
-{% block jscripts %}
-{{ super() }}
-<script type="text/javascript">
-    $(function(){
-        var _url = "{{config['FEDOCAL_URL']}}/api/{{ packager }}/shield/{{
-            config['FEDOCAL_CALENDAR_SHIELD']}}";
-        $.ajax({
-            url: _url,
-            type: 'GET',
-            contentType: 'application/json',
-            dataType: 'jsonp',
-            success: function(res) {
-                var _d = $.parseJSON(res);
-                if (_d.status) {
-                $('#status').html(
-                    '<img src="' + _d.status + '" alt="" />')
-                } else {
-                    $('#status').html()
-                }
-            },
-        });
-
-    });
-</script>
-{% endblock %}
-{% endif %}
