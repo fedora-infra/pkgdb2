@@ -108,8 +108,12 @@
             dataType: 'jsonp',
             success: function(res) {
                 var _d = $.parseJSON(res);
+                if (_d.status) {
                 $('#status').html(
                     '<img src="' + _d.status + '" alt="" />')
+                } else {
+                    $('#status').html()
+                }
             },
         });
 
