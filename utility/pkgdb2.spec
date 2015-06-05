@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.25.1
+Version:        1.26
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,18 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Jun 05 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.26-1
+- Update to 1.26
+- Fix a typo in the list_actions template (Ralph Bean)
+- Adjust unit-tests to prevent re-running into this bug
+- Rework the admin action page (text and options)
+- Provide a read-only page showing the admin action details
+- Add a link to map a project in anitya if it is not already there
+- Improve the logout behavior to avoid looping but still returning to the
+  current page where possible
+- Rework the monitoring flag to be three states
+- Inform about the user's vacation status from fedocal if configured to do so
+
 * Thu May 07 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.25.1-1
 - Update 1.25.1
 - Enforce the master branch when requesting a new package
