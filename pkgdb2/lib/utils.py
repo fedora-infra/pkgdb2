@@ -298,6 +298,9 @@ def log(session, package, topic, message):
         'admin.action.status.update': 'user: %(agent)s updated action: '
                                '%(action.id)s of %(action.package.name)s '
                                'from `%(old_status)s` to `%(new_status)s`',
+        'package.koschei.update': 'user: %(agent)s updated the Koschei '
+                               'monitoring status of %(package.name)s to '
+                               '%(status)s',
     }
     subject_templates = {
         'acl.update': '%(agent)s:%(package_name)s %(acl)s  set to %(status)s',
