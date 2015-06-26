@@ -1243,6 +1243,23 @@ class Package(BASE):
         ).all()
 
     @classmethod
+    def get_koschei_monitored(cls, session):
+        """ Return the list of all Packages present in the database and
+        marked to be monitored by koschei.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        """
+        return session.query(
+            cls
+        ).filter(
+            Package.koschei == True
+        ).order_by(
+            Package.name
+        ).all()
+
+    @classmethod
     def get_latest_package(cls, session, limit=10):
         """ Return the list of the most recent packages added to the
         database.

@@ -2264,6 +2264,18 @@ def get_monitored_package(session):
     return model.Package.get_monitored(session)
 
 
+def get_koschei_monitored_package(session):
+    """ Return the list of packaged marked to be monitored by koschei.
+
+    :arg session: the session with which to connect to the database.
+    :returns: a list of Package.
+    :rtype: list()
+
+    """
+
+    return model.Package.get_koschei_monitored(session)
+
+
 def set_monitor_package(session, pkg_name, status, user):
     """ Set the provided status on the monitoring flag of the specified
     package.
