@@ -352,6 +352,7 @@ def create_package_critpath(session):
         review_url='https://bugzilla.redhat.com/123',
         upstream_url='http://www.kernel.org/',
         monitor=True,
+        koschei=True,
     )
     session.add(package)
 
