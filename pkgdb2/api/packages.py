@@ -1100,7 +1100,7 @@ def api_package_critpath():
 def api_monitor_package(package, status):
     '''
     Monitoring status
-    ------------------------
+    -----------------
     Set the monitor status on the specified package.
 
     ::
