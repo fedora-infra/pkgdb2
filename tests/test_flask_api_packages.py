@@ -1590,6 +1590,110 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data['output'], "ok")
 
+    @patch('pkgdb2.lib.utils')
+    @patch('pkgdb2.is_admin')
+    def test_api_koschei_package(self, login_func, mock_func):
+        """ Test the api_koschei_package function.  """
+        login_func.return_value = None
+
+        user = FakeFasUser()
+
+        # No package
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/guake/koschei/1')
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['error', 'output']
+            )
+            self.assertEqual(
+                data['error'], "No package found by this name")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        # User is not a packager
+        user.username = 'Toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/guake/koschei/1')
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['error', 'output']
+            )
+            self.assertEqual(
+                data['error'],
+                "You are not allowed to update the koschei monitoring flag on this "
+                "package")
+
+            self.assertEqual(
+                data['output'], "notok")
+
+        # Works
+        user.username = 'pingou'
+        with user_set(pkgdb2.APP, user):
+            # Ensure that GETs show that it is *not* monitored
+            output = self.app.get('/api/package/guake/')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data['packages'][0]['package']['koschei_monitor'], False)
+
+            output = self.app.post('/api/package/guake/koschei/1')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['messages', 'output']
+            )
+            self.assertEqual(
+                data['messages'], "Koschei monitoring status of guake set to True")
+
+            self.assertEqual(
+                data['output'], "ok")
+
+            output = self.app.post('/api/package/guake/koschei/1')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['messages', 'output']
+            )
+            self.assertEqual(
+                data['messages'], "Koschei monitoring status un-changed")
+
+            self.assertEqual(
+                data['output'], "ok")
+
+            # Ensure that subsequent GETs show that it is monitored
+            output = self.app.get('/api/package/guake/')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data['packages'][0]['package']['koschei_monitor'], True)
+
+        # User is not a packager but is admin
+        user = FakeFasUserAdmin()
+        user.username = 'Toshio'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/guake/koschei/False')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                sorted(data),
+                ['messages', 'output']
+            )
+            self.assertEqual(
+                data['messages'], "Koschei monitoring status of guake set to False")
+
+            self.assertEqual(
+                data['output'], "ok")
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiPackagesTest)
