@@ -1488,11 +1488,10 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertTrue(pkg['critpath'])
             self.assertTrue(pkg['critpath'])
 
-
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.is_admin')
     def test_api_monitor_package(self, login_func, mock_func):
-        """ Test the api_package_critpath function.  """
+        """ Test the api_monitor_package function.  """
         login_func.return_value = None
 
         user = FakeFasUser()
