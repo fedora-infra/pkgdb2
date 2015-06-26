@@ -1156,3 +1156,63 @@ def api_monitor_package(package, status):
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
     return jsonout
+
+
+@API.route('/package/<package>/koschei/<status>', methods=['POST'])
+@packager_login_required
+def api_koschei_package(package, status):
+    '''
+    Koschei monitoring status
+    -------------------------
+    Set the monitor status for koschei on the specified package.
+
+    ::
+
+        /api/package/<package>/koschei/<status>
+
+    Accepts POST queries only.
+
+    :arg package: The name of the package to update.
+    :arg status: The status to set to the koschei monitoring flag, can be
+        either ``1`` or ``true`` or ``0`` or ``false`` to stop the
+        monitoring.
+
+
+    Sample response:
+
+    ::
+
+        {
+            "output": "ok",
+            "messages": "Koschei monitoring status of guake set to True"
+        }
+
+        {
+          "output": "notok",
+          "error": "No package found by this name"
+        }
+
+     '''
+
+    httpcode = 200
+    output = {}
+    if str(status).lower() in ['1', 'true']:
+        status = True
+    else:
+        status = False
+
+    try:
+        msg = pkgdblib.set_koschei_monitor_package(
+            SESSION, package, status, flask.g.fas_user)
+        SESSION.commit()
+        output['output'] = 'ok'
+        output['messages'] = msg
+    except pkgdblib.PkgdbException, err:
+        SESSION.rollback()
+        output['output'] = 'notok'
+        output['error'] = str(err)
+        httpcode = 500
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
