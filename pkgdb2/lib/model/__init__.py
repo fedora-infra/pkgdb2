@@ -1088,6 +1088,7 @@ class Package(BASE):
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
     monitor = sa.Column(sa.String(10), default=True, nullable=False)
+    koschei = sa.Column(sa.Boolean(), default=False, nullable=False)
     status = sa.Column(
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
@@ -1604,6 +1605,7 @@ class Package(BASE):
             'upstream_url': self.upstream_url,
             'creation_date': time.mktime(self.date_created.timetuple()),
             'monitor': self.monitoring_status,
+            'koschei_monitor': self.koschei,
         }
 
         _seen.append(cls)
