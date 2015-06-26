@@ -345,8 +345,18 @@ def package_anitya(package, full=True):
         package
     )
 
-    req = requests.get(url)
-    data = req.json()
+    data = {}
+    try:
+        req = requests.get(url)
+        if req.status_code != 200:
+            flask.flash(
+                'Querying anitya returned a status %s' % req.status_code,
+                'error')
+        else:
+            data = req.json()
+    except Exception, err:
+        flask.flash(err.message, 'error')
+        pass
 
     return flask.render_template(
         'package_anitya.html',
