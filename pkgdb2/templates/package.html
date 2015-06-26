@@ -25,6 +25,37 @@ confusing what the difference is between that status an the per-branch status)
     </tr>
 #}
     <tr>
+        <th>Created on</th>
+        <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
+    </tr>
+    {% for listing in package.sorted_listings %}
+    {% if listing.collection.status != 'EOL' %}
+    <tr>
+        <th>{{ listing.collection.name }} {{ listing.collection.version }}</th>
+        <td>
+          {% if listing.status == 'Retired' %}
+          <span class="info_retire"
+            title="Click to see content of the dead.package file"
+            data-clt="{{ listing.collection.branchname }}">
+            {{ listing.status }}
+          </span>
+          {% else %}
+            {{ listing.status }}
+          {% endif %}
+          {% if listing.critpath %} -- critpath {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+
+    {% for req in package.requests_open | reverse %}
+    <tr>
+        <th>{{ req.collection.name }} {{ req.collection.version }}</th>
+        <td>{{ req.status }}</td>
+    </tr>
+    {% endfor %}
+
+    <tr>
         <th>
           <a target="_blank"
           href="https://fedoraproject.org/wiki/Upstream_release_monitoring">
@@ -75,36 +106,6 @@ confusing what the difference is between that status an the per-branch status)
             </span>
         </td>
     </tr>
-    <tr>
-        <th>Created on</th>
-        <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
-    </tr>
-    {% for listing in package.sorted_listings %}
-    {% if listing.collection.status != 'EOL' %}
-    <tr>
-        <th>{{ listing.collection.name }} {{ listing.collection.version }}</th>
-        <td>
-          {% if listing.status == 'Retired' %}
-          <span class="info_retire"
-            title="Click to see content of the dead.package file"
-            data-clt="{{ listing.collection.branchname }}">
-            {{ listing.status }}
-          </span>
-          {% else %}
-            {{ listing.status }}
-          {% endif %}
-          {% if listing.critpath %} -- critpath {% endif %}
-        </td>
-    </tr>
-    {% endif %}
-    {% endfor %}
-
-    {% for req in package.requests_open | reverse %}
-    <tr>
-        <th>{{ req.collection.name }} {{ req.collection.version }}</th>
-        <td>{{ req.status }}</td>
-    </tr>
-    {% endfor %}
 
     {% if g.fas_user and branches_possible %}
     <tr>
