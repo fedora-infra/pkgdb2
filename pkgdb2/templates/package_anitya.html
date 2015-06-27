@@ -12,11 +12,22 @@
 <div title="Anitya integration">
 {% endif %}
 
+{% if not full %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if category, messages %}
+    <ul id="flashes">
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  {% endwith %}
+{% endif %}
 
 <h3>Anitya integration for package: {{ package }}</h3>
 
 
-{% if data['output'] == 'notok' %}
+{% if not data or data['output'] == 'notok' %}
 <p>
   This package could not be found in <a href="{{ config['PKGDB2_ANITYA_URL'] }}">
 anitya</a>.
