@@ -10,7 +10,7 @@ python-openid-cla
 docutils
 python-dateutil
 dogpile.cache
-mock
+mock==1.1.2
 python-bugzilla>=1.1.0
 python-memcached
 psutil
