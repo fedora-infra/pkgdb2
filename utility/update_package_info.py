@@ -29,20 +29,6 @@ if 'PKGDB2_CONFIG' not in os.environ \
     os.environ['PKGDB2_CONFIG'] = '/etc/pkgdb2/pkgdb2.cfg'
 
 
-BASE_URL = 'https://dl.fedoraproject.org/pub/%s/SRPMS/'
-VERSIONS = [
-    ('rawhide', 'fedora/linux/development/rawhide/source'),
-    ('f22_up', 'fedora/linux/updates/22'),
-    ('f21_up', 'fedora/linux/updates/21'),
-    ('f21_rel', 'fedora/linux/releases/21/Everything/source'),
-    ('f20_up', 'fedora/linux/updates/20'),
-    ('f20_rel', 'fedora/linux/releases/20/Everything/source'),
-    ('el7', 'epel/7'),
-    ('el6', 'epel/6'),
-    ('el5', 'epel/5'),
-]
-
-
 from sqlalchemy import Column, ForeignKey, Integer, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -66,6 +52,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 import pkgdb2
 import pkgdb2.lib
+
+
+BASE_URL = pkgdb2.config.fet('BASE_REPO_URL')
+VERSIONS = pkgdb2.config.get('REPO_MAP', [])
 
 
 class User(object):
