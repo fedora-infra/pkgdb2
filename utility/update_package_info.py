@@ -131,6 +131,9 @@ def main():
         base_url = BASE_URL % version
 
         primary_db_location = get_primary_db_location(base_url)
+        if not primary_db_location:
+            print 'No primary db found at %s' % base_url
+            continue
 
         db_ext = primary_db_location.split('primary.')[1]
         dbfile_xz = os.path.join(working_dir, 'primary_db.%s' % db_ext)
