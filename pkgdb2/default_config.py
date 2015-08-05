@@ -114,6 +114,21 @@ SESSION_COOKIE_SECURE = False
 # pgkdb is not deployed at the root of the server
 APPLICATION_ROOT = '/'
 
+# Setting for the update_package_info script
+REPO_MAP = [
+    ('rawhide', 'fedora/linux/development/rawhide/source'),
+    ('f23_up', 'fedora/linux/updates/23'),
+    ('f22_up', 'fedora/linux/updates/21'),
+    ('f22_rel', 'fedora/linux/releases/22/Everything/source'),
+    ('f21_up', 'fedora/linux/updates/21'),
+    ('f21_rel', 'fedora/linux/releases/21/Everything/source'),
+    ('el7', 'epel/7'),
+    ('el6', 'epel/6'),
+    ('el5', 'epel/5'),
+]
+
+BASE_REPO_URL = 'https://dl.fedoraproject.org/pub/%s/SRPMS/'
+
 # Anitya settings
 PKGDB2_ANITYA_DISTRO='Fedora'
 PKGDB2_ANITYA_URL='https://release-monitoring.org'
