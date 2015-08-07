@@ -1618,24 +1618,17 @@ class FlaskApiPackagesTest(Modeltests):
 
         # User is not a packager
         user.username = 'Toshio'
+        user.groups = ['sysadmin']
         with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/package/guake/koschei/1')
-            self.assertEqual(output.status_code, 500)
-            data = json.loads(output.data)
-            self.assertEqual(
-                sorted(data),
-                ['error', 'output']
-            )
-            self.assertEqual(
-                data['error'],
-                "You are not allowed to update the koschei monitoring flag on this "
-                "package")
-
-            self.assertEqual(
-                data['output'], "notok")
+            output = self.app.post(
+                '/api/package/guake/koschei/1', follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertIn(
+                '<li class="errors">You must be a packager</li>', output.data)
 
         # Works
         user.username = 'pingou'
+        user.groups = ['packager']
         with user_set(pkgdb2.APP, user):
             # Ensure that GETs show that it is *not* monitored
             output = self.app.get('/api/package/guake/')
