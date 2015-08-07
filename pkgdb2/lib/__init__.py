@@ -2361,9 +2361,7 @@ def set_koschei_monitor_package(session, pkg_name, status, user):
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
-    pkger = has_acls(
-        session, user.username, pkg_name, ['commit', 'approveacls'])
-    if not (pkger or pkgdb2.is_pkgdb_admin(user)):
+    if not 'packager' in user.groups:
         raise PkgdbException(
             'You are not allowed to update the koschei monitoring flag on '
             'this package'
