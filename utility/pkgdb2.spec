@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.26
+Version:        1.27
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,11 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Aug 18 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.27-1
+- Update to 1.27
+- Fix integration with anitya to not crash upon receiving invalid data
+- Fix the upgrade_pkg_info script to rely on the configuration file
+
 * Fri Jun 05 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.26-1
 - Update to 1.26
 - Fix a typo in the list_actions template (Ralph Bean)
