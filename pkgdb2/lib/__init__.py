@@ -2264,6 +2264,18 @@ def get_monitored_package(session):
     return model.Package.get_monitored(session)
 
 
+def get_koschei_monitored_package(session):
+    """ Return the list of packaged marked to be monitored by koschei.
+
+    :arg session: the session with which to connect to the database.
+    :returns: a list of Package.
+    :rtype: list()
+
+    """
+
+    return model.Package.get_koschei_monitored(session)
+
+
 def set_monitor_package(session, pkg_name, status, user):
     """ Set the provided status on the monitoring flag of the specified
     package.
@@ -2318,6 +2330,64 @@ def set_monitor_package(session, pkg_name, status, user):
         except SQLAlchemyError, err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not update monitoring status.')
+
+    return msg
+
+
+def set_koschei_monitor_package(session, pkg_name, status, user):
+    """ Set the provided status on the koscehi monitoring flag of the
+    specified package.
+
+    :arg session: the session with which to connect to the database.
+    :arg pkg_name: The name of the package to update.
+    :arg status: boolean specifying the monitor status to set
+    :arg user: The user performing the update.
+    :returns: a message informing that the package was successfully
+        updated.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception being raised:
+            - You are not allowed to edit a package, only pkgdb admin can.
+            - The package cannot be found in the database.
+            - An error occured while updating the package in the database
+                the message returned is a dummy information message to
+                return to the user, the trace back is in the logs.
+
+    """
+
+    package = None
+    try:
+        package = model.Package.by_name(session, pkg_name)
+    except NoResultFound:
+        raise PkgdbException('No package found by this name')
+
+    if not 'packager' in user.groups:
+        raise PkgdbException(
+            'You are not allowed to update the koschei monitoring flag on '
+            'this package'
+        )
+
+    msg = 'Koschei monitoring status un-changed'
+    if package.koschei != status:
+        package.koschei = status
+        session.add(package)
+
+        msg = 'Koschei monitoring status of %s set to %s' % (
+            pkg_name, package.koschei)
+
+        try:
+            session.flush()
+            pkgdb2.lib.utils.log(
+                session, package, 'package.koschei.update', dict(
+                    agent=user.username,
+                    status=status,
+                    package=package.to_json(acls=False),
+                )
+            )
+        except SQLAlchemyError, err:  # pragma: no cover
+            pkgdb2.LOG.exception(err)
+            raise PkgdbException(
+                'Could not update Koschei monitoring status.')
 
     return msg
 

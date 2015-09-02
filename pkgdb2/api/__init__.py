@@ -104,6 +104,7 @@ def api():
     api_package_unretire = load_doc(packages.api_package_unretire)
     api_package_list = load_doc(packages.api_package_list)
     api_monitor_package = load_doc(packages.api_monitor_package)
+    api_koschei_package = load_doc(packages.api_koschei_package)
 
     api_acl_update = load_doc(acls.api_acl_update)
     api_acl_reassign = load_doc(acls.api_acl_reassign)
@@ -121,6 +122,7 @@ def api():
     api_extras_pendingacls = load_doc(extras.api_pendingacls)
     api_extras_api_groups = load_doc(extras.api_groups)
     api_extras_monitored = load_doc(extras.api_monitored)
+    api_extras_koschei = load_doc(extras.api_koschei)
     api_extras_retired = load_doc(extras.api_retired)
 
     return flask.render_template(
@@ -137,7 +139,7 @@ def api():
         packages=[
             api_package_info, api_package_list,
             api_package_new, api_package_edit,
-            api_package_critpath, api_monitor_package,
+            api_package_critpath, api_monitor_package, api_koschei_package,
             api_package_orphan, api_package_unorphan,
             api_package_retire, api_package_unretire,
         ],
@@ -155,7 +157,7 @@ def api():
             api_extras_notify, api_extras_notify_all,
             api_extras_vcs, api_extras_pendingacls,
             api_extras_api_groups, api_extras_monitored,
-            api_extras_retired
+            api_extras_koschei, api_extras_retired,
         ]
     )
 

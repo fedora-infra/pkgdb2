@@ -1088,6 +1088,7 @@ class Package(BASE):
     review_url = sa.Column(sa.Text)
     upstream_url = sa.Column(sa.Text)
     monitor = sa.Column(sa.String(10), default=True, nullable=False)
+    koschei = sa.Column(sa.Boolean(), default=False, nullable=False)
     status = sa.Column(
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
@@ -1237,6 +1238,23 @@ class Package(BASE):
             cls
         ).filter(
             Package.monitor.in_(['1', 'true', 'True', 'nobuild'])
+        ).order_by(
+            Package.name
+        ).all()
+
+    @classmethod
+    def get_koschei_monitored(cls, session):
+        """ Return the list of all Packages present in the database and
+        marked to be monitored by koschei.
+
+        :arg cls: the class object
+        :arg session: the database session used to query the information.
+
+        """
+        return session.query(
+            cls
+        ).filter(
+            Package.koschei == True
         ).order_by(
             Package.name
         ).all()
@@ -1604,6 +1622,7 @@ class Package(BASE):
             'upstream_url': self.upstream_url,
             'creation_date': time.mktime(self.date_created.timetuple()),
             'monitor': self.monitoring_status,
+            'koschei_monitor': self.koschei,
         }
 
         _seen.append(cls)

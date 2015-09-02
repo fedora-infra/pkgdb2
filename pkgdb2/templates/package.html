@@ -25,33 +25,6 @@ confusing what the difference is between that status an the per-branch status)
     </tr>
 #}
     <tr>
-        <th>
-          <a target="_blank"
-          href="https://fedoraproject.org/wiki/Upstream_release_monitoring">
-            Monitoring:
-          </a>
-        </th>
-        <td></td>
-    </tr>
-    <tr>
-        <td colspan="2" align="center">
-          <div id="monitoring_block">
-            <input type="radio" id="no_monitoring" name="monitoring" value="0" />
-                <label for="no_monitoring" {%-
-                    if package.monitoring_status == False %} class="active"{% endif
-                    -%}>No monitoring</label> <br />
-            <input type="radio" id="monitoring" name="monitoring" value="1" />
-                <label for="monitoring" {%-
-                    if package.monitoring_status == True %} class="active"{% endif
-                    -%}>Bugs &amp; builds</label> <br />
-            <input type="radio" id="no_build" name="monitoring" value="nobuild" />
-                <label for="no_build" {%-
-                    if package.monitoring_status == "nobuild" %} class="active"{% endif
-                    -%}>Bugs only</label>
-          </div>
-        </td>
-    </tr>
-    <tr>
         <th>Created on</th>
         <td property="doap:created">{{ package.date_created.strftime('%Y-%m-%d') }}</td>
     </tr>
@@ -81,6 +54,62 @@ confusing what the difference is between that status an the per-branch status)
         <td>{{ req.status }}</td>
     </tr>
     {% endfor %}
+
+    <tr>
+        <th>
+          <a target="_blank"
+          href="https://fedoraproject.org/wiki/Upstream_release_monitoring">
+            Monitoring:
+          </a>
+        </th>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center">
+          <div id="monitoring_block">
+            <input type="radio" id="no_monitoring" name="monitoring" value="0" />
+                <label for="no_monitoring" {%-
+                    if package.monitoring_status == False %} class="active"{% endif
+                    -%}>No monitoring</label> <br />
+            <input type="radio" id="monitoring" name="monitoring" value="1" />
+                <label for="monitoring" {%-
+                    if package.monitoring_status == True %} class="active"{% endif
+                    -%}>Bugs &amp; builds</label> <br />
+            <input type="radio" id="no_build" name="monitoring" value="nobuild" />
+                <label for="no_build" {%-
+                    if package.monitoring_status == "nobuild" %} class="active"{% endif
+                    -%}>Bugs only</label>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th>
+          <a target="_blank" href="https://apps.fedoraproject.org/koschei">
+            Koschei integration:
+          </a>
+        </th>
+        <td></td>
+    </tr>
+        <td colspan="2" align="center" id="koschei_block">
+            <span class="container" {% if g.fas_user
+                %}title="Toggle Koschei integration"{%
+                else %}title="Login to change the Koschei integration status"{% endif %}>
+              <label class="switch">
+                <input type="checkbox" class="switch-input" name="koschei" id="koschei"
+                  {%if package.koschei %}checked="checked"{% endif %}
+                  {% if not(g.fas_user.username in admins
+                            or g.fas_user.username in commiters
+                            or is_admin) %} disabled="disabled"{% endif %} />
+                <span class="switch-label" data-on="On" data-off="Off"  id="koschei_lbl"></span>
+                <span class="switch-handle"></span>
+              </label>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <th><a >Actions:</a></th>
+        <td></td>
+    </tr>
 
     {% if g.fas_user and branches_possible %}
     <tr>
@@ -591,9 +620,10 @@ confusing what the difference is between that status an the per-branch status)
 </script>
 
 <script type="text/javascript">
-    function toggle_monitor(status){
+    function toggle_monitor(status, action){
         var _url = "{{ url_for(
             'api_ns.api_monitor_package', package=package.name, status='') }}";
+        _url = _url.replace('/monitor/', '/' + action + '/');
         $.ajax({
             url: _url + status,
             type: 'POST',
@@ -626,8 +656,12 @@ confusing what the difference is between that status an the per-branch status)
         {% if g.fas_user.username in admins
             or g.fas_user.username in commiters
             or is_admin %}
+        $('#koschei_lbl').click(function(){
+            var _mon = $('#koschei');
+            toggle_monitor(!_mon[0].checked, 'koschei');
+        });
         $('input[name="monitoring"]').change(function(){
-            toggle_monitor($(this).val());
+            toggle_monitor($(this).val(), 'monitor');
         });
         {% endif %}
 

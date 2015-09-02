@@ -877,6 +877,78 @@ kernel-maint"""
         "# collection: Fedora EPEL\nguake"
         self.assertEqual(output.data, expected)
 
+
+    def test_api_koschei_empty(self):
+        """ Test the api_koschei function with an empty database. """
+
+        output = self.app.get('/api/koschei/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 0"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/koschei/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/koschei/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            'packages': [
+            ],
+            'total_packages': 0
+        }
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/koschei/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+    def test_api_koschei_filled(self):
+        """ Test the api_koschei function with a filled database. """
+        create_package_acl(self.session)
+        create_package_critpath(self.session)
+
+        output = self.app.get('/api/koschei/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = "# Number of packages: 1\nkernel"
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/koschei/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/koschei/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            "total_packages": 1,
+            "packages": [
+                "kernel",
+            ],
+        }
+
+
+        self.assertEqual(data, expected)
+
+        output = self.app.get(
+            '/api/koschei/',
+            environ_base={'HTTP_ACCEPT': 'application/json'})
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        self.assertEqual(data, expected)
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiExtrasTest)
     unittest.TextTestRunner(verbosity=2).run(SUITE)

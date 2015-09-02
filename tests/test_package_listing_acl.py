@@ -88,6 +88,7 @@ class PackageListingAcltests(Modeltests):
                     'summary': u'Top down terminal for GNOME',
                     'description': u'Top down terminal...',
                     'monitor': False,
+                    'koschei_monitor': False,
                 }
             }
         }
