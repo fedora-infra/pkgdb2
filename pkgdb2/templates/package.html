@@ -97,8 +97,7 @@ confusing what the difference is between that status an the per-branch status)
               <label class="switch">
                 <input type="checkbox" class="switch-input" name="koschei" id="koschei"
                   {%if package.koschei %}checked="checked"{% endif %}
-                  {% if not(g.fas_user.username in admins
-                            or g.fas_user.username in commiters
+                  {% if not('packager' in g.fas_user.groups
                             or is_admin) %} disabled="disabled"{% endif %} />
                 <span class="switch-label" data-on="On" data-off="Off"  id="koschei_lbl"></span>
                 <span class="switch-handle"></span>
