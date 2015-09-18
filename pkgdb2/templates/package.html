@@ -652,13 +652,16 @@ confusing what the difference is between that status an the per-branch status)
         $("#committers").tablesorter();
         $( "#monitoring_block" ).buttonset();
 
-        {% if g.fas_user.username in admins
-            or g.fas_user.username in commiters
-            or is_admin %}
+        {% if g.fas_user and 'packager' in g.fas_user.groups %}
         $('#koschei_lbl').click(function(){
             var _mon = $('#koschei');
             toggle_monitor(!_mon[0].checked, 'koschei');
         });
+        {% endif %}
+
+        {% if g.fas_user.username in admins
+            or g.fas_user.username in commiters
+            or is_admin %}
         $('input[name="monitoring"]').change(function(){
             toggle_monitor($(this).val(), 'monitor');
         });
