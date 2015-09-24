@@ -39,7 +39,8 @@ operating in an active virtualenv.
 Next, install your dependencies::
 
     (my-pkgdb2-env)$ pip install kitchen paver urllib3
-    (my-pkgdb2-env)$ pip install git+https://github.com/fedora-infra/python-fedora.git
+    (my-pkgdb2-env)$ git clone https://github.com/fedora-infra/pkgdb2.git
+    (my-pkgdb2-env)$ cd pkgdb2
     (my-pkgdb2-env)$ pip install -r requirements.txt
     (my-pkgdb2-env)$ pip install -r test_requirements.txt
 
