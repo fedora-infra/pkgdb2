@@ -231,6 +231,7 @@ label.active, label.active:hover {
 #description {
     width: 75%;
     min-height: 10px;
+    white-space: pre;
 }
 
 .accordion {
