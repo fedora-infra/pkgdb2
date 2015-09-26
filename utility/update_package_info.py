@@ -54,7 +54,7 @@ import pkgdb2
 import pkgdb2.lib
 
 
-BASE_URL = pkgdb2.APP.config.fet('BASE_REPO_URL')
+BASE_URL = pkgdb2.APP.config.get('BASE_REPO_URL')
 VERSIONS = pkgdb2.APP.config.get('REPO_MAP', [])
 
 
