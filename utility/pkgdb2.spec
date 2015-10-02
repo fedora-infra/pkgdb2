@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.28.2
+Version:        1.29
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,15 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Oct 02 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.29-1
+- Update to 1.29
+- Adjust the README's intructions (trishnaguha)
+- Fixed the problem with formatting the description of a package (farhaanbukhsh)
+- Adjust docstring now that pkgdb in Fedora's infra is using dynamic endpoints
+  (Mikolaj Izdebski)
+- Pull info from bugzilla to pre-populate the new package form when requesting
+  new packages to be added
+
 * Sat Sep 19 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.28.2-1
 - Update to 1.28.2
 - Let packager toggle in the UI the koschei status for all packages
