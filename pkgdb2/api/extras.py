@@ -721,13 +721,13 @@ def api_pkgrequest(bzid):
         jsonout.status_code = 500
         return jsonout
 
-    if not 'Review Request:' in bug.summary:
+    if bug.component != 'Package Review':
         httpcode = 400
         output['output'] = 'notok'
         output['error'] = 'Bugzilla ticket does not correspond '\
             'to a Review Request'
     else:
-        tmp = bug.summary.split('Review Request:')[1]
+        tmp = bug.summary.split(':', 1)[1]
         if not ' - ' in tmp:
             httpcode = 400
             output['output'] = 'notok'
