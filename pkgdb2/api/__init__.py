@@ -124,6 +124,7 @@ def api():
     api_extras_monitored = load_doc(extras.api_monitored)
     api_extras_koschei = load_doc(extras.api_koschei)
     api_extras_retired = load_doc(extras.api_retired)
+    api_extras_pkgrequest = load_doc(extras.api_pkgrequest)
 
     return flask.render_template(
         'api.html',
@@ -158,6 +159,7 @@ def api():
             api_extras_vcs, api_extras_pendingacls,
             api_extras_api_groups, api_extras_monitored,
             api_extras_koschei, api_extras_retired,
+            api_extras_pkgrequest,
         ]
     )
 
