@@ -41,6 +41,9 @@
 <script type="text/javascript">
     $(function(){
         $('#try_populate').click(function(){
+            document.body.style.cursor = 'wait';
+            $('#pkgname').val('');
+            $('#summary').val('');
             var _bzurl = $('#review_url').val();
             var _bzid = null;
             if (_bzurl.indexOf("?id=") > -1) {
@@ -55,11 +58,12 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
+                    document.body.style.cursor = 'auto';
                     $('#pkgname').val(res.name);
                     $('#summary').val(res.summary);
                 },
                 error: function(res) {
-                    console.log(res.responseJSON.error);
+                    document.body.style.cursor = 'auto';
                     if (res.responseJSON.error) {
                       $('#flashes').append(
                         '<li class="error">' + res.responseJSON.error + '</li>'
