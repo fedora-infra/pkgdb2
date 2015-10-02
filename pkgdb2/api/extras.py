@@ -27,6 +27,7 @@ import flask
 import requests
 
 import pkgdb2.lib as pkgdblib
+import pkgdb2.lib.utils
 from pkgdb2 import SESSION, APP
 from pkgdb2.api import API
 
@@ -685,3 +686,59 @@ def api_retired():
             '\n'.join(output),
             content_type="text/plain;charset=UTF-8"
         )
+
+
+@API.route('/pkgrequest/<bzid>/')
+@API.route('/pkgrequest/<bzid>')
+def api_pkgrequest(bzid):
+    '''
+    Get package information from bugzilla
+    -------------------------------------
+    Returns a json with the information from the package review corresponding
+    to the given bugzilla ID.
+
+    ::
+
+        /api/pkgrequest/<bzid>/
+        /api/pkgrequest/<bzid>
+
+    :arg bzid: Bugzilla ticket number to check.
+
+    '''
+
+    output = {}
+    httpcode = 200
+
+    try:
+        bz = pkgdb2.lib.utils.get_bz()
+        bug = bz.getbug(bzid)
+    except Exception:
+        APP.logger.exception('Error fetching info from bugzilla')
+        output['output'] = 'notok'
+        output['error'] = 'Could not fetch a bugzilla ticket from '\
+            'this identifier'
+        jsonout = flask.jsonify(output)
+        jsonout.status_code = 500
+        return jsonout
+
+    if not 'Review Request:' in bug.summary:
+        httpcode = 400
+        output['output'] = 'notok'
+        output['error'] = 'Bugzilla ticket does not correspond '\
+            'to a Review Request'
+    else:
+        tmp = bug.summary.split('Review Request:')[1]
+        if not ' - ' in tmp:
+            httpcode = 400
+            output['output'] = 'notok'
+            output['error'] = 'Invalid title for this bugzilla ticket'
+        else:
+            pkg, summary = tmp.split(' - ', 1)
+            output = {
+                'name': pkg.strip(),
+                'summary': summary.strip(),
+            }
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
