@@ -91,7 +91,7 @@ class ContextInjector(logging.Filter):
         try:
             record.form = dict(flask.request.form)
             if 'csrf_token' in record.form:
-                del(record.form['csrf_token'])
+                record.form['csrf_token'] = 'Was present, is reset'
         except RuntimeError:
             pass
 
