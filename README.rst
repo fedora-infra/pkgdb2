@@ -79,4 +79,4 @@ Open your browser and visit http://localhost:5000 to check it out.
 
 
 For more information about the project configuration or deployment, check out
-the `documentation <http://packagedb.rtfd.org>`_
+the `documentation <http://pkgdb2.readthedocs.org>`_
