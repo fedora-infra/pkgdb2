@@ -30,6 +30,8 @@ import os
 import socket
 import traceback
 
+import flask
+
 psutil = None
 try:
     import psutil
