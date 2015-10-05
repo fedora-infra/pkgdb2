@@ -1776,7 +1776,7 @@ class AdminAction(BASE):
 
     __table_args__ = (
         sa.UniqueConstraint(
-            'user', 'action', 'status', 'package_id', 'collection_id'),
+            'user', 'action', 'package_id', 'collection_id'),
     )
 
     package = relation(
