@@ -117,7 +117,10 @@
     </td>
     <td class="col_odd">{{ action.action }}</td>
     <td>{{ action.collection.branchname }}</td>
-    <td class="col_odd" >{{ action.status }}</td>
+    <td class="col_odd" >
+      {{ action.status }} {%- if action.message %}:
+      {{ action.message }}{% endif %}
+    </td>
     <td class="lastcel">
     {% if not select %}
       <a href="{{ url_for('.admin_action_edit_status', action_id=action.id) }}">
