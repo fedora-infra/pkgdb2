@@ -126,11 +126,14 @@
       <a href="{{ url_for('.admin_action_edit_status', action_id=action.id) }}">
         Update
       </a>
-    {% elif select and g.fas_user and g.fas_user.username == action.user and
-      action.status in ['Pending', 'Awaiting Review'] %}
+    {% elif select and g.fas_user and g.fas_user.username == action.user %}
       <a href="{{ url_for(
         '.package_request_edit', action_id=action.id) }}">
+          {% if action.status in ['Pending', 'Awaiting Review'] %}
           Update
+          {% else %}
+          Details
+          {% endif %}
       </a>
     {% endif %}
     </td>
