@@ -1776,7 +1776,7 @@ class AdminAction(BASE):
 
     __table_args__ = (
         sa.UniqueConstraint(
-            'user', 'action', 'status', 'package_id', 'collection_id'),
+            'user', 'action', 'package_id', 'collection_id'),
     )
 
     package = relation(
@@ -1838,7 +1838,8 @@ class AdminAction(BASE):
         return result
 
     @classmethod
-    def search(cls, session, package_id=None, packager=None, action=None,
+    def search(cls, session, package_id=None, collection_id=None,
+               packager=None, action=None, user=None,
                status=None, offset=None, limit=None, count=False):
         """ Return the list of actions present in the database and
         matching these criterias.
@@ -1863,11 +1864,17 @@ class AdminAction(BASE):
         if package_id:
             query = query.filter(cls.package_id == package_id)
 
+        if collection_id:
+            query = query.filter(cls.collection_id == collection_id)
+
         if packager:
             query = query.filter(cls.user == packager)
 
         if action:
             query = query.filter(cls.action == action)
+
+        if user:
+            query = query.filter(cls.user == user)
 
         if status:
             if status not in ['Awaiting Review', 'Pending']:
