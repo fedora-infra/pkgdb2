@@ -1712,15 +1712,15 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
     if clt_to.name == 'Fedora EPEL':
         _validate_pkg(session, clt_to.version, package.name)
 
-    action = model.AdminAction.search(
+    actions = model.AdminAction.search(
         session,
         package_id=package.id,
         collection_id=clt_to.id,
         action='request.branch',
         user=user.username,
     )
-    if action:
-        action = action.pop()
+    if actions:
+        action = actions.pop()
         action._status = status
         action.message = None
     else:
