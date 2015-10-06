@@ -734,9 +734,13 @@ def api_pkgrequest(bzid):
             output['error'] = 'Invalid title for this bugzilla ticket'
         else:
             pkg, summary = tmp.split(' - ', 1)
+            url = bug.weburl
+            if 'show_bug.cgi?id=' in url:
+                url = url.replace('show_bug.cgi?id=', '')
             output = {
                 'name': pkg.strip(),
                 'summary': summary.strip(),
+                'review_url': url,
             }
 
     jsonout = flask.jsonify(output)
