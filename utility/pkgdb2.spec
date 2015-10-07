@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.29
+Version:        1.30
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,19 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Oct 07 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.30-1
+- Update to 1.30
+- Be less strict with bz package review summaries (Ralph Bean)
+- Fixed broken link for project documentation (Vivek Anand)
+- Import the configuration correctly in update_package_info
+- Improve the email report sent upon error in pkgdb2
+- Ensure the admin actions are uniques
+- Show the reason a request was denied in the list of requests
+- Improve the runserver script
+- Add a link to the review if the action is a request.package
+- Let the package request page support providing simply a ticket number or the
+  full url
+
 * Fri Oct 02 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.29-1
 - Update to 1.29
 - Adjust the README's intructions (trishnaguha)
