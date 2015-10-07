@@ -13,17 +13,16 @@
 <form action="{{ url_for('.package_request_new') }}" method="post" id="new_pkg">
   <table>
     <tr>
-      {{ render_field_in_cell(form.review_url, title="URL pointing directly to the
- location where the package review happened",
-     placeholder="https://bugzilla.redhat.com/1234") }}
+      {{ render_field_in_cell(form.review_url,
+         title="Ticket number of the package review", placeholder="1234") }}
     <td>
-      <button type="button" id="try_populate">Try populate fields</button>
+      <button type="button" id="try_populate">Sync</button>
     </td>
     </tr>
     {{ render_field_in_row(form.pkgname) }}
     {{ render_field_in_row(form.summary) }}
-    {{ render_field_in_row(form.description, rows=5) }}
     {{ render_field_in_row(form.branches) }}
+    {{ render_field_in_row(form.description, rows=5) }}
     {{ render_field_in_row(form.upstream_url, title="URL of the upstream project (if any)") }}
   </table>
   <p class="buttons indent">
@@ -44,12 +43,19 @@
             document.body.style.cursor = 'wait';
             $('#pkgname').val('');
             $('#summary').val('');
+            $('#pkgname').prop('disabled', true);
+            $('#summary').prop('disabled', true);
+            $('#review_url').prop('disabled', true);
             var _bzurl = $('#review_url').val();
             var _bzid = null;
-            if (_bzurl.indexOf("?id=") > -1) {
-                _bzid = _bzurl.split("?id=")[1];
+            if ($.isNumeric(_bzurl)) {
+                _bzid = _bzurl;
             } else {
-                _bzid = _bzurl.split("/").reverse()[0];
+                if (_bzurl.indexOf("?id=") > -1) {
+                    _bzid = _bzurl.split("?id=")[1];
+                } else {
+                    _bzid = _bzurl.split("/").reverse()[0];
+                }
             }
             var _url = "{{url_for('api_ns.api_pkgrequest', bzid='') }}";
             _url += _bzid;
@@ -59,11 +65,16 @@
                 dataType: 'json',
                 success: function(res) {
                     document.body.style.cursor = 'auto';
+                    $('#review_url').prop('disabled', false);
                     $('#pkgname').val(res.name);
                     $('#summary').val(res.summary);
+                    $('#review_url').val(res.review_url);
                 },
                 error: function(res) {
                     document.body.style.cursor = 'auto';
+                    $('#review_url').prop('disabled', false);
+                    $('#pkgname').prop('disabled', false);
+                    $('#summary').prop('disabled', false);
                     if (res.responseJSON.error) {
                       $('#flashes').append(
                         '<li class="error">' + res.responseJSON.error + '</li>'
