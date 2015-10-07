@@ -45,9 +45,9 @@
             $('#summary').val('');
             $('#pkgname').prop('disabled', true);
             $('#summary').prop('disabled', true);
+            $('#review_url').prop('disabled', true);
             var _bzurl = $('#review_url').val();
             var _bzid = null;
-            var _bzidint = false;
             if ($.isNumeric(_bzurl)) {
                 _bzid = _bzurl;
                 _bzidint = true;
@@ -66,12 +66,14 @@
                 dataType: 'json',
                 success: function(res) {
                     document.body.style.cursor = 'auto';
+                    $('#review_url').prop('disabled', false);
                     $('#pkgname').val(res.name);
                     $('#summary').val(res.summary);
                     $('#review_url').val(res.review_url);
                 },
                 error: function(res) {
                     document.body.style.cursor = 'auto';
+                    $('#review_url').prop('disabled', false);
                     $('#pkgname').prop('disabled', false);
                     $('#summary').prop('disabled', false);
                     if (res.responseJSON.error) {
