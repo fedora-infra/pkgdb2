@@ -43,8 +43,8 @@
             document.body.style.cursor = 'wait';
             $('#pkgname').val('');
             $('#summary').val('');
-            $('#pkgname').prop('disabled', true);
-            $('#summary').prop('disabled', true);
+            $('#pkgname').prop('readonly', true);
+            $('#summary').prop('readonly', true);
             $('#review_url').prop('disabled', true);
             var _bzurl = $('#review_url').val();
             var _bzid = null;
@@ -73,8 +73,8 @@
                 error: function(res) {
                     document.body.style.cursor = 'auto';
                     $('#review_url').prop('disabled', false);
-                    $('#pkgname').prop('disabled', false);
-                    $('#summary').prop('disabled', false);
+                    $('#pkgname').prop('readonly', false);
+                    $('#summary').prop('readonly', false);
                     if (res.responseJSON.error) {
                       $('#flashes').append(
                         '<li class="error">' + res.responseJSON.error + '</li>'
