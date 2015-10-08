@@ -1236,8 +1236,7 @@ def package_request_new():
         if bz not in pkg_review_url:
             try:
                 int(pkg_review_url)
-                pkg_review_url = APP.config[
-                    'PKGDB2_BUGZILLA_URL'] + '/' + pkg_review_url
+                pkg_review_url = bz + '/' + pkg_review_url
             except (TypeError, ValueError):
                 pass
 
