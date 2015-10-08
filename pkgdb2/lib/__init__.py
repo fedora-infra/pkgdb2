@@ -390,6 +390,11 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             package_listing=pkglisting.to_json(),
         ))
 
+    if pkglisting.point_of_contact == pkg_user and status != 'Approved' \
+            and acl.startswith('watch'):
+        raise PkgdbException(
+            'You cannot remove `Watch*` ACLs from the Point of Contact.')
+
     create = False
     personpkg = model.PackageListingAcl.get(
         session, pkg_user, pkglisting.id, acl=acl)
@@ -493,6 +498,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
             'Orphaning restricted to the packages of user %s' % prev_poc)
 
     pkglisting.point_of_contact = pkg_poc
+    session.flush()
     if pkg_poc == 'orphan':
         pkglisting.status = 'Orphaned'
         # Remove commit and watchcommits if the user has them
