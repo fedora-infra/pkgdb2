@@ -390,6 +390,11 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             package_listing=pkglisting.to_json(),
         ))
 
+    if pkglisting.point_of_contact == pkg_user and status != 'Approved' \
+            and acl.startswith('watch'):
+        raise PkgdbException(
+            'You cannot remove `Watch*` ACLs from the Point of Contact.')
+
     create = False
     personpkg = model.PackageListingAcl.get(
         session, pkg_user, pkglisting.id, acl=acl)
