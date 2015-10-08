@@ -372,7 +372,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                 'You are not allowed to approve or deny '
                 'ACLs for yourself.')
 
-    if pkg_user.startswith('group::') and acl == 'approveacls':
+    if '-' in pkg_user and acl == 'approveacls':
         raise PkgdbException(
             'Groups cannot have "approveacls".')
 
