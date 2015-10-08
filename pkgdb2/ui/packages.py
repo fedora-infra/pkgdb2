@@ -1232,6 +1232,15 @@ def package_request_new():
         pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
 
+        bz = APP.config.get('PKGDB2_BUGZILLA_URL')
+        if bz not in pkg_review_url:
+            try:
+                int(pkg_review_url)
+                pkg_review_url = APP.config[
+                    'PKGDB2_BUGZILLA_URL'] + '/' + pkg_review_url
+            except (TypeError, ValueError):
+                pass
+
         try:
             messages = []
             for clt in pkg_collection:
