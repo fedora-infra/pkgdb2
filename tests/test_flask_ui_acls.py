@@ -405,7 +405,8 @@ class FlaskUiAclsTest(Modeltests):
                 '/acl/guake/unwatch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<li class="message">ACLs updated</li>' in output.data)
+                '<li class="error">You cannot remove `Watch*` ACLs from '
+                'the Point of Contact.</li>' in output.data)
 
             output = self.app.post(
                 '/acl/random/unwatch/', data=data, follow_redirects=True)
