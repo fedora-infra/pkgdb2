@@ -520,6 +520,19 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
                 )
     elif pkglisting.status in ('Orphaned', 'Retired'):
         pkglisting.status = 'Approved'
+        acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
+        for acl in acls:
+            if not has_acls(session, pkg_poc, pkg_name, acl=acl,
+                        branch=pkg_branch):
+                set_acl_package(
+                    session,
+                    pkg_name=pkg_name,
+                    pkg_branch=pkg_branch,
+                    pkg_user=pkg_poc,
+                    acl=acl,
+                    status='Approved',
+                    user=user,
+                )
 
     session.add(pkglisting)
     session.flush()
