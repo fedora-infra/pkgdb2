@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.30
+Version:        1.30.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,12 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Oct 08 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.30.1-1
+- Update to 1.30.1
+- Use the readonly setting instead of disabling the fields (disabling the fields
+  prevent them to be submitted, thus preventing the form from working)
+- Ensure the review URL is always a real URL not just an ticket id
+
 * Wed Oct 07 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.30-1
 - Update to 1.30
 - Be less strict with bz package review summaries (Ralph Bean)
