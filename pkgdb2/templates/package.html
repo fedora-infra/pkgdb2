@@ -394,13 +394,17 @@ confusing what the difference is between that status an the per-branch status)
               </form>
             </li>
           {% endif %}
-          {% if g.fas_user.username in admins or is_admin %}
+          {% if g.fas_user %}
             <li>
               <a href="{{ url_for('.update_acl',package=package.name,
                        update_acl='approveacls') }}"
-                title="Manage commit ACLs">
+                title="Manage approveacls ACLs">
                 <button class="bold pkg_button_blue inline wheel">
-                  Manage the admins
+                {% if g.fas_user.username in admins or is_admin%}
+                Manage the admins
+                {% else %}
+                Request Approveacls
+                {% endif %}
                 </button>
               </a>
             </li>
