@@ -498,6 +498,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
             'Orphaning restricted to the packages of user %s' % prev_poc)
 
     pkglisting.point_of_contact = pkg_poc
+    session.flush()
     if pkg_poc == 'orphan':
         pkglisting.status = 'Orphaned'
         # Remove commit and watchcommits if the user has them
