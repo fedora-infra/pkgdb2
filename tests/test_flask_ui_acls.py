@@ -36,6 +36,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '..'))
 
 import pkgdb2
+from pkgdb2.lib import model
 from tests import (Modeltests, FakeFasUser, create_package_acl, user_set)
 
 
@@ -407,6 +408,41 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<li class="error">You cannot remove `Watch*` ACLs from '
                 'the Point of Contact.</li>' in output.data)
+
+            output = self.app.post(
+                '/acl/random/unwatch/', data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="error">No package found by this name</li>'
+                in output.data)
+
+        # Give watchbugzilla to ralph on guake/master
+        guake_pkg = model.Package.by_name(self.session, 'guake')
+        devel_collec = model.Collection.by_name(self.session, 'master')
+        pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
+            self.session, guake_pkg.id, devel_collec.id)
+        packager = model.PackageListingAcl(
+            fas_name='ralph',
+            packagelisting_id=pklist_guake_devel.id,
+            acl='watchbugzilla',
+            status='Approved',
+        )
+        self.session.add(packager)
+        self.session.commit()
+
+        # Drop watch* for ralph
+        user.username = 'ralph'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get('/package/guake/')
+            csrf_token = output.data.split(
+                'name="csrf_token" type="hidden" value="')[1].split('">')[0]
+            data = {'csrf_token': csrf_token}
+
+            output = self.app.post(
+                '/acl/guake/unwatch/', data=data, follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">ACLs updated</li>' in output.data)
 
             output = self.app.post(
                 '/acl/random/unwatch/', data=data, follow_redirects=True)
