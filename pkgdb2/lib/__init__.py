@@ -88,7 +88,9 @@ def _validate_poc(pkg_poc):
     else:
         # if pkg_poc is a packager
         packagers = pkgdb2.lib.utils.get_packagers()
-        if pkg_poc not in packagers:
+        if pkg_poc not in packagers \
+                and pkg_poc not in pkgdb2.APP.config.get(
+                    'AUTOAPPROVE_PKGERS', []):
             raise PkgdbException(
                 'User "%s" is not in the packager group' % pkg_poc)
 
@@ -370,7 +372,9 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                 'You are not allowed to approve or deny '
                 'ACLs for yourself.')
 
-    if pkg_user.startswith('group::') and acl == 'approveacls':
+    if acl == 'approveacls' and (
+            pkg_user.startswith('group::')
+            or pkg_user in pkgdb2.APP.config.get('AUTOAPPROVE_PKGERS', [])):
         raise PkgdbException(
             'Groups cannot have "approveacls".')
 
