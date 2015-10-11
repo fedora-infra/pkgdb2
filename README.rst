@@ -66,9 +66,29 @@ pkgdb2::
 
     (my-pkgdb2-env)$ python createdb.py
 
+Setting up PostgreSQL
+=====================
+
+Using PostgreSQL is optional but if you want to work with real datadump then
+setting up PostgreSQL will be a better option
+
+For setting up the PostgreSQL database you can look into the `Fedora documentation about PostgresQL
+<https://fedoraproject.org/wiki/PostgreSQL>`_
+
 .. note:: If you need/want a copy of the database used in production, follow the
           instructions in the `documentation
           <http://pkgdb2.readthedocs.org/en/latest/development.html#get-a-working-database>`_
+
+After executing all the above steps, you now need to  `Adjust Postgresql Connection Settings
+<https://github.com/fedora-infra/bodhi#3-adjust-postgresql-connection-settings>`_
+
+Now, you need to edit `/pkgdb2/default_config.py` file and replace::
+
+    DB_URL = 'sqlite:////var/tmp/pkgdb2_dev.sqlite'
+
+by::
+
+    DB_URL = 'postgresql://postgres:whatever@localhost/pkgdb2'
 
 If all goes well, you can start a development instance of the server by
 running::
