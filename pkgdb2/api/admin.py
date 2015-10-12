@@ -245,14 +245,21 @@ Get a specific Admin Action
 
     actionid = flask.request.args.get('actionid', actionid)
 
-    admin_action = pkgdblib.get_admin_action(SESSION, actionid)
-    if not admin_action:
+    try:
+        int(actionid)
+    except:
         output['output'] = 'notok'
         output['error'] = 'No Admin action with this identifier found'
         httpcode = 500
     else:
-        output = admin_action.to_json()
-        output['output'] = 'ok'
+        admin_action = pkgdblib.get_admin_action(SESSION, actionid)
+        if not admin_action:
+            output['output'] = 'notok'
+            output['error'] = 'No Admin action with this identifier found'
+            httpcode = 500
+        else:
+            output = admin_action.to_json()
+            output['output'] = 'ok'
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
