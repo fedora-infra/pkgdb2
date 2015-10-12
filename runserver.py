@@ -8,8 +8,6 @@ import argparse
 import sys
 import os
 
-from pkgdb2 import APP
-APP.debug = True
 
 parser = argparse.ArgumentParser(
     description='Run the packages2 app')
@@ -38,4 +36,6 @@ if args.profile:
 if args.config:
     os.environ['PKGS_CONFIG'] = args.config
 
+from pkgdb2 import APP
+APP.debug = True
 APP.run(port=int(args.port))
