@@ -533,6 +533,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
                     acl=acl,
                     status='Approved',
                     user=user,
+                    force=True,
                 )
 
     session.add(pkglisting)
