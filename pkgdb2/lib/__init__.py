@@ -42,6 +42,8 @@ import pkgdb2.lib.utils
 from pkgdb2.lib.exceptions import PkgdbException, PkgdbBugzillaException
 
 
+ACLS = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
+
 ## Apparently some of our methods have too many arguments
 # pylint: disable=R0913
 ## to many branches
@@ -253,7 +255,7 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
             ))
 
     # Add all new ACLs to the owner
-    acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
+    acls = ACLS
     if pkg_poc.startswith('group::'):
         acls = ['commit', 'watchbugzilla', 'watchcommits']
 
@@ -520,6 +522,19 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
                 )
     elif pkglisting.status in ('Orphaned', 'Retired'):
         pkglisting.status = 'Approved'
+        for acl in ACLS:
+            if not has_acls(session, pkg_poc, pkg_name, acl=acl,
+                        branch=pkg_branch):
+                set_acl_package(
+                    session,
+                    pkg_name=pkg_name,
+                    pkg_branch=pkg_branch,
+                    pkg_user=pkg_poc,
+                    acl=acl,
+                    status='Approved',
+                    user=user,
+                    force=True,
+                )
 
     session.add(pkglisting)
     session.flush()
