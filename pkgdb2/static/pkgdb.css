@@ -162,6 +162,9 @@ label.active, label.active:hover {
   background-position: 3px 50%!important;
 }
 
+label.inactive, label.inactive:hover {
+    cursor: default;
+}
 
 #actions {
   line-height: 1;
