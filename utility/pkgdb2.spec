@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.30.1
+Version:        1.31
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,17 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Oct 13 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.31-1
+- Update to 1.31
+- Prevent the PoC of a package to be removed of his/her watch* ACLs
+- Add a button to request approveacls per branch
+- Add a whitelist of packager for whom we do not check their group membership
+- Adding more information about PostgreSQL in the README (farhaanbukhsh)
+- Add tooltip for non-admins on clicking monitoring buttons (Devyani Kota)
+- Give ACLs to the new POC of a package
+- Ensure the actionid is an integer and report an error otherwise (in the API)
+- Improve/fix the runserver script
+
 * Thu Oct 08 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.30.1-1
 - Update to 1.30.1
 - Use the readonly setting instead of disabling the fields (disabling the fields
