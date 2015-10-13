@@ -108,7 +108,6 @@ confusing what the difference is between that status an the per-branch status)
                 %} title="Only package admin or owner can turn on monitoring new releases"{%
                 else
                 %} title="Login to turn on monitoring of new releases for the package without attempting to build it"
-                class="mouse_inactive"
                 {%- endif -%}
                 {%- if package.monitoring_status == "nobuild" and g.fas_user %}
                     class="active"
