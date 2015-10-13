@@ -162,7 +162,7 @@ label.active, label.active:hover {
   background-position: 3px 50%!important;
 }
 
-label.inactive, label.inactive:hover {
+label.mouse_inactive, label.mouse_inactive:hover {
     cursor: default;
 }
 

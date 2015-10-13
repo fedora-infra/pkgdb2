@@ -80,7 +80,7 @@ confusing what the difference is between that status an the per-branch status)
                 {%- if package.monitoring_status == False and g.fas_user %}
                     class="active"
                 {%- elif package.monitoring_status == False %}
-                    class="active inactive"
+                    class="active mouse_inactive"
                 {%- endif -%}>
                 No monitoring
               </label> <br />
@@ -96,7 +96,7 @@ confusing what the difference is between that status an the per-branch status)
                 {%- if package.monitoring_status == True and g.fas_user %}
                     class="active"
                 {%- elif package.monitoring_status == True %}
-                    class="active inactive"
+                    class="active mouse_inactive"
                 {% endif-%}>
                 Bugs &amp; builds
               </label> <br />
@@ -108,12 +108,12 @@ confusing what the difference is between that status an the per-branch status)
                 %} title="Only package admin or owner can turn on monitoring new releases"{%
                 else
                 %} title="Login to turn on monitoring of new releases for the package without attempting to build it"
-                class="inactive"
+                class="mouse_inactive"
                 {%- endif -%}
                 {%- if package.monitoring_status == "nobuild" and g.fas_user %}
                     class="active"
                 {%- elif package.monitoring_status == "nobuild" %}
-                    class="active inactive"
+                    class="active mouse_inactive"
                 {%- endif -%}>
                 Bugs only
               </label>
