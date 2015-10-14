@@ -83,63 +83,71 @@
 
 {% if actions %}
 <table id="actiontable">
-  <tr>
-    <th>Date</th>
-    <th>User</th>
-    <th>Package</th>
-    <th>Action</th>
-    <th>Branch</th>
-    <th>Status</th>
-    <th></th>
-  </tr>
-{% for action in actions %}
- {% if loop.last %}
- <tr class="lastrow">
- {% else %}
-  <tr>
- {% endif %}
-    <td>
+
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>User</th>
+      <th>Package</th>
+      <th>Action</th>
+      <th>Branch</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for action in actions %}
+      {% if loop.last %}
+    <tr class="lastrow">
+      {% else %}
+    <tr>
+      {% endif %}
+
+      <td>
         {{ action.date_created.strftime('%Y-%m-%d %H:%M:%S') }}
-    </td>
-    <td class="col_odd">
-      <a href="{{url_for('.packager_info', packager=action.user)}}">
-        {{ action.user }}
-      </a>
-    </td>
-    <td>
-    {% if action.package %}
-      <a href="{{url_for('.package_info', package=action.package.name)}}">
-        {{ action.package.name }}
-      </a>
-    {% else %}
-      {{ action.info_data['pkg_name'] }}
-    {% endif %}
-    </td>
-    <td class="col_odd">{{ action.action }}</td>
-    <td>{{ action.collection.branchname }}</td>
-    <td class="col_odd" >
-      {{ action.status }} {%- if action.message %}:
-      {{ action.message }}{% endif %}
-    </td>
-    <td class="lastcel">
-    {% if not select %}
-      <a href="{{ url_for('.admin_action_edit_status', action_id=action.id) }}">
-        Update
-      </a>
-    {% elif select and g.fas_user and g.fas_user.username == action.user %}
-      <a href="{{ url_for(
-        '.package_request_edit', action_id=action.id) }}">
+      </td>
+      <td class="col_odd">
+        <a href="{{url_for('.packager_info', packager=action.user)}}">
+          {{ action.user }}
+        </a>
+      </td>
+      <td>
+        {% if action.package %}
+          <a href="{{url_for('.package_info', package=action.package.name)}}">
+            {{ action.package.name }}
+          </a>
+        {% else %}
+          {{ action.info_data['pkg_name'] }}
+        {% endif %}
+      </td>
+      <td class="col_odd">{{ action.action }}</td>
+      <td>{{ action.collection.branchname }}</td>
+      <td class="col_odd" >
+        {{ action.status }} {%- if action.message %}:
+        {{ action.message }}{% endif %}
+      </td>
+      <td class="lastcel">
+        {% if not select %}
+          <a href="{{ url_for('.admin_action_edit_status', action_id=action.id) }}">
+            Update
+          </a>
+        {% elif select and g.fas_user and g.fas_user.username == action.user %}
+          <a href="{{ url_for(
+          '.package_request_edit', action_id=action.id) }}">
           {% if action.status in ['Pending', 'Awaiting Review'] %}
-          Update
+            Update
           {% else %}
-          Details
+            Details
           {% endif %}
-      </a>
-    {% endif %}
-    </td>
-  </tr>
+          </a>
+        {% endif %}
+      </td>
+    </tr>
 {% endfor %}
+</tbody>
 </table>
+
 {% else %}
 <p>No actions found</p>
 {% endif %}
@@ -148,15 +156,19 @@
 
 {% block jscripts %}
 {{ super() }}
+
 <script type="text/javascript"
     src="{{ url_for('static',
-        filename='jquery-ui-timespinner.js') }}">
+        filename='jquery.tablesorter.min.js') }}">
+
 </script>
+
 <script type="text/javascript">
     $(function(){
         $('#from_date').datepicker({
             dateFormat: "yy-mm-dd",
         });
+        $('#actiontable').tablesorter();
     });
 </script>
 {% endblock %}

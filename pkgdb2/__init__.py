@@ -112,7 +112,7 @@ _monkey_patch_jsonify_jsonp()
 
 
 def is_authenticated():
-    """ Returns wether a user is authenticated or not.
+    """ Returns whether a user is authenticated or not.
     """
     return hasattr(flask.g, 'fas_user') and flask.g.fas_user is not None
 
@@ -201,7 +201,7 @@ def packager_login_required(function):
 
 
 def is_admin(function):
-    """ Decorator used to check if the loged in user is a pkgdb admin
+    """ Decorator used to check if the logged in user is a pkgdb admin
     or not.
     """
     @wraps(function)
