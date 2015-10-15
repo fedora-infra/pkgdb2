@@ -1839,6 +1839,112 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(
             action.info_data['pkg_review_url'], 'http://bz.rh.c/123')
 
+    @patch('pkgdb2.lib.utils')
+    def test_api_branch_request(self, utils_mock):
+        """ Test the api_branch_request function.  """
+        # Ensure there are no actions before
+        actions = pkgdblib.search_actions(self.session)
+        self.assertEqual(len(actions), 0)
+
+        create_package_acl(self.session)
+        user = FakeFasUser()
+
+        with user_set(pkgdb2.APP, user):
+            # Invalid package
+            data = {
+                'branches': ['foobar'],
+            }
+            output = self.app.post('/api/request/branch/foo', data=data)
+            self.assertEqual(output.status_code, 404)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  "error": "No package found: foo",
+                  "output": "notok"
+                }
+            )
+
+            # Invalid request
+            data = {
+                'branches': ['foobar'],
+            }
+            output = self.app.post('/api/request/branch/guake', data=data)
+            self.assertEqual(output.status_code, 400)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  "error": "Invalid input submitted",
+                  "error_detail": [
+                    "branches: 'foobar' is not a valid choice for this field"
+                  ],
+                  "output": "notok"
+                }
+            )
+
+            # User not a packager
+            data = {
+                'branches': ['f17'],
+            }
+            output = self.app.post('/api/request/branch/guake', data=data)
+            self.assertEqual(output.status_code, 400)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  'error': 'User "pingou" is not in the packager group',
+                  'output': 'notok'
+                }
+            )
+
+            # Working - Fedora branches are directly created
+            utils_mock.get_packagers.return_value = ['pingou', 'ralph']
+            utils_mock.log.return_value = \
+                'user: pingou request package: guake on branch <branch>'
+            data = {
+                'branches': ['f17'],
+            }
+            output = self.app.post('/api/request/branch/guake', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  'messages': [
+                    'Branch f17 created for user pingou',
+                  ],
+                  'output': 'ok'
+                }
+            )
+
+            actions = pkgdblib.search_actions(self.session)
+            self.assertEqual(len(actions), 0)
+
+            # Working - EPEL branches go through validation
+            data = {
+                'branches': ['el6'],
+            }
+            output = self.app.post('/api/request/branch/guake', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  "messages": [
+                    "Branch el6 requested for user pingou"
+                  ],
+                  "output": "ok"
+                }
+            )
+
+            actions = pkgdblib.search_actions(self.session)
+            self.assertEqual(len(actions), 1)
+            self.assertEqual(actions[0].action, 'request.branch')
+            self.assertEqual(actions[0].collection.branchname, 'el6')
+            self.assertEqual(actions[0].package.name, 'guake')
+            self.assertEqual(actions[0].info_data, {})
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(FlaskApiPackagesTest)
