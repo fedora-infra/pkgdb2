@@ -105,6 +105,7 @@ def api():
     api_package_list = load_doc(packages.api_package_list)
     api_monitor_package = load_doc(packages.api_monitor_package)
     api_koschei_package = load_doc(packages.api_koschei_package)
+    api_package_request = load_doc(packages.api_package_request)
 
     api_acl_update = load_doc(acls.api_acl_update)
     api_acl_reassign = load_doc(acls.api_acl_reassign)
@@ -143,6 +144,7 @@ def api():
             api_package_critpath, api_monitor_package, api_koschei_package,
             api_package_orphan, api_package_unorphan,
             api_package_retire, api_package_unretire,
+            api_package_request,
         ],
         acls=[
             api_acl_update, api_acl_reassign,
