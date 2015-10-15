@@ -1216,3 +1216,129 @@ def api_koschei_package(package, status):
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
     return jsonout
+
+
+@API.route('/request/package', methods=['POST'])
+def api_package_request():
+    '''
+    New package request
+    -------------------
+    Request for an admint to include a new package in pkgdb.
+
+    ::
+
+        /api/request/package
+
+    Accepts POST queries only.
+
+    :arg pkgname: The name of the package to create.
+    :arg summary: The summary of the package.
+    :arg description: The description of the package.
+    :arg upstream_url: The URL of the upstream website of the package.
+    :arg review_url: The URL where the package review was done.
+    :arg branches: The list of branches desired for this package.
+        Note: if the ``master`` isn't requested, it will be added
+        automatically.
+
+
+    Sample response:
+
+    ::
+
+        {
+            "output": "ok",
+            "messages": "Koschei monitoring status of guake set to True"
+        }
+
+        {
+          "output": "notok",
+          "error": "No package found by this name"
+        }
+
+     '''
+    httpcode = 200
+    output = {}
+    collections = pkgdblib.search_collection(
+        SESSION, '*', 'Under Development')
+    collections.reverse()
+    active_collections = pkgdblib.search_collection(SESSION, '*', 'Active')
+    active_collections.reverse()
+    # We want all the branch `Under Development` as well as all the `Active`
+    # branch but we can only have at max 2 Fedora branch active at the same
+    # time. In other words, when Fedora n+1 is released one can no longer
+    # request a package to be added to Fedora n-1
+    cnt = 0
+    for collection in active_collections:
+        if collection.name.lower() == 'fedora':
+            if cnt >= 2:
+                continue
+            cnt += 1
+        collections.append(collection)
+
+    form = forms.RequestPackageForm(
+        csrf_enabled=False,
+        collections=collections,
+    )
+
+    if form.validate_on_submit():
+        pkg_name = form.pkgname.data
+        pkg_summary = form.summary.data
+        pkg_description = form.description.data
+        pkg_review_url = form.review_url.data
+        pkg_status = 'Approved'
+        pkg_critpath = False
+        pkg_collection = form.branches.data
+        if not 'master' in pkg_collection:
+            pkg_collection.append('master')
+        pkg_poc = flask.g.fas_user.username
+        pkg_upstream_url = form.upstream_url.data
+
+        bz = APP.config.get('PKGDB2_BUGZILLA_URL')
+        if bz not in pkg_review_url:
+            try:
+                int(pkg_review_url)
+                pkg_review_url = bz + '/' + pkg_review_url
+            except (TypeError, ValueError):
+                pass
+
+        try:
+            messages = []
+            for clt in pkg_collection:
+                message = pkgdblib.add_new_package_request(
+                    SESSION,
+                    pkg_name=pkg_name,
+                    pkg_summary=pkg_summary,
+                    pkg_description=pkg_description,
+                    pkg_review_url=pkg_review_url,
+                    pkg_status=pkg_status,
+                    pkg_critpath=pkg_critpath,
+                    pkg_collection=clt,
+                    pkg_poc=pkg_poc,
+                    pkg_upstream_url=pkg_upstream_url,
+                    user=flask.g.fas_user,
+                )
+                if message:
+                    print message
+                    messages.append(message)
+            SESSION.commit()
+            output['output'] = 'ok'
+            output['messages'] = messages
+        except pkgdblib.PkgdbException, err:
+            SESSION.rollback()
+            output['output'] = 'notok'
+            output['error'] = str(err)
+            httpcode = 400
+    else:
+        output['output'] = 'notok'
+        output['error'] = 'Invalid input submitted'
+        if form.errors:
+            detail = []
+            for error in form.errors:
+                detail.append('%s: %s' % (error,
+                              '; '.join(form.errors[error])))
+            output['error_detail'] = detail
+        httpcode = 400
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
