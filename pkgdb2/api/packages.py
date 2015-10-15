@@ -1246,13 +1246,25 @@ def api_package_request():
     ::
 
         {
-            "output": "ok",
-            "messages": "Koschei monitoring status of guake set to True"
+          "output": "ok",
+          "messages": [
+            'user: pingou request package: guake on branch master',
+            'user: pingou request package: guake on branch f18',
+          ]
         }
 
         {
           "output": "notok",
-          "error": "No package found by this name"
+          'error': 'User "pingou" is not in the packager group',
+        }
+
+        {
+          "error": "Invalid input submitted",
+          "error_detail": [
+            "branches: 'foobar' is not a valid choice for this field",
+            "review_url: This field is required."
+          ],
+          "output": "notok"
         }
 
      '''
