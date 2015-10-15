@@ -68,26 +68,54 @@ confusing what the difference is between that status an the per-branch status)
         <td colspan="2" align="center">
           <div id="monitoring_block">
             <input type="radio" id="no_monitoring" name="monitoring" value="0" />
-                <label for="no_monitoring" {%- if ('packager' in g.fas_user.groups or is_admin)
-                    %} title="Turns off monitoring new releases for this package"{%
-                    elif g.fas_user %} title="Only package admin or owner can turn off monitoring new releases"{%
-                    else %} title="Login to turn off monitoring new releases for this package"{% endif -%}{%-
-                    if package.monitoring_status == False %} class="active"{% endif
-                    -%}>No monitoring</label> <br />
+            {{ package.monitoring_status }}
+              <label for="no_monitoring" {%-
+                if ('packager' in g.fas_user.groups or is_admin)
+                %} title="Turns off monitoring new releases for this package"{%
+                elif g.fas_user
+                %} title="Only package admin or owner can turn off monitoring new releases"{%
+                else
+                %} title="Login to turn off monitoring new releases for this package"
+                {%- endif -%}
+                {%- if package.monitoring_status == False and g.fas_user %}
+                    class="active"
+                {%- elif package.monitoring_status == False %}
+                    class="active mouse_inactive"
+                {%- endif -%}>
+                No monitoring
+              </label> <br />
             <input type="radio" id="monitoring" name="monitoring" value="1" />
-                <label for="monitoring" {% if('packager' in g.fas_user.groups or is_admin)
-                    %} title="Turns on monitoring and attempt to build new releases for this package"{%
-                    elif g.fas_user %} title="Only package admin or owner can turn on monitoring and attempt to build new releases"{%
-                    else %} title="Login to turn on monitoring and attempt to build new releases"{% endif %}{%-
-                    if package.monitoring_status == True %} class="active"{% endif
-                    -%}>Bugs &amp; builds</label> <br />
+              <label for="monitoring" {%
+                if('packager' in g.fas_user.groups or is_admin)
+                %} title="Turns on monitoring and attempt to build new releases for this package"{%
+                elif g.fas_user
+                %} title="Only package admin or owner can turn on monitoring and attempt to build new releases"{%
+                else
+                %} title="Login to turn on monitoring and attempt to build new releases"
+                {%- endif %}
+                {%- if package.monitoring_status == True and g.fas_user %}
+                    class="active"
+                {%- elif package.monitoring_status == True %}
+                    class="active mouse_inactive"
+                {% endif-%}>
+                Bugs &amp; builds
+              </label> <br />
             <input type="radio" id="no_build" name="monitoring" value="nobuild" />
-                <label for="no_build" {%- if ('packager' in g.fas_user.groups or is_admin)
-                        %} title="Turns on monitoring of new releases but without attempt to build it"{%
-                        elif g.fas_user %} title="Only package admin or owner can turn on monitoring new releases"{%
-                        else %} title="Login to turn on monitoring of new releases for the package without attempting to build it"{% endif -%}{%-
-                    if package.monitoring_status == "nobuild" %} class="active"{% endif
-                    -%}>Bugs only</label>
+              <label for="no_build" {%-
+                if ('packager' in g.fas_user.groups or is_admin)
+                %} title="Turns on monitoring of new releases but without attempt to build it"{%
+                elif g.fas_user
+                %} title="Only package admin or owner can turn on monitoring new releases"{%
+                else
+                %} title="Login to turn on monitoring of new releases for the package without attempting to build it"
+                {%- endif -%}
+                {%- if package.monitoring_status == "nobuild" and g.fas_user %}
+                    class="active"
+                {%- elif package.monitoring_status == "nobuild" %}
+                    class="active mouse_inactive"
+                {%- endif -%}>
+                Bugs only
+              </label>
             </div>
         </td>
     </tr>
