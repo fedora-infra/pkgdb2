@@ -1223,7 +1223,7 @@ def api_package_request():
     '''
     New package request
     -------------------
-    Request for an admint to include a new package in pkgdb.
+    Request for an admin to include a new package in pkgdb.
 
     ::
 
@@ -1267,7 +1267,7 @@ def api_package_request():
           "output": "notok"
         }
 
-     '''
+    '''
     httpcode = 200
     output = {}
     collections = pkgdblib.search_collection(
@@ -1330,7 +1330,6 @@ def api_package_request():
                     user=flask.g.fas_user,
                 )
                 if message:
-                    print message
                     messages.append(message)
             SESSION.commit()
             output['output'] = 'ok'
