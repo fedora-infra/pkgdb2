@@ -111,7 +111,7 @@ $(function(){
         var row = $(this).parent().parent();
         row.children().each(function() {
             var _item = $(this).children();
-            if (_item.val() != 'Approved') {
+            if (_item.val() == 'Awaiting Review') {
                 _item.children('option:contains(' + _val + ')').prop(
                     {selected: true});
                 var _val_lbl = _val.replace(' ', '_');
