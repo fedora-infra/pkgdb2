@@ -560,7 +560,7 @@ table .col_odd,
     background: url(link.png) center center no-repeat;
 }
 
-th.header {
+th.tablesorter-header {
     background-image: url(small.gif);
     cursor: pointer;
     font-weight: bold;
@@ -570,12 +570,12 @@ th.header {
     margin-left: -1px;
 }
 
-th.headerSortUp {
+th.tablesorter-headerSortUp {
     background-image: url(small_asc.gif);
     background-color: #C0C0C0;
 }
 
-th.headerSortDown {
+th.tablesorter-headerSortDown {
     background-image: url(small_desc.gif);
     background-color: #C0C0C0;
 }
