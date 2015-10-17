@@ -217,7 +217,7 @@ class FlaskUiAdminTest(Modeltests):
                 1
             )
             self.assertTrue(
-                '<td class="col_odd" >\n      Awaiting Review\n    </td>'
+                '<td class="col_odd" >\n        Awaiting Review\n      </td>'
                 in output.data)
 
             # One action Awaiting Review
@@ -231,7 +231,7 @@ class FlaskUiAdminTest(Modeltests):
                 1
             )
             self.assertTrue(
-                '<td class="col_odd" >\n      Awaiting Review\n    </td>'
+                '<td class="col_odd" >\n        Awaiting Review\n      </td>'
                 in output.data)
 
             # Update

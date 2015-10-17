@@ -58,8 +58,13 @@
     <tr>
         <td>
         {% if page > 1%}
+            {% if select %}
+            <a href="{{ url_for('.packager_requests', page=page-1,
+                packager=packager, package=package if package else None) }}">
+            {% else %}
             <a href="{{ url_for('.admin_actions', page=page-1,
                 package=package, from_date=from_date) }}">
+            {% endif %}
                 < Previous
             </a>
         {% else %}
@@ -69,8 +74,13 @@
         <td>{{ page }} / {{ total_page }}</td>
         <td>
             {% if page < total_page %}
+            {% if select %}
+            <a href="{{ url_for('.packager_requests', page=page+1,
+                packager=packager, package=package if package else None) }}">
+            {% else %}
             <a href="{{ url_for('.admin_actions', page=page+1,
                 package=package, from_date=from_date) }}">
+            {% endif %}
                 Next >
             </a>
             {% else %}
