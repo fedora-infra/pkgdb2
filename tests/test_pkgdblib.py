@@ -979,6 +979,7 @@ class PkgdbLibtests(Modeltests):
                           clt_branchname='f19',
                           clt_disttag='.fc19',
                           clt_koji_name='f19',
+                          clt_allow_retire=False,
                           user=FakeFasUser(),
                           )
         self.session.rollback()
@@ -990,6 +991,7 @@ class PkgdbLibtests(Modeltests):
                                 clt_branchname='f19',
                                 clt_disttag='.fc19',
                                 clt_koji_name='f19',
+                                clt_allow_retire=False,
                                 user=FakeFasUserAdmin(),
                                 )
         self.session.commit()

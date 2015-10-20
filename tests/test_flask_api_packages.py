@@ -689,6 +689,7 @@ class FlaskApiPackagesTest(Modeltests):
             owner='kevin',
             branchname='epel7',
             dist_tag='.el7',
+            allow_retire=True,
         )
         self.session.add(collection)
         self.session.commit()
@@ -793,6 +794,7 @@ class FlaskApiPackagesTest(Modeltests):
             owner='kevin',
             branchname='epel7',
             dist_tag='.el7',
+            allow_retire=True,
         )
         self.session.add(collection)
         self.session.commit()
@@ -848,6 +850,7 @@ class FlaskApiPackagesTest(Modeltests):
             owner='kevin',
             branchname='epel7',
             dist_tag='.el7',
+            allow_retire=True,
         )
         self.session.add(collection)
         self.session.commit()
