@@ -633,6 +633,7 @@ class Collection(BASE):
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
     dist_tag = sa.Column(sa.String(32), unique=True, nullable=False)
     koji_name = sa.Column(sa.Text)
+    allow_retire = sa.Column(sa.Boolean, default=False, nullable=False)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
