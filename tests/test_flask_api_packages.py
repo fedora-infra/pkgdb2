@@ -669,7 +669,6 @@ class FlaskApiPackagesTest(Modeltests):
                 continue
             self.assertEqual(acl['status'], 'Obsolete')
 
-
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
     def test_api_package_retire2(self, login_func, mock_func):
@@ -1686,6 +1685,159 @@ class FlaskApiPackagesTest(Modeltests):
 
             self.assertEqual(
                 data['output'], "ok")
+
+    @patch('pkgdb2.lib.utils')
+    def test_api_package_request(self, utils_mock):
+        """ Test the api_package_request function.  """
+        # Ensure there are no actions before
+        actions = pkgdblib.search_actions(self.session)
+        self.assertEqual(len(actions), 0)
+
+        create_collection(self.session)
+        user = FakeFasUser()
+
+        with user_set(pkgdb2.APP, user):
+            # Incomplete request
+            data = {
+                'pkgname': 'guake',
+                'summary': 'Drop-down terminal for GNOME',
+                'branches': ['foobar'],
+            }
+            output = self.app.post('/api/request/package', data=data)
+            self.assertEqual(output.status_code, 400)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  "error": "Invalid input submitted",
+                  "error_detail": [
+                    "branches: 'foobar' is not a valid choice for this field",
+                    "review_url: This field is required."
+                  ],
+                  "output": "notok"
+                }
+            )
+
+            # User not a packager
+            data = {
+                'pkgname': 'guake',
+                'summary': 'Drop-down terminal for GNOME',
+                'review_url': 'https://bugzilla.redhat.com/450189',
+                'branches': ['master', 'f18'],
+            }
+            output = self.app.post('/api/request/package', data=data)
+            self.assertEqual(output.status_code, 400)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  'error': 'User "pingou" is not in the packager group',
+                  'output': 'notok'
+                }
+            )
+
+            # Working - Asking for 1 branch only but getting `master` as well
+            utils_mock.get_packagers.return_value = ['pingou', 'ralph']
+            utils_mock.log.return_value = \
+                'user: pingou request package: guake on branch <branch>'
+            data = {
+                'pkgname': 'guake',
+                'summary': 'Drop-down terminal for GNOME',
+                'review_url': 'https://bugzilla.redhat.com/450189',
+                'branches': ['f18'],
+            }
+            output = self.app.post('/api/request/package', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  'messages': [
+                    'user: pingou request package: guake on branch <branch>',
+                    'user: pingou request package: guake on branch <branch>',
+                  ],
+                  'output': 'ok'
+                }
+            )
+
+        actions = pkgdblib.search_actions(self.session)
+        self.assertEqual(len(actions), 2)
+        self.assertEqual(actions[0].action, 'request.package')
+        self.assertEqual(actions[1].action, 'request.package')
+        self.assertEqual(actions[0].collection.branchname, 'f18')
+        self.assertEqual(actions[1].collection.branchname, 'master')
+        self.assertEqual(actions[0].package, None)
+        self.assertEqual(actions[1].package, None)
+        self.assertEqual(actions[0].info_data['pkg_name'], 'guake')
+        self.assertEqual(actions[1].info_data['pkg_name'], 'guake')
+
+        # Check with providing a bug number instead of the full URL
+        with user_set(pkgdb2.APP, user):
+            utils_mock.log.return_value = \
+                'user: pingou request package: terminator on branch master'
+            data = {
+                'pkgname': 'terminator',
+                'summary': 'Terminal for GNOME',
+                'review_url': '123',
+                'branches': ['master'],
+            }
+            output = self.app.post('/api/request/package', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  'messages': [
+                    'user: pingou request package: terminator on branch master',
+                  ],
+                  'output': 'ok'
+                }
+            )
+
+        actions = pkgdblib.search_actions(self.session)
+        self.assertEqual(len(actions), 3)
+        action = pkgdblib.get_admin_action(self.session, 3)
+        self.assertEqual(action.action, 'request.package')
+        self.assertEqual(action.collection.branchname, 'master')
+        self.assertEqual(action.package, None)
+        self.assertEqual(action.info_data['pkg_name'], 'terminator')
+        self.assertEqual(
+            action.info_data['pkg_review_url'],
+            'https://bugzilla.redhat.com/123'
+        )
+
+        # Check with an URL not matching expectations
+        with user_set(pkgdb2.APP, user):
+            utils_mock.log.return_value = \
+                'user: pingou request package: foo on branch master'
+            data = {
+                'pkgname': 'foo',
+                'summary': 'bar',
+                'review_url': 'http://bz.rh.c/123',
+                'branches': ['master'],
+            }
+            output = self.app.post('/api/request/package', data=data)
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                  'messages': [
+                    'user: pingou request package: foo on branch master',
+                  ],
+                  'output': 'ok'
+                }
+            )
+
+        actions = pkgdblib.search_actions(self.session)
+        self.assertEqual(len(actions), 4)
+        action = pkgdblib.get_admin_action(self.session, 4)
+        self.assertEqual(action.action, 'request.package')
+        self.assertEqual(action.collection.branchname, 'master')
+        self.assertEqual(action.package, None)
+        self.assertEqual(action.info_data['pkg_name'], 'foo')
+        self.assertEqual(
+            action.info_data['pkg_review_url'], 'http://bz.rh.c/123')
 
 
 if __name__ == '__main__':
