@@ -63,6 +63,9 @@ def api_collection_new():
     :arg branchname: The short name of the collection (ie: F-18).
     :arg dist_tag: The dist tag used by rpm for this collection (ie: .fc18).
     :arg kojiname: the name of the collection in koji.
+    :kwarg allow_retire: a boolean specifying if the collection should allow
+        retiring a package or not.
+        Defaults to ``False``.
 
     Sample response:
 
@@ -95,6 +98,7 @@ def api_collection_new():
         clt_branchname = form.branchname.data
         clt_disttag = form.dist_tag.data
         clt_koji_name = form.kojiname.data
+        clt_allow_retire = form.allow_retire.data or False
 
         try:
             message = pkgdblib.add_collection(
@@ -105,6 +109,7 @@ def api_collection_new():
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_koji_name=clt_koji_name,
+                clt_allow_retire=clt_allow_retire,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
