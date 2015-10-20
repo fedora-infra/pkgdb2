@@ -116,6 +116,7 @@ def collection_edit(collection):
         clt_branchname = form.branchname.data
         clt_disttag = form.dist_tag.data
         clt_koji_name = form.kojiname.data
+        clt_allow_retire = form.allow_retire.data
 
         try:
             pkgdblib.edit_collection(
@@ -127,6 +128,7 @@ def collection_edit(collection):
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_koji_name=clt_koji_name,
+                clt_allow_retire=clt_allow_retire,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
@@ -164,6 +166,7 @@ def collection_new():
         clt_branchname = form.branchname.data
         clt_disttag = form.dist_tag.data
         clt_koji_name = form.kojiname.data
+        clt_allow_retire = form.allow_retire.data
 
         try:
             message = pkgdblib.add_collection(
@@ -174,6 +177,7 @@ def collection_new():
                 clt_branchname=clt_branchname,
                 clt_disttag=clt_disttag,
                 clt_koji_name=clt_koji_name,
+                clt_allow_retire=clt_allow_retire,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
