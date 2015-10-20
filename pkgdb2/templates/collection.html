@@ -11,6 +11,7 @@
 <p>
     Status : <img src="{{ url_for('static', filename='%s.png' % collection.status) }}"
               title="{{ collection.status }}" alt="{{ collection.status }}"/ >
+              {{ collection.status }}
     (<a href="{{ url_for('.collection_edit', collection=collection.branchname) }}">
         edit
     </a>)
