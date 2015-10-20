@@ -618,11 +618,9 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 'You are not allowed to retire this package.')
 
         # Admins can deprecate everything
-        # Users can deprecate Fedora devel and EPEL branches
-        if pkgdb2.is_pkgdb_admin(user) \
-                or (collection.name == 'Fedora'
-                    and collection.status == 'Under Development') \
-                or collection.name == 'Fedora EPEL':
+        # Users can deprecate Fedora devel and EPEL branches, which
+        # are marked as allowing retiring a package.
+        if pkgdb2.is_pkgdb_admin(user) or collection.allow_retire:
 
             prev_poc = pkglisting.point_of_contact
             pkglisting.status = 'Retired'
