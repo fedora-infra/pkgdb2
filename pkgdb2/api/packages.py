@@ -1353,3 +1353,125 @@ def api_package_request():
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
     return jsonout
+
+
+@API.route('/request/branch/<package>', methods=['POST'])
+def api_branch_request(package):
+    '''
+    New branch request
+    ------------------
+    Request a new branch for package in pkgdb.
+
+    ::
+
+        /api/request/branch
+
+    Accepts POST queries only.
+
+    :arg branches: The list of branches desired for this package.
+
+
+    Sample response:
+
+    ::
+
+        {
+          'messages': [
+            'Branch f17 created for user pingou',
+          ],
+          'output': 'ok'
+        }
+
+        {
+          "messages": [
+            "Branch el6 requested for user pingou"
+          ],
+          "output": "ok"
+        }
+
+        {
+          "output": "notok",
+          'error': 'User "pingou" is not in the packager group',
+        }
+
+        {
+          "error": "Invalid input submitted",
+          "error_detail": [
+            "branches: 'foobar' is not a valid choice for this field",
+          ],
+          "output": "notok"
+        }
+
+    '''
+    httpcode = 200
+    output = {}
+    try:
+        package_acl = pkgdblib.get_acl_package(SESSION, package)
+        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+    except (NoResultFound, IndexError):
+        SESSION.rollback()
+        output['output'] = 'notok'
+        output['error'] = 'No package found: %s' % package
+        httpcode = 404
+    else:
+
+        branches = [
+            pkg.collection.branchname
+            for pkg in package_acl
+            if pkg.collection.status != 'EOL'
+        ]
+
+        collections = pkgdblib.search_collection(
+            SESSION, '*', 'Under Development')
+        collections.extend(pkgdblib.search_collection(
+            SESSION, '*', 'Active'))
+        branches_possible = [
+            collec.branchname
+            for collec in collections
+            if collec.branchname not in branches]
+
+        form = forms.BranchForm(
+            collections=branches_possible,
+            csrf_enabled=False,
+        )
+
+        if form.validate_on_submit():
+            try:
+                messages = []
+                for branch in form.branches.data:
+                    msg = pkgdblib.add_new_branch_request(
+                        session=SESSION,
+                        pkg_name=package.name,
+                        clt_to=branch,
+                        user=flask.g.fas_user)
+                    if msg:
+                        messages.append(msg)
+                SESSION.commit()
+                output['output'] = 'ok'
+                output['messages'] = messages
+            except pkgdblib.PkgdbException, err:  # pragma: no cover
+                SESSION.rollback()
+                output['output'] = 'notok'
+                output['error'] = str(err)
+                httpcode = 400
+            except SQLAlchemyError, err:  # pragma: no cover
+                SESSION.rollback()
+                APP.logger.exception(err)
+                output['output'] = 'notok'
+                output['error'] = 'Could not save the request to the '\
+                    'database for branch: %s' % branch
+                httpcode = 400
+        else:
+            output['output'] = 'notok'
+            output['error'] = 'Invalid input submitted'
+            if form.errors:
+                detail = []
+                for error in form.errors:
+                    detail.append('%s: %s' % (error,
+                                  '; '.join(form.errors[error])))
+                output['error_detail'] = detail
+            httpcode = 400
+
+    jsonout = flask.jsonify(output)
+    jsonout.status_code = httpcode
+    return jsonout
