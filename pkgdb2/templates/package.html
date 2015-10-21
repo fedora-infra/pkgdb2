@@ -296,7 +296,8 @@ confusing what the difference is between that status an the per-branch status)
         {% if g.fas_user %}
         <table id="pkg_actions">
           <tr>
-          {% if g.fas_user.username in pocs or is_admin %}
+          {% if g.fas_user.username in pocs or is_admin
+                and not ('Retired' in statuses)  %}
             <td>
               <a title="Give the package to someone..."
                 id="givebutton"
