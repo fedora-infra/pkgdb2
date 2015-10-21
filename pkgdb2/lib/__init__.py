@@ -2204,18 +2204,22 @@ def _vcs_acls_text(packages, skip_pp=None):
     return output
 
 
-def vcs_acls(session, eol=False, oformat='text', skip_pp=None):
+def vcs_acls(
+        session, eol=False, collection=None, oformat='text', skip_pp=None):
     """ Return the information to sync ACLs with gitolite.
 
     :arg session: the session to connect to the database with.
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
+    :kwarg collection: Restrict the VCS info to a specific collection.
     :kwarg oformat: Output format to returned the data as, defaults to `text`
         can be `JSON`.
+    :kwarg skip_pp: A boolean to specify if we want to skip provenpackager
+        for some packages
 
     """
     output = {}
-    pkgs = model.vcs_acls(session=session, eol=eol)
+    pkgs = model.vcs_acls(session=session, eol=eol, collection=collection)
     if oformat == 'json':
         output = _vcs_acls_json(pkgs, skip_pp)
     else:

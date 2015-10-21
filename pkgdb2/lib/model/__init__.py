@@ -2046,12 +2046,13 @@ def bugzilla(session, name=None):
     return query.all()
 
 
-def vcs_acls(session, eol=False):
+def vcs_acls(session, eol=False, collection=None):
     """ Return information for each package to sync with git.
 
     :arg session: the session to connect to the database with.
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
+    :kwarg collection: Restrict the VCS info to a specific collection
 
     """
     query = session.query(
@@ -2067,6 +2068,11 @@ def vcs_acls(session, eol=False):
     ).filter(
         PackageListing.status.in_(['Approved', 'Orphaned'])
     )
+
+    if collection is not None:
+        query = query.filter(
+            Collection.branchname == collection
+        )
 
     if not eol:
         query = query.filter(
@@ -2102,6 +2108,11 @@ def vcs_acls(session, eol=False):
         Package.name,
         Collection.branchname
     )
+
+    if collection is not None:
+        query2 = query2.filter(
+            Collection.branchname == collection
+        )
 
     if not eol:
         query2 = query2.filter(
