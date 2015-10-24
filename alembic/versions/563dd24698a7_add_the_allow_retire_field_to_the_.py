@@ -30,7 +30,7 @@ def upgrade():
                '''SET allow_retire=TRUE WHERE name='Fedora EPEL';''')
     # Set FALSE to all EOL releases - correct behavior
     op.execute('''UPDATE "Collection" '''
-               '''SET allow_retire=TRUE WHERE status='EOL';''')
+               '''SET allow_retire=FALSE WHERE status='EOL';''')
     # Set True to all releases Under Development - mostly correct, except for
     # after final freeze
     op.execute('''UPDATE "Collection" '''
