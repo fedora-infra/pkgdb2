@@ -31,6 +31,9 @@ def upgrade():
     # Set FALSE to all EOL releases - correct behavior
     op.execute('''UPDATE "Collection" '''
                '''SET allow_retire=FALSE WHERE status='EOL';''')
+    # Set FALSE to all Active releases - correct behavior
+    op.execute('''UPDATE "Collection" '''
+               '''SET allow_retire=FALSE WHERE status='Active';''')
     # Set True to all releases Under Development - mostly correct, except for
     # after final freeze
     op.execute('''UPDATE "Collection" '''
