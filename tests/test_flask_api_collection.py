@@ -161,8 +161,9 @@ class FlaskApiCollectionTest(Modeltests):
                          ['collections', 'output'])
         self.assertEqual(len(output['collections']), 5)
         self.assertEqual(set(output['collections'][0].keys()),
-                         set(['branchname', 'version', 'name', 'status',
-                              'dist_tag', 'koji_name']))
+                         set([
+            'allow_retire', 'branchname', 'version', 'name', 'status',
+            'dist_tag', 'koji_name']))
 
         output = self.app.get('/api/collections/f*/')
         self.assertEqual(output.status_code, 200)
@@ -170,8 +171,9 @@ class FlaskApiCollectionTest(Modeltests):
         self.assertEqual(sorted(output.keys()),
                          ['collections', 'output'])
         self.assertEqual(set(output['collections'][0].keys()),
-                         set(['branchname', 'version', 'name', 'status',
-                              'dist_tag', 'koji_name']))
+                         set([
+            'allow_retire', 'branchname', 'version', 'name', 'status',
+            'dist_tag', 'koji_name']))
         self.assertEqual(len(output['collections']), 2)
         self.assertEqual(output['collections'][0]['name'], 'Fedora')
         self.assertEqual(output['collections'][0]['version'], '17')
@@ -222,7 +224,8 @@ class FlaskApiCollectionTest(Modeltests):
             'branchname': 'EL-6',
             'clt_status': 'ACTIVE',
             'dist_tag': '.el6',
-            'kojiname': 'epel6'
+            'kojiname': 'epel6',
+            'allow_retire': True,
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/collection/new/', data=data)
@@ -246,7 +249,8 @@ class FlaskApiCollectionTest(Modeltests):
             'branchname': 'EL-6',
             'clt_status': 'Active',
             'dist_tag': '.el6',
-            'kojiname': 'epel6'
+            'kojiname': 'epel6',
+            'allow_retire': True,
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/collection/new/', data=data)

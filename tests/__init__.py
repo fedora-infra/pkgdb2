@@ -172,6 +172,7 @@ def create_collection(session):
         owner='kevin',
         branchname='master',
         dist_tag='devel',
+        allow_retire=True,
     )
     session.add(collection)
 

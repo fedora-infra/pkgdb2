@@ -93,9 +93,9 @@ class Collectiontests(Modeltests):
         collection = model.Collection.by_name(self.session, 'f18')
         collection = collection.to_json()
         self.assertEqual(
-            set(collection.keys()), set(['branchname', 'version',
-                                         'name', 'status',
-                                         'dist_tag', 'koji_name']))
+            set(collection.keys()), set([
+                'allow_retire','branchname', 'version','name', 'status',
+                'dist_tag', 'koji_name']))
 
 
 if __name__ == '__main__':

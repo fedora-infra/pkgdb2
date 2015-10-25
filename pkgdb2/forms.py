@@ -76,6 +76,10 @@ class AddCollectionForm(wtf.Form):
         'Dist tag',
         [wtforms.validators.Required()]
     )
+    allow_retire = wtforms.BooleanField(
+        'Allows retiring a package',
+        [wtforms.validators.optional()]
+    )
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -95,6 +99,7 @@ class AddCollectionForm(wtf.Form):
             self.branchname.data = collection.branchname
             self.dist_tag.data = collection.dist_tag
             self.kojiname.data = collection.koji_name
+            self.allow_retire.data = collection.allow_retire
 
             # Set the drop down menu to the current value
             opt = (collection.status, collection.status)

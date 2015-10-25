@@ -633,6 +633,7 @@ class Collection(BASE):
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
     dist_tag = sa.Column(sa.String(32), unique=True, nullable=False)
     koji_name = sa.Column(sa.Text)
+    allow_retire = sa.Column(sa.Boolean, default=False, nullable=False)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
@@ -642,7 +643,8 @@ class Collection(BASE):
     )
 
     def __init__(self, name, version, status, owner,
-                 branchname=None, dist_tag=None, koji_name=None):
+                 branchname=None, dist_tag=None, koji_name=None,
+                 allow_retire=False):
         self.name = name
         self.version = version
         self.status = status
@@ -650,6 +652,7 @@ class Collection(BASE):
         self.branchname = branchname
         self.dist_tag = dist_tag
         self.koji_name = koji_name
+        self.allow_retire = allow_retire
 
     def __repr__(self):
         """ The string representation of this object.
@@ -669,6 +672,7 @@ class Collection(BASE):
             status=self.status,
             koji_name=self.koji_name,
             dist_tag=self.dist_tag,
+            allow_retire=self.allow_retire,
         )
 
     @classmethod

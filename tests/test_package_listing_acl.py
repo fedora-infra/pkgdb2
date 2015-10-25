@@ -78,6 +78,7 @@ class PackageListingAcltests(Modeltests):
                     'status': u'Active',
                     'koji_name': None,
                     'dist_tag': u'.fc18',
+                    'allow_retire': False,
                 },
                 'package': {
                     'upstream_url': u'http://guake.org',

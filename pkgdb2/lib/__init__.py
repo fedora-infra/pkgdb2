@@ -618,11 +618,9 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                 'You are not allowed to retire this package.')
 
         # Admins can deprecate everything
-        # Users can deprecate Fedora devel and EPEL branches
-        if pkgdb2.is_pkgdb_admin(user) \
-                or (collection.name == 'Fedora'
-                    and collection.status == 'Under Development') \
-                or collection.name == 'Fedora EPEL':
+        # Users can deprecate Fedora devel and EPEL branches, which
+        # are marked as allowing retiring a package.
+        if pkgdb2.is_pkgdb_admin(user) or collection.allow_retire:
 
             prev_poc = pkglisting.point_of_contact
             pkglisting.status = 'Retired'
@@ -1120,7 +1118,8 @@ def get_package_watch(
 
 
 def add_collection(session, clt_name, clt_version, clt_status,
-                   clt_branchname, clt_disttag, clt_koji_name, user):
+                   clt_branchname, clt_disttag, clt_koji_name,
+                   clt_allow_retire, user):
     """ Add a new collection to the database.
 
     This method only flushes the new object, nothing is committed to the
@@ -1132,7 +1131,9 @@ def add_collection(session, clt_name, clt_version, clt_status,
     :kwarg clt_status: the status of the collection.
     :kwarg clt_branchname: the branchname of the collection.
     :kwarg clt_disttag: the dist tag of the collection.
-    :kward clt_koji_name: the name of the collection in koji.
+    :kwarg clt_koji_name: the name of the collection in koji.
+    :kwarg clt_allow_retire: boolean specifying if the collection allows
+        retiring a package or not.
     :kwarg user: The user performing the update.
     :returns: a message informing that the collection was successfully
         created.
@@ -1157,6 +1158,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
         branchname=clt_branchname,
         dist_tag=clt_disttag,
         koji_name=clt_koji_name,
+        allow_retire=clt_allow_retire,
     )
     try:
         session.add(collection)
@@ -1173,7 +1175,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
 def edit_collection(session, collection, clt_name=None, clt_version=None,
                     clt_status=None, clt_branchname=None, clt_disttag=None,
-                    clt_koji_name=None, user=None):
+                    clt_koji_name=None, clt_allow_retire=None, user=None):
     """ Edit a specified collection
 
     This method only flushes the new object, nothing is committed to the
@@ -1186,7 +1188,9 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     :kwarg clt_status: the new status of the collection.
     :kwarg clt_branchname: the new branchname of the collection.
     :kwarg clt_disttag: the new dist tag of the collection.
-    :kward clt_koji_name: the name of the collection in koji.
+    :kwarg clt_koji_name: the name of the collection in koji.
+    :kwarg clt_allow_retire: a boolean specifying if the collection allows
+        retiring a package.
     :kwarg user: The user performing the update.
     :returns: a message informing that the collection was successfully
         updated.
@@ -1223,6 +1227,9 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if clt_koji_name and clt_koji_name != collection.koji_name:
         collection.koji_name = clt_koji_name
         edited.append('koji_name')
+    if clt_allow_retire is not None and clt_allow_retire != collection.allow_retire:
+        collection.allow_retire = clt_allow_retire
+        edited.append('allow_retire')
 
     if edited:
         try:
