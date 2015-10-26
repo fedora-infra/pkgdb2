@@ -409,6 +409,26 @@ avail | @provenpackager, | rpms/offlineimap/master"""
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected2)
 
+        # Including only the f17 collection
+        expected3 = """# VCS ACLs
+# avail|@groups,users|rpms/Package/branch
+
+avail | @provenpackager,pingou | rpms/fedocal/f17"""
+        output = self.app.get('/api/vcs/?collection=f17')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected3)
+
+        # Including only the master (rawhide) collection
+        expected4 = """# VCS ACLs
+# avail|@groups,users|rpms/Package/branch
+
+avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
+avail | @provenpackager,pingou,spot | rpms/guake/master
+avail | @provenpackager, | rpms/offlineimap/master"""
+        output = self.app.get('/api/vcs/?collection=master')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected4)
+
         output = self.app.get('/api/vcs/?format=random')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected)
