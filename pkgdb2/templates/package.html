@@ -296,8 +296,7 @@ confusing what the difference is between that status an the per-branch status)
         {% if g.fas_user %}
         <table id="pkg_actions">
           <tr>
-          {% if g.fas_user.username in pocs or is_admin
-                and not ('Retired' in statuses)  %}
+          {% if g.fas_user.username in pocs or is_admin %}
             <td>
               <a title="Give the package to someone..."
                 id="givebutton"
@@ -307,7 +306,8 @@ confusing what the difference is between that status an the per-branch status)
                 </button>
               </a>
             </td>
-          {% elif ('Retired' in statuses) %}
+          {%endif %}
+          {% if ('Retired' in statuses) %}
             <td>
               <a title="Ask an admin to un-retire the package for you"
                  id="unretirebutton"
@@ -317,8 +317,6 @@ confusing what the difference is between that status an the per-branch status)
                 </button>
               </a>
             </td>
-          {% else %}
-            <td></td>
           {% endif %}
           {% if (g.fas_user.username in pocs or is_admin) and 'Approved' in statuses %}
             <td>
