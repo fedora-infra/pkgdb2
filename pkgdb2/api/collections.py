@@ -315,7 +315,14 @@ def api_collection_list(pattern=None):
             collections = pkgdblib.search_collection(
                 SESSION, pattern=pattern)
     else:
-        collections = model.Collection.all(SESSION)
+        if status:
+            collections = []
+            for stat in status:
+                collections.extend(pkgdblib.search_collection(
+                    SESSION, pattern='*', status=stat)
+                )
+        else:
+            collections = model.Collection.all(SESSION)
     output = {'collections':
               [collec.to_json() for collec in collections]
               }

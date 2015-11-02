@@ -185,6 +185,39 @@ class FlaskApiCollectionTest(Modeltests):
                          ['collections', 'output'])
         self.assertEqual(output['collections'], [])
 
+        output = self.app.get('/api/collections/?clt_status=EOL')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(sorted(output.keys()),
+                         ['collections', 'output'])
+        self.assertEqual(len(output['collections']), 1)
+        self.assertEqual(
+            output['collections'],
+            [{
+                'status': 'EOL',
+                'dist_tag': '.el4',
+                'koji_name': None,
+                'name': 'Fedora EPEL',
+                'allow_retire': False,
+                'version': '4',
+                'branchname': 'el4',
+            }]
+        )
+
+        output = self.app.get('/api/collections/?clt_status=Active')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(sorted(output.keys()),
+                         ['collections', 'output'])
+        self.assertEqual(len(output['collections']), 3)
+
+        output = self.app.get('/api/collections/?clt_status=Under Development')
+        self.assertEqual(output.status_code, 200)
+        output = json.loads(output.data)
+        self.assertEqual(sorted(output.keys()),
+                         ['collections', 'output'])
+        self.assertEqual(len(output['collections']), 1)
+
     @patch('pkgdb2.packager_login_required')
     def test_collection_new(self, login_func):
         """ Test the api_collection_new function.  """
