@@ -42,5 +42,13 @@
         <td>Allows package retirement</td>
         <td>{{ collection.allow_retire }}</td>
     </tr>
+    <tr>
+        <td>Created on</td>
+        <td>{{ collection.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+    </tr>
+    <tr>
+        <td>Last update on</td>
+        <td>{{ collection.date_updated.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+    </tr>
 </table>
 {% endblock %}
