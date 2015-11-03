@@ -637,6 +637,9 @@ class Collection(BASE):
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
+    date_updated = sa.Column(sa.DateTime, nullable=False,
+                             default=sa.func.now(),
+                             onupdate=sa.func.now())
 
     __table_args__ = (
         sa.UniqueConstraint('name', 'version'),
@@ -673,6 +676,8 @@ class Collection(BASE):
             koji_name=self.koji_name,
             dist_tag=self.dist_tag,
             allow_retire=self.allow_retire,
+            date_created=self.date_created.strftime('%Y-%m-%d %H:%M:%S'),
+            date_updated=self.date_updated.strftime('%Y-%m-%d %H:%M:%S'),
         )
 
     @classmethod
