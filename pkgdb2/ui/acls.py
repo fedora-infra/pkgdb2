@@ -127,7 +127,9 @@ def request_acl_all_branch(package, acl):
         pkg_branchs = set([
             pkglist.collection.branchname
             for pkglist in pkg.listings
-            if pkglist.collection.status in ['Active', 'Under Development']])
+            if pkglist.collection.status in ['Active', 'Under Development']
+                and pkglist.status == 'Approved'
+        ])
 
         for branch in pkg_branchs:
             acl_status = 'Awaiting Review'
