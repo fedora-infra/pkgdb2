@@ -127,7 +127,9 @@ def request_acl_all_branch(package, acl):
         pkg_branchs = set([
             pkglist.collection.branchname
             for pkglist in pkg.listings
-            if pkglist.collection.status in ['Active', 'Under Development']])
+            if pkglist.collection.status in ['Active', 'Under Development']
+                and pkglist.status == 'Approved'
+        ])
 
         for branch in pkg_branchs:
             acl_status = 'Awaiting Review'
@@ -305,7 +307,9 @@ def watch_package(package):
         pkg_branchs = set([
             pkglist.collection.branchname
             for pkglist in pkg.listings
-            if pkglist.collection.status in ['Active', 'Under Development']])
+            if pkglist.collection.status in ['Active', 'Under Development']
+                and pkglist.status == 'Approved'
+        ])
         try:
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
                 pkgdblib.set_acl_package(
@@ -398,7 +402,9 @@ def comaintain_package(package):
         pkg_branchs = set([
             pkglist.collection.branchname
             for pkglist in pkg.listings
-            if pkglist.collection.status in ['Active', 'Under Development']])
+            if pkglist.collection.status in ['Active', 'Under Development']
+                and pkglist.status == 'Approved'
+        ])
 
         # Make sure the requester does not already have commit
         pkg_branchs2 = []

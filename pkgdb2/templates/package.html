@@ -68,7 +68,6 @@ confusing what the difference is between that status an the per-branch status)
         <td colspan="2" align="center">
           <div id="monitoring_block">
             <input type="radio" id="no_monitoring" name="monitoring" value="0" />
-            {{ package.monitoring_status }}
               <label for="no_monitoring" {%-
                 if ('packager' in g.fas_user.groups or is_admin)
                 %} title="Turns off monitoring new releases for this package"{%
