@@ -62,6 +62,8 @@ class PackageListingAcltests(Modeltests):
         # Because matching times in tests is hard.
         del output['packagelist']['package']['creation_date']
         del output['packagelist']['status_change']
+        output['packagelist']['collection']['date_created'] = 'date_created'
+        output['packagelist']['collection']['date_updated'] = 'date_updated'
 
         target = {
             'status': u'Approved',
@@ -79,6 +81,8 @@ class PackageListingAcltests(Modeltests):
                     'koji_name': None,
                     'dist_tag': u'.fc18',
                     'allow_retire': False,
+                    'date_created': 'date_created',
+                    'date_updated': 'date_updated',
                 },
                 'package': {
                     'upstream_url': u'http://guake.org',

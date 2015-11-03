@@ -114,10 +114,12 @@ class FlaskApiPackagersTest(Modeltests):
             set([u'upstream_url', u'name', u'review_url',
                  u'status', u'creation_date', u'summary',
                  u'acls', u'description', u'monitor', u'koschei_monitor']))
+
         self.assertEqual(
-            set(output['acls'][0]['packagelist']['collection'].keys()),
-            set(['allow_retire', 'branchname', 'version', 'name', 'status',
-                 'dist_tag', 'koji_name']))
+            sorted(output['acls'][0]['packagelist']['collection'].keys()),
+            sorted([
+                'allow_retire', 'branchname', 'date_created', 'date_updated',
+                'dist_tag', 'koji_name', 'name', 'status', 'version' ]))
         self.assertEqual(
             output['acls'][0]['packagelist']['package']['name'], 'guake')
         self.assertEqual(
