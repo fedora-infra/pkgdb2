@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.31
+Version:        1.32
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,25 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Nov 03 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.32-1
+- Update to 1.32
+- Change the cursor when hovering over the monitoring buttons logged out
+  (Devyani Kota)
+- Make the list of admin requests sortable (Vivek Anand)
+- Start a FAQ in the doc for frequently asked question (Devyani Kota)
+- Fix pagination in the `My requests` page and the unit-tests
+- Add a new API endpoint to request package to be added to pkgdb
+- Add a new API endpoint to request a new branch to a package
+- Adjust the icons used to show the collection's status
+- Only automatically update 'Awaiting Review' ACL requests
+- Add an allow_retire flag to collections so that the collection status can
+  remain reflecting the actual status of the collection
+- Allow restricting the VCS output information to a specific branch in the API
+- Fix showing the 'Ask un-retirement' button on the package page
+- Fix filtering the collections when listing them in the API
+- Register and show the date of the last update of a collection
+- Ignore the retired branch when requesting ACLs in batch (via the UI)
+
 * Tue Oct 13 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.31-1
 - Update to 1.31
 - Prevent the PoC of a package to be removed of his/her watch* ACLs
