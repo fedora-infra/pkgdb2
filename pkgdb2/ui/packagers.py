@@ -133,8 +133,8 @@ def packager_info(packager):
 @UI.route('/packager/<packager>/requests')
 def packager_requests(packager):
     ''' Display the requests made by the specified packager. '''
-    action = flask.request.args.get('action', None)
-    package = flask.request.args.get('package', None)
+    action = flask.request.args.get('action') or None
+    package = flask.request.args.get('package') or None
     status = flask.request.args.get('status', 'All')
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
     page = flask.request.args.get('page', 1)
