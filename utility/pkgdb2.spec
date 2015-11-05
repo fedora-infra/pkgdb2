@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.32
+Version:        1.32.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Nov 05 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.32.1-1
+- Update to 1.32.1
+- Fix filtering requests on the `My requests` page using the web form
+
 * Tue Nov 03 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.32-1
 - Update to 1.32
 - Change the cursor when hovering over the monitoring buttons logged out
