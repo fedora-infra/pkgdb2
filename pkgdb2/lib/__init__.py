@@ -1857,14 +1857,14 @@ def add_new_package_request(
         _validate_pkg(session, pkg_collection[-1:], pkg_name)
 
     info = {
-        'pkg_name': pkg_name,
-        'pkg_summary': pkg_summary,
-        'pkg_description': pkg_description,
-        'pkg_status': pkg_status,
-        'pkg_collection': pkg_collection,
-        'pkg_poc': pkg_poc,
-        'pkg_review_url': pkg_review_url,
-        'pkg_upstream_url': pkg_upstream_url,
+        'pkg_name': pkg_name.strip(),
+        'pkg_summary': pkg_summary.strip(),
+        'pkg_description': pkg_description.strip() if pkg_description else None,
+        'pkg_status': pkg_status.strip(),
+        'pkg_collection': pkg_collection.strip(),
+        'pkg_poc': pkg_poc.strip(),
+        'pkg_review_url': pkg_review_url.strip() if pkg_review_url else None,
+        'pkg_upstream_url': pkg_upstream_url.strip() if pkg_upstream_url else None,
         'pkg_critpath': pkg_critpath,
     }
 
