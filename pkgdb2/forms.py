@@ -36,6 +36,8 @@ import re
 import wtforms
 from flask.ext import wtf
 
+PKG_NAME_RE = '[a-zA-Z0-9\-\+]+'
+
 
 ## Yes we do nothing with the form argument but they are required...
 # pylint: disable=W0613
@@ -140,8 +142,7 @@ class RequestPackageForm(wtf.Form):
         'Package name',
         [
             wtforms.validators.Required(),
-            wtforms.validators.Regexp(
-                '[a-zA-Z0-9\-\+]+', flags=re.IGNORECASE),
+            wtforms.validators.Regexp(PKG_NAME_RE, flags=re.IGNORECASE),
         ]
     )
     summary = wtforms.TextField(
@@ -214,8 +215,7 @@ class EditPackageForm(wtf.Form):
         'Package name',
         [
             wtforms.validators.Required(),
-            wtforms.validators.Regexp(
-                '[a-zA-Z0-9\-\+]+', flags=re.IGNORECASE),
+            wtforms.validators.Regexp(PKG_NAME_RE, flags=re.IGNORECASE),
         ]
     )
     summary = wtforms.TextField(
@@ -258,8 +258,7 @@ class SetAclPackageForm(wtf.Form):
         'Package name',
         [
             wtforms.validators.Required(),
-            wtforms.validators.Regexp(
-                '[a-zA-Z0-9\-\+]+', flags=re.IGNORECASE),
+            wtforms.validators.Regexp(PKG_NAME_RE, flags=re.IGNORECASE),
         ]
     )
     branches = wtforms.SelectMultipleField(
