@@ -32,9 +32,9 @@ WTF Forms of the pkgdb Flask application.
 ## Couple of our forms do not even have __init__
 # pylint: disable=W0232
 
-
-from flask.ext import wtf
+import re
 import wtforms
+from flask.ext import wtf
 
 
 ## Yes we do nothing with the form argument but they are required...
@@ -138,7 +138,11 @@ class RequestPackageForm(wtf.Form):
     """ Form to request a new package. """
     pkgname = wtforms.TextField(
         'Package name',
-        [wtforms.validators.Required()]
+        [
+            wtforms.validators.Required(),
+            wtforms.validators.Regexp(
+                '[a-zA-Z0-9\-\+]+', flags=re.IGNORECASE),
+        ]
     )
     summary = wtforms.TextField(
         'Summary',
@@ -208,7 +212,11 @@ class EditPackageForm(wtf.Form):
     """ Form to edit packages. """
     pkgname = wtforms.TextField(
         'Package name',
-        [wtforms.validators.Required()]
+        [
+            wtforms.validators.Required(),
+            wtforms.validators.Regexp(
+                '[a-zA-Z0-9\-\+]+', flags=re.IGNORECASE),
+        ]
     )
     summary = wtforms.TextField(
         'Summary',
@@ -248,7 +256,11 @@ class SetAclPackageForm(wtf.Form):
     """ Form to set ACLs to someone on a package. """
     pkgname = wtforms.TextField(
         'Package name',
-        [wtforms.validators.Required()]
+        [
+            wtforms.validators.Required(),
+            wtforms.validators.Regexp(
+                '[a-zA-Z0-9\-\+]+', flags=re.IGNORECASE),
+        ]
     )
     branches = wtforms.SelectMultipleField(
         'Branch',
