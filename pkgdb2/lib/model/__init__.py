@@ -262,6 +262,25 @@ class CollecStatus(BASE):
             session.query(cls).order_by(cls.status).all()]
 
 
+class Artifacts(BASE):
+    """ Table storing the artifacts a collection can have. """
+    __tablename__ = 'artifacts'
+
+    artifact = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, artifact):
+        """ Constructor. """
+        self.artifact = artifact
+
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the artifacts in plain text for a collection. """
+        return [
+            item.artifact
+            for item in
+            session.query(cls).order_by(cls.artifact).all()]
+
+
 class PackageListingAcl(BASE):
     """Give a person or a group ACLs on a specific PackageListing.
 
@@ -1102,6 +1121,10 @@ class Package(BASE):
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
         nullable=False)
+    namespace = sa.Column(
+        sa.Text, nullable=False,
+        sa.ForeignKey('artifacts.artifact', onupdate='CASCADE')
+    )
 
     listings = relation(PackageListing)
 
