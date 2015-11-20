@@ -1118,7 +1118,7 @@ class Package(BASE):
 
     __tablename__ = 'Package'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    name = sa.Column(sa.Text, nullable=False, unique=True, index=True)
+    name = sa.Column(sa.Text, nullable=False, index=True)
     summary = sa.Column(sa.Text, nullable=False)
     description = sa.Column(sa.Text, nullable=True)
     review_url = sa.Column(sa.Text)
@@ -1138,6 +1138,10 @@ class Package(BASE):
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
+
+    __table_args__ = (
+        sa.UniqueConstraint('name', 'namespace'),
+    )
 
     @property
     def sorted_listings(self):
