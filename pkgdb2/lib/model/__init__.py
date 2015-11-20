@@ -166,6 +166,14 @@ def create_status(session):
         except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
+    for status in ['rpms']:
+        obj = Artifacts(status)
+        session.add(obj)
+        try:
+            session.commit()
+        except SQLAlchemyError:  # pragma: no cover
+            session.rollback()
+
 
 class PkgAcls(BASE):
     """ Table storing the ACLs a package can have. """
@@ -1122,7 +1130,7 @@ class Package(BASE):
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
         nullable=False)
     namespace = sa.Column(
-        sa.Text, nullable=False,
+        sa.Text, nullable=False, default='rpms',
         sa.ForeignKey('artifacts.artifact', onupdate='CASCADE')
     )
 
