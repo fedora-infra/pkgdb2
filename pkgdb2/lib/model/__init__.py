@@ -1130,8 +1130,9 @@ class Package(BASE):
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
         nullable=False)
     namespace = sa.Column(
-        sa.Text, nullable=False, default='rpms',
-        sa.ForeignKey('artifacts.artifact', onupdate='CASCADE')
+        sa.String(50),
+        sa.ForeignKey('artifacts.artifact', onupdate='CASCADE'),
+        nullable=False, default='rpms',
     )
 
     listings = relation(PackageListing)
