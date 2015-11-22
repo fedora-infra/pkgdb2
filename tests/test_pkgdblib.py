@@ -1796,8 +1796,10 @@ class PkgdbLibtests(Modeltests):
             user=user
         )
 
-    def test_search_actions(self):
+    @patch('pkgdb2.lib.utils.get_rhel_pkg')
+    def test_search_actions(self, getrhelpkg_func):
         """ Test the search_actions method of pkgdblib. """
+        getrhelpkg_func.return_value = []
         create_package_acl(self.session)
 
         # Wrong limit
