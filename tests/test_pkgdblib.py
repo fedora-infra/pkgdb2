@@ -705,6 +705,22 @@ class PkgdbLibtests(Modeltests):
         pkgs = pkgdblib.search_package(self.session,
                                        pkg_name='g*',
                                        pkg_branch='f18',
+                                       namespace='rpms'
+                                       )
+        self.assertEqual(len(pkgs), 2)
+        self.assertEqual(pkgs[0].name, 'geany')
+        self.assertEqual(pkgs[1].name, 'guake')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       pkg_branch='f18',
+                                       namespace='docker'
+                                       )
+        self.assertEqual(len(pkgs), 0)
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       pkg_name='g*',
+                                       pkg_branch='f18',
                                        pkg_poc=None,
                                        orphaned=None,
                                        status=None,
