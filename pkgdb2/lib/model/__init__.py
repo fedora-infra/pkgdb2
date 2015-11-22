@@ -1327,6 +1327,7 @@ class Package(BASE):
     @classmethod
     def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
                pkg_branch=None, orphaned=None, critpath=None, eol=False,
+               namespace=None,
                offset=None, limit=None, count=False,
                case_sensitive=True):
         """ Search the Packages for the one fitting the given pattern.
@@ -1344,6 +1345,7 @@ class Package(BASE):
             If True, it will return results for all collections
             (including EOL).
             If False, it will return results only for non-EOL collections.
+        :kwarg namespace: the namespace of the packages to restrict with.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -1371,6 +1373,11 @@ class Package(BASE):
         else:
             query = query.filter(
                 Package.name.ilike(pkg_name)
+            )
+
+        if namespace:
+            query = query.filter(
+                Package.namespace == namespace
             )
 
         if pkg_poc:

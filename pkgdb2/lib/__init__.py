@@ -698,6 +698,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
 def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
                    orphaned=None, critpath=None, status=None, eol=False,
+                   namespace=None,
                    page=None, limit=None, count=False, case_sensitive=True):
     """ Return the list of packages matching the given criteria.
 
@@ -713,6 +714,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
         EOL collections or not. Defaults to False.
         If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
+    :kwarg namespace: the namespace of the packages to restrict with.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -762,6 +764,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
         limit=limit,
         count=count,
         case_sensitive=case_sensitive,
+        namespace=namespace,
     )
 
 
