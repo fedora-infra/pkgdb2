@@ -177,7 +177,7 @@ def create_session(db_url, debug=False, pool_recycle=3600):
 
 def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
                 pkg_collection, pkg_poc, user, pkg_review_url=None,
-                pkg_upstream_url=None, pkg_critpath=False):
+                pkg_upstream_url=None, pkg_critpath=False, namespace='rpms'):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
 
@@ -193,6 +193,8 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
     :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
         being in critpath.
+    :kwarg namespace: the namespace of the package created, defaults to
+        'rpms'.
     :returns: a message informating that the package has been successfully
         created.
     :rtype: str()
@@ -219,13 +221,15 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
         else:
             pkg_collection = [pkg_collection]
 
-    package = model.Package(name=pkg_name,
-                            summary=pkg_summary,
-                            description=pkg_description,
-                            status=pkg_status,
-                            review_url=pkg_review_url,
-                            upstream_url=pkg_upstream_url
-                            )
+    package = model.Package(
+        name=pkg_name,
+        summary=pkg_summary,
+        description=pkg_description,
+        status=pkg_status,
+        review_url=pkg_review_url,
+        upstream_url=pkg_upstream_url,
+        namespace=namespace,
+    )
     session.add(package)
     try:
         session.flush()
