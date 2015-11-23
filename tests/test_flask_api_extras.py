@@ -341,7 +341,7 @@ guake|pingou
         self.assertEqual(output.status_code, 200)
 
         expected = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 """
         self.assertEqual(output.data, expected)
@@ -381,7 +381,7 @@ guake|pingou
         self.assertEqual(output.status_code, 200)
 
         expected = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
@@ -394,7 +394,7 @@ avail | @provenpackager, | rpms/offlineimap/master"""
 
         # Including the EOL'd el4 collection
         expected2 = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
@@ -411,7 +411,7 @@ avail | @provenpackager, | rpms/offlineimap/master"""
 
         # Including only the f17 collection
         expected3 = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,pingou | rpms/fedocal/f17"""
         output = self.app.get('/api/vcs/?collection=f17')
@@ -420,7 +420,7 @@ avail | @provenpackager,pingou | rpms/fedocal/f17"""
 
         # Including only the master (rawhide) collection
         expected4 = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou,spot | rpms/guake/master
