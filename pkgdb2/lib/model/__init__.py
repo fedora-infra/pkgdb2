@@ -2095,19 +2095,21 @@ def bugzilla(session, name=None):
     return query.all()
 
 
-def vcs_acls(session, eol=False, collection=None):
+def vcs_acls(session, eol=False, collection=None, namespace=None):
     """ Return information for each package to sync with git.
 
     :arg session: the session to connect to the database with.
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
     :kwarg collection: Restrict the VCS info to a specific collection
+    :kwarg namespace: Restrict the VCS info returned to a given namespace
 
     """
     query = session.query(
         Package.name,  # 0
         PackageListingAcl.fas_name,  # 1
         Collection.branchname,  # 2
+        Package.namespace,  # 2
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(
@@ -2127,12 +2129,17 @@ def vcs_acls(session, eol=False, collection=None):
         query = query.filter(
             Collection.status != 'EOL')
 
+    if namespace is not None:
+        query = query.filter(
+            Package.namespace == namespace
+        )
+
     query = query.filter(
         PackageListingAcl.acl == 'commit'
     ).filter(
         PackageListingAcl.status == 'Approved'
     ).group_by(
-        Package.name, PackageListingAcl.fas_name,
+        Package.namespace, Package.name, PackageListingAcl.fas_name,
         Collection.branchname,
     ).order_by(
         Package.name
@@ -2144,6 +2151,7 @@ def vcs_acls(session, eol=False, collection=None):
     query2 = session.query(
         Package.name,  # 0
         Collection.branchname,  # 1
+        Package.namespace,  # 2
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(
@@ -2151,6 +2159,7 @@ def vcs_acls(session, eol=False, collection=None):
     ).filter(
         PackageListing.status.in_(['Approved', 'Orphaned'])
     ).group_by(
+        Package.namespace,
         Package.name,
         Collection.branchname,
     ).order_by(
@@ -2167,10 +2176,15 @@ def vcs_acls(session, eol=False, collection=None):
         query2 = query2.filter(
             Collection.status != 'EOL')
 
+    if namespace is not None:
+        query2 = query2.filter(
+            Package.namespace == namespace
+        )
+
     sub2 = set(query2.all())
 
     for entry in sub2 - sub:
-        data.append([entry[0], None, entry[1]])
+        data.append([entry[0], None, entry[1], entry[2]])
 
     return data
 

@@ -2111,30 +2111,36 @@ def _vcs_acls_json(packages, skip_pp=None):
     }
     """
     output = {}
-    for pkgname, username, branchname in packages:
+    for pkgname, username, branchname, namespace in packages:
         user = None
         group = None
+
         if username and username.startswith('group::'):
                 group = username.replace('group::', '')
         else:
             user = username
 
-        if pkgname not in output:
-            output[pkgname] = {}
+        if namespace not in output:
+            output[namespace] = {}
 
-        if branchname not in output[pkgname]:
+        if pkgname not in output[namespace]:
+            output[namespace][pkgname] = {}
+
+        if branchname not in output[namespace][pkgname]:
             groups = []
             if skip_pp and pkgname not in skip_pp:
                 groups.append('provenpackager')
 
-            output[pkgname][branchname] = {
-                'commit': {'groups': groups, 'people': []}
+            output[namespace][pkgname][branchname] = {
+                'commit': {'groups': groups, 'people': []},
             }
 
         if group:
-            output[pkgname][branchname]['commit']['groups'].append(group)
+            output[namespace][pkgname][branchname
+                ]['commit']['groups'].append(group)
         if user:
-            output[pkgname][branchname]['commit']['people'].append(user)
+            output[namespace][pkgname][branchname
+                ]['commit']['people'].append(user)
     return output
 
 
@@ -2166,7 +2172,7 @@ def _vcs_acls_text(packages, skip_pp=None):
 
     """
     output = {}
-    for pkgname, username, branchname in packages:
+    for pkgname, username, branchname, namespace in packages:
         user = None
         group = None
         if username and username.startswith('group::'):
@@ -2198,6 +2204,7 @@ def _vcs_acls_text(packages, skip_pp=None):
                     'user': user or '',
                     'group': groups + (group or ''),
                     'branch': branchname,
+                    'namespace': namespace,
                 }
         else:
             if group and groups:
@@ -2208,13 +2215,15 @@ def _vcs_acls_text(packages, skip_pp=None):
                     'user': user or '',
                     'group': groups + (group or ''),
                     'branch': branchname,
+                    'namespace': namespace,
                 }
             }
     return output
 
 
 def vcs_acls(
-        session, eol=False, collection=None, oformat='text', skip_pp=None):
+        session, eol=False, collection=None, oformat='text', skip_pp=None,
+        namespace=None):
     """ Return the information to sync ACLs with gitolite.
 
     :arg session: the session to connect to the database with.
@@ -2225,10 +2234,12 @@ def vcs_acls(
         can be `JSON`.
     :kwarg skip_pp: A boolean to specify if we want to skip provenpackager
         for some packages
+    :kwarg namespace: Restrict the ACLs returned to a given namespace
 
     """
     output = {}
-    pkgs = model.vcs_acls(session=session, eol=eol, collection=collection)
+    pkgs = model.vcs_acls(
+        session=session, eol=eol, collection=collection, namespace=namespace)
     if oformat == 'json':
         output = _vcs_acls_json(pkgs, skip_pp)
     else:

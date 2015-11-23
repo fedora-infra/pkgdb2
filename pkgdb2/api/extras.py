@@ -144,13 +144,15 @@ def _bz_notify_cache(
 
 
 #@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
-def _vcs_acls_cache(out_format='text', eol=False, collection=None):
+def _vcs_acls_cache(out_format='text', eol=False, collection=None,
+                    namespace=None):
     '''Return ACLs for the version control system.
 
     :kwarg out_format: Specify if the output if text or json.
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
     :kwarg collection: Restrict the VCS info to a specific collection.
+    :kwarg namespace: Restrict the VCS info to a specific namespace.
 
     '''
     packages = pkgdblib.vcs_acls(
@@ -158,18 +160,20 @@ def _vcs_acls_cache(out_format='text', eol=False, collection=None):
         eol=eol,
         collection=collection,
         oformat=out_format,
-        skip_pp=APP.config.get('PKGS_NOT_PROVENPACKAGER', None))
+        skip_pp=APP.config.get('PKGS_NOT_PROVENPACKAGER', None),
+        namespace=namespace)
     output = []
     if out_format == 'json':
-        output = {'packageAcls': packages,
-                  'title': 'Fedora Package Database -- VCS ACLs'}
+        output = packages
+        output['title'] = 'Fedora Package Database -- VCS ACLs'
     else:
         for package in sorted(packages):
             for branch in sorted(packages[package]):
                 if packages[package][branch]['group']:
                     packages[package][branch]['group'] += ','
                 output.append(
-                    'avail | %(group)s%(user)s | rpms/%(name)s/%(branch)s'
+                    'avail | %(group)s%(user)s | '
+                    '%(namespace)s/%(name)s/%(branch)s'
                     % (packages[package][branch]))
     return output
 
@@ -340,6 +344,7 @@ def api_vcs():
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
     :kwarg collection: Restrict the VCS info to a specific collection.
+    :kwarg namespace: Restrict the VCS info to a specific namespace.
 
     '''
     intro = """# VCS ACLs
@@ -350,6 +355,7 @@ def api_vcs():
     out_format = flask.request.args.get('format', 'text')
     eol = flask.request.args.get('eol', False)
     collection = flask.request.args.get('collection')
+    namespace = flask.request.args.get('namespace')
 
     if out_format not in ('text', 'json'):
         out_format = 'text'
@@ -357,7 +363,8 @@ def api_vcs():
     if request_wants_json():
         out_format = 'json'
 
-    acls = _vcs_acls_cache(out_format, eol=eol, collection=collection)
+    acls = _vcs_acls_cache(
+        out_format, eol=eol, collection=collection, namespace=namespace)
 
     if out_format == 'json':
         return flask.jsonify(acls)
