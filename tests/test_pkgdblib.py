@@ -2111,6 +2111,89 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(
             msg, 'user: pingou request package: zsh on branch master')
 
+    def test_add_namespace(self):
+        """ Test the add_namespace method to pkgdblib. """
+        # Before:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['rpms'])
+
+        # User is not an admin
+        user = FakeFasUser()
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_namespace,
+            self.session,
+            'foo',
+            user
+        )
+
+        # Namespace already exists
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_namespace,
+            self.session,
+            'rpms',
+            user
+        )
+
+        # Works
+        user = FakeFasUserAdmin()
+        msg = pkgdblib.add_namespace(
+            self.session,
+            'foo',
+            user
+        )
+        self.assertEqual(msg, 'Namespace "foo" created')
+
+        # After:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['foo', 'rpms'])
+
+    def test_drop_namespace(self):
+        """ Test the drop_namespace method to pkgdblib. """
+
+        self.test_add_namespace()
+
+        # Before:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['foo', 'rpms'])
+
+        # User is not an admin
+        user = FakeFasUser()
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.drop_namespace,
+            self.session,
+            'foo',
+            user
+        )
+
+        # Namespace does not exist
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.drop_namespace,
+            self.session,
+            'foobar',
+            user
+        )
+
+        # Works
+        user = FakeFasUserAdmin()
+        msg = pkgdblib.drop_namespace(
+            self.session,
+            'foo',
+            user
+        )
+        self.assertEqual(msg, 'Namespace "foo" removed')
+
+        # After:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['rpms'])
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
