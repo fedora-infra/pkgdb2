@@ -348,7 +348,7 @@ def api_vcs():
 
     '''
     intro = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 """
 
