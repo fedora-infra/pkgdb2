@@ -301,6 +301,9 @@ def log(session, package, topic, message):
         'package.koschei.update': 'user: %(agent)s updated the Koschei '
                                'monitoring status of %(package.name)s to '
                                '%(status)s',
+        'namespace.new': 'user: %(agent)s added a new namespace: '
+                               '%(namespace)s',
+        'namespace.drop': 'user: %(agent)s removed a namespace: %(namespace)s',
     }
     subject_templates = {
         'acl.update': '%(agent)s:%(package_name)s %(acl)s  set to %(status)s',
