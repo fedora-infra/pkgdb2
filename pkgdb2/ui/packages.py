@@ -479,10 +479,12 @@ def package_new():
         SESSION, '*', 'Under Development')
     collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
     pkg_status = pkgdb2.lib.get_status(SESSION, 'pkg_status')['pkg_status']
+    namespaces = pkgdb2.lib.get_status(SESSION, 'namespaces')['namespaces']
 
     form = pkgdb2.forms.AddPackageForm(
         collections=collections,
         pkg_status_list=pkg_status,
+        namespaces=namespaces,
     )
     if form.validate_on_submit():
         pkg_name = form.pkgname.data
@@ -494,6 +496,7 @@ def package_new():
         pkg_collection = form.branches.data
         pkg_poc = form.poc.data
         pkg_upstream_url = form.upstream_url.data
+        pkg_namespace = form.namespace.data
 
         try:
             message = pkgdblib.add_package(
@@ -507,6 +510,7 @@ def package_new():
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
                 pkg_upstream_url=pkg_upstream_url,
+                pkg_namespace=pkg_namespace,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
