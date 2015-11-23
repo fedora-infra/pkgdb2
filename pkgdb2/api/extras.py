@@ -165,6 +165,11 @@ def _vcs_acls_cache(out_format='text', eol=False, collection=None,
     output = []
     if out_format == 'json':
         output = packages
+        if 'rpms' in output:
+            output['packageAcls'] = output['rpms']
+            del(output['rpms'])
+        if not 'packageAcls' in output:
+            output['packageAcls'] = {}
         output['title'] = 'Fedora Package Database -- VCS ACLs'
     else:
         for package in sorted(packages):
