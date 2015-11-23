@@ -2603,3 +2603,88 @@ def get_retired_packages(session, collection):
     """
 
     return model.Package.get_retired(session, collection)
+
+
+def add_namespace(session, namespace, user):
+    """ Add a new namespace to the database.
+
+    This method only flushes the new object, nothing is committed to the
+    database.
+
+    :arg session: the session with which to connect to the database.
+    :arg namespace: the namespace to add.
+    :arg user: The user performing the action.
+    :returns: a message informing that the namespace was successfully
+        created.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to add a namespace, only pkgdb admin can.
+            - An error occured while adding the namespace in the database
+                the message returned is then the error message from the
+                database.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to add namespaces')
+
+    ns = model.Namespace(namespace=namespace)
+    try:
+        session.add(ns)
+        session.flush()
+        pkgdb2.lib.utils.log(session, None, 'namespace.new', dict(
+            agent=user.username,
+            namespace=namespace,
+        ))
+        return 'Namespace "%s" created' % namespace
+    except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb2.LOG.exception(err)
+        session.rollback()
+        raise PkgdbException(
+            'Could not add Namespace "%s" to the database.' % namespace)
+
+
+def drop_namespace(session, namespace, user):
+    """ Remove a namespace to the database.
+
+    This method only flushes the new object, nothing is committed to the
+    database.
+
+    :arg session: the session with which to connect to the database.
+    :arg namespace: the namespace to remove.
+    :arg user: The user performing the action.
+    :returns: a message informing that the namespace was successfully
+        removed.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to remove a namespace, only pkgdb admin can.
+            - The specified namespace could not be found in the DB.
+            - An error occured while removing the namespace in the database
+                the message returned is then the error message from the
+                database.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to remove namespaces')
+
+    ns = model.Namespace.get(session, namespace)
+    if not ns:
+        raise PkgdbException(
+            'Could not find namespace "%s" in the DB' % namespace)
+
+    try:
+        session.delete(ns)
+        session.flush()
+        pkgdb2.lib.utils.log(session, None, 'namespace.drop', dict(
+            agent=user.username,
+            namespace=namespace,
+        ))
+        return 'Namespace "%s" removed' % namespace
+    except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb2.LOG.exception(err)
+        session.rollback()
+        raise PkgdbException(
+            'Could not remove Namespace "%s" to the database.' % namespace)
