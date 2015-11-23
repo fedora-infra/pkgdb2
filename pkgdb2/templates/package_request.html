@@ -24,6 +24,7 @@
     {{ render_field_in_row(form.branches) }}
     {{ render_field_in_row(form.description, rows=5) }}
     {{ render_field_in_row(form.upstream_url, title="URL of the upstream project (if any)") }}
+    {{ render_field_in_row(form.namespace, title="Namespace of the package") }}
   </table>
   <p class="buttons indent">
     <input type="submit" class="submit positive button" value="Create">
