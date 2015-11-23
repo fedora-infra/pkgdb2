@@ -1,4 +1,4 @@
-"""artifacts
+"""namespaces
 
 
 Revision ID: 27924040e3ad
@@ -23,25 +23,25 @@ def upgrade():
     op.add_column(
         'Package',
         sa.Column(
-            'artifact',
+            'namespace',
             sa.String(50),
-            sa.ForeignKey('artifacts.artifact', onupdate='CASCADE'),
+            sa.ForeignKey('namespaces.namespace', onupdate='CASCADE'),
             default='rpms',
         )
     )
 
-    op.execute('''UPDATE "Package" SET artifact='rpms';''')
+    op.execute('''UPDATE "Package" SET namespace='rpms';''')
 
     op.alter_column(
         'Package',
-        column_name='artifact',
+        column_name='namespace',
         nullable=False,
         existing_nullable=True)
 
     op.execute("""
 DROP INDEX "ix_Package_name";
 ALTER TABLE "Package"
-  ADD CONSTRAINT "ix_package_name_artifact" UNIQUE (name, artifact);
+  ADD CONSTRAINT "ix_package_name_namespace" UNIQUE (name, namespace);
 """)
 
 
@@ -49,4 +49,4 @@ def downgrade():
     ''' Drop the artifact field to the Package table and adjust the unique
     key constraints.
     '''
-    op.drop_column('Package', 'artifact')
+    op.drop_column('Package', 'namespace')

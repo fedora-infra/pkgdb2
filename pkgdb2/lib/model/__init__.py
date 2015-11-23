@@ -167,7 +167,7 @@ def create_status(session):
             session.rollback()
 
     for status in ['rpms']:
-        obj = Artifacts(status)
+        obj = Namespace(status)
         session.add(obj)
         try:
             session.commit()
@@ -270,23 +270,23 @@ class CollecStatus(BASE):
             session.query(cls).order_by(cls.status).all()]
 
 
-class Artifacts(BASE):
-    """ Table storing the artifacts a collection can have. """
-    __tablename__ = 'artifacts'
+class Namespace(BASE):
+    """ Table storing the namespaces a package can be in. """
+    __tablename__ = 'namespaces'
 
-    artifact = sa.Column(sa.String(50), primary_key=True)
+    namespace = sa.Column(sa.String(50), primary_key=True)
 
-    def __init__(self, artifact):
+    def __init__(self, namespace):
         """ Constructor. """
-        self.artifact = artifact
+        self.namespace = namespace
 
     @classmethod
     def all_txt(cls, session):
-        """ Return all the artifacts in plain text for a collection. """
+        """ Return all the namespaces in plain text for a collection. """
         return [
-            item.artifact
+            item.namespace
             for item in
-            session.query(cls).order_by(cls.artifact).all()]
+            session.query(cls).order_by(cls.namespace).all()]
 
 
 class PackageListingAcl(BASE):
@@ -1131,7 +1131,7 @@ class Package(BASE):
         nullable=False)
     namespace = sa.Column(
         sa.String(50),
-        sa.ForeignKey('artifacts.artifact', onupdate='CASCADE'),
+        sa.ForeignKey('namespaces.namespace', onupdate='CASCADE'),
         nullable=False, default='rpms',
     )
 
