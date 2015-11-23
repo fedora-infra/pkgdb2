@@ -165,6 +165,11 @@ class RequestPackageForm(wtf.Form):
         'Upstream URL',
         [wtforms.validators.optional()]
     )
+    namespace = wtforms.SelectField(
+        'Namespace',
+        [wtforms.validators.Required()],
+        choices=[(item, item) for item in []]
+    )
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -176,6 +181,12 @@ class RequestPackageForm(wtf.Form):
             self.branches.choices = [
                 (collec.branchname, collec.branchname)
                 for collec in kwargs['collections']
+            ]
+
+        if 'namespaces' in kwargs:
+            self.namespace.choices = [
+                (ns, ns)
+                for ns in kwargs['namespaces']
             ]
 
 
