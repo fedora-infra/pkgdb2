@@ -288,6 +288,12 @@ class Namespace(BASE):
             for item in
             session.query(cls).order_by(cls.namespace).all()]
 
+    @classmethod
+    def get(cls, session, namespace):
+        """ Return the specified namespace if found in the DB. """
+        query = session.query(cls).filter(cls.namespace == namespace)
+        return query.first()
+
 
 class PackageListingAcl(BASE):
     """Give a person or a group ACLs on a specific PackageListing.
