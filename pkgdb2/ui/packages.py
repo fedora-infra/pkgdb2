@@ -1257,8 +1257,11 @@ def package_request_new():
             cnt += 1
         collections.append(collection)
 
+    namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
+
     form = pkgdb2.forms.RequestPackageForm(
         collections=collections,
+        namespaces=namespaces,
     )
 
     if form.validate_on_submit():
@@ -1269,6 +1272,7 @@ def package_request_new():
         pkg_status = 'Approved'
         pkg_critpath = False
         pkg_collection = form.branches.data
+        pkg_namespace = form.namespace.data
         if not 'master' in pkg_collection:
             flask.flash(
                 'Adding a request for `master` branch, this branch is '
@@ -1299,6 +1303,7 @@ def package_request_new():
                     pkg_collection=clt,
                     pkg_poc=pkg_poc,
                     pkg_upstream_url=pkg_upstream_url,
+                    pkg_namespace=pkg_namespace,
                     user=flask.g.fas_user,
                 )
                 if message:

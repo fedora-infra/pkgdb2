@@ -1818,7 +1818,7 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
 
 def add_new_package_request(
         session, pkg_name, pkg_summary, pkg_description, pkg_status,
-        pkg_collection, pkg_poc, user, pkg_review_url,
+        pkg_collection, pkg_poc, user, pkg_review_url, pkg_namespace='rpms',
         pkg_upstream_url=None, pkg_critpath=False):
     """ Create a new Package request in the database.
 
@@ -1830,6 +1830,7 @@ def add_new_package_request(
     :arg pkg_collection: the collection in which had the package.
     :arg pkg_poc: the point of contact for this package in this collection
     :arg user: the user performing the action
+    :kwarg pkg_namespace: the namespace of the package, defaults to 'rpms'
     :kwarg pkg_review_url: the url of the review-request on the bugzilla
     :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
@@ -1875,6 +1876,7 @@ def add_new_package_request(
         'pkg_review_url': pkg_review_url.strip() if pkg_review_url else None,
         'pkg_upstream_url': pkg_upstream_url.strip() if pkg_upstream_url else None,
         'pkg_critpath': pkg_critpath,
+        'pkg_namespace': pkg_namespace,
     }
 
     action = model.AdminAction(

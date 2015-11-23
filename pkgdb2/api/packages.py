@@ -71,6 +71,7 @@ def api_package_new():
     :arg poc: FAS username of the point of contact
     :arg upstream_url: the URL of the upstream project
     :arg critpath: boolean specifying if the package is in the critpath
+    :arg namespace: the namespace of the new package.
 
     Sample response:
 
@@ -94,11 +95,13 @@ def api_package_new():
         SESSION, '*', 'Under Development')
     collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
     pkg_status = pkgdblib.get_status(SESSION, 'pkg_status')['pkg_status']
+    namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
 
     form = forms.AddPackageForm(
         csrf_enabled=False,
         collections=collections,
         pkg_status_list=pkg_status,
+        namespaces=namespaces,
     )
     if form.validate_on_submit():
         pkg_name = form.pkgname.data
@@ -1248,6 +1251,7 @@ def api_package_request():
         automatically.
 
 
+
     Sample response:
 
     ::
@@ -1294,9 +1298,11 @@ def api_package_request():
             cnt += 1
         collections.append(collection)
 
+    namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
     form = forms.RequestPackageForm(
         csrf_enabled=False,
         collections=collections,
+        namespaces=namespaces,
     )
 
     if form.validate_on_submit():
@@ -1311,6 +1317,7 @@ def api_package_request():
             pkg_collection.append('master')
         pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
+        pkg_namespace = form.namespace.data
 
         bz = APP.config.get('PKGDB2_BUGZILLA_URL')
         if bz not in pkg_review_url:
@@ -1334,6 +1341,7 @@ def api_package_request():
                     pkg_collection=clt,
                     pkg_poc=pkg_poc,
                     pkg_upstream_url=pkg_upstream_url,
+                    pkg_namespace=pkg_namespace,
                     user=flask.g.fas_user,
                 )
                 if message:
