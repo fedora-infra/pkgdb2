@@ -1515,6 +1515,8 @@ def get_status(session, status='all'):
         output['acl_status'] = model.AclStatus.all_txt(session)
     if 'admin_status' in status:
         output['admin_status'] = model.ActionStatus.all_txt(session)
+    if 'namespaces' in status:
+        output['namespaces'] = model.Namespace.all_txt(session)
 
     return output
 
