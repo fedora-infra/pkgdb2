@@ -156,6 +156,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'poc': 'mclasen',
                 'upstream_url': '',
                 'critpath': False,
+                'namespace': 'rpms',
                 'csrf_token': csrf_token,
             }
 
@@ -954,6 +955,7 @@ class FlaskUiPackagesTest(Modeltests):
             'poc': 'pingou',
             'upstream_url': 'http://gnome.org',
             'branches': 'master',
+            'namespace': 'rpms',
         }
 
         user = FakeFasUser()
