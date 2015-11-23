@@ -89,6 +89,7 @@ class FlaskApiPackagesTest(Modeltests):
                 sorted(data['error_detail']),
                 [
                     "branches: This field is required.",
+                    "namespace: Not a valid choice",
                     "pkgname: This field is required.",
                     "poc: This field is required.",
                     "review_url: This field is required.",
@@ -107,6 +108,7 @@ class FlaskApiPackagesTest(Modeltests):
             'branches': '',
             'poc': '',
             'upstream_url': '',
+            'namespace': 'foo',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -118,6 +120,7 @@ class FlaskApiPackagesTest(Modeltests):
                     "error": "Invalid input submitted",
                     "error_detail": [
                         "status: This field is required.",
+                        "namespace: Not a valid choice",
                         "branches: '' is not a valid choice for this field",
                         "poc: This field is required.",
                     ],
@@ -135,6 +138,7 @@ class FlaskApiPackagesTest(Modeltests):
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
             'critpath': False,
+            'namespace': 'rpms',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -165,6 +169,7 @@ class FlaskApiPackagesTest(Modeltests):
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
             'critpath': False,
+            'namespace': 'rpms',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -191,6 +196,7 @@ class FlaskApiPackagesTest(Modeltests):
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
             'critpath': False,
+            'namespace': 'rpms',
         }
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/new/', data=data)
@@ -1818,6 +1824,7 @@ class FlaskApiPackagesTest(Modeltests):
                   "error": "Invalid input submitted",
                   "error_detail": [
                     "branches: 'foobar' is not a valid choice for this field",
+                    "namespace: Not a valid choice",
                     "review_url: This field is required."
                   ],
                   "output": "notok"
@@ -1830,6 +1837,7 @@ class FlaskApiPackagesTest(Modeltests):
                 'summary': 'Drop-down terminal for GNOME',
                 'review_url': 'https://bugzilla.redhat.com/450189',
                 'branches': ['master', 'f18'],
+                'namespace': 'rpms',
             }
             output = self.app.post('/api/request/package', data=data)
             self.assertEqual(output.status_code, 400)
@@ -1851,6 +1859,7 @@ class FlaskApiPackagesTest(Modeltests):
                 'summary': 'Drop-down terminal for GNOME',
                 'review_url': 'https://bugzilla.redhat.com/450189',
                 'branches': ['f18'],
+                'namespace': 'rpms',
             }
             output = self.app.post('/api/request/package', data=data)
             self.assertEqual(output.status_code, 200)
@@ -1886,6 +1895,7 @@ class FlaskApiPackagesTest(Modeltests):
                 'summary': 'Terminal for GNOME',
                 'review_url': '123',
                 'branches': ['master'],
+                'namespace': 'rpms',
             }
             output = self.app.post('/api/request/package', data=data)
             self.assertEqual(output.status_code, 200)
@@ -1921,6 +1931,7 @@ class FlaskApiPackagesTest(Modeltests):
                 'summary': 'bar',
                 'review_url': 'http://bz.rh.c/123',
                 'branches': ['master'],
+                'namespace': 'rpms',
             }
             output = self.app.post('/api/request/package', data=data)
             self.assertEqual(output.status_code, 200)
