@@ -52,7 +52,8 @@
     </tr>
     <tr><td>Action:</td><td>{{ admin_action.action }}</td></tr>
     <tr><td>To branch:</td><td>{{ admin_action.collection.branchname }}</td></tr>
-    {% if admin_action.action == 'request.package' %}
+    {% if admin_action.action == 'request.package'
+        or admin_action.action == 'request.unretire' %}
     <tr>
       <td>Ticket</td>
       <td>

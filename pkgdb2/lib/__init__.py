@@ -1887,7 +1887,7 @@ def add_new_package_request(
     ))
 
 
-def add_unretire_request(session, pkg_name, pkg_branch, user):
+def add_unretire_request(session, pkg_name, pkg_branch, review_url, user):
     """ Register a new request to un-retire a package.
 
     This method only flushes the new objects.
@@ -1895,6 +1895,7 @@ def add_unretire_request(session, pkg_name, pkg_branch, user):
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package to unretire.
     :arg clt_to: the ``branchname`` of the collection to unretire.
+    :arg review_url: the url of the new review.
     :arg user: the user making the action.
     :raises pkgdb2.lib.PkgdbException: There are three conditions leading to
         this exception beeing raised:
@@ -1921,6 +1922,7 @@ def add_unretire_request(session, pkg_name, pkg_branch, user):
         user=user.username,
         _status='Awaiting Review',
         action='request.unretire',
+        info=json.dumps({'pkg_review_url': review_url}),
     )
 
     session.add(action)

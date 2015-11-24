@@ -27,7 +27,8 @@
   <tr><td>To branch:</td><td>{{ admin_action.collection.branchname }}</td></tr>
   <tr><td>Status</td><td>{{ admin_action.status }}</td></tr>
   <tr><td>Message</td><td>{{ admin_action.message }}</td></tr>
-  {% if admin_action.action == 'request.package' %}
+  {% if admin_action.action == 'request.package'
+      or admin_action.action == 'request.unretire' %}
   <tr>
       <td>Ticket</td>
       <td>

@@ -788,7 +788,7 @@ def package_unretire(package, full=True):
         and acl.status == 'Retired'
     ]
 
-    form = pkgdb2.forms.BranchForm(collections=collections)
+    form = pkgdb2.forms.UnretireForm(collections=collections)
 
     if form.validate_on_submit():
         for acl in package_acl:
@@ -799,6 +799,7 @@ def package_unretire(package, full=True):
                             session=SESSION,
                             pkg_name=package.name,
                             pkg_branch=acl.collection.branchname,
+                            review_url=form.review_url.data,
                             user=flask.g.fas_user,
                         )
                         flask.flash(
@@ -832,7 +833,7 @@ def package_unretire(package, full=True):
             flask.url_for('.package_info', package=package.name))
 
     return flask.render_template(
-        'branch_selection.html',
+        'request_unretire.html',
         full=full,
         package=package,
         form=form,
