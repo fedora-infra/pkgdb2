@@ -33,7 +33,7 @@
 
 {% block content %}
 
-<h1>Search packages {% if namespace %} ({{ namespace }}) {% endif %}</h1>
+<h1>Search packages{% if namespace %} ({{ namespace }}) {% endif %}</h1>
 
 {% if origin == 'list_packages' %}
 <p>See the list of <a href="{{ url_for('.list_orphaned') }}">orphaned</a>
