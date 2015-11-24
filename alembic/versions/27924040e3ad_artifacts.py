@@ -25,7 +25,11 @@ def upgrade():
         sa.Column(
             'namespace',
             sa.String(50),
-            sa.ForeignKey('namespaces.namespace', onupdate='CASCADE'),
+            sa.ForeignKey(
+                'namespaces.namespace',
+                onupdate='CASCADE',
+                ondelete='CASCADE',
+            ),
             default='rpms',
         )
     )

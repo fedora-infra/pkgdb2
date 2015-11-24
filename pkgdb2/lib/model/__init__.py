@@ -1137,7 +1137,10 @@ class Package(BASE):
         nullable=False)
     namespace = sa.Column(
         sa.String(50),
-        sa.ForeignKey('namespaces.namespace', onupdate='CASCADE'),
+        sa.ForeignKey(
+            'namespaces.namespace',
+            onupdate='CASCADE',
+            ondelete='CASCADE'),
         nullable=False, default='rpms',
     )
 
