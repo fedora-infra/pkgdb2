@@ -231,3 +231,79 @@ def admin_action_edit_status(action_id):
         action_id=action_id,
         form=form,
     )
+
+
+@UI.route('/admin/namespaces')
+@is_admin
+def admin_namespaces():
+    """ Shows all the existing namespaces.
+    """
+    namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
+    form = pkgdb2.forms.NamespaceForm()
+
+    return flask.render_template(
+        'admin_namespaces.html',
+        namespaces=namespaces,
+        form=form,
+    )
+
+
+@UI.route('/admin/namespace/drop', methods=['POST'])
+@is_admin
+def admin_drop_namespace():
+    """ Drop an existing namespace
+    """
+
+    form = pkgdb2.forms.NamespaceForm()
+
+    if form.validate_on_submit():
+
+        try:
+            message = pkgdblib.drop_namespace(
+                SESSION,
+                form.namespace.data,
+                user=flask.g.fas_user,
+            )
+            SESSION.commit()
+            flask.flash(message)
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We can only reach here in two cases:
+            # 1) the user is not an admin, but that's taken care of
+            #    by the decorator
+            # 2) we have a SQLAlchemy problem when storing the info
+            #    in the DB which we cannot test
+            SESSION.rollback()
+            flask.flash(err, 'errors')
+            return flask.render_template('msg.html')
+
+    return flask.redirect(flask.url_for('.admin_namespaces'))
+
+
+@UI.route('/admin/namespace/add', methods=['POST'])
+@is_admin
+def admin_add_namespace():
+    """ Add a new namespace
+    """
+
+    form = pkgdb2.forms.NamespaceForm()
+
+    if form.validate_on_submit():
+
+        try:
+            message = pkgdblib.add_namespace(
+                SESSION,
+                form.namespace.data,
+                user=flask.g.fas_user,
+            )
+            SESSION.commit()
+            flask.flash(message)
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We can only reach here in two cases:
+            # 1) the user is not an admin, but that's taken care of
+            #    by the decorator
+            # 2) we have a SQLAlchemy problem when storing the info
+            #    in the DB which we cannot test
+            flask.flash(err, 'errors')
+            return flask.render_template('msg.html')
+
+    return flask.redirect(flask.url_for('.admin_namespaces'))

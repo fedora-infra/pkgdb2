@@ -1,0 +1,37 @@
+{% extends "master.html" %}
+
+{% block title %} Admin | PkgDB {% endblock %}
+
+{%block tag %}admin{% endblock %}
+
+{% block content %}
+
+<h1>Namespaces</h1>
+
+<p>
+    This page lists all the namespaces currently in the DB.
+</p>
+
+<table>
+  {% for namespace in namespaces %}
+  <tr>
+      <td>{{ namespace }}</td>
+      <td>
+        <form action="{{ url_for('.admin_drop_namespace') }}" method="POST">
+            <input type="hidden" name="namespace" value="{{ namespace }}"/>
+            {{ form.csrf_token }}
+            <input type="submit" value="delete"/>
+        </form>
+      </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>Add a new namespace</h2>
+<form action="{{ url_for('.admin_add_namespace') }}" method="POST">
+    <input type="text" name="namespace"></input>
+    {{ form.csrf_token }}
+    <input type="submit" value="add"/>
+</form>
+
+{% endblock %}
