@@ -727,27 +727,48 @@ def api_pkgrequest(bzid):
         jsonout.status_code = 500
         return jsonout
 
+    # Check component
     if bug.component != 'Package Review':
         httpcode = 400
         output['output'] = 'notok'
         output['error'] = 'Bugzilla ticket does not correspond '\
             'to a Review Request'
-    else:
-        tmp = bug.summary.split(':', 1)[1]
-        if not ' - ' in tmp:
-            httpcode = 400
-            output['output'] = 'notok'
-            output['error'] = 'Invalid title for this bugzilla ticket'
-        else:
-            pkg, summary = tmp.split(' - ', 1)
-            url = bug.weburl
-            if 'show_bug.cgi?id=' in url:
-                url = url.replace('show_bug.cgi?id=', '')
-            output = {
-                'name': pkg.strip(),
-                'summary': summary.strip(),
-                'review_url': url,
-            }
+
+    # Check if the bug is assigned
+    if bug.assigned_to in ['', None, 'nobody@fedoraproject.org']:
+        httpcode = 400
+        output['output'] = 'notok'
+        output['error'] = 'Bugzilla ticket is not assigned to anyone'
+
+    # Check if the review was approved
+    flag_set = False
+    for flag in bug.flags:
+        if flag.get('name') == 'fedora-review' and flag.get('status') == '+':
+            flag_set = True
+            break
+    if flag_set is False:
+        httpcode = 400
+        output['output'] = 'notok'
+        output['error'] = 'Bugzilla ticket does not have the flag ' \
+            'fedora-review set to `+`'
+
+    tmp = bug.summary.split(':', 1)[1]
+    # Check the format of the title
+    if not ' - ' in tmp:
+        httpcode = 400
+        output['output'] = 'notok'
+        output['error'] = 'Invalid title for this bugzilla ticket'
+
+    if httpcode == 200:
+        pkg, summary = tmp.split(' - ', 1)
+        url = bug.weburl
+        if 'show_bug.cgi?id=' in url:
+            url = url.replace('show_bug.cgi?id=', '')
+        output = {
+            'name': pkg.strip(),
+            'summary': summary.strip(),
+            'review_url': url,
+        }
 
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
