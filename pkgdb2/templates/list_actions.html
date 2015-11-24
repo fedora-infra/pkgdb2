@@ -123,10 +123,14 @@
         </a>
       </td>
       <td>
-        {% if action.package or (request.action == 'request.package' and
-              request.status == 'Approved') %}
+        {% if action.package %}
           <a href="{{url_for('.package_info', package=action.package.name)}}">
             {{ action.package.name }}
+          </a>
+        {% elif action.action == 'request.package' and
+              action.status == 'Approved' %}
+          <a href="{{url_for('.package_info', package=action.info_data['pkg_name'])}}">
+            {{ action.info_data['pkg_name'] }}
           </a>
         {% else %}
           {{ action.info_data['pkg_name'] }}
