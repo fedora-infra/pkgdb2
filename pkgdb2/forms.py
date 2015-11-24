@@ -427,4 +427,11 @@ class UnretireForm(BranchForm):
     review_url = wtforms.TextField(
         'review_url',
         [wtforms.validators.optional()],
+
+
+class NamespaceForm(wtf.Form):
+    """ Form to add/drop namespace from the DB. """
+    namespace = wtforms.TextField(
+        'Namespace <span class="error">*</span>',
+        [wtforms.validators.Required()]
     )
