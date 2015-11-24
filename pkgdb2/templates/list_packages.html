@@ -80,6 +80,7 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
 {% if total_page >= page and page > 0 %}
     {% for pkg in packages %}
         <li>
+        {{ pkg.namespace }}:
         <a href="{{url_for('.package_info', package=pkg.name)}}">
                 {{ pkg.name }}</a>
         -- {{ pkg.summary }}
