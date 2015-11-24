@@ -2008,6 +2008,7 @@ class PkgdbLibtests(Modeltests):
             self.session,
             pkg_name='foo',
             pkg_branch='master',
+            review_url=None,
             user=FakeFasUser()
         )
 
@@ -2020,6 +2021,7 @@ class PkgdbLibtests(Modeltests):
             self.session,
             pkg_name='guake',
             pkg_branch='foo',
+            review_url=None,
             user=FakeFasUser()
         )
 
@@ -2027,6 +2029,7 @@ class PkgdbLibtests(Modeltests):
             self.session,
             pkg_name='guake',
             pkg_branch='master',
+            review_url=None,
             user=FakeFasUser()
         )
         self.assertEqual(
