@@ -54,3 +54,8 @@ def downgrade():
     key constraints.
     '''
     op.drop_column('Package', 'namespace')
+    op.execute("""
+DROP INDEX IF EXISTS "ix_package_name_namespace";
+ALTER TABLE "Package"
+  ADD CONSTRAINT "ix_Package_name" UNIQUE (name);
+""")
