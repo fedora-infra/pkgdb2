@@ -87,7 +87,10 @@ class FlaskUiPackagesTest(Modeltests):
         output = self.app.get('/package/geany/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
-            '<h1 class="inline" property="doap:name">geany</h1>'
+            '<span class="italic">Rpms:</span>'
+            in output.data)
+        self.assertTrue(
+            '<span property="doap:name">geany</span>'
             in output.data)
         self.assertTrue('<th>Fedora 18</th>' in output.data)
         self.assertTrue('<a href="/packager/pingou/">' in output.data)
@@ -260,7 +263,10 @@ class FlaskUiPackagesTest(Modeltests):
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h1 class="inline" property="doap:name">guake</h1>'
+                '<span class="italic">Rpms:</span>'
+                in output.data)
+            self.assertTrue(
+                '<span property="doap:name">guake</span>'
                 in output.data)
             self.assertTrue('<a href="/packager/spot/">' in output.data)
 

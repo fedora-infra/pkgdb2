@@ -202,7 +202,10 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h1 class="inline" property="doap:name">guake</h1>'
+                '<span class="italic">Rpms:</span>'
+                in output.data)
+            self.assertTrue(
+                '<span property="doap:name">guake</span>'
                 in output.data)
             self.assertEqual(
                 output.data.count('<a href="/packager/spot/">'), 2)
