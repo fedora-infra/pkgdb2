@@ -791,6 +791,28 @@ def package_unretire(package, full=True):
     form = pkgdb2.forms.UnretireForm(collections=collections)
 
     if form.validate_on_submit():
+        review_url = form.review_url.data
+        review_url = review_url.strip() if review_url else None
+        checks_ok = True
+        for br in form.branches.data:
+            if br == 'master' and not review_url:
+                checks_ok = False
+                flask.flash(
+                    'You must provide a review URL to un-retire master',
+                    'error')
+                break
+            elif br.startswith('e') and 'master' in collections and not review_url:
+                checks_ok = False
+                flask.flash(
+                    'You must provide a review URL to un-retire an EPEL '
+                    'branch if master is also retired',
+                    'error')
+                break
+
+        if not checks_ok:
+            return flask.redirect(
+                flask.url_for('.package_info', package=package.name))
+
         for acl in package_acl:
             if acl.collection.branchname in form.branches.data:
                 if acl.point_of_contact == 'orphan':
