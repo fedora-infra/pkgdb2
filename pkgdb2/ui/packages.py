@@ -44,13 +44,14 @@ from pkgdb2.ui import UI
 
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
-def list_packages(motif=None, orphaned=None, status=None,
+def list_packages(motif=None, orphaned=None, status=None, namespace=None,
                   origin='list_packages', case_sensitive=False):
     ''' Display the list of packages corresponding to the motif. '''
 
     pattern = flask.request.args.get('motif', motif) or '*'
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
+    namespace = flask.request.args.get('namespace', None)
     orphaned = flask.request.args.get('orphaned', orphaned)
     if str(orphaned) in ['False', '0']:
         orphaned = False
@@ -76,6 +77,7 @@ def list_packages(motif=None, orphaned=None, status=None,
         pkg_branch=branches,
         pkg_poc=owner,
         orphaned=orphaned,
+        namespace=namespace,
         status=status,
         page=page,
         limit=limit,
@@ -87,6 +89,7 @@ def list_packages(motif=None, orphaned=None, status=None,
         pkg_branch=branches,
         pkg_poc=owner,
         orphaned=orphaned,
+        namespace=namespace,
         status=status,
         page=page,
         limit=limit,
@@ -95,7 +98,7 @@ def list_packages(motif=None, orphaned=None, status=None,
     )
     total_page = int(ceil(packages_count / float(limit)))
 
-    select = origin.replace('list_', '')
+    select = namespace or origin.replace('list_', '')
 
     if len(packages) == 1:
         flask.flash('Only one package matching, redirecting you to it')
@@ -114,6 +117,7 @@ def list_packages(motif=None, orphaned=None, status=None,
         status=status,
         owner=owner,
         branches=branches,
+        namespace=namespace,
     )
 
 
