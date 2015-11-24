@@ -43,7 +43,7 @@ def upgrade():
         existing_nullable=True)
 
     op.execute("""
-DROP INDEX "ix_Package_name";
+DROP INDEX IF EXISTS "ix_Package_name";
 ALTER TABLE "Package"
   ADD CONSTRAINT "ix_package_name_namespace" UNIQUE (name, namespace);
 """)
