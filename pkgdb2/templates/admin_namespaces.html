@@ -20,7 +20,8 @@
         <form action="{{ url_for('.admin_drop_namespace') }}" method="POST">
             <input type="hidden" name="namespace" value="{{ namespace }}"/>
             {{ form.csrf_token }}
-            <input type="submit" value="delete"/>
+            <input type="submit" value="delete"
+                onclick="return confirm('Are you sure to delete the namespace `{{ namespace }}``?\nThis will delete all of its packages and cannot be un-done');"/>
         </form>
       </td>
   </tr>
