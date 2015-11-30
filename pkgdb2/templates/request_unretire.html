@@ -1,0 +1,42 @@
+{% if full %}
+  {% extends "master.html" %}
+  {% block title %} Select branches | PkgDB {% endblock %}
+  {%block tag %}packages{% endblock %}
+{% endif %}
+
+{% from "_formhelpers.html" import render_field_in_row %}
+
+
+{% block content %}
+{% if not full %}
+<div title="{{ action.capitalize() }} package">
+{% endif %}
+
+<h1>
+  Select branches of package:
+  <a href="{{ url_for('.package_info', package=package.name) }}">
+    {{ package.name }}
+  </a>
+  to {{ action }}
+</h1>
+
+<form action="{{ url_for(
+    '.package_%s' % action, package=package.name, full=full) }}" method="post">
+  <table>
+    {{ render_field_in_row(form.branches) }}
+    {{ render_field_in_row(form.review_url, after="Required if you're un-retiring the master branch or an EPEL branch while keeping the master branch retired") }}
+  </table>
+  <p class="buttons indent">
+    <input type="submit" class="submit positive button" value="Select">
+    {% if full %}
+    <input type="button" value="Cancel" class="button" onclick="history.back();">
+    {% endif %}
+    {{ form.csrf_token }}
+  </p>
+  <p class="small">Use your mouse or the control key to select multiple
+    ACLs or branch at once</p>
+</form>
+{% if not full %}
+</div>
+{% endif %}
+{% endblock %}

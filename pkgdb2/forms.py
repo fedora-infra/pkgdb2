@@ -409,3 +409,11 @@ class EditActionStatusForm(wtf.Form):
                 (status, status)
                 for status in kwargs['status']
             ]
+
+
+class UnretireForm(BranchForm):
+    """ Form to ask for a package to be un-retired. """
+    review_url = wtforms.TextField(
+        'review_url',
+        [wtforms.validators.optional()],
+    )
