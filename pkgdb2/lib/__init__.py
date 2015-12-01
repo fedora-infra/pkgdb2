@@ -2487,7 +2487,7 @@ def edit_action_status(
     elif action_status in ['Awaiting Review', 'Blocked']:
         # Requester can re-set 'request.unretire' to 'Awaiting Review'
         if (not pkg_admin and not pkgdb_admin and
-                requester and admin_action.action != 'request.unretire'):
+                (requester and admin_action.action != 'request.unretire')):
             raise PkgdbException(
                 'You are not allowed to review this request')
     elif action_status in ['Obsolete']:
