@@ -782,12 +782,33 @@ def package_unretire(package, full=True):
         flask.flash('No package of this name found.', 'errors')
         return flask.render_template('msg.html')
 
-    collections = [
+    # Get the list of retired branches
+    retire_collections = [
         acl.collection.branchname
         for acl in package_acl
         if acl.collection.status in ['Active', 'Under Development']
         and acl.status == 'Retired'
     ]
+
+    # Get the list of all the collections active or under development
+    collections = [
+        collection.branchname for collection in
+        pkgdb2.lib.search_collection(SESSION, '*', 'Under Development')
+        if collection.branchname in retire_collections
+    ]
+    collections.reverse()
+    active_collections = pkgdb2.lib.search_collection(SESSION, '*', 'Active')
+    active_collections.reverse()
+    cnt = 0
+    # Restrict the Fedora branch to 2 active versions
+    for collection in active_collections:
+        if collection.name.lower() == 'fedora':
+                if cnt >= 2:
+                    continue
+                cnt += 1
+        if collection.branchname not in retire_collections:
+            continue
+        collections.append(collection.branchname)
 
     form = pkgdb2.forms.UnretireForm(collections=collections)
 
