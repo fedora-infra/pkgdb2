@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.32.2
+Version:        1.33.0
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,25 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Dec 04 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.33.0-1
+- Update to 1.33.0
+- Strip the input (if there is one) when a new package is requested (avoids
+  trailing spaces typo)
+- Add a link to the package once the action has been approved (trishnaguha &
+  pingou)
+- Improve the checks to the package review on bugzilla before letting it through
+- Limit the size of the content section (avoids the overlap with the options
+  box)
+- When un-retiring a package, request the review_url
+- Mention postgresql-devel dependency (Till Maas and Ralph Bean)
+- Let the user update request to unretire to `Awaiting Review`
+- Restrict the branches proposed to un-retire to the last two Fedora releases
+- Perform more checks around the fedora-review flag when syncing info from
+  bugzilla
+- Making sure admins are made aware that changing a status does not process the
+  request
+- When approving a new package, process the new Fedora branch requests as well
+
 * Thu Nov 05 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.32.2-1
 - Update to 1.32.2
 - Fix showing the link to the detail view of the action on the page listing them
