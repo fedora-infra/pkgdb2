@@ -35,6 +35,12 @@
 <form action="{{ url_for('.admin_action_edit_status', action_id=action_id) }}"
     method="post">
 {% endif %}
+{% if is_admin %}
+<p>
+    <span class="required">Updating the status of a request does not process the request. The proper
+    way to process requests is via the pkgdb-admin CLI tool.</span>
+</p>
+{% endif %}
 
   <table>
     <tr><td>User:</td><td>{{ admin_action.user }}</td></tr>
