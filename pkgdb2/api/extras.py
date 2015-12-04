@@ -734,23 +734,53 @@ def api_pkgrequest(bzid):
         output['error'] = 'Bugzilla ticket does not correspond '\
             'to a Review Request'
 
+    # Check product
+    if bug.product != 'Fedora':
+        httpcode = 400
+        output['output'] = 'notok'
+        output['error'] = 'Bugzilla ticket was not open against Fedora '\
+            'but: {0}'.format(bug.product)
+
     # Check if the bug is assigned
     if bug.assigned_to in ['', None, 'nobody@fedoraproject.org']:
         httpcode = 400
         output['output'] = 'notok'
         output['error'] = 'Bugzilla ticket is not assigned to anyone'
 
-    # Check if the review was approved
+    # Check if the review was approved and by whom
+    error = None
     flag_set = False
     for flag in bug.flags:
-        if flag.get('name') == 'fedora-review' and flag.get('status') == '+':
-            flag_set = True
+        if flag.get('name') == 'fedora-review':
+            if flag.get('status') == '+':
+                flag_set = True
+
+            flag_setter = flag['setter']
+
+            if flag_setter == bug.comments[0].author:
+                msg = 'Review approved by the person creating ' \
+                      'the ticket {0}'.format(flag_setter)
+                error = msg
+
+            if flag_setter != bug.comments[0].author:
+                msg = 'Review not approved by the assignee of ' \
+                        'the ticket {0}'.format(flag_setter)
+                if error:
+                    error += ' -- {0}'.format(msg)
+                else:
+                    error = msg
             break
-    if flag_set is False:
+
+    if error is not None or flag_set is False:
         httpcode = 400
         output['output'] = 'notok'
-        output['error'] = 'Bugzilla ticket does not have the flag ' \
-            'fedora-review set to `+`'
+        msg = 'Fedora-review flag not approved'
+        if error and flag_set is False:
+            output['error'] = '{0} -- {1}'.format(error, msg)
+        elif error and flag_set is True:
+            output['error'] = error
+        else:
+            output['error'] = msg
 
     tmp = bug.summary.split(':', 1)[1]
     # Check the format of the title
