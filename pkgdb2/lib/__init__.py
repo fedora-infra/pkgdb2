@@ -2539,8 +2539,11 @@ def edit_action_status(
                 and admin_action.action == 'request.package':
             pkg = admin_action.info_data.get('package')
             requests = search_actions(
-                session, package=pkg, action='request.branch',
+                session, package=pkg, action='request.package',
                 status='Awaiting Review')
+            requests.extend(search_actions(
+                session, package=pkg, action='request.branch',
+                status='Awaiting Review'))
             for req in requests:
                 if req.collection.name.lower() != 'fedora':
                     continue
