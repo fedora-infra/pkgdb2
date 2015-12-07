@@ -1645,9 +1645,10 @@ class Package(BASE):
                 if collection:
                     if pkg.collection.branchname in collection:
                         result['acls'].append(
-                            pkg.to_json(_seen, package=package))
+                            pkg.to_json(_seen, package=package, acls=acls))
                 else:
-                    result['acls'].append(pkg.to_json(_seen, package=package))
+                    result['acls'].append(
+                        pkg.to_json(_seen, package=package, acls=acls))
 
         return result
 
