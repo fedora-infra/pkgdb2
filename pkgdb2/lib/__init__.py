@@ -2646,7 +2646,7 @@ def add_namespace(session, namespace, user):
 
 
 def drop_namespace(session, namespace, user):
-    """ Remove a namespace to the database.
+    """ Remove a namespace from the database.
 
     This method only flushes the new object, nothing is committed to the
     database.
