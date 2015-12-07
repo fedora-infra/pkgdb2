@@ -906,7 +906,7 @@ def api_package_list(pattern=None):
     elif critpath:
         critpath = True
     acls = flask.request.args.get('acls', False)
-    if str(orphaned).lower() in ['0', 'false']:
+    if str(acls).lower() in ['0', 'false']:
         acls = False
     else:
         acls = True
