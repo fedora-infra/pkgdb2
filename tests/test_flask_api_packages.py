@@ -1214,6 +1214,37 @@ class FlaskApiPackagesTest(Modeltests):
             }
         )
 
+        # Check that we do return the ACLs when we ask them
+        output = self.app.get('/api/packages/g*/?acls=True')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(
+            data['packages'][0]['name'], 'geany')
+        self.assertEqual(
+            data['packages'][1]['name'], 'guake')
+        self.assertNotEqual(data['packages'][0]['acls'], [])
+        self.assertNotEqual(data['packages'][1]['acls'], [])
+        self.assertEqual(
+            data['packages'][0]['acls'][0]['collection']['branchname'],
+            'f18'
+        )
+        self.assertEqual(
+            data['packages'][1]['acls'][1]['collection']['branchname'],
+            'master'
+        )
+        self.assertEqual(
+            data['packages'][1]['acls'][0].keys(),
+            [
+                'status', 'point_of_contact', 'collection', 'acls',
+                'critpath', 'status_change',
+            ]
+        )
+
         output = self.app.get('/api/packages/g*/?limit=abc')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)

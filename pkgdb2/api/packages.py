@@ -905,22 +905,29 @@ def api_package_list(pattern=None):
         critpath = False
     elif critpath:
         critpath = True
-    acls = bool(flask.request.args.get('acls', False))
+    acls = flask.request.args.get('acls', False)
+    if str(orphaned).lower() in ['0', 'false']:
+        acls = False
+    else:
+        acls = True
+
     statuses = flask.request.args.getlist('status', None)
     eol = flask.request.args.get('eol', False)
     page = flask.request.args.get('page', 1)
     limit = get_limit()
     count = flask.request.args.get('count', False)
     try:
+        tmp_branches = branches
         if not branches:
-            branches = [None]
+            tmp_branches = [None]
+        tmp_statuses = statuses
         if not statuses:
-            statuses = [None]
+            tmp_statuses = [None]
 
         if count:
             packages = 0
             for status, branch in itertools.product(
-                    statuses, branches):
+                    tmp_statuses, tmp_branches):
                 packages += pkgdblib.search_package(
                     SESSION,
                     pkg_name=pattern,
@@ -943,7 +950,7 @@ def api_package_list(pattern=None):
             packages = set()
             packages_count = 0
             for status, branch in itertools.product(
-                    statuses, branches):
+                    tmp_statuses, tmp_branches):
                 packages.update(
                     pkgdblib.search_package(
                         SESSION,
