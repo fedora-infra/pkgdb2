@@ -201,9 +201,7 @@ confusing what the difference is between that status an the per-branch status)
 
 <section id="pkg_info">
   <h1 class="inline">
-      <span class="italic">
-        {{ package.namespace | capitalize}}</span>/<span
-        property="doap:name">{{ package.name }}</span>
+    {{ package.namespace }}/<span property="doap:name">{{ package.name }}</span>
   </h1>
     {% if package.upstream_url %}
       (<a class="inline" href="{{ package.upstream_url }}">upstream</a>)
