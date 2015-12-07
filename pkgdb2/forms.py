@@ -427,6 +427,7 @@ class UnretireForm(BranchForm):
     review_url = wtforms.TextField(
         'review_url',
         [wtforms.validators.optional()],
+    )
 
 
 class NamespaceForm(wtf.Form):
