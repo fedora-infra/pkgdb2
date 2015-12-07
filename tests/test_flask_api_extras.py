@@ -358,7 +358,6 @@ guake|pingou
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         expected = {
-            u'packageAcls': {},
             u'title': u'Fedora Package Database -- VCS ACLs'
         }
 
@@ -438,7 +437,7 @@ avail | @provenpackager, | rpms/offlineimap/master"""
         data = json.loads(output.data)
 
         expected = {
-            "packageAcls": {
+            "rpms": {
                 "fedocal": {
                     "f17": {
                         "commit": {
