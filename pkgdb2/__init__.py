@@ -241,6 +241,8 @@ from .ui import admin
 from .ui import collections
 from .ui import packages
 from .ui import packagers
+if APP.config.get('PKGDB_OLD_URL', True):
+    from .ui import redirects
 APP.register_blueprint(UI)
 
 
