@@ -145,7 +145,6 @@ def list_retired(motif=None):
 # pylint: disable=R0914
 ## Too many statements
 # pylint: disable=R0915
-#@UI.route('/package/<package>/')
 @UI.route('/package/<namespace>/<package>/')
 def package_info(package, namespace='rpms'):
     ''' Display the information about the specified package. '''
@@ -336,8 +335,6 @@ def package_timeline(package, namespace='rpms'):
     )
 
 
-#@UI.route('/package/<package>/anitya')
-#@UI.route('/package/<package>/anitya/<full>')
 @UI.route('/package/<namespace>/<package>/anitya')
 @UI.route('/package/<namespace>/<package>/anitya/<full>')
 def package_anitya(package, namespace='rpms', full=True):
@@ -349,7 +346,7 @@ def package_anitya(package, namespace='rpms', full=True):
     pkg = None
     try:
         pkg = pkgdblib.search_package(
-            SESSION, package, namespace=namespace, limit=1)[0]
+            SESSION, namespace, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
