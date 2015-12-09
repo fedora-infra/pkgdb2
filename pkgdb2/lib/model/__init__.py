@@ -461,7 +461,7 @@ class PackageListingAcl(BASE):
         return query.all()
 
     @classmethod
-    def get_acl_package(cls, session, user, package,
+    def get_acl_package(cls, session, user, package, namespace,
                         status="Awaiting Review"):
         """ Return the pending ACLs for the specified package owned by
         user.
@@ -477,8 +477,12 @@ class PackageListingAcl(BASE):
 
         """
         # Get all the packages of this person
-        stmt = session.query(Package.id).filter(
+        stmt = session.query(
+            Package.id
+        ).filter(
             Package.name == package
+        ).filter(
+            Package.namespace == namespace
         ).subquery()
 
         stmt2 = session.query(PackageListing.id).filter(
@@ -1169,13 +1173,17 @@ class Package(BASE):
         return sorted(self.listings, cmp=comparator)
 
     @classmethod
-    def by_name(cls, session, pkgname):
+    def by_name(cls, session, pkgname, namespace='rpms'):
         """ Return the package associated to the given name.
 
         :raises sqlalchemy.InvalidRequestError: if the package name is
             not found
         """
-        return session.query(cls).filter(Package.name == pkgname).one()
+        return session.query(cls).filter(
+            Package.name == pkgname
+        ).filter(
+            Package.namespace == namespace
+        ).one()
 
     @property
     def requests_open(self):
@@ -1334,11 +1342,10 @@ class Package(BASE):
         return query.all()
 
     @classmethod
-    def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               pkg_branch=None, orphaned=None, critpath=None, eol=False,
-               namespace=None,
-               offset=None, limit=None, count=False,
-               case_sensitive=True):
+    def search(
+            cls, session, namespace, pkg_name, pkg_poc=None, pkg_status=None,
+            pkg_branch=None, orphaned=None, critpath=None, eol=False,
+            offset=None, limit=None, count=False, case_sensitive=True):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database

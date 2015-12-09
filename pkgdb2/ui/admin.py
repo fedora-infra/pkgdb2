@@ -47,6 +47,7 @@ def admin_log():
     """ Return the logs as requested by the user. """
     from_date = flask.request.args.get('from_date', None)
     package = flask.request.args.get('package', None)
+    namespace = flask.request.args.get('namespace', None)
     packager = flask.request.args.get('packager', None)
     refresh = flask.request.args.get('refresh', False)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
@@ -82,6 +83,7 @@ def admin_log():
         logs = pkgdblib.search_logs(
             SESSION,
             package=package or None,
+            namespace=namespace or None,
             packager=packager or None,
             from_date=from_date,
             page=page,
@@ -90,6 +92,7 @@ def admin_log():
         cnt_logs = pkgdblib.search_logs(
             SESSION,
             package=package or None,
+            namespace=namespace or None,
             packager=packager or None,
             from_date=from_date,
             count=True

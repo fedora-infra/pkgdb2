@@ -88,7 +88,8 @@ def api_acl_update():
     httpcode = 200
     output = {}
 
-    status = pkgdblib.get_status(SESSION, ['pkg_acl', 'acl_status'])
+    status = pkgdblib.get_status(
+        SESSION, ['pkg_acl', 'acl_status', 'namespaces'])
     collections = pkgdblib.search_collection(
         SESSION, '*', 'Under Development')
     collections.extend(pkgdblib.search_collection(SESSION, '*', 'Active'))
@@ -98,9 +99,11 @@ def api_acl_update():
         collections=[col.branchname for col in collections],
         pkg_acl=status['pkg_acl'],
         acl_status=status['acl_status'],
+        namespaces=status['namespaces'],
     )
 
     if form.validate_on_submit():
+        namespace = form.namespace.data
         pkg_name = form.pkgname.data
         pkg_branch = form.branches.data
         pkg_acl = form.acl.data
@@ -119,6 +122,7 @@ def api_acl_update():
 
                 message = pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=pkg_name,
                     pkg_branch=branch,
                     acl=acl,
@@ -198,11 +202,12 @@ def api_acl_reassign():
     output = {}
 
     packages = flask.request.form.getlist('pkgnames', None)
+    namespace = flask.request.form.get('namespace', None)
     branches = flask.request.form.getlist('branches', None)
     former_poc = flask.request.form.get('former_poc', None)
     user_target = flask.request.form.get('poc', None)
 
-    if not packages or not branches or not user_target:
+    if not packages or not branches or not user_target or not namespace:
         output['output'] = 'notok'
         output['error'] = 'Invalid input submitted'
         httpcode = 500
@@ -214,6 +219,7 @@ def api_acl_reassign():
             try:
                 message = pkgdblib.update_pkg_poc(
                     session=SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=branch,
                     pkg_poc=user_target,

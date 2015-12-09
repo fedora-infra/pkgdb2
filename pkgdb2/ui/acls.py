@@ -39,14 +39,16 @@ from pkgdb2.ui import UI
 # pylint: disable=E1101
 
 
-@UI.route('/acl/<package>/request/', methods=('GET', 'POST'))
+@UI.route('/acl/<namespace>/<package>/request/', methods=('GET', 'POST'))
 @fas_login_required
-def request_acl(package):
+def request_acl(namespace, package):
     ''' Request acls for a specific package. '''
 
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, package)
+        package = pkgdblib.search_package(
+            SESSION, namespace, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -81,6 +83,7 @@ def request_acl(package):
 
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package.name,
                     pkg_branch=collec,
                     pkg_user=flask.g.fas_user.username,
@@ -90,9 +93,12 @@ def request_acl(package):
                 )
             SESSION.commit()
             flask.flash('ACLs updated')
-            return flask.redirect(
-                flask.url_for('.package_info',
-                              package=package.name))
+            return flask.redirect(flask.url_for(
+                '.package_info',
+                namespace=package.namespace,
+                package=package.name)
+            )
+
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(str(err), 'error')
@@ -101,12 +107,13 @@ def request_acl(package):
         'acl_request.html',
         form=form,
         package=package.name,
+        namespace=namespace,
     )
 
 
-@UI.route('/acl/<package>/request/<acl>/', methods=['POST'])
+@UI.route('/acl/<namespace>/<package>/request/<acl>/', methods=['POST'])
 @fas_login_required
-def request_acl_all_branch(package, acl):
+def request_acl_all_branch(namespace, package, acl):
     ''' Request the specified ACL on all branches of the specified package.
     '''
     form = pkgdb2.forms.ConfirmationForm()
@@ -119,7 +126,7 @@ def request_acl_all_branch(package, acl):
 
         try:
             pkg = pkgdblib.search_package(
-                SESSION, pkg_name=package, limit=1)[0]
+                SESSION, namespace=namespace, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
             return flask.render_template('msg.html')
@@ -143,6 +150,7 @@ def request_acl_all_branch(package, acl):
             try:
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=branch,
                     pkg_user=flask.g.fas_user.username,
@@ -157,13 +165,13 @@ def request_acl_all_branch(package, acl):
                 SESSION.rollback()
                 flask.flash(str(err), 'error')
 
-    return flask.redirect(
-        flask.url_for('.package_info', package=package))
+    return flask.redirect(flask.url_for(
+        '.package_info', namespace=namespace, package=package))
 
 
-@UI.route('/acl/<package>/giveup/<acl>/', methods=['POST'])
+@UI.route('/acl/<namespace>/<package>/giveup/<acl>/', methods=['POST'])
 @fas_login_required
-def giveup_acl(package, acl):
+def giveup_acl(namespace, package, acl):
     ''' Request acls for a specific package. '''
     form = pkgdb2.forms.ConfirmationForm()
 
@@ -175,11 +183,11 @@ def giveup_acl(package, acl):
 
         try:
             pkg = pkgdblib.search_package(
-                SESSION, pkg_name=package, limit=1)[0]
+                SESSION, namespace=namespace, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
-            return flask.redirect(
-                flask.url_for('.package_info', package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
 
         pkg_branchs = set([
             pkglist.collection.branchname
@@ -193,13 +201,15 @@ def giveup_acl(package, acl):
             flask.flash(
                 'No active branches found for you for the ACL: %s' % acl,
                 'error')
-            return flask.redirect(
-                flask.url_for('.package_info', package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
 
         for branch in pkg_branchs:
+            print package, namespace, branch, acl, flask.g.fas_user.username
             try:
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=branch,
                     pkg_user=flask.g.fas_user.username,
@@ -221,17 +231,18 @@ def giveup_acl(package, acl):
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
-    return flask.redirect(
-        flask.url_for('.package_info', package=package))
+    return flask.redirect(flask.url_for(
+        '.package_info', namespace=namespace, package=package))
 
 
-@UI.route('/acl/<package>/give/', methods=('GET', 'POST'))
+@UI.route('/acl/<namespace>/<package>/give/', methods=('GET', 'POST'))
 @fas_login_required
-def package_give_acls(package):
+def package_give_acls(namespace, package):
     ''' Give acls to a specified user for a specific package. '''
 
     try:
-        pkg = pkgdblib.search_package(SESSION, pkg_name=package, limit=1)[0]
+        pkg = pkgdblib.search_package(
+            SESSION, namespace=namespace, pkg_name=package, limit=1)[0]
     except IndexError:
         flask.flash('No package found by this name', 'error')
         return flask.redirect(
@@ -248,6 +259,7 @@ def package_give_acls(package):
         collections_obj=collections,
         pkg_acl=acls['pkg_acl'],
         acl_status=acls['acl_status'],
+        namespaces=acls['namespaces'],
     )
     form.pkgname.data = package
     if form.validate_on_submit():
@@ -263,6 +275,7 @@ def package_give_acls(package):
 
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=collec,
                     pkg_user=pkg_user,
@@ -272,9 +285,8 @@ def package_give_acls(package):
                 )
             SESSION.commit()
             flask.flash('ACLs updated')
-            return flask.redirect(
-                flask.url_for('.package_info',
-                              package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
         except pkgdblib.PkgdbException, err:
             SESSION.rollback()
             flask.flash(str(err), 'error')
@@ -283,12 +295,13 @@ def package_give_acls(package):
         'acl_give.html',
         form=form,
         package=package,
+        namespace=namespace,
     )
 
 
-@UI.route('/acl/<package>/watch/', methods=['POST'])
+@UI.route('/acl/<namespace>/<package>/watch/', methods=['POST'])
 @fas_login_required
-def watch_package(package):
+def watch_package(namespace, package):
     ''' Request watch* ACLs on a package.
     Anyone can request these ACLs, no need to be a packager.
     '''
@@ -297,11 +310,11 @@ def watch_package(package):
     if form.validate_on_submit():
         try:
             pkg = pkgdblib.search_package(
-                SESSION, pkg_name=package, limit=1)[0]
+                SESSION, namespace=namespace, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
-            return flask.redirect(
-                flask.url_for('.package_info', package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
 
         pkg_acls = ['watchcommits', 'watchbugzilla']
         pkg_branchs = set([
@@ -314,6 +327,7 @@ def watch_package(package):
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=collec,
                     pkg_user=flask.g.fas_user.username,
@@ -327,12 +341,13 @@ def watch_package(package):
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
-    return flask.redirect(flask.url_for('.package_info', package=package))
+    return flask.redirect(flask.url_for(
+        '.package_info', namespace=namespace, package=package))
 
 
-@UI.route('/acl/<package>/unwatch/', methods=['POST'])
+@UI.route('/acl/<namespace>/<package>/unwatch/', methods=['POST'])
 @fas_login_required
-def unwatch_package(package):
+def unwatch_package(namespace, package):
     ''' Obsolete watch* ACLs on a package.
     This method can only be used for the user itself.
     '''
@@ -341,11 +356,11 @@ def unwatch_package(package):
     if form.validate_on_submit():
         try:
             pkg = pkgdblib.search_package(
-                SESSION, pkg_name=package, limit=1)[0]
+                SESSION, namespace=namespace, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
-            return flask.redirect(
-                flask.url_for('.package_info', package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
 
         pkg_acls = ['watchcommits', 'watchbugzilla']
         pkg_branchs = set([
@@ -356,6 +371,7 @@ def unwatch_package(package):
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=collec,
                     pkg_user=flask.g.fas_user.username,
@@ -369,12 +385,13 @@ def unwatch_package(package):
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
-    return flask.redirect(flask.url_for('.package_info', package=package))
+    return flask.redirect(flask.url_for(
+        '.package_info', namespace=namespace, package=package))
 
 
-@UI.route('/acl/<package>/comaintain/', methods=['POST'])
+@UI.route('/acl/<namespace>/<package>/comaintain/', methods=['POST'])
 @packager_login_required
-def comaintain_package(package):
+def comaintain_package(namespace, package):
     ''' Asks for ACLs to co-maintain a package.
     You need to be a packager to request co-maintainership.
     '''
@@ -392,11 +409,11 @@ def comaintain_package(package):
 
         try:
             pkg = pkgdblib.search_package(
-                SESSION, pkg_name=package, limit=1)[0]
+                SESSION, namespace=namespace, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
-            return flask.redirect(
-                flask.url_for('.package_info', package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
 
         pkg_acls = ['commit', 'watchcommits', 'watchbugzilla']
         pkg_branchs = set([
@@ -409,8 +426,9 @@ def comaintain_package(package):
         # Make sure the requester does not already have commit
         pkg_branchs2 = []
         for pkg_branch in pkg_branchs:
-            if pkgdblib.has_acls(SESSION, flask.g.fas_user.username, pkg.name,
-                                 acl='commit', branch=pkg_branch):
+            if pkgdblib.has_acls(
+                    SESSION, flask.g.fas_user.username, pkg.namespace,
+                    pkg.name, acl='commit', branch=pkg_branch):
                 flask.flash(
                     'You are already a co-maintainer on %s' % pkg_branch,
                     'error')
@@ -419,8 +437,8 @@ def comaintain_package(package):
         pkg_branchs = pkg_branchs2
 
         if not pkg_branchs:
-            return flask.redirect(
-                flask.url_for('.package_info', package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
 
         try:
             msgs = []
@@ -430,6 +448,7 @@ def comaintain_package(package):
                     acl_status = 'Approved'
                 msg = pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=collec,
                     pkg_user=flask.g.fas_user.username,
@@ -449,12 +468,13 @@ def comaintain_package(package):
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
-    return flask.redirect(flask.url_for('.package_info', package=package))
+    return flask.redirect(flask.url_for(
+        '.package_info', namespace=namespace, package=package))
 
 
-@UI.route('/acl/<package>/dropcommit/', methods=['POST'])
+@UI.route('/acl/<namespace>/<package>/dropcommit/', methods=['POST'])
 @fas_login_required
-def dropcommit_package(package):
+def dropcommit_package(namespace, package):
     ''' Obsolete commit ACLs on a package.
     This method can only be used for the user itself.
     '''
@@ -463,11 +483,11 @@ def dropcommit_package(package):
     if form.validate_on_submit():
         try:
             pkg = pkgdblib.search_package(
-                SESSION, pkg_name=package, limit=1)[0]
+                SESSION, namespace=namespace, pkg_name=package, limit=1)[0]
         except IndexError:
             flask.flash('No package found by this name', 'error')
-            return flask.redirect(
-                flask.url_for('.package_info', package=package))
+            return flask.redirect(flask.url_for(
+                '.package_info', namespace=namespace, package=package))
 
         pkg_acls = ['commit']
         pkg_branchs = set()
@@ -483,6 +503,7 @@ def dropcommit_package(package):
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=package,
                     pkg_branch=collec,
                     pkg_user=flask.g.fas_user.username,
@@ -496,7 +517,8 @@ def dropcommit_package(package):
         except pkgdblib.PkgdbException, err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
-    return flask.redirect(flask.url_for('.package_info', package=package))
+    return flask.redirect(flask.url_for(
+        '.package_info', namespace=namespace, package=package))
 
 
 @UI.route('/acl/pending/')
@@ -526,6 +548,7 @@ def pending_acl_approve():
             for acl in pending_acls:
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=acl['namespace'],
                     pkg_name=acl['package'],
                     pkg_branch=acl['collection'],
                     pkg_user=acl['user'],
@@ -557,6 +580,7 @@ def pending_acl_deny():
             for acl in pending_acls:
                 pkgdblib.set_acl_package(
                     SESSION,
+                    namespace=acl['namespace'],
                     pkg_name=acl['package'],
                     pkg_branch=acl['collection'],
                     pkg_user=acl['user'],

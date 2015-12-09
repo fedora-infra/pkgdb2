@@ -44,6 +44,7 @@ from pkgdb2.ui import UI
 
 @UI.route('/packages/')
 @UI.route('/packages/<motif>/')
+@UI.route('/packages/<namespace>/<motif>/')
 def list_packages(motif=None, orphaned=None, status=None, namespace=None,
                   origin='list_packages', case_sensitive=False):
     ''' Display the list of packages corresponding to the motif. '''
@@ -103,7 +104,10 @@ def list_packages(motif=None, orphaned=None, status=None, namespace=None,
     if len(packages) == 1:
         flask.flash('Only one package matching, redirecting you to it')
         return flask.redirect(flask.url_for(
-            '.package_info', package=packages[0].name))
+            '.package_info',
+            namespace=packages[0].namespace,
+            package=packages[0].name)
+        )
 
     return flask.render_template(
         'list_packages.html',
@@ -142,15 +146,18 @@ def list_retired(motif=None):
 # pylint: disable=R0914
 ## Too many statements
 # pylint: disable=R0915
-@UI.route('/package/<package>/')
-def package_info(package):
+#@UI.route('/package/<package>/')
+@UI.route('/package/<namespace>/<package>/')
+def package_info(package, namespace='rpms'):
     ''' Display the information about the specified package. '''
 
     packagename = package
     package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, packagename)
+        package = pkgdblib.search_package(
+            SESSION, namespace, packagename, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -260,7 +267,8 @@ def package_info(package):
 
 
 @UI.route('/package/<package>/timeline')
-def package_timeline(package):
+@UI.route('/package/<namespace>/<package>/timeline')
+def package_timeline(package, namespace='rpms'):
     """ Return the timeline of a specified package.
     """
     from_date = flask.request.args.get('from_date', None)
@@ -299,6 +307,7 @@ def package_timeline(package):
             SESSION,
             package=package or None,
             packager=packager or None,
+            namespace=namespace or None,
             from_date=from_date,
             page=page,
             limit=limit,
@@ -307,6 +316,7 @@ def package_timeline(package):
             SESSION,
             package=package or None,
             packager=packager or None,
+            namespace=namespace or None,
             from_date=from_date,
             count=True
         )
@@ -327,9 +337,11 @@ def package_timeline(package):
     )
 
 
-@UI.route('/package/<package>/anitya')
-@UI.route('/package/<package>/anitya/<full>')
-def package_anitya(package, full=True):
+#@UI.route('/package/<package>/anitya')
+#@UI.route('/package/<package>/anitya/<full>')
+@UI.route('/package/<namespace>/<package>/anitya')
+@UI.route('/package/<namespace>/<package>/anitya/<full>')
+def package_anitya(package, namespace='rpms', full=True):
     """ Return information anitya integration about this package.
     """
     if str(full).lower() in ['0', 'false']:
@@ -337,7 +349,8 @@ def package_anitya(package, full=True):
 
     pkg = None
     try:
-        pkg = pkgdblib.search_package(SESSION, package, limit=1)[0]
+        pkg = pkgdblib.search_package(
+            SESSION, package, namespace=namespace, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -400,7 +413,8 @@ def package_request_edit(action_id):
 
     # Check user is the pkg/pkgdb admin
     pkg_admin = pkgdblib.has_acls(
-        SESSION, flask.g.fas_user.username, package, 'approveacls')
+        SESSION, flask.g.fas_user.username, admin_action.package.namespace,
+        package, 'approveacls')
     if not is_pkgdb_admin(flask.g.fas_user) \
             and not pkg_admin \
             and not admin_action.user == flask.g.fas_user.username:
@@ -408,8 +422,10 @@ def package_request_edit(action_id):
             'Only package adminitrators (`approveacls`) and the requester '
             'can review pending branch requests', 'errors')
         if package:
-            return flask.redirect(
-                flask.url_for('.package_info', package=package)
+            return flask.redirect(flask.url_for(
+                '.package_info',
+                namespace=admin_action.package.namespace,
+                package=package)
             )
         else:
             return flask.redirect(
@@ -454,8 +470,10 @@ def package_request_edit(action_id):
             return flask.render_template('msg.html')
 
         if package:
-            return flask.redirect(
-                flask.url_for('.package_info', package=package)
+            return flask.redirect(flask.url_for(
+                '.package_info',
+                namespace=admin_action.package.namespace,
+                package=package)
             )
         else:
             return flask.redirect(
@@ -505,6 +523,7 @@ def package_new():
         try:
             message = pkgdblib.add_package(
                 SESSION,
+                namespace=pkg_namespace,
                 pkg_name=pkg_name,
                 pkg_summary=pkg_summary,
                 pkg_description=pkg_description,
@@ -514,7 +533,6 @@ def package_new():
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
                 pkg_upstream_url=pkg_upstream_url,
-                pkg_namespace=pkg_namespace,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
@@ -531,10 +549,10 @@ def package_new():
     )
 
 
-@UI.route('/package/<package>/give', methods=('GET', 'POST'))
-@UI.route('/package/<package>/give/<full>', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/give', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/give/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_give(package, full=True):
+def package_give(namespace, package, full=True):
     ''' Gives the PoC of a package to someone else. '''
 
     if not bool(full) or str(full) in ['0', 'False']:
@@ -543,8 +561,10 @@ def package_give(package, full=True):
     packagename = package
     package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, packagename)
+        package = pkgdblib.search_package(
+            SESSION, namespace, packagename, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -580,6 +600,7 @@ def package_give(package, full=True):
             for pkg_collection in collections:
                 message = pkgdblib.update_pkg_poc(
                     SESSION,
+                    namespace=namespace,
                     pkg_name=packagename,
                     pkg_branch=pkg_collection,
                     pkg_poc=pkg_poc,
@@ -590,6 +611,7 @@ def package_give(package, full=True):
                 for acl in acls:
                     pkgdblib.set_acl_package(
                         SESSION,
+                        namespace=namespace,
                         pkg_name=packagename,
                         pkg_branch=pkg_collection,
                         pkg_user=pkg_poc,
@@ -607,8 +629,8 @@ def package_give(package, full=True):
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=packagename)
+        return flask.redirect(flask.url_for(
+            '.package_info', namespace=namespace, package=packagename)
         )
 
     return flask.render_template(
@@ -616,21 +638,24 @@ def package_give(package, full=True):
         full=full,
         form=form,
         packagename=packagename,
+        namespace=namespace,
     )
 
 
-@UI.route('/package/<package>/orphan', methods=('GET', 'POST'))
-@UI.route('/package/<package>/orphan/<full>', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/orphan', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/orphan/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_orphan(package, full=True):
+def package_orphan(namespace, package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
 
     if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, package)
+        package = pkgdblib.search_package(
+            SESSION, namespace, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -646,7 +671,8 @@ def package_orphan(package, full=True):
             or acl.point_of_contact == flask.g.fas_user.username
             or (
                 acl.point_of_contact.startswith('group::') and
-                is_pkg_admin(SESSION, flask.g.fas_user, package.name)
+                is_pkg_admin(
+                    SESSION, flask.g.fas_user, namespace, package.name)
             )
         )
     ]
@@ -658,6 +684,7 @@ def package_orphan(package, full=True):
             try:
                 pkgdblib.update_pkg_poc(
                     session=SESSION,
+                    namespace=namespace,
                     pkg_name=package.name,
                     pkg_branch=branch,
                     pkg_poc='orphan',
@@ -682,8 +709,11 @@ def package_orphan(package, full=True):
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     return flask.render_template(
         'branch_selection.html',
@@ -694,18 +724,20 @@ def package_orphan(package, full=True):
     )
 
 
-@UI.route('/package/<package>/retire', methods=('GET', 'POST'))
-@UI.route('/package/<package>/retire/<full>', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/retire', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/retire/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_retire(package, full=True):
+def package_retire(namespace, package, full=True):
     ''' Gives the possibility to orphan or take a package. '''
 
     if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, package)
+        package = pkgdblib.search_package(
+            SESSION, namespace, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -715,8 +747,11 @@ def package_retire(package, full=True):
         flask.flash(
             'Only Admins are allowed to retire package here, '
             'you should use `fedpkg retire`.', 'errors')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     collections = [
         acl.collection.branchname
@@ -734,6 +769,7 @@ def package_retire(package, full=True):
                     try:
                         pkgdblib.update_pkg_status(
                             session=SESSION,
+                            namespace=namespace,
                             pkg_name=package.name,
                             pkg_branch=acl.collection.branchname,
                             status='Retired',
@@ -761,8 +797,11 @@ def package_retire(package, full=True):
             APP.logger.exception(err)
             flask.flash(str(err), 'error')
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     return flask.render_template(
         'branch_selection.html',
@@ -773,18 +812,20 @@ def package_retire(package, full=True):
     )
 
 
-@UI.route('/package/<package>/unretire', methods=('GET', 'POST'))
-@UI.route('/package/<package>/unretire/<full>', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/unretire', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/unretire/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_unretire(package, full=True):
+def package_unretire(namespace, package, full=True):
     ''' Asks an admin to unretire the package. '''
 
     if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, package)
+        package = pkgdblib.search_package(
+            SESSION, namespace, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -840,8 +881,11 @@ def package_unretire(package, full=True):
                 break
 
         if not checks_ok:
-            return flask.redirect(
-                flask.url_for('.package_info', package=package.name))
+            return flask.redirect(flask.url_for(
+                '.package_info',
+                namespace=package.namespace,
+                package=package.name)
+            )
 
         for acl in package_acl:
             if acl.collection.branchname in form.branches.data:
@@ -849,6 +893,7 @@ def package_unretire(package, full=True):
                     try:
                         pkgdblib.add_unretire_request(
                             session=SESSION,
+                            namespace=namespace,
                             pkg_name=package.name,
                             pkg_branch=acl.collection.branchname,
                             review_url=form.review_url.data,
@@ -881,8 +926,11 @@ def package_unretire(package, full=True):
             APP.logger.exception(err)
             flask.flash(str(err), 'error')
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     return flask.render_template(
         'request_unretire.html',
@@ -893,18 +941,20 @@ def package_unretire(package, full=True):
     )
 
 
-@UI.route('/package/<package>/take', methods=('GET', 'POST'))
-@UI.route('/package/<package>/take/<full>', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/take', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/take/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_take(package, full=True):
+def package_take(namespace, package, full=True):
     ''' Make someone Point of contact of an orphaned package. '''
 
     if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, package)
+        package = pkgdblib.search_package(
+            SESSION, namespace, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -919,8 +969,11 @@ def package_take(package, full=True):
 
     if not collections:
         flask.flash('No branches orphaned found', 'error')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     form = pkgdb2.forms.BranchForm(collections=collections)
 
@@ -929,6 +982,7 @@ def package_take(package, full=True):
             try:
                 pkgdblib.unorphan_package(
                     session=SESSION,
+                    namespace=package.namespace,
                     pkg_name=package.name,
                     pkg_branch=branch,
                     pkg_user=flask.g.fas_user.username,
@@ -945,8 +999,11 @@ def package_take(package, full=True):
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     return flask.render_template(
         'branch_selection.html',
@@ -957,16 +1014,18 @@ def package_take(package, full=True):
     )
 
 
-@UI.route('/package/<package>/acl/<update_acl>/', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/acl/<update_acl>/', methods=('GET', 'POST'))
 @packager_login_required
-def update_acl(package, update_acl):
+def update_acl(namespace, package, update_acl):
     ''' Update the acls of a package. '''
 
     packagename = package
     package = None
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, packagename)
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, packagename)
+        package = pkgdblib.search_package(
+            SESSION, namespace, packagename, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -979,8 +1038,11 @@ def update_acl(package, update_acl):
 
     if update_acl not in planned_acls:
         flask.flash('Invalid ACL to update.', 'errors')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     branches = {}
     branches_inv = {}
@@ -1085,6 +1147,7 @@ def update_acl(package, update_acl):
                     try:
                         pkgdblib.set_acl_package(
                             SESSION,
+                            namespace=namespace,
                             pkg_name=package.name,
                             pkg_branch=lcl_branch,
                             pkg_user=lcl_user,
@@ -1104,8 +1167,11 @@ def update_acl(package, update_acl):
             SESSION.commit()
             if not changed:
                 flask.flash('Nothing to update')
-            return flask.redirect(
-                flask.url_for('.package_info', package=package.name))
+            return flask.redirect(flask.url_for(
+                '.package_info',
+                namespace=package.namespace,
+                package=package.name)
+            )
         else:
             flask.flash('Invalid input submitted', 'error')
 
@@ -1122,22 +1188,23 @@ def update_acl(package, update_acl):
     )
 
 
-@UI.route('/package/<package>/delete', methods=['POST'])
+@UI.route('/package/<namespace>/<package>/delete', methods=['POST'])
 @is_admin
-def delete_package(package):
+def delete_package(namespace, package):
     ''' Delete the specified package.
     '''
     form = pkgdb2.forms.ConfirmationForm()
 
     if not form.validate_on_submit():
         flask.flash('Invalid input', 'error')
-        return flask.redirect(
-            flask.url_for('.package_info', package=package))
+        return flask.redirect(flask.url_for(
+            '.package_info', namespace=namespace, package=package))
 
     packagename = package
     package = None
     try:
-        package = pkgdblib.search_package(SESSION, packagename, limit=1)[0]
+        package = pkgdblib.search_package(
+            SESSION, namespace, packagename, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -1172,25 +1239,30 @@ def delete_package(package):
             % packagename, 'error')
         APP.logger.debug('Could not delete package: %s', packagename)
         APP.logger.exception(err)
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     return flask.redirect(
         flask.url_for('.list_packages'))
 
 
-@UI.route('/package/<package>/request_branch', methods=('GET', 'POST'))
-@UI.route('/package/<package>/request_branch/<full>', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/request_branch', methods=('GET', 'POST'))
+@UI.route('/package/<namespace>/<package>/request_branch/<full>', methods=('GET', 'POST'))
 @packager_login_required
-def package_request_branch(package, full=True):
+def package_request_branch(namespace, package, full=True):
     ''' Gives the possibility to request a new branch for this package. '''
 
     if not bool(full) or str(full) in ['0', 'False']:
         full = False
 
     try:
-        package_acl = pkgdblib.get_acl_package(SESSION, package)
-        package = pkgdblib.search_package(SESSION, package, limit=1)[0]
+        package_acl = pkgdblib.get_acl_package(
+            SESSION, namespace, package)
+        package = pkgdblib.search_package(
+            SESSION, namespace, package, limit=1)[0]
     except (NoResultFound, IndexError):
         SESSION.rollback()
         flask.flash('No package of this name found.', 'errors')
@@ -1217,6 +1289,7 @@ def package_request_branch(package, full=True):
             try:
                 msg = pkgdblib.add_new_branch_request(
                     session=SESSION,
+                    namespace=package.namespace,
                     pkg_name=package.name,
                     clt_to=branch,
                     user=flask.g.fas_user)
@@ -1232,8 +1305,11 @@ def package_request_branch(package, full=True):
                     'branch: %s' % branch, 'error')
                 SESSION.rollback()
 
-        return flask.redirect(
-            flask.url_for('.package_info', package=package.name))
+        return flask.redirect(flask.url_for(
+            '.package_info',
+            namespace=package.namespace,
+            package=package.name)
+        )
 
     return flask.render_template(
         'request_branch.html',
@@ -1249,9 +1325,11 @@ def package_request_branch(package, full=True):
 def package_request_new():
     ''' Page to request a new package. '''
 
-    collections = pkgdb2.lib.search_collection(SESSION, '*', 'Under Development')
+    collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Under Development')
     collections.reverse()
-    active_collections = pkgdb2.lib.search_collection(SESSION, '*', 'Active')
+    active_collections = pkgdb2.lib.search_collection(
+        SESSION, '*', 'Active')
     active_collections.reverse()
     # We want all the branch `Under Development` as well as all the `Active`
     # branch but we can only have at max 2 Fedora branch active at the same
@@ -1302,6 +1380,7 @@ def package_request_new():
             for clt in pkg_collection:
                 message = pkgdblib.add_new_package_request(
                     SESSION,
+                    pkg_namespace=pkg_namespace,
                     pkg_name=pkg_name,
                     pkg_summary=pkg_summary,
                     pkg_description=pkg_description,
@@ -1311,7 +1390,6 @@ def package_request_new():
                     pkg_collection=clt,
                     pkg_poc=pkg_poc,
                     pkg_upstream_url=pkg_upstream_url,
-                    pkg_namespace=pkg_namespace,
                     user=flask.g.fas_user,
                 )
                 if message:
