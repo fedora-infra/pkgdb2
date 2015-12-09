@@ -14,14 +14,16 @@
 
 <h1>
   Select branches of package:
-  <a href="{{ url_for('.package_info', package=package.name) }}">
+  <a href="{{ url_for(
+    '.package_info', namespace=package.namespace, package=package.name) }}">
     {{ package.name }}
   </a>
   to {{ action }}
 </h1>
 
 <form action="{{ url_for(
-    '.package_%s' % action, package=package.name, full=full) }}" method="post">
+    '.package_%s' % action, namespace=package.namespace,
+    package=package.name, full=full) }}" method="post">
   <table>
     {{ render_field_in_row(form.branches) }}
     {{ render_field_in_row(form.review_url, after="Required if you're un-retiring the master branch or an EPEL branch while keeping the master branch retired") }}

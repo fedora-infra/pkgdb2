@@ -15,7 +15,9 @@
     <td>Package:</td>
     <td>
       {% if admin_action.package %}
-        <a href="{{url_for('.package_info', package=admin_action.package.name)}}">
+        <a href="{{url_for(
+            '.package_info', namespace=admin_action.package.namespace,
+            package=admin_action.package.name)}}">
           {{ admin_action.package.name }}
         </a>
       {% else %}

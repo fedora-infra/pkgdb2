@@ -124,12 +124,17 @@
       </td>
       <td>
         {% if action.package %}
-          <a href="{{url_for('.package_info', package=action.package.name)}}">
+          <a href="{{url_for('.package_info',
+            namespace=action.package.namespace,
+            package=action.package.name)}}">
             {{ action.package.name }}
           </a>
         {% elif action.action == 'request.package' and
               action.status == 'Approved' %}
-          <a href="{{url_for('.package_info', package=action.info_data['pkg_name'])}}">
+          <a href="{{url_for('.package_info',
+            namespace=action.info_data['namespace'],
+            package=action.info_data['pkg_name']
+           )}}">
             {{ action.info_data['pkg_name'] }}
           </a>
         {% else %}

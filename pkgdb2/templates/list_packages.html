@@ -81,7 +81,8 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
     {% for pkg in packages %}
         <li>
         {{ pkg.namespace }}:
-        <a href="{{url_for('.package_info', package=pkg.name)}}">
+        <a href="{{url_for(
+            '.package_info', namespace=pkg.namespace, package=pkg.name)}}">
                 {{ pkg.name }}</a>
         -- {{ pkg.summary }}
         (
