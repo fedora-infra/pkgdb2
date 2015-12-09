@@ -185,8 +185,8 @@ engineers need to create packages and spin them into a distribution."""
         output = self.app.get('/search/?term=g*', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Search packages</h1>' in output.data)
-        self.assertTrue('<a href="/package/geany/">' in output.data)
-        self.assertTrue('<a href="/package/guake/">' in output.data)
+        self.assertTrue('<a href="/package/rpms/geany/">' in output.data)
+        self.assertTrue('<a href="/package/rpms/guake/">' in output.data)
 
         output = self.app.get('/search/?term=p&type=packager',
                               follow_redirects=True)
@@ -199,8 +199,8 @@ engineers need to create packages and spin them into a distribution."""
         output = self.app.get('/search/?term=g*', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
         self.assertTrue('<h1>Search packages</h1>' in output.data)
-        self.assertTrue('<a href="/package/geany/">' in output.data)
-        self.assertTrue('<a href="/package/guake/">' in output.data)
+        self.assertTrue('<a href="/package/rpms/geany/">' in output.data)
+        self.assertTrue('<a href="/package/rpms/guake/">' in output.data)
 
         output = self.app.get('/search/?term=gu*', follow_redirects=True)
         self.assertEqual(output.status_code, 200)

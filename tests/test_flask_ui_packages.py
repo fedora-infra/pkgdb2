@@ -84,7 +84,7 @@ class FlaskUiPackagesTest(Modeltests):
         """ Test the package_info function. """
         create_package_acl(self.session)
 
-        output = self.app.get('/package/geany/')
+        output = self.app.get('/package/rpms/geany/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             'rpms/<span property="doap:name">geany</span>'
@@ -93,7 +93,7 @@ class FlaskUiPackagesTest(Modeltests):
         self.assertTrue('<a href="/packager/pingou/">' in output.data)
         self.assertTrue('<a href="/packager/group::gtk-sig/">' in output.data)
 
-        output = self.app.get('/package/random/')
+        output = self.app.get('/package/rpms/random/')
         self.assertEqual(output.status_code, 200)
         self.assertTrue(
             '<li class="errors">No package of this name found.</li>'
@@ -168,7 +168,7 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertTrue(
                 '<h1>Search packages</h1>' in output.data)
             self.assertTrue(
-                '<a href="/package/gnome-terminal/">' in output.data)
+                '<a href="/package/rpms/gnome-terminal/">' in output.data)
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
@@ -179,12 +179,12 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/give')
+            output = self.app.get('/package/rpms/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title> Give package | PkgDB </title>' in output.data)
 
-            output = self.app.get('/package/guake/give/0')
+            output = self.app.get('/package/rpms/guake/give/0')
             self.assertEqual(output.status_code, 200)
             self.assertFalse(
                 '<title> Give package | PkgDB </title>' in output.data)
@@ -203,7 +203,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/package/guake/give', data=data)
+            output = self.app.post('/package/rpms/guake/give', data=data)
             self.assertEqual(output.status_code, 200)
             self.assertEqual(
                 output.data.count(
@@ -211,7 +211,7 @@ class FlaskUiPackagesTest(Modeltests):
                 ), 1)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/give')
+            output = self.app.get('/package/rpms/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give Point of Contact of package: guake</h1>'
@@ -228,7 +228,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/package/guake/give', data=data,
+            output = self.app.post('/package/rpms/guake/give', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -239,7 +239,7 @@ class FlaskUiPackagesTest(Modeltests):
         utils_module.log.return_value = ''
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/give')
+            output = self.app.get('/package/rpms/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give Point of Contact of package: guake</h1>'
@@ -256,7 +256,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/package/guake/give', data=data,
+            output = self.app.post('/package/rpms/guake/give', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -265,7 +265,7 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertTrue('<a href="/packager/spot/">' in output.data)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/random/give')
+            output = self.app.get('/package/rpms/random/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
@@ -273,7 +273,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         user.username = 'ralph'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/give')
+            output = self.app.get('/package/rpms/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give Point of Contact of package: guake</h1>'
@@ -290,7 +290,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/package/guake/give', data=data,
+            output = self.app.post('/package/rpms/guake/give', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -307,18 +307,18 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/orphan')
+            output = self.app.get('/package/rpms/guake/orphan')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title> Select branches | PkgDB </title>' in output.data)
 
-            output = self.app.get('/package/guake/orphan/0')
+            output = self.app.get('/package/rpms/guake/orphan/0')
             self.assertEqual(output.status_code, 200)
             self.assertFalse(
                 '<title> Select branches | PkgDB </title>' in output.data)
 
             output = self.app.post(
-                '/package/guake/orphan', follow_redirects=True,
+                '/package/rpms/guake/orphan', follow_redirects=True,
                 data={'branches': ['master']})
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -335,7 +335,7 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/orphan', follow_redirects=True,
+                '/package/rpms/guake/orphan', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -345,7 +345,7 @@ class FlaskUiPackagesTest(Modeltests):
             # You cannot orphan twice the same package, the branch is no
             # longer available
             output = self.app.post(
-                '/package/guake/orphan', follow_redirects=True,
+                '/package/rpms/guake/orphan', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -354,7 +354,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/random/orphan', follow_redirects=True,
+                '/package/rpms/random/orphan', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -369,7 +369,7 @@ class FlaskUiPackagesTest(Modeltests):
         create_package_acl(self.session)
 
         # Check at the very beginning
-        output = self.app.get('/package/guake/')
+        output = self.app.get('/package/rpms/guake/')
         self.assertEqual(output.data.count('Obsolete'), 0)
         self.assertEqual(output.data.count('Awaiting Review'), 3)
 
@@ -381,7 +381,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/retire', follow_redirects=True,
+                '/package/rpms/guake/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -398,7 +398,7 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/orphan', follow_redirects=True,
+                '/package/rpms/guake/orphan', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -407,7 +407,7 @@ class FlaskUiPackagesTest(Modeltests):
 
             data['branches'] = ['f18']
             output = self.app.post(
-                '/package/guake/orphan', follow_redirects=True,
+                '/package/rpms/guake/orphan', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -416,7 +416,7 @@ class FlaskUiPackagesTest(Modeltests):
 
             # Check after orphaning
             # Orphaning already drops the ACLs of the person doing the action
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             self.assertEqual(output.data.count('Obsolete'), 8)
             self.assertEqual(output.data.count('Awaiting Review'), 3)
 
@@ -429,7 +429,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/retire', follow_redirects=True,
+                '/package/rpms/guake/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -438,19 +438,19 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/retire')
+            output = self.app.get('/package/rpms/guake/retire')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title> Select branches | PkgDB </title>' in output.data)
 
-            output = self.app.get('/package/guake/retire/0')
+            output = self.app.get('/package/rpms/guake/retire/0')
             self.assertEqual(output.status_code, 200)
             self.assertFalse(
                 '<title> Select branches | PkgDB </title>' in output.data)
 
             data['branches'] = ['foobar']
             output = self.app.post(
-                '/package/guake/retire', follow_redirects=True,
+                '/package/rpms/guake/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -460,7 +460,7 @@ class FlaskUiPackagesTest(Modeltests):
             # Retire F18 that has been orphaned before
             data['branches'] = ['f18']
             output = self.app.post(
-                '/package/guake/retire', follow_redirects=True,
+                '/package/rpms/guake/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -468,14 +468,14 @@ class FlaskUiPackagesTest(Modeltests):
                 'branch: f18</li>' in output.data)
 
             # Package retired, clear all the ACLs on branch f18
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             self.assertEqual(output.data.count('Obsolete'), 8)
             self.assertEqual(output.data.count('Awaiting Review'), 3)
 
             # Retire branch master
             data['branches'] = ['master']
             output = self.app.post(
-                '/package/guake/retire', follow_redirects=True,
+                '/package/rpms/guake/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -483,13 +483,13 @@ class FlaskUiPackagesTest(Modeltests):
                 'branch: master</li>' in output.data)
 
             # Package retired, clear all the ACLs on master
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             self.assertEqual(output.data.count('Obsolete'), 12)
             self.assertEqual(output.data.count('Awaiting Review'), 0)
 
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/random/retire', follow_redirects=True,
+                '/package/rpms/random/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -505,7 +505,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/orphan')
+            output = self.app.get('/package/rpms/guake/orphan')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
@@ -518,7 +518,7 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/orphan', follow_redirects=True,
+                '/package/rpms/guake/orphan', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -529,7 +529,7 @@ class FlaskUiPackagesTest(Modeltests):
         with user_set(pkgdb2.APP, user):
 
             output = self.app.post(
-                '/package/guake/retire', follow_redirects=True,
+                '/package/rpms/guake/retire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -540,7 +540,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/package/random/unretire', follow_redirects=True,
+                '/package/rpms/random/unretire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -548,7 +548,7 @@ class FlaskUiPackagesTest(Modeltests):
                 in output.data)
 
             output = self.app.post(
-                '/package/random/unretire', follow_redirects=True,
+                '/package/rpms/random/unretire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -556,7 +556,7 @@ class FlaskUiPackagesTest(Modeltests):
                 in output.data)
 
             output = self.app.post(
-                '/package/guake/unretire', follow_redirects=True,
+                '/package/rpms/guake/unretire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -567,7 +567,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/package/guake/unretire', follow_redirects=True,
+                '/package/rpms/guake/unretire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -576,7 +576,7 @@ class FlaskUiPackagesTest(Modeltests):
                 in output.data)
 
             output = self.app.post(
-                '/package/guake/unretire', follow_redirects=True,
+                '/package/rpms/guake/unretire', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -584,7 +584,7 @@ class FlaskUiPackagesTest(Modeltests):
                 'branch: f18</li>' in output.data)
 
             output = self.app.post(
-                '/package/guake/unretire/0', follow_redirects=True,
+                '/package/rpms/guake/unretire/0', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -608,7 +608,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/take', follow_redirects=True,
+                '/package/rpms/guake/take', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -625,7 +625,7 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/orphan', follow_redirects=True, data=data)
+                '/package/rpms/guake/orphan', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You are no longer point of contact on '
@@ -639,7 +639,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/take', follow_redirects=True,
+                '/package/rpms/guake/take', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -655,18 +655,18 @@ class FlaskUiPackagesTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/take')
+            output = self.app.get('/package/rpms/guake/take')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<title> Select branches | PkgDB </title>' in output.data)
 
-            output = self.app.get('/package/guake/take/0')
+            output = self.app.get('/package/rpms/guake/take/0')
             self.assertEqual(output.status_code, 200)
             self.assertFalse(
                 '<title> Select branches | PkgDB </title>' in output.data)
 
             output = self.app.post(
-                '/package/guake/take', follow_redirects=True, data=data)
+                '/package/rpms/guake/take', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">You have taken the package guake on '
@@ -674,7 +674,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/random/take', follow_redirects=True, data=data)
+                '/package/rpms/random/take', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
@@ -695,7 +695,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/delete', follow_redirects=True,
+                '/package/rpms/guake/delete', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -706,13 +706,13 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/delete', follow_redirects=True,
+                '/package/rpms/guake/delete', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">Invalid input</li>' in output.data)
 
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
@@ -725,7 +725,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/delete', follow_redirects=True,
+                '/package/rpms/guake/delete', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -742,7 +742,7 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/delete', follow_redirects=True,
+                '/package/rpms/guake/delete', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -752,7 +752,7 @@ class FlaskUiPackagesTest(Modeltests):
                 '<p>3 packages found</p>' in output.data)
 
             output = self.app.post(
-                '/package/random/delete', follow_redirects=True, data=data)
+                '/package/rpms/random/delete', follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
@@ -864,7 +864,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/foobar/request_branch', follow_redirects=True,
+                '/package/rpms/foobar/request_branch', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -872,7 +872,7 @@ class FlaskUiPackagesTest(Modeltests):
                 in output.data)
 
             output = self.app.post(
-                '/package/guake/request_branch', follow_redirects=True,
+                '/package/rpms/guake/request_branch', follow_redirects=True,
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -891,7 +891,7 @@ class FlaskUiPackagesTest(Modeltests):
         user.username = 'kevin'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/request_branch/0',
+                '/package/rpms/guake/request_branch/0',
                 follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -907,7 +907,7 @@ class FlaskUiPackagesTest(Modeltests):
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/package/guake/request_branch',
+                '/package/rpms/guake/request_branch',
                 follow_redirects=True, data=data)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(

@@ -388,7 +388,7 @@ avail | @provenpackager, | rpms/geany/f18
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master
-avail | @provenpackager, | rpms/offlineimap/master"""
+avail | @provenpackager, | docker/offlineimap/master"""
         self.assertEqual(output.data, expected)
 
         # Including the EOL'd el4 collection
@@ -401,8 +401,8 @@ avail | @provenpackager, | rpms/geany/f18
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master
-avail | @provenpackager, | rpms/offlineimap/el4
-avail | @provenpackager, | rpms/offlineimap/master"""
+avail | @provenpackager, | docker/offlineimap/el4
+avail | @provenpackager, | docker/offlineimap/master"""
 
         output = self.app.get('/api/vcs/?eol=True')
         self.assertEqual(output.status_code, 200)
@@ -423,7 +423,7 @@ avail | @provenpackager,pingou | rpms/fedocal/f17"""
 
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou,spot | rpms/guake/master
-avail | @provenpackager, | rpms/offlineimap/master"""
+avail | @provenpackager, | docker/offlineimap/master"""
         output = self.app.get('/api/vcs/?collection=master')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected4)
@@ -504,6 +504,8 @@ avail | @provenpackager, | rpms/offlineimap/master"""
                         }
                     }
                 },
+            },
+            "docker": {
                 "offlineimap": {
                     "master": {
                         "commit": {
@@ -655,6 +657,7 @@ guake:master has toshio waiting for commit"""
                 {
                     'acl': 'approveacls',
                     'collection': 'master',
+                    'namespace': 'rpms',
                     'package': 'guake',
                     'status': 'Awaiting Review',
                     'user': 'ralph'
@@ -662,6 +665,7 @@ guake:master has toshio waiting for commit"""
                 {
                     'acl': 'commit',
                     'collection': 'master',
+                    'namespace': 'rpms',
                     'package': 'guake',
                     'status': 'Awaiting Review',
                     'user': 'toshio'

@@ -97,6 +97,7 @@ class Packagetests(Modeltests):
 
         packages = model.Package.search(
             session=self.session,
+            namespace='rpms',
             pkg_name='g%')
         self.assertEqual(len(packages), 2)
         self.assertEqual(packages[0].name, 'geany')
@@ -104,6 +105,7 @@ class Packagetests(Modeltests):
 
         packages = model.Package.search(
             session=self.session,
+            namespace='rpms',
             pkg_name='g%',
             limit=1)
         self.assertEqual(len(packages), 1)
@@ -111,6 +113,7 @@ class Packagetests(Modeltests):
 
         packages = model.Package.search(
             session=self.session,
+            namespace='rpms',
             pkg_name='g%',
             offset=1)
         self.assertEqual(len(packages), 1)
@@ -118,12 +121,14 @@ class Packagetests(Modeltests):
 
         packages = model.Package.search(
             session=self.session,
+            namespace='rpms',
             pkg_name='g%',
             count=True)
         self.assertEqual(packages, 2)
 
         packages = model.Package.search(
             session=self.session,
+            namespace='rpms',
             pkg_name='g%',
             eol=True,
             limit=1)
@@ -184,11 +189,13 @@ class Packagetests(Modeltests):
         create_retired_pkgs(self.session)
 
         packages = model.Package.search(
-            session=self.session, pkg_name='guake', limit=1)
+            session=self.session, namespace='rpms',
+            pkg_name='guake', limit=1)
         self.assertFalse(packages[0].retired_everywhere)
 
         packages = model.Package.search(
-            session=self.session, pkg_name='fedocal', limit=1)
+            session=self.session, namespace='rpms',
+            pkg_name='fedocal', limit=1)
         self.assertTrue(packages[0].retired_everywhere)
 
 

@@ -86,6 +86,7 @@ class FlaskApiAclsTest(Modeltests):
                     "acl: This field is required.",
                     "acl_status: Not a valid choice",
                     "branches: This field is required.",
+                    "namespace: Not a valid choice",
                     "pkgname: This field is required.",
                     "user: This field is required.",
                 ]
@@ -94,6 +95,7 @@ class FlaskApiAclsTest(Modeltests):
         create_package_acl(self.session)
 
         data = {
+            'namespace': 'rpms',
             'pkgname': 'guake',
             'branches': 'master',
             'acl': 'commit',
@@ -121,6 +123,7 @@ class FlaskApiAclsTest(Modeltests):
 
             # Test that auto-approved ACL gets automatically Approved
             data = {
+                'namespace': 'rpms',
                 'pkgname': 'guake',
                 'branches': 'master',
                 'acl': 'watchcommits',
@@ -145,6 +148,7 @@ class FlaskApiAclsTest(Modeltests):
         user.username = 'Ralph'
 
         data = {
+            'namespace': 'rpms',
             'pkgname': 'guake',
             'branches': 'master',
             'acl': 'commit',
@@ -163,6 +167,7 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(json_out, exp)
 
         data = {
+            'namespace': 'rpms',
             'pkgname': 'guake',
             'branches': 'master',
             'acl': 'commit',
@@ -187,6 +192,7 @@ class FlaskApiAclsTest(Modeltests):
             self.assertEqual(json_out, exp)
 
         data = {
+            'namespace': 'rpms',
             'pkgname': 'guake',
             'branches': 'master',
             'acl': 'commit',
@@ -246,6 +252,7 @@ class FlaskApiAclsTest(Modeltests):
         data = {
             'pkgnames': ['guake', 'geany'],
             'branches': 'master',
+            'namespace': 'rpms',
             'poc': 'toshio',
         }
 
@@ -275,6 +282,7 @@ class FlaskApiAclsTest(Modeltests):
             }
             output = self.app.post('/api/package/acl/reassign/', data=data)
             json_out = json.loads(output.data)
+            print output.data
             self.assertEqual(output.status_code, 200)
             self.assertEqual(json_out, exp)
 
@@ -282,6 +290,7 @@ class FlaskApiAclsTest(Modeltests):
         data = {
             'pkgnames': ['geany'],
             'branches': 'master',
+            'namespace': 'rpms',
             'poc': 'toshio',
         }
         user.groups.append('gtk-sig')
