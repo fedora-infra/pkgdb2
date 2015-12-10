@@ -797,7 +797,7 @@ class FlaskUiPackagesTest(Modeltests):
 
         # Put some data in the database
         create_package_acl(self.session)
-        guake_pkg = model.Package.by_name(self.session, 'guake')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         pkgdb2.lib.utils.log(
             self.session,
             guake_pkg,

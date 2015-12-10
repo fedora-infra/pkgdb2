@@ -53,8 +53,8 @@ class PkgdbOrphanGrouptests(Modeltests):
         create_collection(self.session)
         create_package(self.session)
 
-        guake_pkg = model.Package.by_name(self.session, 'guake', 'rpms')
-        fedocal_pkg = model.Package.by_name(self.session, 'fedocal', 'rpms')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
+        fedocal_pkg = model.Package.by_name(self.session, 'rpms', 'fedocal')
 
         f18_collec = model.Collection.by_name(self.session, 'f18')
         devel_collec = model.Collection.by_name(self.session, 'master')

@@ -716,7 +716,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.session.commit()
 
         # Add guake to epel7
-        guake_pkg = model.Package.by_name(self.session, 'guake')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         el7_collec = model.Collection.by_name(self.session, 'epel7')
 
         pkgltg = model.PackageListing(
@@ -821,7 +821,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.session.commit()
 
         # Add guake to epel7
-        guake_pkg = model.Package.by_name(self.session, 'guake')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         el7_collec = model.Collection.by_name(self.session, 'epel7')
 
         pkgltg = model.PackageListing(
@@ -877,7 +877,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.session.commit()
 
         # Add guake to epel7
-        guake_pkg = model.Package.by_name(self.session, 'guake', 'rpms')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         el7_collec = model.Collection.by_name(self.session, 'epel7')
 
         pkgltg = model.PackageListing(
@@ -967,7 +967,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.session.commit()
 
         # Add guake to epel7
-        guake_pkg = model.Package.by_name(self.session, 'guake')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         el7_collec = model.Collection.by_name(self.session, 'epel7')
 
         pkgltg = model.PackageListing(

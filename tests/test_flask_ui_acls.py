@@ -419,7 +419,7 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
         # Give watchbugzilla to ralph on guake/master
-        guake_pkg = model.Package.by_name(self.session, 'guake')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         devel_collec = model.Collection.by_name(self.session, 'master')
         pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
             self.session, guake_pkg.id, devel_collec.id)

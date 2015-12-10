@@ -261,10 +261,10 @@ def create_package_listing(session):
     create_collection(session)
     create_package(session)
 
-    guake_pkg = model.Package.by_name(session, 'guake', 'rpms')
-    fedocal_pkg = model.Package.by_name(session, 'fedocal', 'rpms')
-    geany_pkg = model.Package.by_name(session, 'geany', 'rpms')
-    offlineimap_pkg = model.Package.by_name(session, 'offlineimap', 'docker')
+    guake_pkg = model.Package.by_name(session, 'rpms', 'guake')
+    fedocal_pkg = model.Package.by_name(session, 'rpms', 'fedocal')
+    geany_pkg = model.Package.by_name(session, 'rpms', 'geany')
+    offlineimap_pkg = model.Package.by_name(session, 'docker', 'offlineimap')
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')
@@ -396,9 +396,9 @@ def create_package_acl(session):
     """ Add packagers to packages. """
     create_package_listing(session)
 
-    guake_pkg = model.Package.by_name(session, 'guake', 'rpms')
-    geany_pkg = model.Package.by_name(session, 'geany', 'rpms')
-    offlineimap_pkg = model.Package.by_name(session, 'offlineimap', 'docker')
+    guake_pkg = model.Package.by_name(session, 'rpms', 'guake')
+    geany_pkg = model.Package.by_name(session, 'rpms', 'geany')
+    offlineimap_pkg = model.Package.by_name(session, 'docker', 'offlineimap')
 
     el4_collec = model.Collection.by_name(session, 'el4')
     f18_collec = model.Collection.by_name(session, 'f18')
@@ -533,9 +533,9 @@ def create_package_acl2(session):
     """ Add packagers to packages. """
     create_package_listing(session)
 
-    guake_pkg = model.Package.by_name(session, 'guake', 'rpms')
-    fedocal_pkg = model.Package.by_name(session, 'fedocal', 'rpms')
-    geany_pkg = model.Package.by_name(session, 'geany', 'rpms')
+    guake_pkg = model.Package.by_name(session, 'rpms', 'guake')
+    fedocal_pkg = model.Package.by_name(session, 'rpms', 'fedocal')
+    geany_pkg = model.Package.by_name(session, 'rpms', 'geany')
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')
@@ -697,7 +697,7 @@ def create_package_acl2(session):
 
 def create_admin_actions(session, n=1):
     """ Add an Admin Actions for the tests. """
-    guake_pkg = model.Package.by_name(session, 'guake', 'rpms')
+    guake_pkg = model.Package.by_name(session, 'rpms', 'guake')
     el6_collec = model.Collection.by_name(session, 'el6')
 
     action = model.AdminAction(
@@ -732,10 +732,10 @@ def create_retired_pkgs(session):
     create_collection(session)
     create_package(session)
 
-    guake_pkg = model.Package.by_name(session, 'guake', 'rpms')
-    fedocal_pkg = model.Package.by_name(session, 'fedocal', 'rpms')
-    geany_pkg = model.Package.by_name(session, 'geany', 'rpms')
-    offlineimap_pkg = model.Package.by_name(session, 'offlineimap', 'docker')
+    guake_pkg = model.Package.by_name(session, 'rpms', 'guake')
+    fedocal_pkg = model.Package.by_name(session, 'rpms', 'fedocal')
+    geany_pkg = model.Package.by_name(session, 'rpms', 'geany')
+    offlineimap_pkg = model.Package.by_name(session, 'docker', 'offlineimap')
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')

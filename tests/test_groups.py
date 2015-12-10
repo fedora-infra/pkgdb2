@@ -66,7 +66,7 @@ class PkgdbGrouptests(Modeltests):
 
     def set_group_acls(self):
         ''' Create some Group ACLs. '''
-        fedocal_pkg = model.Package.by_name(self.session, 'fedocal')
+        fedocal_pkg = model.Package.by_name(self.session, 'rpms', 'fedocal')
         devel_collec = model.Collection.by_name(self.session, 'master')
         f18_collec = model.Collection.by_name(self.session, 'f18')
 

@@ -59,7 +59,7 @@ class Packagetests(Modeltests):
     def test_to_json(self):
         """ Test the to_json function of Package. """
         create_package(self.session)
-        package = model.Package.by_name(self.session, 'guake')
+        package = model.Package.by_name(self.session, 'rpms', 'guake')
         package = package.to_json()
         self.assertEqual(
             set(package.keys()),
@@ -68,7 +68,7 @@ class Packagetests(Modeltests):
                  'koschei_monitor']))
         self.assertEqual(package['acls'], [])
 
-        package = model.Package.by_name(self.session, 'guake')
+        package = model.Package.by_name(self.session, 'rpms', 'guake')
         package = package.to_json(collection='master')
         self.assertEqual(
             set(package.keys()),
@@ -82,7 +82,7 @@ class Packagetests(Modeltests):
 
         create_package_acl(self.session)
 
-        package = model.Package.by_name(self.session, 'guake')
+        package = model.Package.by_name(self.session, 'rpms', 'guake')
         package = package.to_json(collection='master')
         self.assertEqual(
             set(package.keys()),
