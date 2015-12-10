@@ -25,13 +25,20 @@ UI redirects to keep the URLs working from before the namespacing change
 
 import flask
 
-from pkgdb2 import packager_login_required
+from pkgdb2 import packager_login_required, is_admin, fas_login_required
 from pkgdb2.ui import UI
+import pkgdb2.ui.packages as packages
+import pkgdb2.ui.acls as acls
 
-#@UI.route('/packages/')
-#@UI.route('/packages/<motif>/')
-#def list_packages(motif=None, orphaned=None, status=None, namespace=None,
-                  #origin='list_packages', case_sensitive=False):
+#
+# packages controller
+#
+
+@UI.route('/packages/<motif>/')
+def old_list_packages(motif=None):
+    return flask.redirect(flask.url_for(
+        'ui_ns.list_packages', namespace='rpms', motif=motif))
+
 
 @UI.route('/package/<package>/')
 @UI.route('/package/<namespace>/<package>/')
@@ -53,58 +60,145 @@ def old_package_anitya(package, full=True):
         'ui_ns.package_anitya', namespace='rpms', package=package, full=full))
 
 
-@UI.route('/package/<package>/give')
-@UI.route('/package/<package>/give/<full>')
+@UI.route('/package/<package>/give', methods=('GET', 'POST'))
+@UI.route('/package/<package>/give/<full>', methods=('GET', 'POST'))
 @packager_login_required
 def old_package_give(package, full=True):
-    return flask.redirect(flask.url_for(
-        'ui_ns.package_give', namespace='rpms', package=package, full=full))
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.package_give', namespace='rpms', package=package, full=full))
+    else:
+        return packages.package_give('rpms', package, full=full)
 
 
-@UI.route('/package/<package>/orphan')
-@UI.route('/package/<package>/orphan/<full>')
+@UI.route('/package/<package>/orphan', methods=('GET', 'POST'))
+@UI.route('/package/<package>/orphan/<full>', methods=('GET', 'POST'))
 @packager_login_required
 def old_package_orphan(package, full=True):
-    return flask.redirect(flask.url_for(
-        'ui_ns.package_orphan', namespace='rpms', package=package, full=full))
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.package_orphan', namespace='rpms', package=package, full=full))
+    else:
+        return packages.package_orphan('rpms', package, full=full)
 
 
-@UI.route('/package/<package>/retire')
-@UI.route('/package/<package>/retire/<full>')
+@UI.route('/package/<package>/retire', methods=('GET', 'POST'))
+@UI.route('/package/<package>/retire/<full>', methods=('GET', 'POST'))
 @packager_login_required
 def old_package_retire(package, full=True):
-    return flask.redirect(flask.url_for(
-        'ui_ns.package_retire', namespace='rpms', package=package, full=full))
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.package_retire', namespace='rpms', package=package, full=full))
+    else:
+        return packages.package_retire('rpms', package, full=full)
 
 
-@UI.route('/package/<package>/unretire')
-@UI.route('/package/<package>/unretire/<full>')
+@UI.route('/package/<package>/unretire', methods=('GET', 'POST'))
+@UI.route('/package/<package>/unretire/<full>', methods=('GET', 'POST'))
 @packager_login_required
 def old_package_unretire(package, full=True):
-    return flask.redirect(flask.url_for(
-        'ui_ns.package_unretire', namespace='rpms', package=package, full=full))
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.package_unretire', namespace='rpms', package=package, full=full))
+    else:
+        return packages.package_unretire('rpms', package, full=full)
 
 
-@UI.route('/package/<package>/take')
-@UI.route('/package/<package>/take/<full>')
+@UI.route('/package/<package>/take', methods=('GET', 'POST'))
+@UI.route('/package/<package>/take/<full>', methods=('GET', 'POST'))
 @packager_login_required
 def old_package_take(package, full=True):
-    return flask.redirect(flask.url_for(
-        'ui_ns.package_take', namespace='rpms', package=package, full=full))
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.package_take', namespace='rpms', package=package, full=full))
+    else:
+        return packages.package_take('rpms', package, full=full)
 
 
-@UI.route('/package/<package>/acl/<update_acl>/')
+@UI.route('/package/<package>/acl/<update_acl>/', methods=('GET', 'POST'))
 @packager_login_required
 def old_update_acl(package, update_acl):
-    return flask.redirect(flask.url_for(
-        'ui_ns.update_acl', namespace='rpms',
-        package=package, update_acl=update_acl))
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.update_acl', namespace='rpms',
+            package=package, update_acl=update_acl))
+    else:
+        return packages.update_acl('rpms', package, update_acl=update_acl)
 
 
-@UI.route('/package/<package>/request_branch')
-@UI.route('/package/<package>/request_branch/<full>')
+@UI.route('/package/<package>/delete', methods=['POST'])
+@is_admin
+def old_delete_package(package):
+    return packages.update_acl('rpms', package)
+
+
+@UI.route('/package/<package>/request_branch', methods=('GET', 'POST'))
+@UI.route('/package/<package>/request_branch/<full>', methods=('GET', 'POST'))
 @packager_login_required
 def old_package_request_branch(package, full=True):
-    return flask.redirect(flask.url_for(
-        'ui_ns.package_request_branch', namespace='rpms',
-        package=package, full=full))
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.package_request_branch', namespace='rpms',
+            package=package, full=full))
+    else:
+        return packages.package_request_branch(
+            'rpms', package, update_acl=update_acl)
+
+#
+# ACLs controller
+#
+
+@UI.route('/acl/<package>/request/', methods=('GET', 'POST'))
+@fas_login_required
+def old_request_acl(package):
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.request_acl', namespace='rpms', package=package))
+    else:
+        return acls.request_acl('rpms', package)
+
+
+@UI.route('/acl/<package>/request/<acl>/', methods=['POST'])
+@fas_login_required
+def old_request_acl_all_branch(package, acl):
+    return acls.request_acl_all_branch('rpms', package)
+
+
+@UI.route('/acl/<package>/giveup/<acl>/', methods=['POST'])
+@fas_login_required
+def old_giveup_acl(package, acl):
+    return acls.giveup_acl('rpms', package)
+
+
+@UI.route('/acl/<package>/give/', methods=('GET', 'POST'))
+@fas_login_required
+def old_package_give_acls(package):
+    if flask.request.method == 'GET':
+        return flask.redirect(flask.url_for(
+            'ui_ns.package_give_acls', namespace='rpms', package=package))
+    else:
+        return acls.package_give_acls('rpms', package)
+
+
+@UI.route('/acl/<package>/watch/', methods=['POST'])
+@fas_login_required
+def old_watch_package(package):
+    return acls.watch_package('rpms', package)
+
+
+@UI.route('/acl/<package>/unwatch/', methods=['POST'])
+@fas_login_required
+def old_unwatch_package(package):
+    return acls.unwatch_package('rpms', package)
+
+
+@UI.route('/acl/<package>/comaintain/', methods=['POST'])
+@packager_login_required
+def old_comaintain_package(package):
+    return acls.comaintain_package('rpms', package)
+
+
+@UI.route('/acl/<package>/dropcommit/', methods=['POST'])
+@fas_login_required
+def old_dropcommit_package(package):
+    return acls.dropcommit_package('rpms', package)
