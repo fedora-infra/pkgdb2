@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.33.1
+Version:        1.33.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Dec 10 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.33.2-1
+- Update to 1.33.2
+- Fix the bugzilla integration when requesting a new package in pkgdb
+
 * Mon Dec 07 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.33.1-1
 - Update to 1.33.1
 - Fix the API listing the packages to make it return the ACLs if asked to
