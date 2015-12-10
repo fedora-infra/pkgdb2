@@ -757,12 +757,12 @@ def api_pkgrequest(bzid):
 
             flag_setter = flag['setter']
 
-            if flag_setter == bug.comments[0].author:
+            if flag_setter == bug.creator:
                 msg = 'Review approved by the person creating ' \
                       'the ticket {0}'.format(flag_setter)
                 error = msg
 
-            if flag_setter != bug.comments[0].author:
+            if flag_setter != bug.assigned_to:
                 msg = 'Review not approved by the assignee of ' \
                         'the ticket {0}'.format(flag_setter)
                 if error:
