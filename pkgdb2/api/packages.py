@@ -1140,9 +1140,10 @@ def api_package_critpath():
     return jsonout
 
 
+@API.route('/package/<package>/monitor/<status>', methods=['POST'])
 @API.route('/package/<namespace>/<package>/monitor/<status>', methods=['POST'])
 @packager_login_required
-def api_monitor_package(namespace, package, status):
+def api_monitor_package(package, status, namespace='rpms'):
     '''
     Monitoring status
     -----------------
@@ -1154,12 +1155,13 @@ def api_monitor_package(namespace, package, status):
 
     Accepts POST queries only.
 
-    :arg namespace: The namespce of the package to update.
     :arg package: The name of the package to update.
     :arg status: The status to set to the monitoring flag, can be either
         ``1`` or ``true`` for setting full monitoring, ``nobuild`` to set
         the monitoring but block scratch builds or ``0`` or ``false`` to
         stop the monitoring entirely.
+    :kwarg namespace: The namespce of the package to update
+        (default to ``rpms``).
 
 
     Sample response:
@@ -1204,9 +1206,10 @@ def api_monitor_package(namespace, package, status):
     return jsonout
 
 
+@API.route('/package/<package>/koschei/<status>', methods=['POST'])
 @API.route('/package/<namespace>/<package>/koschei/<status>', methods=['POST'])
 @packager_login_required
-def api_koschei_package(namespace, package, status):
+def api_koschei_package(package, status, namespace='rpms'):
     '''
     Koschei monitoring status
     -------------------------
@@ -1218,11 +1221,12 @@ def api_koschei_package(namespace, package, status):
 
     Accepts POST queries only.
 
-    :arg namespace: The namespace of the package to update.
     :arg package: The name of the package to update.
     :arg status: The status to set to the koschei monitoring flag, can be
         either ``1`` or ``true`` or ``0`` or ``false`` to stop the
         monitoring.
+    :kwarg namespace: The namespace of the package to update
+        (default to ``rpms``).
 
 
     Sample response:
@@ -1278,6 +1282,7 @@ def api_package_request():
 
     Accepts POST queries only.
 
+    :arg namespace: The namespace of the package to create.
     :arg pkgname: The name of the package to create.
     :arg summary: The summary of the package.
     :arg description: The description of the package.
@@ -1407,8 +1412,9 @@ def api_package_request():
     return jsonout
 
 
+@API.route('/request/branch/<package>', methods=['POST'])
 @API.route('/request/branch/<namespace>/<package>', methods=['POST'])
-def api_branch_request(namespace, package):
+def api_branch_request(package, namespace='rpms'):
     '''
     New branch request
     ------------------
@@ -1420,9 +1426,10 @@ def api_branch_request(namespace, package):
 
     Accepts POST queries only.
 
-    :arg namespace: The namespace of the package.
     :arg package: The name of the package
     :arg branches: The list of branches desired for this package.
+    :arg namespace: The namespace of the package
+        (default to ``rpms``).
 
 
     Sample response:

@@ -174,6 +174,8 @@ def api_acl_reassign():
 
     Accepts POST queries only.
 
+    :arg namespace: The namespace of the packages to reassign (can only
+        reassign package from one namespace at a time).
     :arg pkgnames: List of strings of the package name to reassign.
     :arg branches: List of strings of the branchname of the Collection on
         which to reassign the point of contact.
