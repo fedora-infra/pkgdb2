@@ -1174,7 +1174,7 @@ class Package(BASE):
         return sorted(self.listings, cmp=comparator)
 
     @classmethod
-    def by_name(cls, session, pkgname, namespace='rpms'):
+    def by_name(cls, session, namespace, pkgname):
         """ Return the package associated to the given name.
 
         :raises sqlalchemy.InvalidRequestError: if the package name is

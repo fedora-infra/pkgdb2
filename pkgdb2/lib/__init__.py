@@ -302,7 +302,7 @@ def get_acl_package(
         found in the database with the name ``pkg_name``.
 
     """
-    package = model.Package.by_name(session, pkg_name, namespace)
+    package = model.Package.by_name(session, namespace, pkg_name)
     pkglisting = model.PackageListing.by_package_id(session, package.id)
 
     if pkg_clt:
@@ -362,7 +362,7 @@ def set_acl_package(session, namespace, pkg_name, pkg_branch, pkg_user,
         _validate_fas_user(pkg_user)
 
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -473,7 +473,7 @@ def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
     _validate_poc(pkg_poc)
 
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -599,7 +599,7 @@ def update_pkg_status(
 
     """
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -1589,7 +1589,7 @@ def unorphan_package(
     _validate_poc(pkg_user)
 
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -1753,7 +1753,7 @@ def add_new_branch_request(session, namespace, pkg_name, clt_to, user):
 
     """
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('Package %s not found' % pkg_name)
 
@@ -1877,7 +1877,7 @@ def add_new_package_request(
     # Prevent asking for an existing package
     package = None
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, pkg_namespace, pkg_name)
     except NoResultFound:
         pass
     if package:
@@ -1939,7 +1939,7 @@ def add_unretire_request(
 
     """
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('Package %s not found' % pkg_name)
 
@@ -2305,7 +2305,7 @@ def set_critpath_packages(
         raise PkgdbException('You are not allowed to edit packages')
 
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -2396,7 +2396,7 @@ def set_monitor_package(session, namespace, pkg_name, status, user):
 
     package = None
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -2455,7 +2455,7 @@ def set_koschei_monitor_package(session, namespace, pkg_name, status, user):
 
     package = None
     try:
-        package = model.Package.by_name(session, pkg_name, namespace)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
