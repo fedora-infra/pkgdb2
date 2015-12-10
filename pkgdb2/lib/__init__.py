@@ -941,13 +941,13 @@ def search_actions(
         count=count)
 
 
-def search_logs(session, package=None, namespace=None, packager=None,
+def search_logs(session,namespace=None, package=None, packager=None,
                 from_date=None, page=None, limit=None, count=False):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database.
-    :kwarg package: retrict the logs to a certain package.
     :kwarg namespace: the namespace of a package.
+    :kwarg package: retrict the logs to a certain package.
     :kwarg packager: restrict the logs to a certain user/packager.
     :kwarg from_date: a date from which to retrieve the logs.
     :kwarg page: the page number to apply to the results.
@@ -1446,7 +1446,7 @@ def get_acl_user_package(session, user, namespace, package, status=None):
     """
     output = []
     for package in model.PackageListingAcl.get_acl_package(
-            session, user, package, namespace, status=status):
+            session, user, namespace, package, status=status):
         output.append(
             {'package': package.packagelist.package.name,
              'user': package.fas_name,

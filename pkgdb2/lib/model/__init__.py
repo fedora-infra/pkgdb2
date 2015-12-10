@@ -461,7 +461,7 @@ class PackageListingAcl(BASE):
         return query.all()
 
     @classmethod
-    def get_acl_package(cls, session, user, package, namespace,
+    def get_acl_package(cls, session, user, namespace, package,
                         status="Awaiting Review"):
         """ Return the pending ACLs for the specified package owned by
         user.
@@ -470,6 +470,7 @@ class PackageListingAcl(BASE):
             database.
         :arg user: the username of the packager whose ACL are asked for
             this package.
+        :arg namespace: the namespace of the package.
         :arg package: name of the package for which are returned the
             requested ACLs.
         :kwarg status: status of the ACLs to be returned for the desired
