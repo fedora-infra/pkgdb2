@@ -44,7 +44,7 @@ from pkgdb2.ui import UI
 
 @UI.route('/packages/')
 @UI.route('/packages/<namespace>/<motif>/')
-def list_packages(motif=None, orphaned=None, status=None, namespace=None,
+def list_packages(namespace=None, motif=None, orphaned=None, status=None,
                   origin='list_packages', case_sensitive=False):
     ''' Display the list of packages corresponding to the motif. '''
 
@@ -146,7 +146,7 @@ def list_retired(motif=None):
 ## Too many statements
 # pylint: disable=R0915
 @UI.route('/package/<namespace>/<package>/')
-def package_info(package, namespace='rpms'):
+def package_info(namespace, package):
     ''' Display the information about the specified package. '''
 
     packagename = package
@@ -264,9 +264,8 @@ def package_info(package, namespace='rpms'):
     )
 
 
-@UI.route('/package/<package>/timeline')
 @UI.route('/package/<namespace>/<package>/timeline')
-def package_timeline(package, namespace='rpms'):
+def package_timeline(namespace, package):
     """ Return the timeline of a specified package.
     """
     from_date = flask.request.args.get('from_date', None)
@@ -303,18 +302,18 @@ def package_timeline(package, namespace='rpms'):
     try:
         logs = pkgdblib.search_logs(
             SESSION,
+            namespace=namespace or None,
             package=package or None,
             packager=packager or None,
-            namespace=namespace or None,
             from_date=from_date,
             page=page,
             limit=limit,
         )
         cnt_logs = pkgdblib.search_logs(
             SESSION,
+            namespace=namespace or None,
             package=package or None,
             packager=packager or None,
-            namespace=namespace or None,
             from_date=from_date,
             count=True
         )
@@ -337,7 +336,7 @@ def package_timeline(package, namespace='rpms'):
 
 @UI.route('/package/<namespace>/<package>/anitya')
 @UI.route('/package/<namespace>/<package>/anitya/<full>')
-def package_anitya(package, namespace='rpms', full=True):
+def package_anitya(namespace, package, full=True):
     """ Return information anitya integration about this package.
     """
     if str(full).lower() in ['0', 'false']:
