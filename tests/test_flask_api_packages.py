@@ -1501,6 +1501,7 @@ class FlaskApiPackagesTest(Modeltests):
                 sorted(data['error_detail']),
                 [
                     'branches: This field is required.',
+                    'namespace: This field is required.',
                     'pkgnames: This field is required.'
                 ]
             )
