@@ -60,7 +60,6 @@ def api_package_new():
 
     Accepts POST queries only.
 
-    :arg namespace: String of the namespace of the package to create.
     :arg pkgname: String of the package name to be created.
     :arg summary: String of the summary description of the package.
     :arg description: String describing the package (same as in the
@@ -73,7 +72,8 @@ def api_package_new():
     :arg poc: FAS username of the point of contact
     :arg upstream_url: the URL of the upstream project
     :arg critpath: boolean specifying if the package is in the critpath
-    :arg namespace: the namespace of the new package.
+    :kwarg namespace: String of the namespace of the package to create
+        (defaults to ``rpms``).
 
     Sample response:
 
@@ -105,6 +105,10 @@ def api_package_new():
         pkg_status_list=pkg_status,
         namespaces=namespaces,
     )
+
+    if not form.namespace.data:
+        form.namespace.data = 'rpms'
+
     if form.validate_on_submit():
         namespace = form.namespace.data
         pkg_name = form.pkgname.data
@@ -170,8 +174,7 @@ def api_package_edit():
 
     Accepts POST queries only.
 
-    :arg namespace: String of the namespace of the package to be created.
-    :arg pkgname: String of the package name to be created.
+    :arg pkgname: String of the package name to be edited.
     :arg summary: String of the summary description of the package.
     :arg description: String describing the package (same as in the
         spec file).
@@ -179,6 +182,8 @@ def api_package_edit():
     :arg status: status of the package can be one of: 'Approved',
         'Awaiting Review', 'Denied', 'Obsolete', 'Removed'
     :arg upstream_url: the URL of the upstream project
+    :kwarg namespace: String of the namespace of the package to be edited
+        (defaults to ``rpms``).
 
     Sample response:
 
@@ -206,6 +211,10 @@ def api_package_edit():
         pkg_status_list=pkg_status,
         namespaces=namespaces,
     )
+
+    if not form.namespace.data:
+        form.namespace.data = 'rpms'
+
     if form.validate_on_submit():
         namespace = form.namespace.data
         pkg_name = form.pkgname.data
@@ -287,7 +296,8 @@ def api_package_orphan():
     :arg pkgnames: Comma separated list of string of the packages name.
     :arg branches: Comma separated list of string of the branches name in
         which these packages will be orphaned.
-    :kwarg namespace: The namespace of the packages.
+    :kwarg namespace: The namespace of the packages (can only process one
+        namespace at a time), defaults to ``rpms``.
     :kwarg former_poc: Use to restrict orphaning the branches maintained by
         a specific user while providing a broader list of branches.
 
@@ -391,7 +401,8 @@ def api_package_unorphan():
         which these packages will be unorphaned.
     :arg poc: String of the name of the user taking ownership of
         this package. If you are not an admin, this name must be None.
-    :kwarg namespace: The namespace of the packages.
+    :kwarg namespace: The namespace of the packages (can only process one
+        namespace at a time), defaults to ``rpms``.
 
     Sample response:
 
@@ -414,7 +425,7 @@ def api_package_unorphan():
 
     pkgnames = flask.request.form.getlist('pkgnames', None)
     branches = flask.request.form.getlist('branches', None)
-    namespace = flask.request.form.get('namespace', None)
+    namespace = flask.request.form.get('namespace', 'rpms')
     poc = flask.request.form.get('poc', None)
 
     if pkgnames and branches and poc:
@@ -590,6 +601,8 @@ def api_package_unretire():
     :arg pkgnames: Comma separated list of the packages names.
     :arg branches: Comma separated list of string of the branches names in
         which these packages will be un-deprecated.
+    :kwarg namespace: The namespace of the package to unretire (can only
+        process one namespace at a time), defaults to ``rpms``.
 
 
     Sample response:
@@ -1059,7 +1072,7 @@ def api_package_critpath():
     :arg pkgnames: A list of string of the packages name.
     :arg branches: A list of string of the branches name in which the
         critpath status will be updated.
-    :arg namespace: The namespace of the packages.
+    :kwarg namespace: The namespace of the packages (defaults to ``rpms``).
     :kwarg critpath: A boolean of the critpath status. Defaults to False.
 
 
@@ -1085,7 +1098,7 @@ def api_package_critpath():
     output = {}
 
     pkgnames = flask.request.form.getlist('pkgnames', None)
-    namespace = flask.request.form.get('namespace', None)
+    namespace = flask.request.form.get('namespace', 'rpms')
     branches = flask.request.form.getlist('branches', None)
     critpath = flask.request.form.get('critpath', False)
     if str(critpath).lower() in ['1', 'true']:
@@ -1160,7 +1173,7 @@ def api_monitor_package(package, status, namespace='rpms'):
         ``1`` or ``true`` for setting full monitoring, ``nobuild`` to set
         the monitoring but block scratch builds or ``0`` or ``false`` to
         stop the monitoring entirely.
-    :kwarg namespace: The namespce of the package to update
+    :kwarg namespace: The namespace of the package to update
         (default to ``rpms``).
 
 
@@ -1282,7 +1295,6 @@ def api_package_request():
 
     Accepts POST queries only.
 
-    :arg namespace: The namespace of the package to create.
     :arg pkgname: The name of the package to create.
     :arg summary: The summary of the package.
     :arg description: The description of the package.
@@ -1291,7 +1303,8 @@ def api_package_request():
     :arg branches: The list of branches desired for this package.
         Note: if the ``master`` isn't requested, it will be added
         automatically.
-
+    :kwarg namespace: The namespace of the package to create
+        (defaults to ``rpms``).
 
 
     Sample response:
@@ -1346,6 +1359,9 @@ def api_package_request():
         collections=collections,
         namespaces=namespaces,
     )
+
+    if not form.namespace.data:
+        form.namespace.data = 'rpms'
 
     if form.validate_on_submit():
         pkg_name = form.pkgname.data
