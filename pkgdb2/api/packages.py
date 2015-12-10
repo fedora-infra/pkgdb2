@@ -414,9 +414,8 @@ def api_package_unorphan():
 
     pkgnames = flask.request.form.getlist('pkgnames', None)
     branches = flask.request.form.getlist('branches', None)
-    namespace = flask.request.form.get('namespace', 'rpms')
-    poc = flask.request.form.get('poc', None)
     namespace = flask.request.form.get('namespace', None)
+    poc = flask.request.form.get('poc', None)
 
     if pkgnames and branches and poc:
         messages = []
@@ -662,7 +661,7 @@ def api_package_unretire():
 @API.route('/package/<pkgname>')
 @API.route('/package/<namespace>/<pkgname>/')
 @API.route('/package/<namespace>/<pkgname>')
-def api_package_info(namespace='rpms', pkgname=None):
+def api_package_info(namespace=None, pkgname=None):
     '''
     Package information
     -------------------
@@ -766,7 +765,7 @@ def api_package_info(namespace='rpms', pkgname=None):
     output = {}
 
     pkg_name = flask.request.args.get('pkgname', pkgname)
-    namespace = flask.request.args.get('namespace', namespace)
+    namespace = flask.request.args.get('namespace', namespace) or 'rpms'
     branches = flask.request.args.getlist('branches', None)
     eol = flask.request.args.get('eol', False)
     acls = flask.request.args.get('acls', True)
@@ -1130,6 +1129,8 @@ def api_package_critpath():
             detail.append('pkgnames: This field is required.')
         if not branches:
             detail.append('branches: This field is required.')
+        if not namespace:
+            detail.append('namespace: This field is required.')
         if detail:
             output['error_detail'] = detail
         httpcode = 500
