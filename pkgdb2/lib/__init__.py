@@ -2537,29 +2537,30 @@ def edit_action_status(
         # that it was approved
         if action_status == 'Approved' \
                 and admin_action.action == 'request.package':
-            pkg = admin_action.info_data.get('package')
-            requests = search_actions(
-                session, package=pkg, action='request.package',
-                status='Awaiting Review')
-            requests.extend(search_actions(
-                session, package=pkg, action='request.branch',
-                status='Awaiting Review'))
-            for req in requests:
-                if req.collection.name.lower() != 'fedora':
-                    continue
-                for acl in ['commit', 'watchbugzilla',
-                            'watchcommits', 'approveacls']:
-                    set_acl_package(
-                        session,
-                        pkg_name=pkg,
-                        pkg_branch=req.collection.branchname,
-                        pkg_user=user.username,
-                        acl=acl,
-                        status='Approved',
-                        user=user,
-                        force=True,
-                    )
-                edit_action_status(session, req, 'Approved', user=user)
+            pkg = admin_action.info_data.get('pkg_name')
+            if pkg:
+                requests = search_actions(
+                    session, package=pkg, action='request.package',
+                    status='Awaiting Review')
+                requests.extend(search_actions(
+                    session, package=pkg, action='request.branch',
+                    status='Awaiting Review'))
+                for req in requests:
+                    if req.collection.name.lower() != 'fedora':
+                        continue
+                    for acl in ['commit', 'watchbugzilla',
+                                'watchcommits', 'approveacls']:
+                        set_acl_package(
+                            session,
+                            pkg_name=pkg,
+                            pkg_branch=req.collection.branchname,
+                            pkg_user=user.username,
+                            acl=acl,
+                            status='Approved',
+                            user=user,
+                            force=True,
+                        )
+                    edit_action_status(session, req, 'Approved', user=user)
 
     else:
         msg = 'Nothing to change.'
