@@ -3,12 +3,12 @@ Contributors to packagedb
 
 Pkgdb2 would be nothing without its contributors.
 
-On December 10, 2015 (release 1.33.2), the list looks as follow:
+On December 11, 2015 (release 1.33.3), the list looks as follow:
 
 =================  ===========
 Number of commits  Contributor
 =================  ===========
-  2570              Pierre-Yves Chibon <pingou@pingoured.fr>
+  2571              Pierre-Yves Chibon <pingou@pingoured.fr>
     41              Ralph Bean <rbean@redhat.com>
      9              Devyani Kota <divs.passion.18@gmail.com>
      4              trishnaguha <trishnaguha17@gmail.com>

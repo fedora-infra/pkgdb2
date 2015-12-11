@@ -2,8 +2,8 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.33.2
-Release:        1%{?dist}
+Version:        1.33.3
+Release:        2%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
@@ -118,6 +118,13 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Dec 11 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.33.3-2
+- Bump release
+
+* Fri Dec 11 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.33.3-1
+- Update to 1.33.3
+- Fix processing new package requests
+
 * Thu Dec 10 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.33.2-1
 - Update to 1.33.2
 - Fix the bugzilla integration when requesting a new package in pkgdb
