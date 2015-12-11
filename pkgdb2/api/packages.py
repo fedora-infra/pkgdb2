@@ -106,7 +106,7 @@ def api_package_new():
         namespaces=namespaces,
     )
 
-    if not form.namespace.data:
+    if str(form.namespace.data) in ['None', '']:
         form.namespace.data = 'rpms'
 
     if form.validate_on_submit():
@@ -212,7 +212,7 @@ def api_package_edit():
         namespaces=namespaces,
     )
 
-    if not form.namespace.data:
+    if str(form.namespace.data) in ['None', '']:
         form.namespace.data = 'rpms'
 
     if form.validate_on_submit():
@@ -1360,7 +1360,7 @@ def api_package_request():
         namespaces=namespaces,
     )
 
-    if not form.namespace.data:
+    if str(form.namespace.data) in ['None', '']:
         form.namespace.data = 'rpms'
 
     if form.validate_on_submit():
