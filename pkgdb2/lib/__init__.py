@@ -488,8 +488,8 @@ def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
                                                             collection.id)
     if not pkglisting:
         raise PkgdbException(
-            'The package %s could not be found in the collection %s.' %
-            (pkg_name, pkg_branch))
+            'The package %s/%s could not be found in the collection %s.' %
+            (namespace, pkg_name, pkg_branch))
 
     prev_poc = pkglisting.point_of_contact
 
@@ -617,8 +617,8 @@ def update_pkg_status(
                                                             collection.id)
 
     if not pkglisting:
-        raise PkgdbException('No package %s found in collection %s' % (
-                             pkg_name, pkg_branch))
+        raise PkgdbException('No package %s/%s found in collection %s' % (
+                             namespace, pkg_name, pkg_branch))
 
     prev_status = pkglisting.status
     if status == 'Retired':
@@ -659,8 +659,8 @@ def update_pkg_status(
         else:
             raise PkgdbException(
                 'You are not allowed to retire the '
-                'package: %s on branch %s.' % (
-                    package.name, collection.branchname))
+                'package: %s/%s on branch %s.' % (
+                    package.namespace, package.name, collection.branchname))
     elif status == 'Orphaned':
         pkglisting.status = 'Orphaned'
         pkglisting.point_of_contact = 'orphan'
@@ -689,8 +689,9 @@ def update_pkg_status(
     else:
         raise PkgdbException(
             'You are not allowed to update the status of '
-            'the package: %s on branch %s to %s.' % (
-                package.name, collection.branchname, status)
+            'the package: %s/%s on branch %s to %s.' % (
+                package.namespace, package.name,
+                collection.branchname, status)
         )
 
     return pkgdb2.lib.utils.log(
@@ -1602,13 +1603,14 @@ def unorphan_package(
         session, namespace, pkg_name, pkg_clt=pkg_branch)
     if not pkg_listing:
         raise PkgdbException(
-            'Package "%s" is not in the collection %s'
-            % (pkg_name, pkg_branch))
+            'Package "%s/%s" is not in the collection %s'
+            % (namespace, pkg_name, pkg_branch))
     pkg_listing = pkg_listing[0]
 
     if pkg_listing.status not in ('Orphaned', 'Retired'):
         raise PkgdbException(
-            'Package "%s" is not orphaned on %s' % (pkg_name, pkg_branch))
+            'Package "%s/%s" is not orphaned on %s' % (
+                namespace, pkg_name, pkg_branch))
 
     if not pkgdb2.is_pkgdb_admin(user):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
@@ -1660,8 +1662,8 @@ def unorphan_package(
         ))
 
     session.flush()
-    return 'Package %s has been unorphaned on %s by %s' % (
-        pkg_name, pkg_branch, pkg_user
+    return 'Package %s/%s has been unorphaned on %s by %s' % (
+        namespace, pkg_name, pkg_branch, pkg_user
     )
 
 
@@ -1716,16 +1718,16 @@ def add_branch(session, clt_from, clt_to, user):
                 # Should not fail since the flush() passed
                 session.commit()
                 messages.append(
-                    '%s branched successfully from %s to %s %s' % (
-                        pkglist.package.name, clt_from.name, clt_to.name,
-                        clt_to.version))
+                    '%s/%s branched successfully from %s to %s %s' % (
+                        pkglist.package.namespace, pkglist.package.name,
+                        clt_from.name, clt_to.name, clt_to.version))
             except SQLAlchemyError, err:  # pragma: no cover
                 session.rollback()
                 pkgdb2.LOG.debug(err)
                 messages.append(
-                    'FAILED: %s failed to branch from %s to %s %s' % (
-                        pkglist.package.name, clt_from.name, clt_to.name,
-                        clt_to.version))
+                    'FAILED: %s/%s failed to branch from %s to %s %s' % (
+                        pkglist.package.namespace, pkglist.package.name,
+                        clt_from.name, clt_to.name, clt_to.version))
                 messages.append(str(err))
 
     pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
@@ -1755,7 +1757,8 @@ def add_new_branch_request(session, namespace, pkg_name, clt_to, user):
     try:
         package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
-        raise PkgdbException('Package %s not found' % pkg_name)
+        raise PkgdbException(
+            'Package %s/%s not found' % (namespace, pkg_name))
 
     try:
         clt_to = model.Collection.by_name(session, clt_to)
@@ -1882,7 +1885,7 @@ def add_new_package_request(
         pass
     if package:
         raise PkgdbException(
-            'There is already a package named: %s' % pkg_name)
+            'There is already a package named: %s/%s' % (namespace, pkg_name))
 
     if pkg_collection.startswith(('el', 'epel')):
         _validate_pkg(session, pkg_collection[-1:], pkg_name)
@@ -1941,7 +1944,8 @@ def add_unretire_request(
     try:
         package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
-        raise PkgdbException('Package %s not found' % pkg_name)
+        raise PkgdbException(
+            'Package %s/%s not found' % (namespace, pkg_name))
 
     try:
         pkg_branch = model.Collection.by_name(session, pkg_branch)
@@ -2307,7 +2311,8 @@ def set_critpath_packages(
     try:
         package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
-        raise PkgdbException('No package found by this name')
+        raise PkgdbException(
+            'No package found by this name: %s/%s' % (namespace, pkg_name))
 
     try:
         collection = model.Collection.by_name(session, pkg_branch)
@@ -2320,16 +2325,18 @@ def set_critpath_packages(
                                                             collection.id)
 
     if not pkglisting:
-        raise PkgdbException('%s was not found in the collection %s'
-                             % (pkg_name, pkg_branch))
+        raise PkgdbException(
+            '%s/%s was not found in the collection %s' % (
+                namespace, pkg_name, pkg_branch))
 
     msg = None
     branches = []
     if critpath != pkglisting.critpath:
         pkglisting.critpath = critpath
         branches.append(pkglisting.collection.branchname)
-        msg = '%s: critpath updated on %s to %s' % (
-            package.name, pkglisting.collection.branchname, critpath)
+        msg = '%s/%s: critpath updated on %s to %s' % (
+            package.namespace, package.name,
+            pkglisting.collection.branchname, critpath)
         session.add(pkglisting)
 
     try:
@@ -2412,8 +2419,8 @@ def set_monitor_package(session, namespace, pkg_name, status, user):
         package.monitor = status
         session.add(package)
 
-        msg = 'Monitoring status of %s set to %s' % (
-            pkg_name, package.monitoring_status)
+        msg = 'Monitoring status of %s/%s set to %s' % (
+            package.namespace, pkg_name, package.monitoring_status)
 
         try:
             session.flush()
@@ -2470,8 +2477,8 @@ def set_koschei_monitor_package(session, namespace, pkg_name, status, user):
         package.koschei = status
         session.add(package)
 
-        msg = 'Koschei monitoring status of %s set to %s' % (
-            pkg_name, package.koschei)
+        msg = 'Koschei monitoring status of %s/%s set to %s' % (
+            package.namespace, pkg_name, package.koschei)
 
         try:
             session.flush()
