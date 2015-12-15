@@ -67,6 +67,7 @@ def api_acl_update():
     :kwarg user: the name of the user that is the target of this ACL
         change/update. This will only work if: 1) you are an admin,
         2) you are changing one of your package.
+    :kwarg namespace: The namespace of the packages (defaults to ``rpms``).
 
     Sample response:
 
@@ -101,6 +102,9 @@ def api_acl_update():
         acl_status=status['acl_status'],
         namespaces=status['namespaces'],
     )
+
+    if str(form.namespace.data) in ['None', '']:
+        form.namespace.data = 'rpms'
 
     if form.validate_on_submit():
         namespace = form.namespace.data
