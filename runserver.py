@@ -34,7 +34,7 @@ if args.profile:
     APP.wsgi_app = ProfilerMiddleware(APP.wsgi_app, restrictions=[30])
 
 if args.config:
-    os.environ['PKGS_CONFIG'] = args.config
+    os.environ['PKGDB2_CONFIG'] = args.config
 
 from pkgdb2 import APP
 APP.debug = True
