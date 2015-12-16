@@ -50,6 +50,7 @@ class FlaskApiAdminTest(Modeltests):
         pkgdb2.APP.config['TESTING'] = True
         pkgdb2.SESSION = self.session
         pkgdb2.api.admin.SESSION = self.session
+        pkgdb2.ui.SESSION = self.session
         pkgdb2.ui.packages.SESSION = self.session
         self.app = pkgdb2.APP.test_client()
 

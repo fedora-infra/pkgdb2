@@ -90,7 +90,6 @@ class FlaskApiPackagesTest(Modeltests):
                 sorted(data['error_detail']),
                 [
                     "branches: This field is required.",
-                    "namespace: Not a valid choice",
                     "pkgname: This field is required.",
                     "poc: This field is required.",
                     "review_url: This field is required.",
@@ -278,8 +277,8 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    'error': 'The package guake could not be found in the '
-                    'collection el4.',
+                    'error': 'The package rpms/guake could not be found in '
+                    'the collection el4.',
                     'messages': [''],
                     'output': 'ok'
                 }
@@ -394,8 +393,8 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": [
-                        'Package "guake" is not orphaned on f18',
-                        'Package "guake" is not orphaned on master',
+                        'Package "rpms/guake" is not orphaned on master',
+                        'Package "rpms/guake" is not orphaned on f18',
                     ],
                     "output": "notok"
                 }
@@ -468,9 +467,9 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     'error':
-                    'Package "guake" is not in the collection el4',
+                    'Package "rpms/guake" is not in the collection el4',
                     "messages": [
-                        "Package guake has been unorphaned on f18 by pingou"
+                        "Package rpms/guake has been unorphaned on f18 by pingou"
                     ],
                     'output': 'ok'
                 }
@@ -502,9 +501,9 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": 'Package "guake" is not orphaned on f18',
+                    "error": 'Package "rpms/guake" is not orphaned on f18',
                     "messages": [
-                        "Package guake has been unorphaned on master by pingou"
+                        "Package rpms/guake has been unorphaned on master by pingou"
                     ],
                     "output": "ok"
                 }
@@ -587,7 +586,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to retire the package: "
-                    "guake on branch f18.",
+                    "rpms/guake on branch f18.",
                     "output": "notok"
                 }
             )
@@ -624,7 +623,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "No package guake found in collection el6",
+                    "error": "No package rpms/guake found in collection el6",
                     "output": "notok"
                 }
             )
@@ -1006,7 +1005,8 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "You are not allowed to retire the package: guake on branch epel7.",
+                    "error": "You are not allowed to retire the package: "
+                    "rpms/guake on branch epel7.",
                     "output": "notok"
                 }
             )
@@ -1075,7 +1075,7 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     "error": "You are not allowed to update the status of "
-                             "the package: guake on branch f18 to "
+                             "the package: rpms/guake on branch f18 to "
                              "Approved.",
                     "output": "notok"
                 }
@@ -1108,7 +1108,7 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(
             data,
             {
-                "error": "Package: guake not found",
+                "error": "Package: rpms/guake not found",
                 "output": "notok"
             }
         )
@@ -1395,7 +1395,6 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 sorted(data['error_detail']),
                 [
-                    "namespace: Not a valid choice",
                     "pkgname: This field is required.",
                 ]
             )
@@ -1501,7 +1500,6 @@ class FlaskApiPackagesTest(Modeltests):
                 sorted(data['error_detail']),
                 [
                     'branches: This field is required.',
-                    'namespace: This field is required.',
                     'pkgnames: This field is required.'
                 ]
             )
@@ -1518,7 +1516,8 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                    "error": "No package found by this name",
+                    "error": "No package found by this name: "
+                    "rpms/gnome-terminal",
                     "output": "notok"
                 }
             )
@@ -1610,8 +1609,8 @@ class FlaskApiPackagesTest(Modeltests):
                 data,
                 {
                     'messages': [
-                        'guake: critpath updated on master to True',
-                        'guake: critpath updated on f18 to True'
+                        'rpms/guake: critpath updated on master to True',
+                        'rpms/guake: critpath updated on f18 to True'
                     ],
                     'output': 'ok'
                 }
@@ -1685,7 +1684,8 @@ class FlaskApiPackagesTest(Modeltests):
                 ['messages', 'output']
             )
             self.assertEqual(
-                data['messages'], "Monitoring status of guake set to True")
+                data['messages'],
+                "Monitoring status of rpms/guake set to True")
 
             self.assertEqual(
                 data['output'], "ok")
@@ -1721,7 +1721,8 @@ class FlaskApiPackagesTest(Modeltests):
                 ['messages', 'output']
             )
             self.assertEqual(
-                data['messages'], "Monitoring status of guake set to False")
+                data['messages'],
+                "Monitoring status of rpms/guake set to False")
 
             self.assertEqual(
                 data['output'], "ok")
@@ -1781,7 +1782,8 @@ class FlaskApiPackagesTest(Modeltests):
                 ['messages', 'output']
             )
             self.assertEqual(
-                data['messages'], "Koschei monitoring status of guake set to True")
+                data['messages'],
+                "Koschei monitoring status of rpms/guake set to True")
 
             self.assertEqual(
                 data['output'], "ok")
@@ -1818,7 +1820,8 @@ class FlaskApiPackagesTest(Modeltests):
                 ['messages', 'output']
             )
             self.assertEqual(
-                data['messages'], "Koschei monitoring status of guake set to False")
+                data['messages'],
+                "Koschei monitoring status of rpms/guake set to False")
 
             self.assertEqual(
                 data['output'], "ok")
@@ -1849,7 +1852,6 @@ class FlaskApiPackagesTest(Modeltests):
                   "error": "Invalid input submitted",
                   "error_detail": [
                     "branches: 'foobar' is not a valid choice for this field",
-                    "namespace: Not a valid choice",
                     "review_url: This field is required."
                   ],
                   "output": "notok"
@@ -2002,7 +2004,7 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data,
                 {
-                  "error": "No package found: foo",
+                  "error": "No package found: rpms/foo",
                   "output": "notok"
                 }
             )

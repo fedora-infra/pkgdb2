@@ -1813,7 +1813,7 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUser()
         )
 
-        self.assertEqual(msg, 'Monitoring status of guake set to True')
+        self.assertEqual(msg, 'Monitoring status of rpms/guake set to True')
 
         # Works
         msg = pkgdblib.set_monitor_package(
@@ -1841,7 +1841,7 @@ class PkgdbLibtests(Modeltests):
             status=False,
             user=FakeFasUser()
         )
-        self.assertEqual(msg, 'Monitoring status of guake set to False')
+        self.assertEqual(msg, 'Monitoring status of rpms/guake set to False')
 
     @patch('pkgdb2.lib.utils')
     def test_add_new_branch_request(self, mock_func):

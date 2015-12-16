@@ -86,7 +86,6 @@ class FlaskApiAclsTest(Modeltests):
                     "acl: This field is required.",
                     "acl_status: Not a valid choice",
                     "branches: This field is required.",
-                    "namespace: Not a valid choice",
                     "pkgname: This field is required.",
                     "user: This field is required.",
                 ]

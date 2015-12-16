@@ -806,7 +806,7 @@ def api_package_info(namespace=None, pkgname=None):
                 for pkg in packages]
     except NoResultFound:
         output['output'] = 'notok'
-        output['error'] = 'Package: %s not found' % pkg_name
+        output['error'] = 'Package: %s/%s not found' % (namespace, pkg_name)
         httpcode = 404
 
     jsonout = flask.jsonify(output)
@@ -1489,7 +1489,7 @@ def api_branch_request(package, namespace='rpms'):
     except (NoResultFound, IndexError):
         SESSION.rollback()
         output['output'] = 'notok'
-        output['error'] = 'No package found: %s' % package
+        output['error'] = 'No package found: %s/%s' % (namespace, package)
         httpcode = 404
     else:
 
