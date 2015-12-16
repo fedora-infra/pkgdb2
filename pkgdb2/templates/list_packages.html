@@ -18,6 +18,12 @@
       <option value="Retired" {% if status == 'Retired' %} selected {% endif %}>Retired</option>
     </select> <br />
     Restrict to owner: <input type="text" name="owner" /> <br />
+    Restrict to namespace:
+    <select name="namespace">
+      {% for ns in namespaces %}
+      <option value="{{ ns }}" {% if namespace == ns %} selected {% endif %}>{{ ns }}</option>
+      {% endfor %}
+    </select> <br />
     <input type="submit" class="submit positive button" value="filter">
 </form>
 {% if is_admin %}
@@ -80,10 +86,9 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
 {% if total_page >= page and page > 0 %}
     {% for pkg in packages %}
         <li>
-        {{ pkg.namespace }}:
         <a href="{{url_for(
             '.package_info', namespace=pkg.namespace, package=pkg.name)}}">
-                {{ pkg.name }}</a>
+                {{ pkg.namespace }}/{{ pkg.name }}</a>
         -- {{ pkg.summary }}
         (
         {% for listing in pkg.listings | sort(attribute="collection.branchname", reverse=True)
