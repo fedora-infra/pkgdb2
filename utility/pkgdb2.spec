@@ -2,8 +2,8 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        1.33.3
-Release:        2%{?dist}
+Version:        2.0
+Release:        1%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
@@ -118,6 +118,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu Dec 17 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0-1
+- Update to 2.0
+- Add the concept of namespace to all the packages present in pkgdb2
+
 * Fri Dec 11 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 1.33.3-2
 - Bump release
 
