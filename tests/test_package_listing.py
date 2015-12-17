@@ -44,7 +44,7 @@ class PackageListingtests(Modeltests):
     def test_init_package_listing(self):
         """ Test the __init__ function of PackageListing. """
         create_package_listing(self.session)
-        pkg = model.Package.by_name(self.session, 'guake')
+        pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         self.assertEqual(
             2,
             len(model.PackageListing.by_package_id(
@@ -54,7 +54,7 @@ class PackageListingtests(Modeltests):
     def test_repr_package_listing(self):
         """ Test the __repr__ function of PackageListing. """
         create_package_listing(self.session)
-        pkg = model.Package.by_name(self.session, 'guake')
+        pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         packages = model.PackageListing.by_package_id(
             self.session, pkg.id)
         self.assertEqual("PackageListing(id:1, u'pingou', "
@@ -143,7 +143,7 @@ class PackageListingtests(Modeltests):
     def test_to_json(self):
         """ Test the to_json function of PackageListing. """
         create_package_listing(self.session)
-        pkg = model.Package.by_name(self.session, 'guake')
+        pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         package = model.PackageListing.by_package_id(self.session,
                                                      pkg.id)[0]
         package = package.to_json()
@@ -200,7 +200,7 @@ class PackageListingtests(Modeltests):
         """ Test the branch method of PackageListing. """
         create_package_acl(self.session)
 
-        pkg = model.Package.by_name(self.session, 'guake')
+        pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         pkg_list = model.PackageListing.by_package_id(
             self.session, pkg.id)
         self.assertEqual(len(pkg_list), 2)

@@ -47,7 +47,8 @@
         </td>
         <td>
             <a href="{{ url_for('.package_info',
-                     package=pending_acl['package']) }}">
+                    namespace=pending_acl['namespace'],
+                    package=pending_acl['package']) }}">
                 {{ pending_acl['package'] }}
             </a>
         </td>
@@ -56,6 +57,7 @@
         <td>{{ pending_acl['status'] }}</td>
         <td>
             <a href="{{ url_for('.update_acl',
+                    namespace=pending_acl['namespace'],
                     package=pending_acl['package'],
                     update_acl=pending_acl['acl']) }}">
                 <input type="submit" value="Update"/>

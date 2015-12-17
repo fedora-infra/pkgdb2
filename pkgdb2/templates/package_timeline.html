@@ -13,7 +13,9 @@
 
 {% set options = True %}
 {%block options %}
-<form action="{{ url_for('.package_timeline', package=package) }}" method="get">
+<form action="{{ url_for(
+        '.package_timeline', namespace=namespace, package=package)
+    }}" method="get">
     Restrict to packager: <input type="text" name="packager" /> <br />
     From date: <input id="from_date" type="text" name="from_date" /> <br />
     <input type="submit" class="submit positive button" value="filter">
@@ -23,7 +25,8 @@
 {% block content %}
 
 <h1>
-    <a property="doap:name" href="{{ url_for('.package_info', package=package) }}">
+    <a property="doap:name" href="{{ url_for(
+        '.package_info', namespace=namespace, package=package) }}">
       {{ package }}
     </a> > Timeline
 </h1>
@@ -38,8 +41,8 @@ This page should refresh automatically every 5 seconds
         <td>
         {% if page > 1%}
             <a href="{{ url_for(
-                '.package_timeline', package=package, from_date=from_date,
-                packager=packager, page=page-1) }}">
+                '.package_timeline', namespace=namespace, package=package,
+                from_date=from_date, packager=packager, page=page-1) }}">
                 < Previous
             </a>
         {% else %}
@@ -50,8 +53,8 @@ This page should refresh automatically every 5 seconds
         <td>
             {% if page < total_page %}
             <a href="{{ url_for(
-                '.package_timeline', package=package, from_date=from_date,
-                packager=packager, page=page+1) }}">
+                '.package_timeline', namespace=namespace, package=package,
+                from_date=from_date, packager=packager, page=page+1) }}">
                 Next >
             </a>
             {% else %}
@@ -78,7 +81,8 @@ This page should refresh automatically every 5 seconds
 {% elif total_page %}
     <p>
         Sorry, but the page you are requesting is unavailable. <br />
-        <a href="{{ url_for('.package_timeline', package=package) }}">
+        <a href="{{ url_for(
+        '.package_timeline', namespace=namespace, package=package) }}">
             Back to the list
         </a>
     </p>

@@ -71,7 +71,7 @@ class FlaskUiAclsTest(Modeltests):
         mock_func.return_value = ['pingou', 'ralph', 'kevin']
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/acl/guake/request/')
+            output = self.app.get('/acl/rpms/guake/request/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Request ACLs on package: guake</h1>' in output.data)
@@ -89,7 +89,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/acl/guake/request/', data=data,
+            output = self.app.post('/acl/rpms/guake/request/', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<li class="message">ACLs updated</li>' in
@@ -97,7 +97,7 @@ class FlaskUiAclsTest(Modeltests):
 
         user.username = 'Toshio'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/acl/guake/request/')
+            output = self.app.get('/acl/rpms/guake/request/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Request ACLs on package: guake</h1>' in output.data)
@@ -115,7 +115,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/acl/guake/request/', data=data,
+            output = self.app.post('/acl/rpms/guake/request/', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<li class="message">ACLs updated</li>' in
@@ -127,7 +127,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/acl/guake/request/', data=data,
+            output = self.app.post('/acl/rpms/guake/request/', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -137,7 +137,7 @@ class FlaskUiAclsTest(Modeltests):
         user = FakeFasUser()
         user.groups = ['gitr2spec']
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/acl/guake/request/')
+            output = self.app.get('/acl/rpms/guake/request/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Request ACLs on package: guake</h1>' in output.data)
@@ -155,7 +155,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/acl/guake/request/', data=data,
+            output = self.app.post('/acl/rpms/guake/request/', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -166,7 +166,7 @@ class FlaskUiAclsTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/acl/test/request/')
+            output = self.app.get('/acl/rpms/test/request/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
@@ -178,7 +178,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/acl/test/request/', data=data,
+            output = self.app.post('/acl/rpms/test/request/', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -200,17 +200,17 @@ class FlaskUiAclsTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/acl/guake/request/approveacls/', follow_redirects=True)
+                '/acl/rpms/guake/request/approveacls/', follow_redirects=True)
             self.assertEqual(output.status_code, 405)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
             output = self.app.post(
-                '/acl/guake/request/approveacls/',
+                '/acl/rpms/guake/request/approveacls/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -223,7 +223,7 @@ class FlaskUiAclsTest(Modeltests):
                 output.data.count('<a class="pending"'), 2)
 
             output = self.app.post(
-                '/acl/guake/request/foobar/',
+                '/acl/rpms/guake/request/foobar/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -231,7 +231,7 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
             output = self.app.post(
-                '/acl/barfoo/request/commit/',
+                '/acl/rpms/barfoo/request/commit/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -242,7 +242,7 @@ class FlaskUiAclsTest(Modeltests):
         user.groups = []
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/acl/guake/request/commit/',
+                '/acl/rpms/guake/request/commit/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -251,7 +251,7 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
             output = self.app.post(
-                '/acl/guake/request/watchcommits/',
+                '/acl/rpms/guake/request/watchcommits/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -276,18 +276,18 @@ class FlaskUiAclsTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/acl/guake/giveup/approveacls/', follow_redirects=True)
+                '/acl/rpms/guake/giveup/approveacls/', follow_redirects=True)
             self.assertEqual(output.status_code, 405)
 
         user.username = 'dodji'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
             output = self.app.post(
-                '/acl/offlineimap/giveup/approveacls/',
+                '/acl/docker/offlineimap/giveup/approveacls/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -296,13 +296,14 @@ class FlaskUiAclsTest(Modeltests):
 
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
+            print 'give up'
             output = self.app.post(
-                '/acl/guake/giveup/approveacls/',
+                '/acl/rpms/guake/giveup/approveacls/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -311,11 +312,12 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<li class="message">Your ACL approveacls is obsoleted on '
                 'branch master of package guake</li>' in output.data)
+            #print output.data
             self.assertEqual(
                 output.data.count('<a class="pending"'), 1)
 
             output = self.app.post(
-                '/acl/guake/giveup/foobar/',
+                '/acl/rpms/guake/giveup/foobar/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -323,7 +325,7 @@ class FlaskUiAclsTest(Modeltests):
                 in output.data)
 
             output = self.app.post(
-                '/acl/barfoo/giveup/commit/',
+                '/acl/rpms/barfoo/giveup/commit/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -334,7 +336,7 @@ class FlaskUiAclsTest(Modeltests):
         user.groups = []
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/acl/guake/giveup/commit/',
+                '/acl/rpms/guake/giveup/commit/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertFalse(
@@ -356,23 +358,23 @@ class FlaskUiAclsTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/acl/guake/watch/', follow_redirects=True)
+                '/acl/rpms/guake/watch/', follow_redirects=True)
             self.assertEqual(output.status_code, 405)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
             output = self.app.post(
-                '/acl/guake/watch/', data=data, follow_redirects=True)
+                '/acl/rpms/guake/watch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">ACLs updated</li>' in output.data)
 
             output = self.app.post(
-                '/acl/random/watch/', data=data, follow_redirects=True)
+                '/acl/rpms/random/watch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">No package found by this name</li>'
@@ -393,31 +395,31 @@ class FlaskUiAclsTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/acl/guake/unwatch/', follow_redirects=True)
+                '/acl/rpms/guake/unwatch/', follow_redirects=True)
             self.assertEqual(output.status_code, 405)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
             output = self.app.post(
-                '/acl/guake/unwatch/', data=data, follow_redirects=True)
+                '/acl/rpms/guake/unwatch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">You cannot remove `Watch*` ACLs from '
                 'the Point of Contact.</li>' in output.data)
 
             output = self.app.post(
-                '/acl/random/unwatch/', data=data, follow_redirects=True)
+                '/acl/rpms/random/unwatch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">No package found by this name</li>'
                 in output.data)
 
         # Give watchbugzilla to ralph on guake/master
-        guake_pkg = model.Package.by_name(self.session, 'guake')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
         devel_collec = model.Collection.by_name(self.session, 'master')
         pklist_guake_devel = model.PackageListing.by_pkgid_collectionid(
             self.session, guake_pkg.id, devel_collec.id)
@@ -433,19 +435,19 @@ class FlaskUiAclsTest(Modeltests):
         # Drop watch* for ralph
         user.username = 'ralph'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
             output = self.app.post(
-                '/acl/guake/unwatch/', data=data, follow_redirects=True)
+                '/acl/rpms/guake/unwatch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">ACLs updated</li>' in output.data)
 
             output = self.app.post(
-                '/acl/random/unwatch/', data=data, follow_redirects=True)
+                '/acl/rpms/random/unwatch/', data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">No package found by this name</li>'
@@ -464,17 +466,17 @@ class FlaskUiAclsTest(Modeltests):
         user = FakeFasUser()
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/acl/guake/comaintain/', follow_redirects=True)
+                '/acl/rpms/guake/comaintain/', follow_redirects=True)
             self.assertEqual(output.status_code, 405)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
             output = self.app.post(
-                '/acl/guake/comaintain/',
+                '/acl/rpms/guake/comaintain/',
                 data=data, follow_redirects=True)
 
             self.assertTrue(
@@ -484,7 +486,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">ACLs updated</li>' in output.data)
 
             output = self.app.post(
-                '/acl/random/comaintain/',
+                '/acl/rpms/random/comaintain/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -497,7 +499,7 @@ class FlaskUiAclsTest(Modeltests):
         user.username = 'kevin'
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/acl/guake/comaintain/',
+                '/acl/rpms/guake/comaintain/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -505,14 +507,14 @@ class FlaskUiAclsTest(Modeltests):
 
             # Nothing to update the second time
             output = self.app.post(
-                '/acl/guake/comaintain/',
+                '/acl/rpms/guake/comaintain/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">Nothing to update</li>' in output.data)
 
             output = self.app.post(
-                '/acl/random/comaintain/',
+                '/acl/rpms/random/comaintain/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -523,7 +525,7 @@ class FlaskUiAclsTest(Modeltests):
         user.groups = ['gitr2spec']
         with user_set(pkgdb2.APP, user):
             output = self.app.post(
-                '/acl/guake/comaintain/',
+                '/acl/rpms/guake/comaintain/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -545,24 +547,24 @@ class FlaskUiAclsTest(Modeltests):
 
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/acl/guake/dropcommit/', follow_redirects=True)
+                '/acl/rpms/guake/dropcommit/', follow_redirects=True)
             self.assertEqual(output.status_code, 405)
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/')
+            output = self.app.get('/package/rpms/guake/')
             csrf_token = output.data.split(
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
             data = {'csrf_token': csrf_token}
 
             output = self.app.post(
-                '/acl/guake/dropcommit/',
+                '/acl/rpms/guake/dropcommit/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">ACLs updated</li>' in output.data)
 
             output = self.app.post(
-                '/acl/random/dropcommit/',
+                '/acl/rpms/random/dropcommit/',
                 data=data, follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -585,7 +587,7 @@ class FlaskUiAclsTest(Modeltests):
         user.username = 'kevin'
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/package/guake/acl/commit/', follow_redirects=True)
+                '/package/rpms/guake/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertEqual(
                 output.data.count('<td class="users">'), 1)
@@ -595,7 +597,7 @@ class FlaskUiAclsTest(Modeltests):
         user.username = 'toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.get(
-                '/package/guake/acl/commit/', follow_redirects=True)
+                '/package/rpms/guake/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '</a> > Edit Commit Access</h1>' in output.data)
@@ -617,7 +619,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -628,7 +630,7 @@ class FlaskUiAclsTest(Modeltests):
         with user_set(pkgdb2.APP, user):
             # Invalid package name
             output = self.app.get(
-                '/package/foobar/acl/commit/', follow_redirects=True)
+                '/package/rpms/foobar/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">No package of this name found.</li>'
@@ -636,7 +638,7 @@ class FlaskUiAclsTest(Modeltests):
 
             # Invalid ACL name
             output = self.app.get(
-                '/package/guake/acl/foobar/', follow_redirects=True)
+                '/package/rpms/guake/acl/foobar/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="errors">Invalid ACL to update.</li>'
@@ -644,7 +646,7 @@ class FlaskUiAclsTest(Modeltests):
 
             # GET works
             output = self.app.get(
-                '/package/guake/acl/commit/', follow_redirects=True)
+                '/package/rpms/guake/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '</a> > Edit Commit Access</h1>' in output.data)
@@ -667,7 +669,7 @@ class FlaskUiAclsTest(Modeltests):
 
             # No user provided, so we don't know for who to update the ACLs
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -681,7 +683,7 @@ class FlaskUiAclsTest(Modeltests):
         with user_set(pkgdb2.APP, user):
             # Get works
             output = self.app.get(
-                '/package/guake/acl/commit/', follow_redirects=True)
+                '/package/rpms/guake/acl/commit/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '</a> > Edit Commit Access</h1>' in output.data)
@@ -694,7 +696,7 @@ class FlaskUiAclsTest(Modeltests):
 
             # Only 2 approved ACLs
             output = self.app.get(
-                '/package/guake/', follow_redirects=True)
+                '/package/rpms/guake/', follow_redirects=True)
             self.assertEqual(output.data.count('title="ACL Approved"'), 2)
 
             csrf_token = output.data.split(
@@ -709,7 +711,7 @@ class FlaskUiAclsTest(Modeltests):
 
             # Toshio drops his ACL request on master
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -727,7 +729,7 @@ class FlaskUiAclsTest(Modeltests):
 
             # Invalid ACL status provided
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -743,7 +745,7 @@ class FlaskUiAclsTest(Modeltests):
             # Toshio is no longer requesting, thus is not in the list of
             # users and thus makes the request invalid
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -764,7 +766,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -782,7 +784,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -797,7 +799,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -812,7 +814,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -827,7 +829,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -843,7 +845,7 @@ class FlaskUiAclsTest(Modeltests):
             }
 
             output = self.app.post(
-                '/package/guake/acl/commit/', data=data,
+                '/package/rpms/guake/acl/commit/', data=data,
                 follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
@@ -864,7 +866,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/acl/pending/')
             self.assertTrue('<table id="pending">' in output.data)
             self.assertTrue(
-                '<a href="/package/guake/acl/commit/">' in output.data)
+                '<a href="/package/rpms/guake/acl/commit/">' in output.data)
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
@@ -884,7 +886,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/acl/pending/')
             self.assertTrue('<table id="pending">' in output.data)
             self.assertTrue(
-                '<a href="/package/guake/acl/commit/">' in output.data)
+                '<a href="/package/rpms/guake/acl/commit/">' in output.data)
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
@@ -893,7 +895,7 @@ class FlaskUiAclsTest(Modeltests):
                 '/acl/pending/approve', follow_redirects=True)
             self.assertTrue('<table id="pending">' in output.data)
             self.assertTrue(
-                '<a href="/package/guake/acl/commit/">' in output.data)
+                '<a href="/package/rpms/guake/acl/commit/">' in output.data)
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
@@ -908,7 +910,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">All ACLs approved</li>' in output.data)
             self.assertFalse('<table id="pending">' in output.data)
             self.assertFalse(
-                '<a href="/package/guake/acl/commit/">' in output.data)
+                '<a href="/package/rpms/guake/acl/commit/">' in output.data)
             self.assertFalse(
                 '<input type="submit" value="Update"/>' in output.data)
 
@@ -928,7 +930,7 @@ class FlaskUiAclsTest(Modeltests):
             output = self.app.get('/acl/pending/')
             self.assertTrue('<table id="pending">' in output.data)
             self.assertTrue(
-                '<a href="/package/guake/acl/commit/">' in output.data)
+                '<a href="/package/rpms/guake/acl/commit/">' in output.data)
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
@@ -937,7 +939,7 @@ class FlaskUiAclsTest(Modeltests):
                 '/acl/pending/deny', follow_redirects=True)
             self.assertTrue('<table id="pending">' in output.data)
             self.assertTrue(
-                '<a href="/package/guake/acl/commit/">' in output.data)
+                '<a href="/package/rpms/guake/acl/commit/">' in output.data)
             self.assertTrue(
                 '<input type="submit" value="Update"/>' in output.data)
 
@@ -952,7 +954,7 @@ class FlaskUiAclsTest(Modeltests):
                 '<li class="message">All ACLs denied</li>' in output.data)
             self.assertFalse('<table id="pending">' in output.data)
             self.assertFalse(
-                '<a href="/package/guake/acl/commit/">' in output.data)
+                '<a href="/package/rpms/guake/acl/commit/">' in output.data)
             self.assertFalse(
                 '<input type="submit" value="Update"/>' in output.data)
 
@@ -970,7 +972,7 @@ class FlaskUiAclsTest(Modeltests):
         mock_func.return_value = ['pingou', 'ralph', 'kevin']
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/acl/guake/give/')
+            output = self.app.get('/acl/rpms/guake/give/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give ACLs on package: guake</h1>' in output.data)
@@ -983,6 +985,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
+                'namespace': 'rpms',
                 'branches': 'master',
                 'acl': 'watchbugzilla',
                 'user': 'kevin',
@@ -990,7 +993,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/acl/guake/give/', data=data,
+            output = self.app.post('/acl/rpms/guake/give/', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue('<li class="message">ACLs updated</li>' in
@@ -998,14 +1001,14 @@ class FlaskUiAclsTest(Modeltests):
 
         user.username = 'Toshio'
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/acl/foo/give/', follow_redirects=True)
+            output = self.app.get('/acl/rpms/foo/give/', follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="error">No package found by this name</li>'
                 in output.data)
-            self.assertTrue('<h1>Search packages</h1>' in output.data)
+            self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
 
-            output = self.app.get('/acl/guake/give/')
+            output = self.app.get('/acl/rpms/guake/give/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give ACLs on package: guake</h1>' in output.data)
@@ -1018,6 +1021,7 @@ class FlaskUiAclsTest(Modeltests):
                 'name="csrf_token" type="hidden" value="')[1].split('">')[0]
 
             data = {
+                'namespace': 'rpms',
                 'branches': 'master',
                 'acl': 'commit',
                 'user': 'kevin',
@@ -1025,7 +1029,7 @@ class FlaskUiAclsTest(Modeltests):
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/acl/guake/give/', data=data,
+            output = self.app.post('/acl/rpms/guake/give/', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(

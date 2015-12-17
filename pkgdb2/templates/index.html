@@ -36,8 +36,9 @@ engineers need to create packages and spin them into a distribution.
   </tr>
   {% for pkg in latest_pkgs %}
   <tr class="{{ loop.cycle('col_odd', 'col_even') }}">
-    <td><a href="{{url_for('.package_info', package=pkg.name)}}">
-      {{ pkg.name }}</a>
+    <td><a href="{{url_for(
+        '.package_info', namespace=pkg.namespace, package=pkg.name)}}">
+      {{ pkg.namespace }}/{{ pkg.name }}</a>
     </td>
     <td>{{ pkg.summary }}</td>
     <td>

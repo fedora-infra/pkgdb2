@@ -10,7 +10,7 @@
 <h1>Give ACLs on package: {{ package }}</h1>
 
 
-<form action="{{ url_for('.package_give_acls', package=package) }}"
+<form action="{{ url_for('.package_give_acls', namespace=namespace, package=package) }}"
     method="post">
   <table>
     {{ render_field_in_row(form.user) }}

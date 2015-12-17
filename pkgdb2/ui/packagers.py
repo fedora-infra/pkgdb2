@@ -130,6 +130,7 @@ def packager_info(packager):
         packages_watch=packages_watch,
     )
 
+
 @UI.route('/packager/<packager>/requests')
 def packager_requests(packager):
     ''' Display the requests made by the specified packager. '''

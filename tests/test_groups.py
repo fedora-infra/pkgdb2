@@ -66,7 +66,7 @@ class PkgdbGrouptests(Modeltests):
 
     def set_group_acls(self):
         ''' Create some Group ACLs. '''
-        fedocal_pkg = model.Package.by_name(self.session, 'fedocal')
+        fedocal_pkg = model.Package.by_name(self.session, 'rpms', 'fedocal')
         devel_collec = model.Collection.by_name(self.session, 'master')
         f18_collec = model.Collection.by_name(self.session, 'f18')
 
@@ -181,7 +181,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         user = FakeFasUser()
 
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/give')
+            output = self.app.get('/package/rpms/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give Point of Contact of package: guake</h1>'
@@ -198,11 +198,11 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/package/guake/give', data=data,
+            output = self.app.post('/package/rpms/guake/give', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<h1 class="inline" property="doap:name">guake</h1>'
+                'rpms/<span property="doap:name">guake</span>'
                 in output.data)
             self.assertEqual(
                 output.data.count('<a href="/packager/spot/">'), 2)
@@ -210,7 +210,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
         user.username = 'spot'
         user.groups.append('gtk-sig')
         with user_set(pkgdb2.APP, user):
-            output = self.app.get('/package/guake/give')
+            output = self.app.get('/package/rpms/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give Point of Contact of package: guake</h1>'
@@ -227,7 +227,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
                 'csrf_token': csrf_token,
             }
 
-            output = self.app.post('/package/guake/give', data=data,
+            output = self.app.post('/package/rpms/guake/give', data=data,
                                    follow_redirects=True)
             self.assertEqual(output.status_code, 200)
             self.assertEqual(
@@ -236,7 +236,7 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
                 output.data.count('<a href="/packager/group::gtk-sig/">'),
                 1)
 
-            output = self.app.get('/package/guake/give')
+            output = self.app.get('/package/rpms/guake/give')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<h1>Give Point of Contact of package: guake</h1>'

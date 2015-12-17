@@ -76,7 +76,7 @@ engineers need to create packages and spin them into a distribution."""
         output = self.app.get('/packages/')
         self.assertEqual(output.status_code, 200)
 
-        expected = "<h1>Search packages</h1>"
+        expected = "<h1>Search packages (rpms) </h1>"
 
         self.assertTrue(expected in output.data)
 
@@ -93,7 +93,7 @@ engineers need to create packages and spin them into a distribution."""
         output = self.app.get('/orphaned/')
         self.assertEqual(output.status_code, 200)
 
-        expected = "<h1>Search packages</h1>"
+        expected = "<h1>Search packages (rpms) </h1>"
 
         self.assertTrue(expected in output.data)
 
@@ -110,7 +110,7 @@ engineers need to create packages and spin them into a distribution."""
         output = self.app.get('/retired/')
         self.assertEqual(output.status_code, 200)
 
-        expected = "<h1>Search packages</h1>"
+        expected = "<h1>Search packages (rpms) </h1>"
 
         self.assertTrue(expected in output.data)
 
@@ -178,15 +178,15 @@ engineers need to create packages and spin them into a distribution."""
 
         output = self.app.get('/search/', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
 
         create_package_acl(self.session)
 
         output = self.app.get('/search/?term=g*', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages</h1>' in output.data)
-        self.assertTrue('<a href="/package/geany/">' in output.data)
-        self.assertTrue('<a href="/package/guake/">' in output.data)
+        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
+        self.assertTrue('<a href="/package/rpms/geany/">' in output.data)
+        self.assertTrue('<a href="/package/rpms/guake/">' in output.data)
 
         output = self.app.get('/search/?term=p&type=packager',
                               follow_redirects=True)
@@ -198,9 +198,9 @@ engineers need to create packages and spin them into a distribution."""
 
         output = self.app.get('/search/?term=g*', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages</h1>' in output.data)
-        self.assertTrue('<a href="/package/geany/">' in output.data)
-        self.assertTrue('<a href="/package/guake/">' in output.data)
+        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
+        self.assertTrue('<a href="/package/rpms/geany/">' in output.data)
+        self.assertTrue('<a href="/package/rpms/guake/">' in output.data)
 
         output = self.app.get('/search/?term=gu*', follow_redirects=True)
         self.assertEqual(output.status_code, 200)
@@ -214,7 +214,7 @@ engineers need to create packages and spin them into a distribution."""
         output = self.app.get('/search/?term=g*&type=orphaned',
                               follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
         self.assertTrue('<p>0 packages found</p>' in output.data)
         expected = '<p>See the list of <a href="/packages/">active</a>\n' \
                    'or <a href="/retired/">retired</a> packages</p>'
@@ -223,7 +223,7 @@ engineers need to create packages and spin them into a distribution."""
         output = self.app.get('/search/?term=g*&type=retired',
                               follow_redirects=True)
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
         self.assertTrue('<p>0 packages found</p>' in output.data)
         expected = '<p>See the list of <a href="/packages/">active</a>\n' \
                    'or <a href="/orphaned/">orphaned</a> packages</p>'

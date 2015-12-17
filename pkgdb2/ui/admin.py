@@ -47,6 +47,7 @@ def admin_log():
     """ Return the logs as requested by the user. """
     from_date = flask.request.args.get('from_date', None)
     package = flask.request.args.get('package', None)
+    namespace = flask.request.args.get('namespace', None)
     packager = flask.request.args.get('packager', None)
     refresh = flask.request.args.get('refresh', False)
     limit = flask.request.args.get('limit', APP.config['ITEMS_PER_PAGE'])
@@ -82,6 +83,7 @@ def admin_log():
         logs = pkgdblib.search_logs(
             SESSION,
             package=package or None,
+            namespace=namespace or None,
             packager=packager or None,
             from_date=from_date,
             page=page,
@@ -90,6 +92,7 @@ def admin_log():
         cnt_logs = pkgdblib.search_logs(
             SESSION,
             package=package or None,
+            namespace=namespace or None,
             packager=packager or None,
             from_date=from_date,
             count=True
@@ -231,3 +234,79 @@ def admin_action_edit_status(action_id):
         action_id=action_id,
         form=form,
     )
+
+
+@UI.route('/admin/namespaces')
+@is_admin
+def admin_namespaces():
+    """ Shows all the existing namespaces.
+    """
+    namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
+    form = pkgdb2.forms.NamespaceForm()
+
+    return flask.render_template(
+        'admin_namespaces.html',
+        namespaces=namespaces,
+        form=form,
+    )
+
+
+@UI.route('/admin/namespace/drop', methods=['POST'])
+@is_admin
+def admin_drop_namespace():
+    """ Drop an existing namespace
+    """
+
+    form = pkgdb2.forms.NamespaceForm()
+
+    if form.validate_on_submit():
+
+        try:
+            message = pkgdblib.drop_namespace(
+                SESSION,
+                form.namespace.data,
+                user=flask.g.fas_user,
+            )
+            SESSION.commit()
+            flask.flash(message)
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We can only reach here in two cases:
+            # 1) the user is not an admin, but that's taken care of
+            #    by the decorator
+            # 2) we have a SQLAlchemy problem when storing the info
+            #    in the DB which we cannot test
+            SESSION.rollback()
+            flask.flash(err, 'errors')
+            return flask.render_template('msg.html')
+
+    return flask.redirect(flask.url_for('.admin_namespaces'))
+
+
+@UI.route('/admin/namespace/add', methods=['POST'])
+@is_admin
+def admin_add_namespace():
+    """ Add a new namespace
+    """
+
+    form = pkgdb2.forms.NamespaceForm()
+
+    if form.validate_on_submit():
+
+        try:
+            message = pkgdblib.add_namespace(
+                SESSION,
+                form.namespace.data,
+                user=flask.g.fas_user,
+            )
+            SESSION.commit()
+            flask.flash(message)
+        except pkgdblib.PkgdbException, err:  # pragma: no cover
+            # We can only reach here in two cases:
+            # 1) the user is not an admin, but that's taken care of
+            #    by the decorator
+            # 2) we have a SQLAlchemy problem when storing the info
+            #    in the DB which we cannot test
+            flask.flash(err, 'errors')
+            return flask.render_template('msg.html')
+
+    return flask.redirect(flask.url_for('.admin_namespaces'))

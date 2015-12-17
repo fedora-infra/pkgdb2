@@ -341,7 +341,7 @@ guake|pingou
         self.assertEqual(output.status_code, 200)
 
         expected = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 """
         self.assertEqual(output.data, expected)
@@ -358,7 +358,6 @@ guake|pingou
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
         expected = {
-            u'packageAcls': {},
             u'title': u'Fedora Package Database -- VCS ACLs'
         }
 
@@ -381,7 +380,7 @@ guake|pingou
         self.assertEqual(output.status_code, 200)
 
         expected = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
@@ -389,12 +388,12 @@ avail | @provenpackager, | rpms/geany/f18
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master
-avail | @provenpackager, | rpms/offlineimap/master"""
+avail | @provenpackager, | docker/offlineimap/master"""
         self.assertEqual(output.data, expected)
 
         # Including the EOL'd el4 collection
         expected2 = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,pingou | rpms/fedocal/f17
 avail | @provenpackager,pingou | rpms/fedocal/f18
@@ -402,8 +401,8 @@ avail | @provenpackager, | rpms/geany/f18
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou | rpms/guake/f18
 avail | @provenpackager,pingou,spot | rpms/guake/master
-avail | @provenpackager, | rpms/offlineimap/el4
-avail | @provenpackager, | rpms/offlineimap/master"""
+avail | @provenpackager, | docker/offlineimap/el4
+avail | @provenpackager, | docker/offlineimap/master"""
 
         output = self.app.get('/api/vcs/?eol=True')
         self.assertEqual(output.status_code, 200)
@@ -411,7 +410,7 @@ avail | @provenpackager, | rpms/offlineimap/master"""
 
         # Including only the f17 collection
         expected3 = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,pingou | rpms/fedocal/f17"""
         output = self.app.get('/api/vcs/?collection=f17')
@@ -420,11 +419,11 @@ avail | @provenpackager,pingou | rpms/fedocal/f17"""
 
         # Including only the master (rawhide) collection
         expected4 = """# VCS ACLs
-# avail|@groups,users|rpms/Package/branch
+# avail|@groups,users|namespace/Package/branch
 
 avail | @provenpackager,@gtk-sig,pingou | rpms/geany/master
 avail | @provenpackager,pingou,spot | rpms/guake/master
-avail | @provenpackager, | rpms/offlineimap/master"""
+avail | @provenpackager, | docker/offlineimap/master"""
         output = self.app.get('/api/vcs/?collection=master')
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected4)
@@ -438,7 +437,7 @@ avail | @provenpackager, | rpms/offlineimap/master"""
         data = json.loads(output.data)
 
         expected = {
-            "packageAcls": {
+            "rpms": {
                 "fedocal": {
                     "f17": {
                         "commit": {
@@ -505,6 +504,8 @@ avail | @provenpackager, | rpms/offlineimap/master"""
                         }
                     }
                 },
+            },
+            "docker": {
                 "offlineimap": {
                     "master": {
                         "commit": {
@@ -656,6 +657,7 @@ guake:master has toshio waiting for commit"""
                 {
                     'acl': 'approveacls',
                     'collection': 'master',
+                    'namespace': 'rpms',
                     'package': 'guake',
                     'status': 'Awaiting Review',
                     'user': 'ralph'
@@ -663,6 +665,7 @@ guake:master has toshio waiting for commit"""
                 {
                     'acl': 'commit',
                     'collection': 'master',
+                    'namespace': 'rpms',
                     'package': 'guake',
                     'status': 'Awaiting Review',
                     'user': 'toshio'

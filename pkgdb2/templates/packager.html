@@ -44,8 +44,9 @@
 <ul>
 {% for info in packages %}
     <li>
-        <a href="{{url_for('.package_info', package=info[0].name)}}">
-            {{ info[0].name }}</a>
+        <a href="{{url_for(
+            '.package_info', namespace=info[0].namespace, package=info[0].name)}}">
+            {{ info[0].namespace }}/{{ info[0].name }}</a>
         -- {{ info[0].summary }}
         (
         {% for clt in info[1] | sort(attribute='branchname', reverse=True) %}
@@ -62,8 +63,9 @@
 <ul>
 {% for info in packages_co %}
     <li>
-        <a href="{{url_for('.package_info', package=info[0].name)}}">
-            {{ info[0].name }}</a>
+        <a href="{{url_for(
+            '.package_info', namespace=info[0].namespace, package=info[0].name)}}">
+            {{ info[0].namespace }}/{{ info[0].name }}</a>
         -- {{ info[0].summary }}
         (
         {% for clt in info[1] | sort(attribute='branchname', reverse=True) %}
@@ -80,8 +82,9 @@
 <ul>
 {% for info in packages_watch %}
     <li>
-        <a href="{{url_for('.package_info', package=info[0].name)}}">
-            {{ info[0].name }}</a>
+        <a href="{{url_for(
+            '.package_info', namespace=info[0].namespace, package=info[0].name)}}">
+            {{ info[0].namespace }}/{{ info[0].name }}</a>
         -- {{ info[0].summary }}
         (
         {% for clt in info[1] | sort(attribute='branchname', reverse=True) %}

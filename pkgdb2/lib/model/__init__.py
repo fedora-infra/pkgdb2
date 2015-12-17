@@ -166,6 +166,14 @@ def create_status(session):
         except SQLAlchemyError:  # pragma: no cover
             session.rollback()
 
+    for status in ['rpms']:
+        obj = Namespace(status)
+        session.add(obj)
+        try:
+            session.commit()
+        except SQLAlchemyError:  # pragma: no cover
+            session.rollback()
+
 
 class PkgAcls(BASE):
     """ Table storing the ACLs a package can have. """
@@ -260,6 +268,31 @@ class CollecStatus(BASE):
             item.status
             for item in
             session.query(cls).order_by(cls.status).all()]
+
+
+class Namespace(BASE):
+    """ Table storing the namespaces a package can be in. """
+    __tablename__ = 'namespaces'
+
+    namespace = sa.Column(sa.String(50), primary_key=True)
+
+    def __init__(self, namespace):
+        """ Constructor. """
+        self.namespace = namespace
+
+    @classmethod
+    def all_txt(cls, session):
+        """ Return all the namespaces in plain text for a collection. """
+        return [
+            item.namespace
+            for item in
+            session.query(cls).order_by(cls.namespace).all()]
+
+    @classmethod
+    def get(cls, session, namespace):
+        """ Return the specified namespace if found in the DB. """
+        query = session.query(cls).filter(cls.namespace == namespace)
+        return query.first()
 
 
 class PackageListingAcl(BASE):
@@ -428,7 +461,7 @@ class PackageListingAcl(BASE):
         return query.all()
 
     @classmethod
-    def get_acl_package(cls, session, user, package,
+    def get_acl_package(cls, session, user, namespace, package,
                         status="Awaiting Review"):
         """ Return the pending ACLs for the specified package owned by
         user.
@@ -437,6 +470,7 @@ class PackageListingAcl(BASE):
             database.
         :arg user: the username of the packager whose ACL are asked for
             this package.
+        :arg namespace: the namespace of the package.
         :arg package: name of the package for which are returned the
             requested ACLs.
         :kwarg status: status of the ACLs to be returned for the desired
@@ -444,8 +478,12 @@ class PackageListingAcl(BASE):
 
         """
         # Get all the packages of this person
-        stmt = session.query(Package.id).filter(
+        stmt = session.query(
+            Package.id
+        ).filter(
             Package.name == package
+        ).filter(
+            Package.namespace == namespace
         ).subquery()
 
         stmt2 = session.query(PackageListing.id).filter(
@@ -1091,7 +1129,7 @@ class Package(BASE):
 
     __tablename__ = 'Package'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
-    name = sa.Column(sa.Text, nullable=False, unique=True, index=True)
+    name = sa.Column(sa.Text, nullable=False, index=True)
     summary = sa.Column(sa.Text, nullable=False)
     description = sa.Column(sa.Text, nullable=True)
     review_url = sa.Column(sa.Text)
@@ -1102,11 +1140,23 @@ class Package(BASE):
         sa.String(50),
         sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
         nullable=False)
+    namespace = sa.Column(
+        sa.String(50),
+        sa.ForeignKey(
+            'namespaces.namespace',
+            onupdate='CASCADE',
+            ondelete='CASCADE'),
+        nullable=False, default='rpms',
+    )
 
     listings = relation(PackageListing)
 
     date_created = sa.Column(sa.DateTime, nullable=False,
                              default=datetime.datetime.utcnow)
+
+    __table_args__ = (
+        sa.UniqueConstraint('name', 'namespace'),
+    )
 
     @property
     def sorted_listings(self):
@@ -1124,13 +1174,17 @@ class Package(BASE):
         return sorted(self.listings, cmp=comparator)
 
     @classmethod
-    def by_name(cls, session, pkgname):
+    def by_name(cls, session, namespace, pkgname):
         """ Return the package associated to the given name.
 
         :raises sqlalchemy.InvalidRequestError: if the package name is
             not found
         """
-        return session.query(cls).filter(Package.name == pkgname).one()
+        return session.query(cls).filter(
+            Package.name == pkgname
+        ).filter(
+            Package.namespace == namespace
+        ).one()
 
     @property
     def requests_open(self):
@@ -1289,10 +1343,10 @@ class Package(BASE):
         return query.all()
 
     @classmethod
-    def search(cls, session, pkg_name, pkg_poc=None, pkg_status=None,
-               pkg_branch=None, orphaned=None, critpath=None, eol=False,
-               offset=None, limit=None, count=False,
-               case_sensitive=True):
+    def search(
+            cls, session, namespace, pkg_name, pkg_poc=None, pkg_status=None,
+            pkg_branch=None, orphaned=None, critpath=None, eol=False,
+            offset=None, limit=None, count=False, case_sensitive=True):
         """ Search the Packages for the one fitting the given pattern.
 
         :arg session: session with which to connect to the database
@@ -1308,6 +1362,7 @@ class Package(BASE):
             If True, it will return results for all collections
             (including EOL).
             If False, it will return results only for non-EOL collections.
+        :kwarg namespace: the namespace of the packages to restrict with.
         :kwarg offset: the offset to apply to the results
         :kwarg limit: the number of results to return
         :kwarg count: a boolean to return the result of a COUNT query
@@ -1335,6 +1390,11 @@ class Package(BASE):
         else:
             query = query.filter(
                 Package.name.ilike(pkg_name)
+            )
+
+        if namespace:
+            query = query.filter(
+                Package.namespace == namespace
             )
 
         if pkg_poc:
@@ -2052,19 +2112,21 @@ def bugzilla(session, name=None):
     return query.all()
 
 
-def vcs_acls(session, eol=False, collection=None):
+def vcs_acls(session, eol=False, collection=None, namespace=None):
     """ Return information for each package to sync with git.
 
     :arg session: the session to connect to the database with.
     :kwarg eol: A boolean specifying whether to include information about
         End Of Life collections or not. Defaults to ``False``.
     :kwarg collection: Restrict the VCS info to a specific collection
+    :kwarg namespace: Restrict the VCS info returned to a given namespace
 
     """
     query = session.query(
         Package.name,  # 0
         PackageListingAcl.fas_name,  # 1
         Collection.branchname,  # 2
+        Package.namespace,  # 2
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(
@@ -2084,12 +2146,17 @@ def vcs_acls(session, eol=False, collection=None):
         query = query.filter(
             Collection.status != 'EOL')
 
+    if namespace is not None:
+        query = query.filter(
+            Package.namespace == namespace
+        )
+
     query = query.filter(
         PackageListingAcl.acl == 'commit'
     ).filter(
         PackageListingAcl.status == 'Approved'
     ).group_by(
-        Package.name, PackageListingAcl.fas_name,
+        Package.namespace, Package.name, PackageListingAcl.fas_name,
         Collection.branchname,
     ).order_by(
         Package.name
@@ -2101,6 +2168,7 @@ def vcs_acls(session, eol=False, collection=None):
     query2 = session.query(
         Package.name,  # 0
         Collection.branchname,  # 1
+        Package.namespace,  # 2
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(
@@ -2108,6 +2176,7 @@ def vcs_acls(session, eol=False, collection=None):
     ).filter(
         PackageListing.status.in_(['Approved', 'Orphaned'])
     ).group_by(
+        Package.namespace,
         Package.name,
         Collection.branchname,
     ).order_by(
@@ -2124,10 +2193,15 @@ def vcs_acls(session, eol=False, collection=None):
         query2 = query2.filter(
             Collection.status != 'EOL')
 
+    if namespace is not None:
+        query2 = query2.filter(
+            Package.namespace == namespace
+        )
+
     sub2 = set(query2.all())
 
     for entry in sub2 - sub:
-        data.append([entry[0], None, entry[1]])
+        data.append([entry[0], None, entry[1], entry[2]])
 
     return data
 

@@ -89,8 +89,13 @@ def inject_is_admin():
     if justlogedout:
         flask.session['_justloggedout'] = None
 
-    return dict(is_admin=is_pkgdb_admin(flask.g.fas_user),
-                version=__version__)
+    namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
+
+    return dict(
+        is_admin=is_pkgdb_admin(flask.g.fas_user),
+        version=__version__,
+        namespaces=namespaces,
+    )
 
 
 @UI.context_processor
@@ -148,7 +153,7 @@ def stats():
 def search():
     ''' Redirect to the correct url to perform the appropriate search.
     '''
-    search_type = flask.request.args.get('type', 'package')
+    search_type = flask.request.args.get('type', None)
     search_term = flask.request.args.get('term', '*') or '*'
 
     if not search_term.endswith('*'):
@@ -164,8 +169,12 @@ def search():
         return flask.redirect(flask.url_for('.list_retired',
                                             motif=search_term))
     else:
-        return flask.redirect(flask.url_for('.list_packages',
-                                            motif=search_term))
+        args = dict(
+            motif=search_term
+        )
+        if search_type:
+            args['namespace'] = search_type
+        return flask.redirect(flask.url_for('.list_packages', **args))
 
 
 @UI.route('/opensearch/<xmlfile>')

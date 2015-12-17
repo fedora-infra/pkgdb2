@@ -165,6 +165,11 @@ class RequestPackageForm(wtf.Form):
         'Upstream URL',
         [wtforms.validators.optional()]
     )
+    namespace = wtforms.SelectField(
+        'Namespace',
+        [wtforms.validators.Required()],
+        choices=[(item, item) for item in []]
+    )
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
@@ -176,6 +181,12 @@ class RequestPackageForm(wtf.Form):
             self.branches.choices = [
                 (collec.branchname, collec.branchname)
                 for collec in kwargs['collections']
+            ]
+
+        if 'namespaces' in kwargs:
+            self.namespace.choices = [
+                (ns, ns)
+                for ns in kwargs['namespaces']
             ]
 
 
@@ -211,6 +222,11 @@ class AddPackageForm(RequestPackageForm):
 
 class EditPackageForm(wtf.Form):
     """ Form to edit packages. """
+    namespace = wtforms.SelectField(
+        'Namespaces',
+        [wtforms.validators.Required()],
+        choices=[('', '')]
+    )
     pkgname = wtforms.TextField(
         'Package name',
         [
@@ -250,10 +266,20 @@ class EditPackageForm(wtf.Form):
                 (status, status)
                 for status in kwargs['pkg_status_list']
             ]
+        if 'namespaces' in kwargs:
+            self.namespace.choices = [
+                (ns, ns)
+                for ns in kwargs['namespaces']
+            ]
 
 
 class SetAclPackageForm(wtf.Form):
     """ Form to set ACLs to someone on a package. """
+    namespace = wtforms.SelectField(
+        'Namespaces',
+        [wtforms.validators.Required()],
+        choices=[('', '')]
+    )
     pkgname = wtforms.TextField(
         'Package name',
         [
@@ -306,6 +332,11 @@ class SetAclPackageForm(wtf.Form):
             self.acl.choices = [
                 (acl, acl)
                 for acl in kwargs['pkg_acl']
+            ]
+        if 'namespaces' in kwargs:
+            self.namespace.choices = [
+                (ns, ns)
+                for ns in kwargs['namespaces']
             ]
 
 
@@ -416,4 +447,12 @@ class UnretireForm(BranchForm):
     review_url = wtforms.TextField(
         'review_url',
         [wtforms.validators.optional()],
+    )
+
+
+class NamespaceForm(wtf.Form):
+    """ Form to add/drop namespace from the DB. """
+    namespace = wtforms.TextField(
+        'Namespace <span class="error">*</span>',
+        [wtforms.validators.Required()]
     )

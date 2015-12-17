@@ -175,13 +175,16 @@ def create_session(db_url, debug=False, pool_recycle=3600):
     return scopedsession
 
 
-def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
-                pkg_collection, pkg_poc, user, pkg_review_url=None,
-                pkg_upstream_url=None, pkg_critpath=False):
+def add_package(
+        session, namespace, pkg_name, pkg_summary, pkg_description,
+        pkg_status, pkg_collection, pkg_poc, user, pkg_review_url=None,
+        pkg_upstream_url=None, pkg_critpath=False):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
 
     :arg session: session with which to connect to the database.
+    :arg namespace: the namespace of the package created, defaults to
+        'rpms'.
     :arg pkg_name: the name of the package.
     :arg pkg_summary: a summary description of the package.
     :arg pkg_description: the description of the package.
@@ -219,13 +222,15 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
         else:
             pkg_collection = [pkg_collection]
 
-    package = model.Package(name=pkg_name,
-                            summary=pkg_summary,
-                            description=pkg_description,
-                            status=pkg_status,
-                            review_url=pkg_review_url,
-                            upstream_url=pkg_upstream_url
-                            )
+    package = model.Package(
+        namespace=namespace,
+        name=pkg_name,
+        summary=pkg_summary,
+        description=pkg_description,
+        status=pkg_status,
+        review_url=pkg_review_url,
+        upstream_url=pkg_upstream_url,
+    )
     session.add(package)
     try:
         session.flush()
@@ -261,13 +266,15 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
 
     for collec in pkg_collection:
         for acl in acls:
-            set_acl_package(session=session,
-                            pkg_name=pkg_name,
-                            pkg_branch=collec,
-                            pkg_user=pkg_poc,
-                            acl=acl,
-                            status='Approved',
-                            user=user)
+            set_acl_package(
+                session=session,
+                namespace=namespace,
+                pkg_name=pkg_name,
+                pkg_branch=collec,
+                pkg_user=pkg_poc,
+                acl=acl,
+                status='Approved',
+                user=user)
     try:
         session.flush()
         return 'Package created'
@@ -276,11 +283,13 @@ def add_package(session, pkg_name, pkg_summary, pkg_description, pkg_status,
         raise PkgdbException('Could not add ACLs')
 
 
-def get_acl_package(session, pkg_name, pkg_clt=None, eol=False):
+def get_acl_package(
+        session, namespace, pkg_name, pkg_clt=None, eol=False):
     """ Return the ACLs for the specified package.
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package to retrieve the ACLs for.
+    :kwarg namespace: the namespace of the package.
     :kward pkg_clt: the branche name of the collection or collections to
         retrieve the ACLs of.
     :kwarg eol: a boolean to specify whether to include results for
@@ -293,7 +302,7 @@ def get_acl_package(session, pkg_name, pkg_clt=None, eol=False):
         found in the database with the name ``pkg_name``.
 
     """
-    package = model.Package.by_name(session, pkg_name)
+    package = model.Package.by_name(session, namespace, pkg_name)
     pkglisting = model.PackageListing.by_package_id(session, package.id)
 
     if pkg_clt:
@@ -315,11 +324,12 @@ def get_acl_package(session, pkg_name, pkg_clt=None, eol=False):
     return pkglisting
 
 
-def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
-                    user, force=False):
+def set_acl_package(session, namespace, pkg_name, pkg_branch, pkg_user,
+                    acl, status, user, force=False):
     """ Set the specified ACLs for the specified package.
 
     :arg session: session with which to connect to the database.
+    :arg namespace: the namespace of the package.
     :arg pkg_name: the name of the package.
     :arg pkg_branch: the name of the collection.
     :arg pkg_user: the FAS user for which the ACL should be set/change.
@@ -352,7 +362,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
         _validate_fas_user(pkg_user)
 
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -363,7 +373,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
                              % pkg_branch)
 
     if not force and not pkgdb2.is_pkg_admin(
-            session, user, package.name, pkg_branch):
+            session, user, namespace, package.name, pkg_branch):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
@@ -381,9 +391,7 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
             'Groups cannot have "approveacls".')
 
     pkglisting = model.PackageListing.by_pkgid_collectionid(
-        session,
-        package.id,
-        collection.id)
+        session, package.id, collection.id)
     if not pkglisting:
         pkglisting = package.create_listing(point_of_contact=pkg_user,
                                             collection=collection,
@@ -433,11 +441,12 @@ def set_acl_package(session, pkg_name, pkg_branch, pkg_user, acl, status,
     ))
 
 
-def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
+def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
                    former_poc=None):
     """ Change the point of contact of a package.
 
     :arg session: session with which to connect to the database.
+    :arg namespace: the namespace of the package.
     :arg pkg_name: the name of the package.
     :arg pkg_branch: the branchname of the collection.
     :arg pkg_poc: name of the new point of contact for the package.
@@ -464,7 +473,7 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
     _validate_poc(pkg_poc)
 
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -479,8 +488,8 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
                                                             collection.id)
     if not pkglisting:
         raise PkgdbException(
-            'The package %s could not be found in the collection %s.' %
-            (pkg_name, pkg_branch))
+            'The package %s/%s could not be found in the collection %s.' %
+            (namespace, pkg_name, pkg_branch))
 
     prev_poc = pkglisting.point_of_contact
 
@@ -509,10 +518,12 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
         pkglisting.status = 'Orphaned'
         # Remove commit and watchcommits if the user has them
         for acl in ['commit', 'approveacls']:
-            if has_acls(session, user.username, pkg_name, acl=acl,
-                        branch=pkg_branch):
+            if has_acls(
+                    session, user.username, namespace, pkg_name,
+                    acl=acl, branch=pkg_branch):
                 set_acl_package(
                     session,
+                    namespace=namespace,
                     pkg_name=pkg_name,
                     pkg_branch=pkg_branch,
                     pkg_user=user.username,
@@ -523,10 +534,12 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
     elif pkglisting.status in ('Orphaned', 'Retired'):
         pkglisting.status = 'Approved'
         for acl in ACLS:
-            if not has_acls(session, pkg_poc, pkg_name, acl=acl,
-                        branch=pkg_branch):
+            if not has_acls(
+                    session, pkg_poc, namespace, pkg_name,
+                    acl=acl, branch=pkg_branch):
                 set_acl_package(
                     session,
+                    namespace=namespace,
                     pkg_name=pkg_name,
                     pkg_branch=pkg_branch,
                     pkg_user=pkg_poc,
@@ -547,22 +560,24 @@ def update_pkg_poc(session, pkg_name, pkg_branch, pkg_poc, user,
             package_listing=pkglisting.to_json(),
         )
     )
-    # Update Bugzilla about new owner
-    pkgdb2.lib.utils.set_bugzilla_owner(
-        pkg_poc, prev_poc, package.name, collection.name,
-        collection.version)
+    if namespace == 'rpms':
+        # Update Bugzilla about new owner
+        pkgdb2.lib.utils.set_bugzilla_owner(
+            pkg_poc, prev_poc, package.name, collection.name,
+            collection.version)
 
     return output
 
 
-def update_pkg_status(session, pkg_name, pkg_branch, status, user,
-                      poc='orphan'):
+def update_pkg_status(
+        session, namespace, pkg_name, pkg_branch, status, user, poc='orphan'):
     """ Update the status of a package.
 
     :arg session: session with which to connect to the database.
     :arg pkg_name: the name of the package.
     :arg pkg_branch: the name of the collection.
     :arg user: the user making the action.
+    :kwarg namespace: the namespace of the package.
     :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
         this exception beeing raised:
             - The provided ``pkg_name`` does not correspond to any package
@@ -584,7 +599,7 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
 
     """
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -602,15 +617,15 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
                                                             collection.id)
 
     if not pkglisting:
-        raise PkgdbException('No package %s found in collection %s' % (
-                             pkg_name, pkg_branch))
+        raise PkgdbException('No package %s/%s found in collection %s' % (
+                             namespace, pkg_name, pkg_branch))
 
     prev_status = pkglisting.status
     if status == 'Retired':
 
         if pkglisting.point_of_contact != user.username \
                 and not pkgdb2.is_pkg_admin(
-                    session, user, pkg_name, pkg_branch) \
+                    session, user, namespace, pkg_name, pkg_branch) \
                 and pkglisting.point_of_contact != 'orphan' \
                 and not pkgdb2.is_pkgdb_admin(user) \
                 and not pkglisting.point_of_contact.startswith('group::'):
@@ -644,8 +659,8 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
         else:
             raise PkgdbException(
                 'You are not allowed to retire the '
-                'package: %s on branch %s.' % (
-                    package.name, collection.branchname))
+                'package: %s/%s on branch %s.' % (
+                    package.namespace, package.name, collection.branchname))
     elif status == 'Orphaned':
         pkglisting.status = 'Orphaned'
         pkglisting.point_of_contact = 'orphan'
@@ -674,8 +689,9 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
     else:
         raise PkgdbException(
             'You are not allowed to update the status of '
-            'the package: %s on branch %s to %s.' % (
-                package.name, collection.branchname, status)
+            'the package: %s/%s on branch %s to %s.' % (
+                package.namespace, package.name,
+                collection.branchname, status)
         )
 
     return pkgdb2.lib.utils.log(
@@ -692,9 +708,10 @@ def update_pkg_status(session, pkg_name, pkg_branch, status, user,
     )
 
 
-def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
-                   orphaned=None, critpath=None, status=None, eol=False,
-                   page=None, limit=None, count=False, case_sensitive=True):
+def search_package(
+        session, namespace, pkg_name, pkg_branch=None, pkg_poc=None,
+        orphaned=None, critpath=None, status=None, eol=False,
+        page=None, limit=None, count=False, case_sensitive=True):
     """ Return the list of packages matching the given criteria.
 
     :arg session: session with which to connect to the database.
@@ -709,6 +726,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
         EOL collections or not. Defaults to False.
         If True, it will return results for all collections (including EOL).
         If False, it will return results only for non-EOL collections.
+    :kwarg namespace: the namespace of the packages to restrict with.
     :kwarg page: the page number to apply to the results.
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
@@ -747,6 +765,7 @@ def search_package(session, pkg_name, pkg_branch=None, pkg_poc=None,
 
     return model.Package.search(
         session,
+        namespace=namespace,
         pkg_name=pkg_name,
         pkg_poc=pkg_poc,
         pkg_status=status,
@@ -860,7 +879,7 @@ def search_packagers(session, pattern, eol=False, page=None, limit=None,
 
 
 def search_actions(
-        session, package=None, packager=None,
+        session, namespace='rpms', package=None, packager=None,
         action=None, status='Awaiting Review', page=None,
         limit=None, count=False):
     """ Return the list of actions requiring an admin and matching the
@@ -899,8 +918,8 @@ def search_actions(
             raise PkgdbException('Wrong page provided')
 
     package_id = None
-    if package is not None:
-        package = search_package(session, package, limit=1)
+    if package is not None and namespace is not None:
+        package = search_package(session, namespace, package, limit=1)
         if not package:
             raise PkgdbException('No package exists')
         else:
@@ -923,12 +942,12 @@ def search_actions(
         count=count)
 
 
-def search_logs(session, package=None, packager=None,
-                from_date=None, page=None,
-                limit=None, count=False):
+def search_logs(session,namespace=None, package=None, packager=None,
+                from_date=None, page=None, limit=None, count=False):
     """ Return the list of Collection matching the given criteria.
 
     :arg session: session with which to connect to the database.
+    :kwarg namespace: the namespace of a package.
     :kwarg package: retrict the logs to a certain package.
     :kwarg packager: restrict the logs to a certain user/packager.
     :kwarg from_date: a date from which to retrieve the logs.
@@ -960,7 +979,8 @@ def search_logs(session, package=None, packager=None,
 
     package_id = None
     if package is not None:
-        package = search_package(session, package, limit=1)
+        package = search_package(
+            session, namespace, package, limit=1)
         if not package:
             raise PkgdbException('No package exists')
         else:
@@ -1251,9 +1271,10 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
             raise PkgdbException('Could not edit Collection.')
 
 
-def edit_package(session, package, pkg_name=None, pkg_summary=None,
-                 pkg_description=None, pkg_review_url=None,
-                 pkg_upstream_url=None, pkg_status=None, user=None):
+def edit_package(
+        session, package, pkg_name=None, pkg_summary=None,
+        pkg_description=None, pkg_review_url=None, pkg_upstream_url=None,
+        pkg_status=None, user=None):
     """ Edit a specified package
 
     This method only flushes the new object, nothing is committed to the
@@ -1393,17 +1414,19 @@ def get_pending_acl_user(session, user=None):
     for package in model.PackageListingAcl.get_pending_acl(
             session, user=user):
         output.append(
-            {'package': package.packagelist.package.name,
-             'user': package.fas_name,
-             'collection': package.packagelist.collection.branchname,
-             'acl': package.acl,
-             'status': package.status,
+            {
+                'package': package.packagelist.package.name,
+                'namespace': package.packagelist.package.namespace,
+                'user': package.fas_name,
+                'collection': package.packagelist.collection.branchname,
+                'acl': package.acl,
+                'status': package.status,
              }
         )
     return output
 
 
-def get_acl_user_package(session, user, package, status=None):
+def get_acl_user_package(session, user, namespace, package, status=None):
     """ Return the ACLs on a specified package for the specified user.
 
     The method returns a list of dictionnary containing the package name
@@ -1424,7 +1447,7 @@ def get_acl_user_package(session, user, package, status=None):
     """
     output = []
     for package in model.PackageListingAcl.get_acl_package(
-            session, user, package, status=status):
+            session, user, namespace, package, status=status):
         output.append(
             {'package': package.packagelist.package.name,
              'user': package.fas_name,
@@ -1437,7 +1460,7 @@ def get_acl_user_package(session, user, package, status=None):
     return output
 
 
-def has_acls(session, user, package, acl, branch=None):
+def has_acls(session, user, namespace, package, acl, branch=None):
     """ Return wether the specified user has *one of* the specified acl on
     the specified package.
 
@@ -1457,8 +1480,9 @@ def has_acls(session, user, package, acl, branch=None):
     if package is None or acl is None:
         return False
 
-    acls = get_acl_user_package(session, user=user,
-                                package=package, status='Approved')
+    acls = get_acl_user_package(
+        session, user=user, namespace=namespace,
+        package=package, status='Approved')
 
     if isinstance(acl, basestring):
         acl = [acl]
@@ -1493,7 +1517,7 @@ def get_status(session, status='all'):
     if status == 'all':
         status = [
             'clt_status', 'pkg_status', 'pkg_acl', 'acl_status',
-            'admin_status',
+            'admin_status', 'namespaces',
         ]
     elif isinstance(status, basestring):
         status = [status]
@@ -1508,6 +1532,8 @@ def get_status(session, status='all'):
         output['acl_status'] = model.AclStatus.all_txt(session)
     if 'admin_status' in status:
         output['admin_status'] = model.ActionStatus.all_txt(session)
+    if 'namespaces' in status:
+        output['namespaces'] = model.Namespace.all_txt(session)
 
     return output
 
@@ -1536,7 +1562,8 @@ def get_top_poc(session, top=10):
     return model.PackageListing.get_top_poc(session, top)
 
 
-def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
+def unorphan_package(
+        session, namespace, pkg_name, pkg_branch, pkg_user, user):
     """ Unorphan a specific package in favor of someone and give him the
     appropriate ACLs.
 
@@ -1563,7 +1590,7 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     _validate_poc(pkg_user)
 
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -1572,16 +1599,18 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
     except NoResultFound:
         raise PkgdbException('No collection found by this name')
 
-    pkg_listing = get_acl_package(session, pkg_name, pkg_branch)
+    pkg_listing = get_acl_package(
+        session, namespace, pkg_name, pkg_clt=pkg_branch)
     if not pkg_listing:
         raise PkgdbException(
-            'Package "%s" is not in the collection %s'
-            % (pkg_name, pkg_branch))
+            'Package "%s/%s" is not in the collection %s'
+            % (namespace, pkg_name, pkg_branch))
     pkg_listing = pkg_listing[0]
 
     if pkg_listing.status not in ('Orphaned', 'Retired'):
         raise PkgdbException(
-            'Package "%s" is not orphaned on %s' % (pkg_name, pkg_branch))
+            'Package "%s/%s" is not orphaned on %s' % (
+                namespace, pkg_name, pkg_branch))
 
     if not pkgdb2.is_pkgdb_admin(user):
         if user.username != pkg_user and not pkg_user.startswith('group::'):
@@ -1604,9 +1633,10 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         package_name=pkg_listing.package.name,
         package_listing=pkg_listing.to_json(),
     ))
-    pkgdb2.lib.utils.set_bugzilla_owner(
-        pkg_user, None, package.name, collection.name,
-        collection.version)
+    if namespace == 'rpms':
+        pkgdb2.lib.utils.set_bugzilla_owner(
+            pkg_user, None, package.name, collection.name,
+            collection.version)
 
     acls = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 
@@ -1632,8 +1662,8 @@ def unorphan_package(session, pkg_name, pkg_branch, pkg_user, user):
         ))
 
     session.flush()
-    return 'Package %s has been unorphaned on %s by %s' % (
-        pkg_name, pkg_branch, pkg_user
+    return 'Package %s/%s has been unorphaned on %s by %s' % (
+        namespace, pkg_name, pkg_branch, pkg_user
     )
 
 
@@ -1688,16 +1718,16 @@ def add_branch(session, clt_from, clt_to, user):
                 # Should not fail since the flush() passed
                 session.commit()
                 messages.append(
-                    '%s branched successfully from %s to %s %s' % (
-                        pkglist.package.name, clt_from.name, clt_to.name,
-                        clt_to.version))
+                    '%s/%s branched successfully from %s to %s %s' % (
+                        pkglist.package.namespace, pkglist.package.name,
+                        clt_from.name, clt_to.name, clt_to.version))
             except SQLAlchemyError, err:  # pragma: no cover
                 session.rollback()
                 pkgdb2.LOG.debug(err)
                 messages.append(
-                    'FAILED: %s failed to branch from %s to %s %s' % (
-                        pkglist.package.name, clt_from.name, clt_to.name,
-                        clt_to.version))
+                    'FAILED: %s/%s failed to branch from %s to %s %s' % (
+                        pkglist.package.namespace, pkglist.package.name,
+                        clt_from.name, clt_to.name, clt_to.version))
                 messages.append(str(err))
 
     pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
@@ -1709,7 +1739,7 @@ def add_branch(session, clt_from, clt_to, user):
     return messages
 
 
-def add_new_branch_request(session, pkg_name, clt_to, user):
+def add_new_branch_request(session, namespace, pkg_name, clt_to, user):
     """ Register a new branch request.
 
     :arg session: session with which to connect to the database.
@@ -1725,9 +1755,10 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
 
     """
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
-        raise PkgdbException('Package %s not found' % pkg_name)
+        raise PkgdbException(
+            'Package %s/%s not found' % (namespace, pkg_name))
 
     try:
         clt_to = model.Collection.by_name(session, clt_to)
@@ -1735,7 +1766,8 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
         raise PkgdbException('Branch %s not found' % clt_to)
 
     _validate_poc(user.username)
-    pkg_admin = has_acls(session, user.username, pkg_name, 'approveacls')
+    pkg_admin = has_acls(
+        session, user.username, namespace, pkg_name, 'approveacls')
 
     status = 'Pending'
     if pkg_admin:
@@ -1789,6 +1821,7 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
                     'watchcommits', 'approveacls']:
             set_acl_package(
                 session,
+                namespace=namespace,
                 pkg_name=package.name,
                 pkg_branch=clt_to.branchname,
                 pkg_user=user.username,
@@ -1809,7 +1842,7 @@ def add_new_branch_request(session, pkg_name, clt_to, user):
 
 def add_new_package_request(
         session, pkg_name, pkg_summary, pkg_description, pkg_status,
-        pkg_collection, pkg_poc, user, pkg_review_url,
+        pkg_collection, pkg_poc, user, pkg_review_url, pkg_namespace='rpms',
         pkg_upstream_url=None, pkg_critpath=False):
     """ Create a new Package request in the database.
 
@@ -1821,6 +1854,7 @@ def add_new_package_request(
     :arg pkg_collection: the collection in which had the package.
     :arg pkg_poc: the point of contact for this package in this collection
     :arg user: the user performing the action
+    :kwarg pkg_namespace: the namespace of the package, defaults to 'rpms'
     :kwarg pkg_review_url: the url of the review-request on the bugzilla
     :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
@@ -1846,12 +1880,12 @@ def add_new_package_request(
     # Prevent asking for an existing package
     package = None
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, pkg_namespace, pkg_name)
     except NoResultFound:
         pass
     if package:
         raise PkgdbException(
-            'There is already a package named: %s' % pkg_name)
+            'There is already a package named: %s/%s' % (namespace, pkg_name))
 
     if pkg_collection.startswith(('el', 'epel')):
         _validate_pkg(session, pkg_collection[-1:], pkg_name)
@@ -1866,6 +1900,7 @@ def add_new_package_request(
         'pkg_review_url': pkg_review_url.strip() if pkg_review_url else None,
         'pkg_upstream_url': pkg_upstream_url.strip() if pkg_upstream_url else None,
         'pkg_critpath': pkg_critpath,
+        'pkg_namespace': pkg_namespace,
     }
 
     action = model.AdminAction(
@@ -1887,12 +1922,14 @@ def add_new_package_request(
     ))
 
 
-def add_unretire_request(session, pkg_name, pkg_branch, review_url, user):
+def add_unretire_request(
+        session, namespace, pkg_name, pkg_branch, review_url, user):
     """ Register a new request to un-retire a package.
 
     This method only flushes the new objects.
 
     :arg session: session with which to connect to the database.
+    :arg namespace: the namespace of the package to unretire.
     :arg pkg_name: the name of the package to unretire.
     :arg clt_to: the ``branchname`` of the collection to unretire.
     :arg review_url: the url of the new review.
@@ -1905,9 +1942,10 @@ def add_unretire_request(session, pkg_name, pkg_branch, review_url, user):
 
     """
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
-        raise PkgdbException('Package %s not found' % pkg_name)
+        raise PkgdbException(
+            'Package %s/%s not found' % (namespace, pkg_name))
 
     try:
         pkg_branch = model.Collection.by_name(session, pkg_branch)
@@ -2104,30 +2142,36 @@ def _vcs_acls_json(packages, skip_pp=None):
     }
     """
     output = {}
-    for pkgname, username, branchname in packages:
+    for pkgname, username, branchname, namespace in packages:
         user = None
         group = None
+
         if username and username.startswith('group::'):
                 group = username.replace('group::', '')
         else:
             user = username
 
-        if pkgname not in output:
-            output[pkgname] = {}
+        if namespace not in output:
+            output[namespace] = {}
 
-        if branchname not in output[pkgname]:
+        if pkgname not in output[namespace]:
+            output[namespace][pkgname] = {}
+
+        if branchname not in output[namespace][pkgname]:
             groups = []
             if skip_pp and pkgname not in skip_pp:
                 groups.append('provenpackager')
 
-            output[pkgname][branchname] = {
-                'commit': {'groups': groups, 'people': []}
+            output[namespace][pkgname][branchname] = {
+                'commit': {'groups': groups, 'people': []},
             }
 
         if group:
-            output[pkgname][branchname]['commit']['groups'].append(group)
+            output[namespace][pkgname][branchname
+                ]['commit']['groups'].append(group)
         if user:
-            output[pkgname][branchname]['commit']['people'].append(user)
+            output[namespace][pkgname][branchname
+                ]['commit']['people'].append(user)
     return output
 
 
@@ -2159,7 +2203,7 @@ def _vcs_acls_text(packages, skip_pp=None):
 
     """
     output = {}
-    for pkgname, username, branchname in packages:
+    for pkgname, username, branchname, namespace in packages:
         user = None
         group = None
         if username and username.startswith('group::'):
@@ -2191,6 +2235,7 @@ def _vcs_acls_text(packages, skip_pp=None):
                     'user': user or '',
                     'group': groups + (group or ''),
                     'branch': branchname,
+                    'namespace': namespace,
                 }
         else:
             if group and groups:
@@ -2201,13 +2246,15 @@ def _vcs_acls_text(packages, skip_pp=None):
                     'user': user or '',
                     'group': groups + (group or ''),
                     'branch': branchname,
+                    'namespace': namespace,
                 }
             }
     return output
 
 
 def vcs_acls(
-        session, eol=False, collection=None, oformat='text', skip_pp=None):
+        session, eol=False, collection=None, oformat='text', skip_pp=None,
+        namespace=None):
     """ Return the information to sync ACLs with gitolite.
 
     :arg session: the session to connect to the database with.
@@ -2218,10 +2265,12 @@ def vcs_acls(
         can be `JSON`.
     :kwarg skip_pp: A boolean to specify if we want to skip provenpackager
         for some packages
+    :kwarg namespace: Restrict the ACLs returned to a given namespace
 
     """
     output = {}
-    pkgs = model.vcs_acls(session=session, eol=eol, collection=collection)
+    pkgs = model.vcs_acls(
+        session=session, eol=eol, collection=collection, namespace=namespace)
     if oformat == 'json':
         output = _vcs_acls_json(pkgs, skip_pp)
     else:
@@ -2230,13 +2279,14 @@ def vcs_acls(
 
 
 def set_critpath_packages(
-        session, pkg_name, pkg_branch, critpath=True, user=None):
+        session, namespace, pkg_name, pkg_branch, critpath=True, user=None):
     """ Set the provided critpath status on a specified package.
 
     This method can be used to set or unset the critpath flag of a package
     on the specified branches.
 
     :arg session: the session with which to connect to the database.
+    :arg namespace: the namespce to search the package in.
     :arg pkg_name: The name of the package to update.
     :arg pkg_branch: The branchname of the collection to update
     :kwarg user: The user performing the update.
@@ -2259,9 +2309,10 @@ def set_critpath_packages(
         raise PkgdbException('You are not allowed to edit packages')
 
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
-        raise PkgdbException('No package found by this name')
+        raise PkgdbException(
+            'No package found by this name: %s/%s' % (namespace, pkg_name))
 
     try:
         collection = model.Collection.by_name(session, pkg_branch)
@@ -2274,16 +2325,18 @@ def set_critpath_packages(
                                                             collection.id)
 
     if not pkglisting:
-        raise PkgdbException('%s was not found in the collection %s'
-                             % (pkg_name, pkg_branch))
+        raise PkgdbException(
+            '%s/%s was not found in the collection %s' % (
+                namespace, pkg_name, pkg_branch))
 
     msg = None
     branches = []
     if critpath != pkglisting.critpath:
         pkglisting.critpath = critpath
         branches.append(pkglisting.collection.branchname)
-        msg = '%s: critpath updated on %s to %s' % (
-            package.name, pkglisting.collection.branchname, critpath)
+        msg = '%s/%s: critpath updated on %s to %s' % (
+            package.namespace, package.name,
+            pkglisting.collection.branchname, critpath)
         session.add(pkglisting)
 
     try:
@@ -2326,11 +2379,12 @@ def get_koschei_monitored_package(session):
     return model.Package.get_koschei_monitored(session)
 
 
-def set_monitor_package(session, pkg_name, status, user):
+def set_monitor_package(session, namespace, pkg_name, status, user):
     """ Set the provided status on the monitoring flag of the specified
     package.
 
     :arg session: the session with which to connect to the database.
+    :arg namespace: The namespace of the package to update.
     :arg pkg_name: The name of the package to update.
     :arg status: boolean specifying the monitor status to set
     :arg user: The user performing the update.
@@ -2349,12 +2403,12 @@ def set_monitor_package(session, pkg_name, status, user):
 
     package = None
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
     pkger = has_acls(
-        session, user.username, pkg_name, ['commit', 'approveacls'])
+        session, user.username, namespace, pkg_name, ['commit', 'approveacls'])
     if not (pkger or pkgdb2.is_pkgdb_admin(user)):
         raise PkgdbException(
             'You are not allowed to update the monitor flag on this package'
@@ -2365,8 +2419,8 @@ def set_monitor_package(session, pkg_name, status, user):
         package.monitor = status
         session.add(package)
 
-        msg = 'Monitoring status of %s set to %s' % (
-            pkg_name, package.monitoring_status)
+        msg = 'Monitoring status of %s/%s set to %s' % (
+            package.namespace, pkg_name, package.monitoring_status)
 
         try:
             session.flush()
@@ -2384,11 +2438,12 @@ def set_monitor_package(session, pkg_name, status, user):
     return msg
 
 
-def set_koschei_monitor_package(session, pkg_name, status, user):
+def set_koschei_monitor_package(session, namespace, pkg_name, status, user):
     """ Set the provided status on the koscehi monitoring flag of the
     specified package.
 
     :arg session: the session with which to connect to the database.
+    :arg namespace: the namespace of the package to update.
     :arg pkg_name: The name of the package to update.
     :arg status: boolean specifying the monitor status to set
     :arg user: The user performing the update.
@@ -2407,7 +2462,7 @@ def set_koschei_monitor_package(session, pkg_name, status, user):
 
     package = None
     try:
-        package = model.Package.by_name(session, pkg_name)
+        package = model.Package.by_name(session, namespace, pkg_name)
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
@@ -2422,8 +2477,8 @@ def set_koschei_monitor_package(session, pkg_name, status, user):
         package.koschei = status
         session.add(package)
 
-        msg = 'Koschei monitoring status of %s set to %s' % (
-            pkg_name, package.koschei)
+        msg = 'Koschei monitoring status of %s/%s set to %s' % (
+            package.namespace, pkg_name, package.koschei)
 
         try:
             session.flush()
@@ -2474,8 +2529,9 @@ def edit_action_status(
     """
     pkgdb_admin = pkgdb2.is_pkgdb_admin(user)
     if admin_action.package:
-        pkg_admin = has_acls(session, user.username,
-                             admin_action.package.name, 'approveacls')
+        pkg_admin = has_acls(
+            session, user.username, admin_action.package.namespace,
+            admin_action.package.name, 'approveacls')
     else:
         pkg_admin = False
     requester = admin_action.user == user.username
@@ -2580,3 +2636,88 @@ def get_retired_packages(session, collection):
     """
 
     return model.Package.get_retired(session, collection)
+
+
+def add_namespace(session, namespace, user):
+    """ Add a new namespace to the database.
+
+    This method only flushes the new object, nothing is committed to the
+    database.
+
+    :arg session: the session with which to connect to the database.
+    :arg namespace: the namespace to add.
+    :arg user: The user performing the action.
+    :returns: a message informing that the namespace was successfully
+        created.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to add a namespace, only pkgdb admin can.
+            - An error occured while adding the namespace in the database
+                the message returned is then the error message from the
+                database.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to add namespaces')
+
+    ns = model.Namespace(namespace=namespace)
+    try:
+        session.add(ns)
+        session.flush()
+        pkgdb2.lib.utils.log(session, None, 'namespace.new', dict(
+            agent=user.username,
+            namespace=namespace,
+        ))
+        return 'Namespace "%s" created' % namespace
+    except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb2.LOG.exception(err)
+        session.rollback()
+        raise PkgdbException(
+            'Could not add Namespace "%s" to the database.' % namespace)
+
+
+def drop_namespace(session, namespace, user):
+    """ Remove a namespace from the database.
+
+    This method only flushes the new object, nothing is committed to the
+    database.
+
+    :arg session: the session with which to connect to the database.
+    :arg namespace: the namespace to remove.
+    :arg user: The user performing the action.
+    :returns: a message informing that the namespace was successfully
+        removed.
+    :rtype: str()
+    :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
+        this exception beeing raised:
+            - You are not allowed to remove a namespace, only pkgdb admin can.
+            - The specified namespace could not be found in the DB.
+            - An error occured while removing the namespace in the database
+                the message returned is then the error message from the
+                database.
+
+    """
+
+    if not pkgdb2.is_pkgdb_admin(user):
+        raise PkgdbException('You are not allowed to remove namespaces')
+
+    ns = model.Namespace.get(session, namespace)
+    if not ns:
+        raise PkgdbException(
+            'Could not find namespace "%s" in the DB' % namespace)
+
+    try:
+        session.delete(ns)
+        session.flush()
+        pkgdb2.lib.utils.log(session, None, 'namespace.drop', dict(
+            agent=user.username,
+            namespace=namespace,
+        ))
+        return 'Namespace "%s" removed' % namespace
+    except SQLAlchemyError, err:  # pragma: no cover
+        pkgdb2.LOG.exception(err)
+        session.rollback()
+        raise PkgdbException(
+            'Could not remove Namespace "%s" to the database.' % namespace)

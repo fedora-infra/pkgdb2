@@ -16,7 +16,9 @@
 <h1>Give Point of Contact of package: {{packagename}}</h1>
 
 
-<form action="{{ url_for('.package_give', package=packagename) }}" method="post">
+<form action="{{ url_for(
+    '.package_give', namespace=namespace, package=packagename
+    ) }}" method="post">
   <table>
     {{ render_field_in_row(form.branches) }}
     {{ render_field_in_row(form.poc) }}

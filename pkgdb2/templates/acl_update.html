@@ -8,7 +8,9 @@
 
 <section id="edit_acl">
   <h1>
-    <a property="doap:name" href="{{ url_for('.package_info', package=package.name) }}">
+    <a property="doap:name" href="{{ url_for(
+        '.package_info', namespace=package.namespace,
+        package=package.name) }}">
       {{ package.name }}
     </a> > Edit {{ acl.capitalize() }} Access</h1>
 
@@ -17,7 +19,9 @@
       <h3 class="inline">User(s)</h3>
     </div>
 
-    <form action="{{ url_for('.update_acl', package=package.name, update_acl=acl) }}" method="POST">
+    <form action="{{ url_for(
+        '.update_acl', namespace=package.namespace, package=package.name,
+        update_acl=acl) }}" method="POST">
       <table>
         <tr>
           <th></th>
@@ -78,14 +82,17 @@
         </li>
         <li class="inline">
           <a class="bold pkg_button_lightgrey"
-            href="{{ url_for('.package_info', package=package.name) }}">
+            href="{{ url_for(
+                '.package_info', namespace=package.namespace,
+                package=package.name) }}">
             Cancel
           </a>
         </li>
         <li class="inline">
           <a class="bold pkg_button_grey"
-            href="{{ url_for('.package_give_acls', package=package.name) }}"
-            title="Give ACLs to someone">
+            href="{{ url_for(
+                '.package_give_acls', namespace=package.namespace,
+                package=package.name) }}" title="Give ACLs to someone">
             Add someone
           </a>
         </li>

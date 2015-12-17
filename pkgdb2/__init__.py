@@ -144,7 +144,7 @@ def is_pkgdb_admin(user):
     return len(admins.intersection(set(user.groups))) > 0
 
 
-def is_pkg_admin(session, user, package, branch=None):
+def is_pkg_admin(session, user, namespace, package, branch=None):
     """ Is the user an admin for this package.
     Admin =
         - user has approveacls rights
@@ -156,8 +156,8 @@ def is_pkg_admin(session, user, package, branch=None):
         return True
     else:
         return pkgdblib.has_acls(
-            session, user=user.username,
-            package=package, acl='approveacls', branch=branch)
+            session, user=user.username, package=package,
+            namespace=namespace, acl='approveacls', branch=branch)
 
 
 def fas_login_required(function):
@@ -241,6 +241,8 @@ from .ui import admin
 from .ui import collections
 from .ui import packages
 from .ui import packagers
+if APP.config.get('PKGDB_OLD_URL', True):
+    from .ui import redirects
 APP.register_blueprint(UI)
 
 

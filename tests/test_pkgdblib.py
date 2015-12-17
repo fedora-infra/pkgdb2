@@ -61,6 +61,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='test',
                           pkg_summary='test package',
                           pkg_description='test description',
@@ -76,6 +77,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='test',
                           pkg_summary='test package',
                           pkg_description='test description',
@@ -95,6 +97,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_summary='Drop down terminal',
                           pkg_description='Drop down terminal desc',
@@ -112,6 +115,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_summary='Drop down terminal',
                           pkg_description='Drop down terminal desc',
@@ -129,6 +133,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='fedocal',
                           pkg_summary='web calendar for Fedora',
                           pkg_description='Web-based calendar system',
@@ -143,6 +148,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.add_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='fedocal',
                           pkg_summary='web calendar for Fedora',
                           pkg_description='Web-based calendar system',
@@ -157,6 +163,7 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_packagers.return_value = ['ralph', 'pingou']
 
         msg = pkgdblib.add_package(self.session,
+                                   namespace='rpms',
                                    pkg_name='guake',
                                    pkg_summary='Drop down terminal',
                                    pkg_description='Drop down terminal desc',
@@ -173,6 +180,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual('guake', packages[0].name)
 
         pkgdblib.add_package(self.session,
+                             namespace='rpms',
                              pkg_name='geany',
                              pkg_summary='GTK IDE',
                              pkg_description='Lightweight IDE for GNOME',
@@ -192,6 +200,7 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_fas_group.return_value = FakeFasGroupValid
 
         pkgdblib.add_package(self.session,
+                             namespace='rpms',
                              pkg_name='fedocal',
                              pkg_summary='web calendar for Fedora',
                              pkg_description='Web-based calendar system',
@@ -216,20 +225,21 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(4, len(packages))
         self.assertEqual('guake', packages[0].name)
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(len(pkg_acl), 2)
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
 
         # No EOL collection, so no change
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', eol=True)
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake', eol=True)
         self.assertEqual(len(pkg_acl), 2)
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'master')[0]
+        pkg_acl = pkgdblib.get_acl_package(
+            self.session, 'rpms', 'guake', pkg_clt='master')[0]
         self.assertEqual(pkg_acl.collection.branchname, 'master')
         self.assertEqual(pkg_acl.package.name, 'guake')
         self.assertEqual(pkg_acl.acls[0].fas_name, 'pingou')
@@ -238,11 +248,13 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(NoResultFound,
                           pkgdblib.get_acl_package,
                           self.session,
+                          'rpms',
                           'test',
                           'master')
 
         # Collection does not exist
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake', 'unknown')
+        pkg_acl = pkgdblib.get_acl_package(
+            self.session, 'rpms', 'guake', 'unknown')
         self.assertEqual(pkg_acl, [])
 
     @patch('pkgdb2.lib.utils.get_bz_email_user')
@@ -256,6 +268,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='test',
                           pkg_branch='f17',
                           pkg_user='pingou',
@@ -269,6 +282,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f16',
                           pkg_user='pingou',
@@ -282,6 +296,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(IntegrityError,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           acl='commit',
@@ -295,6 +310,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(IntegrityError,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           pkg_user='pingou',
@@ -308,6 +324,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           pkg_user='pingou',
@@ -321,6 +338,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           pkg_user='ralph',
@@ -334,6 +352,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           pkg_user='group::perl',
@@ -347,6 +366,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           pkg_user='group::perl',
@@ -360,6 +380,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           pkg_user='group::gtk-sig',
@@ -371,7 +392,7 @@ class PkgdbLibtests(Modeltests):
 
         ## Working ones
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(len(pkg_acl[0].acls), 4)
@@ -380,6 +401,7 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'blahblah'
         pkgdblib.set_acl_package(self.session,
+                                 namespace='rpms',
                                  pkg_name='guake',
                                  pkg_branch='f18',
                                  pkg_user='blahblah',
@@ -394,6 +416,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.set_acl_package,
             self.session,
+            namespace='rpms',
             pkg_name='guake',
             pkg_branch='f18',
             pkg_user='blahblah',
@@ -405,6 +428,7 @@ class PkgdbLibtests(Modeltests):
 
         # You can ask for new ACLs
         pkgdblib.set_acl_package(self.session,
+                                 namespace='rpms',
                                  pkg_name='guake',
                                  pkg_branch='f18',
                                  pkg_user='pingou',
@@ -416,6 +440,7 @@ class PkgdbLibtests(Modeltests):
 
         # You can obsolete your own ACLs
         pkgdblib.set_acl_package(self.session,
+                                 namespace='rpms',
                                  pkg_name='guake',
                                  pkg_branch='f18',
                                  pkg_user='pingou',
@@ -427,6 +452,7 @@ class PkgdbLibtests(Modeltests):
 
         # You can remove your own ACLs
         pkgdblib.set_acl_package(self.session,
+                                 namespace='rpms',
                                  pkg_name='guake',
                                  pkg_branch='f18',
                                  pkg_user='pingou',
@@ -438,6 +464,7 @@ class PkgdbLibtests(Modeltests):
 
         # You can approve your own ACLs on a new branch
         pkgdblib.set_acl_package(self.session,
+                                 namespace='rpms',
                                  pkg_name='guake',
                                  pkg_branch='el6',
                                  pkg_user='pingou',
@@ -449,6 +476,7 @@ class PkgdbLibtests(Modeltests):
 
         # An admin can approve you ACLs
         pkgdblib.set_acl_package(self.session,
+                                 namespace='rpms',
                                  pkg_name='guake',
                                  pkg_branch='f18',
                                  pkg_user='pingou',
@@ -458,7 +486,7 @@ class PkgdbLibtests(Modeltests):
                                  )
         self.session.commit()
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(len(pkg_acl[0].acls), 7)
@@ -477,6 +505,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
+                          namespace='rpms',
                           pkg_name='test',
                           pkg_branch='f17',
                           user=FakeFasUser(),
@@ -488,6 +517,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f16',
                           user=FakeFasUser(),
@@ -500,6 +530,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           user=FakeFasUser(),
@@ -513,13 +544,14 @@ class PkgdbLibtests(Modeltests):
         # Change PoC to a group
         pkgdblib.update_pkg_poc(
             self.session,
+            namespace='rpms',
             pkg_name='guake',
             pkg_branch='f18',
             user=user,
             pkg_poc='group::perl-sig',
         )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'group::perl-sig')
@@ -528,6 +560,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           user=user,
@@ -541,6 +574,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           user=user,
@@ -551,13 +585,14 @@ class PkgdbLibtests(Modeltests):
         user.groups.append('perl-sig')
         pkgdblib.update_pkg_poc(
             self.session,
+            namespace='rpms',
             pkg_name='guake',
             pkg_branch='f18',
             user=user,
             pkg_poc='ralph',
         )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'ralph')
@@ -569,13 +604,14 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'ralph'
         pkgdblib.update_pkg_poc(self.session,
+                                namespace='rpms',
                                 pkg_name='guake',
                                 pkg_branch='f18',
                                 user=user,
                                 pkg_poc='toshio',
                                 )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'toshio')
@@ -584,6 +620,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           user=FakeFasUserAdmin,
@@ -596,13 +633,14 @@ class PkgdbLibtests(Modeltests):
 
         # Admin can change PoC
         pkgdblib.update_pkg_poc(self.session,
+                                namespace='rpms',
                                 pkg_name='guake',
                                 pkg_branch='f18',
                                 user=FakeFasUserAdmin(),
                                 pkg_poc='kevin',
                                 )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'kevin')
@@ -611,13 +649,14 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'kevin'
         pkgdblib.update_pkg_poc(self.session,
+                                namespace='rpms',
                                 pkg_name='guake',
                                 pkg_branch='f18',
                                 user=user,
                                 pkg_poc='orphan',
                                 )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
@@ -625,13 +664,14 @@ class PkgdbLibtests(Modeltests):
 
         # Take orphaned package -> status changed to Approved
         pkgdblib.update_pkg_poc(self.session,
+                                namespace='rpms',
                                 pkg_name='guake',
                                 pkg_branch='f18',
                                 user=FakeFasUser(),
                                 pkg_poc=FakeFasUser().username,
                                 )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
@@ -646,6 +686,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the search_package function. """
         self.test_add_package()
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='gu*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -657,6 +698,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkgs[0].upstream_url, 'http://guake.org')
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='g*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -668,6 +710,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkgs[1].name, 'guake')
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='g*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -679,6 +722,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkgs[0].name, 'geany')
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='g*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -691,6 +735,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkgs[0].name, 'geany')
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='g*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -703,6 +748,23 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkgs[0].name, 'guake')
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
+                                       pkg_name='g*',
+                                       pkg_branch='f18'
+                                       )
+        self.assertEqual(len(pkgs), 2)
+        self.assertEqual(pkgs[0].name, 'geany')
+        self.assertEqual(pkgs[1].name, 'guake')
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       namespace='docker',
+                                       pkg_name='g*',
+                                       pkg_branch='f18',
+                                       )
+        self.assertEqual(len(pkgs), 0)
+
+        pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='g*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -714,6 +776,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(pkgs), 0)
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='g*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -724,6 +787,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(pkgs), 0)
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='gu*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -733,6 +797,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(pkgs), 0)
 
         pkgs = pkgdblib.search_package(self.session,
+                                       namespace='rpms',
                                        pkg_name='gu*',
                                        pkg_branch='f18',
                                        pkg_poc=None,
@@ -744,6 +809,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.search_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='g*',
                           pkg_branch='f18',
                           pkg_poc=None,
@@ -755,6 +821,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.search_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='g*',
                           pkg_branch='f18',
                           pkg_poc=None,
@@ -771,6 +838,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
+                          namespace='rpms',
                           pkg_name='test',
                           pkg_branch='f17',
                           status='Retired',
@@ -782,6 +850,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f16',
                           status='Orphaned',
@@ -793,6 +862,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           status='Retired',
@@ -804,6 +874,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           status='Depreasdcated',
@@ -815,6 +886,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='f18',
                           status='Allowed',
@@ -824,13 +896,14 @@ class PkgdbLibtests(Modeltests):
 
         # Admin can retire package
         pkgdblib.update_pkg_status(self.session,
+                                   namespace='rpms',
                                    pkg_name='guake',
                                    pkg_branch='f18',
                                    status='Retired',
                                    user=FakeFasUserAdmin()
                                    )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
@@ -838,13 +911,14 @@ class PkgdbLibtests(Modeltests):
 
         # User can orphan package
         pkgdblib.update_pkg_status(self.session,
+                                   namespace='rpms',
                                    pkg_name='guake',
                                    pkg_branch='master',
                                    status='Orphaned',
                                    user=FakeFasUser()
                                    )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
@@ -858,13 +932,14 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='master',
                           status='Approved',
                           user=FakeFasUserAdmin()
                           )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
@@ -876,6 +951,7 @@ class PkgdbLibtests(Modeltests):
 
         # Admin can un-orphan package
         pkgdblib.update_pkg_status(self.session,
+                                   namespace='rpms',
                                    pkg_name='guake',
                                    pkg_branch='master',
                                    status='Approved',
@@ -883,7 +959,7 @@ class PkgdbLibtests(Modeltests):
                                    user=FakeFasUserAdmin()
                                    )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'orphan')
@@ -895,6 +971,7 @@ class PkgdbLibtests(Modeltests):
 
         # Admin can un-retire package
         pkgdblib.update_pkg_status(self.session,
+                                   namespace='rpms',
                                    pkg_name='guake',
                                    pkg_branch='f18',
                                    status='Approved',
@@ -902,7 +979,7 @@ class PkgdbLibtests(Modeltests):
                                    user=FakeFasUserAdmin()
                                    )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
         self.assertEqual(pkg_acl[0].point_of_contact, 'pingou')
@@ -916,6 +993,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='master',
                           status='Removed',
@@ -1147,21 +1225,21 @@ class PkgdbLibtests(Modeltests):
     def test_get_acl_user_package(self):
         """ Test the get_acl_user_package function. """
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'pingou', 'guake')
+            self.session, 'pingou', 'rpms', 'guake')
         self.assertEqual(pending_acls, [])
 
         create_package_acl(self.session)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'pingou', 'geany')
+            self.session, 'pingou', 'rpms', 'geany')
         self.assertEqual(len(pending_acls), 0)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'pingou', 'guake')
+            self.session, 'pingou', 'rpms', 'guake')
         self.assertEqual(len(pending_acls), 5)
 
         pending_acls = pkgdblib.get_acl_user_package(
-            self.session, 'toshio', 'guake', status='Awaiting Review')
+            self.session, 'toshio', 'rpms', 'guake', status='Awaiting Review')
         self.assertEqual(len(pending_acls), 1)
         self.assertEqual(pending_acls[0]['package'], 'guake')
         self.assertEqual(pending_acls[0]['collection'], 'master')
@@ -1172,24 +1250,24 @@ class PkgdbLibtests(Modeltests):
         """ Test the has_acls function. """
         self.assertFalse(
             pkgdblib.has_acls(
-                self.session, 'pingou', 'guake',
+                self.session, 'pingou', 'rpms', 'guake',
                 acl='approveacl', branch='master'))
 
         create_package_acl(self.session)
 
         self.assertTrue(
             pkgdblib.has_acls(
-                self.session, 'pingou', 'guake',
+                self.session, 'pingou', 'rpms', 'guake',
                 acl='commit', branch='master'))
 
         self.assertTrue(pkgdblib.has_acls(
-            self.session, 'pingou', 'guake', acl='commit'))
+            self.session, 'pingou', 'rpms', 'guake', acl='commit'))
         self.assertTrue(pkgdblib.has_acls(
-            self.session, 'pingou', 'guake', acl='approveacls'))
+            self.session, 'pingou', 'rpms', 'guake', acl='approveacls'))
         self.assertFalse(pkgdblib.has_acls(
-            self.session, 'toshio', 'guake', acl='commit'))
+            self.session, 'toshio', 'rpms', 'guake', acl='commit'))
         self.assertFalse(pkgdblib.has_acls(
-            self.session, 'toshio', 'guake', acl=['commit', 'approveacls']))
+            self.session, 'toshio', 'rpms', 'guake', acl=['commit', 'approveacls']))
 
     def test_get_status(self):
         """ Test the get_status function. """
@@ -1304,7 +1382,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the edit_package function. """
         create_package_acl(self.session)
 
-        package = pkgdblib.search_package(self.session, 'guake')[0]
+        package = pkgdblib.search_package(self.session, 'rpms', 'guake')[0]
 
         out = pkgdblib.edit_package(
             self.session, package, user=FakeFasUserAdmin())
@@ -1329,10 +1407,11 @@ class PkgdbLibtests(Modeltests):
 
         self.assertEqual(out, 'Package "Fedora youhou!" edited')
 
-        collections = pkgdblib.search_package(self.session, 'guake')
+        collections = pkgdblib.search_package(self.session, 'rpms', 'guake')
         self.assertEqual(collections, [])
 
-        package = pkgdblib.search_package(self.session, 'Fedora youhou!')[0]
+        package = pkgdblib.search_package(
+            self.session, 'rpms', 'Fedora youhou!')[0]
         self.assertEqual(package.name, 'Fedora youhou!')
         self.assertEqual(package.review_url, 'http://bugzilla.rh.com/42')
         self.assertEqual(package.summary, 'Youhou Fedora is awesome!')
@@ -1428,6 +1507,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='asd',
                           pkg_branch='master',
                           pkg_user='pingou',
@@ -1439,6 +1519,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='asd',
                           pkg_user='pingou',
@@ -1450,6 +1531,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='master',
                           pkg_user='pingou',
@@ -1461,6 +1543,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='master',
                           pkg_user='pingou',
@@ -1477,6 +1560,7 @@ class PkgdbLibtests(Modeltests):
 
         # Orphan package
         pkgdblib.update_pkg_poc(self.session,
+                                namespace='rpms',
                                 pkg_name='guake',
                                 pkg_branch='master',
                                 user=FakeFasUserAdmin(),
@@ -1488,6 +1572,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='master',
                           pkg_user='ralph',
@@ -1501,6 +1586,7 @@ class PkgdbLibtests(Modeltests):
         self.assertRaises(pkgdblib.PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
+                          namespace='rpms',
                           pkg_name='guake',
                           pkg_branch='master',
                           pkg_user='pingou',
@@ -1508,7 +1594,7 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[1].collection.branchname, 'master')
         self.assertEqual(pkg_acl[1].package.name, 'guake')
         self.assertEqual(pkg_acl[1].point_of_contact, 'orphan')
@@ -1516,6 +1602,7 @@ class PkgdbLibtests(Modeltests):
 
         pkgdblib.unorphan_package(
             self.session,
+            namespace='rpms',
             pkg_name='guake',
             pkg_branch='master',
             pkg_user='pingou',
@@ -1523,7 +1610,7 @@ class PkgdbLibtests(Modeltests):
         )
         self.session.commit()
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(pkg_acl[1].collection.branchname, 'master')
         self.assertEqual(pkg_acl[1].package.name, 'guake')
         self.assertEqual(pkg_acl[1].point_of_contact, 'pingou')
@@ -1533,7 +1620,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the add_branch function. """
         create_package_acl(self.session)
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(len(pkg_acl), 2)
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
@@ -1586,7 +1673,7 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUserAdmin()
         )
 
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'guake')
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
         self.assertEqual(len(pkg_acl), 3)
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
@@ -1645,6 +1732,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.set_critpath_packages,
             session=self.session,
+            namespace='rpms',
             pkg_name='master',
             pkg_branch='blah',
             user=FakeFasUser()
@@ -1657,6 +1745,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.set_critpath_packages,
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             pkg_branch='el4',
             user=FakeFasUserAdmin()
@@ -1681,7 +1770,7 @@ class PkgdbLibtests(Modeltests):
         """ Test the set_monitor_package function. """
         self.assertFalse(
             pkgdblib.has_acls(
-                self.session, 'pingou', 'guake',
+                self.session, 'pingou', 'rpms', 'guake',
                 acl='approveacl', branch='master'))
 
         # Fails: package not found
@@ -1689,6 +1778,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.set_monitor_package,
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             status=True,
             user=FakeFasUser()
@@ -1698,7 +1788,7 @@ class PkgdbLibtests(Modeltests):
 
         self.assertTrue(
             pkgdblib.has_acls(
-                self.session, 'pingou', 'guake',
+                self.session, 'pingou', 'rpms', 'guake',
                 acl='commit', branch='master'))
 
         # Fails: user not a packager
@@ -1708,6 +1798,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.set_monitor_package,
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             status=True,
             user=user
@@ -1716,16 +1807,18 @@ class PkgdbLibtests(Modeltests):
         # Works
         msg = pkgdblib.set_monitor_package(
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             status=True,
             user=FakeFasUser()
         )
 
-        self.assertEqual(msg, 'Monitoring status of guake set to True')
+        self.assertEqual(msg, 'Monitoring status of rpms/guake set to True')
 
         # Works
         msg = pkgdblib.set_monitor_package(
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             status=True,
             user=FakeFasUser()
@@ -1736,18 +1829,19 @@ class PkgdbLibtests(Modeltests):
         # Works: user is a pkgdb admin
         self.assertFalse(
             pkgdblib.has_acls(
-                self.session, 'kevin', 'guake',
+                self.session, 'kevin', 'rpms', 'guake',
                 acl='commit', branch='master'))
 
         user = FakeFasUserAdmin()
         user.username = 'kevin'
         msg = pkgdblib.set_monitor_package(
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             status=False,
             user=FakeFasUser()
         )
-        self.assertEqual(msg, 'Monitoring status of guake set to False')
+        self.assertEqual(msg, 'Monitoring status of rpms/guake set to False')
 
     @patch('pkgdb2.lib.utils')
     def test_add_new_branch_request(self, mock_func):
@@ -1761,6 +1855,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.add_new_branch_request,
             session=self.session,
+            namespace='rpms',
             pkg_name='foobar',
             clt_to='el6',
             user=FakeFasUserAdmin()
@@ -1771,6 +1866,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.add_new_branch_request,
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             clt_to='foobar',
             user=FakeFasUserAdmin()
@@ -1781,6 +1877,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.add_new_branch_request,
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             clt_to='el6',
             user=FakeFasUserAdmin()
@@ -1791,13 +1888,16 @@ class PkgdbLibtests(Modeltests):
         user.username = 'toshio'
         pkgdblib.add_new_branch_request(
             session=self.session,
+            namespace='rpms',
             pkg_name='guake',
             clt_to='el6',
             user=user
         )
 
-    def test_search_actions(self):
+    @patch('pkgdb2.lib.utils.get_rhel_pkg')
+    def test_search_actions(self, getrhelpkg_func):
         """ Test the search_actions method of pkgdblib. """
+        getrhelpkg_func.return_value = []
         create_package_acl(self.session)
 
         # Wrong limit
@@ -1838,6 +1938,7 @@ class PkgdbLibtests(Modeltests):
             # Insert
             pkgdblib.add_new_branch_request(
                 session=self.session,
+                namespace='rpms',
                 pkg_name='guake',
                 clt_to='el6',
                 user=FakeFasUser()
@@ -1847,6 +1948,7 @@ class PkgdbLibtests(Modeltests):
             # One thing awaiting review:
             actions = pkgdblib.search_actions(
                 self.session,
+                namespace='rpms',
                 package='guake',
                 page=1,
                 limit=50,
@@ -1859,6 +1961,7 @@ class PkgdbLibtests(Modeltests):
             # But nothing pending
             actions = pkgdblib.search_actions(
                 self.session,
+                namespace='rpms',
                 package='guake',
                 status='Pending',
                 page=1,
@@ -2006,6 +2109,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.add_unretire_request,
             self.session,
+            namespace='rpms',
             pkg_name='foo',
             pkg_branch='master',
             review_url=None,
@@ -2019,6 +2123,7 @@ class PkgdbLibtests(Modeltests):
             pkgdblib.PkgdbException,
             pkgdblib.add_unretire_request,
             self.session,
+            namespace='rpms',
             pkg_name='guake',
             pkg_branch='foo',
             review_url=None,
@@ -2027,6 +2132,7 @@ class PkgdbLibtests(Modeltests):
 
         msg = pkgdblib.add_unretire_request(
             self.session,
+            namespace='rpms',
             pkg_name='guake',
             pkg_branch='master',
             review_url=None,
@@ -2092,6 +2198,89 @@ class PkgdbLibtests(Modeltests):
         )
         self.assertEqual(
             msg, 'user: pingou request package: zsh on branch master')
+
+    def test_add_namespace(self):
+        """ Test the add_namespace method to pkgdblib. """
+        # Before:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['docker', 'rpms'])
+
+        # User is not an admin
+        user = FakeFasUser()
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_namespace,
+            self.session,
+            'foo',
+            user
+        )
+
+        # Namespace already exists
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_namespace,
+            self.session,
+            'rpms',
+            user
+        )
+
+        # Works
+        user = FakeFasUserAdmin()
+        msg = pkgdblib.add_namespace(
+            self.session,
+            'foo',
+            user
+        )
+        self.assertEqual(msg, 'Namespace "foo" created')
+
+        # After:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['docker', 'foo', 'rpms'])
+
+    def test_drop_namespace(self):
+        """ Test the drop_namespace method to pkgdblib. """
+
+        self.test_add_namespace()
+
+        # Before:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['docker', 'foo', 'rpms'])
+
+        # User is not an admin
+        user = FakeFasUser()
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.drop_namespace,
+            self.session,
+            'foo',
+            user
+        )
+
+        # Namespace does not exist
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.drop_namespace,
+            self.session,
+            'foobar',
+            user
+        )
+
+        # Works
+        user = FakeFasUserAdmin()
+        msg = pkgdblib.drop_namespace(
+            self.session,
+            'foo',
+            user
+        )
+        self.assertEqual(msg, 'Namespace "foo" removed')
+
+        # After:
+        namespaces = pkgdblib.get_status(
+            self.session, 'namespaces')['namespaces']
+        self.assertEqual(namespaces, ['docker', 'rpms'])
 
 
 if __name__ == '__main__':

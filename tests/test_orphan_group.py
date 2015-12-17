@@ -53,8 +53,8 @@ class PkgdbOrphanGrouptests(Modeltests):
         create_collection(self.session)
         create_package(self.session)
 
-        guake_pkg = model.Package.by_name(self.session, 'guake')
-        fedocal_pkg = model.Package.by_name(self.session, 'fedocal')
+        guake_pkg = model.Package.by_name(self.session, 'rpms', 'guake')
+        fedocal_pkg = model.Package.by_name(self.session, 'rpms', 'fedocal')
 
         f18_collec = model.Collection.by_name(self.session, 'f18')
         devel_collec = model.Collection.by_name(self.session, 'master')
@@ -90,8 +90,8 @@ class PkgdbOrphanGrouptests(Modeltests):
 
         # Orphan allowed (?)
         msg = pkgdblib.update_pkg_status(
-            self.session, pkg_name='fedocal', pkg_branch='master',
-            status='Orphaned', user=user, poc='orphan')
+            self.session, namespace='rpms', pkg_name='fedocal',
+            pkg_branch='master', status='Orphaned', user=user, poc='orphan')
 
         self.assertEqual(
             msg,
@@ -100,8 +100,8 @@ class PkgdbOrphanGrouptests(Modeltests):
 
         # Retired blocked
         msg = pkgdblib.update_pkg_status(
-            self.session, pkg_name='guake', pkg_branch='master',
-            status='Retired', user=user, poc='orphan')
+            self.session, namespace='rpms', pkg_name='guake',
+            pkg_branch='master', status='Retired', user=user, poc='orphan')
 
         self.assertEqual(
             msg,
