@@ -1885,7 +1885,8 @@ def add_new_package_request(
         pass
     if package:
         raise PkgdbException(
-            'There is already a package named: %s/%s' % (namespace, pkg_name))
+            'There is already a package named: %s/%s' % (pkg_namespace,
+                                                         pkg_name))
 
     if pkg_collection.startswith(('el', 'epel')):
         _validate_pkg(session, pkg_collection[-1:], pkg_name)

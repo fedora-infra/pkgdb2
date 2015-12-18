@@ -2148,6 +2148,7 @@ class PkgdbLibtests(Modeltests):
 
         mock_func.return_value = ['pingou']
 
+        # Branch `foo` not found
         self.assertRaises(
             pkgdblib.PkgdbException,
             pkgdblib.add_new_package_request,
@@ -2167,6 +2168,7 @@ class PkgdbLibtests(Modeltests):
         self.test_add_new_branch_request()
         self.session.commit()
 
+        # Again, branch not found
         self.assertRaises(
             pkgdblib.PkgdbException,
             pkgdblib.add_new_package_request,
@@ -2176,6 +2178,23 @@ class PkgdbLibtests(Modeltests):
             pkg_description='desc',
             pkg_status='Approved',
             pkg_collection='foo',
+            pkg_poc='pingou',
+            user=FakeFasUser(),
+            pkg_review_url='https://bz.rh.c/123',
+            pkg_upstream_url=None,
+            pkg_critpath=False,
+        )
+
+        # Package already exists
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_package_request,
+            session=self.session,
+            pkg_name='guake',
+            pkg_summary='Drop-down terminal for GNOME',
+            pkg_description='desc',
+            pkg_status='Approved',
+            pkg_collection='master',
             pkg_poc='pingou',
             user=FakeFasUser(),
             pkg_review_url='https://bz.rh.c/123',
