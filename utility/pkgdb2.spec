@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.0
+Version:        2.0.1
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,14 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Dec 18 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.1-1
+- Update to 2.0.1
+- Fix typo in a variable name that was making requesting a new package fail
+  (Patrick Uiterwijk)
+- Fix giving ACLs to someone
+- Fix editing a new package request (where the request is not associated to any
+  package)
+
 * Thu Dec 17 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0-1
 - Update to 2.0
 - Add the concept of namespace to all the packages present in pkgdb2
