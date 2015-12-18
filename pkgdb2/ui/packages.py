@@ -389,8 +389,10 @@ def package_request_edit(action_id):
         return flask.render_template('msg.html')
 
     package = None
+    namespace = None
     if admin_action.package:
         package = admin_action.package.name
+        namespace = admin_action.package.namespace
 
     if admin_action.status in ['Accepted', 'Blocked', 'Denied']:
         return flask.render_template(
@@ -408,8 +410,9 @@ def package_request_edit(action_id):
 
     # Check user is the pkg/pkgdb admin
     pkg_admin = pkgdblib.has_acls(
-        SESSION, flask.g.fas_user.username, admin_action.package.namespace,
-        package, 'approveacls')
+        SESSION, flask.g.fas_user.username,
+        namespace, package, 'approveacls')
+
     if not is_pkgdb_admin(flask.g.fas_user) \
             and not pkg_admin \
             and not admin_action.user == flask.g.fas_user.username:
@@ -418,9 +421,7 @@ def package_request_edit(action_id):
             'can review pending branch requests', 'errors')
         if package:
             return flask.redirect(flask.url_for(
-                '.package_info',
-                namespace=admin_action.package.namespace,
-                package=package)
+                '.package_info', namespace=namespace, package=package)
             )
         else:
             return flask.redirect(
@@ -466,9 +467,7 @@ def package_request_edit(action_id):
 
         if package:
             return flask.redirect(flask.url_for(
-                '.package_info',
-                namespace=admin_action.package.namespace,
-                package=package)
+                '.package_info', namespace=namespace, package=package)
             )
         else:
             return flask.redirect(
