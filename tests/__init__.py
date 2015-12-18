@@ -710,6 +710,20 @@ def create_admin_actions(session, n=1):
 
     session.add(action)
 
+    action = model.AdminAction(
+        info='{"pkg_summary": "Busybox version suited for Mindi", '
+        '"pkg_status": "Approved", "pkg_collection": "master", '
+        '"pkg_name": "mindi-busybox", "pkg_review_url": '
+        '"https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=476234", '
+        '"pkg_description": "", "pkg_upstream_url": "", "pkg_poc": "pingou", '
+        '"pkg_critpath": false}',
+        collection_id=el6_collec.id,
+        user='toshio',
+        _status='Awaiting Review',
+        action='request.branch',
+    )
+    session.add(action)
+
     if n > 1:
         f17_collec = model.Collection.by_name(session, 'f17')
 
@@ -722,7 +736,6 @@ def create_admin_actions(session, n=1):
         )
 
         session.add(action)
-
 
     session.commit()
 

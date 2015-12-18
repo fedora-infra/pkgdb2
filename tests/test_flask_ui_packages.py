@@ -1025,6 +1025,19 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="errors">Only package adminitrators (`approveacls`)'
                 ' and the requester can review pending branch requests</li>'
                 in output.data)
+            output = self.app.get(
+                '/package/requests/2', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+
+            self.assertIn('<h1>Update admin action: 2</h1>', output.data)
+            self.assertIn(
+                '<form action="/package/requests/2"\n    method="post">',
+                output.data)
+            self.assertIn(
+                '<td><textarea id="message" name="message" placeholder='
+                '"Required if the action is blocked or denied"></textarea>',
+                output.data)
 
         # Before the edit
         user = FakeFasUser()
