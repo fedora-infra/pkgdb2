@@ -262,6 +262,9 @@ def package_give_acls(namespace, package):
         namespaces=acls['namespaces'],
     )
     form.pkgname.data = package
+    if str(form.namespace.data) in ['None', '']:
+        form.namespace.data = 'rpms'
+
     if form.validate_on_submit():
         pkg_branchs = form.branches.data
         pkg_acls = form.acl.data

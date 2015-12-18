@@ -999,6 +999,22 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue('<li class="message">ACLs updated</li>' in
                             output.data)
 
+            # Add test for giving ACLs without providing the namespace in
+            # the form (in which case it relies on the one in the URL)
+            data = {
+                'branches': 'master',
+                'acl': 'watchcommits',
+                'user': 'kevin',
+                'acl_status': 'Approved',
+                'csrf_token': csrf_token,
+            }
+
+            output = self.app.post('/acl/rpms/guake/give/', data=data,
+                                   follow_redirects=True)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue('<li class="message">ACLs updated</li>' in
+                            output.data)
+
         user.username = 'Toshio'
         with user_set(pkgdb2.APP, user):
             output = self.app.get('/acl/rpms/foo/give/', follow_redirects=True)
