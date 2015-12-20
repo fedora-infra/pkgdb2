@@ -188,6 +188,13 @@ engineers need to create packages and spin them into a distribution."""
         self.assertTrue('<a href="/package/rpms/geany/">' in output.data)
         self.assertTrue('<a href="/package/rpms/guake/">' in output.data)
 
+        output = self.app.get(
+            '/search/?term=g&type=packages*', follow_redirects=True)
+        self.assertEqual(output.status_code, 200)
+        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
+        self.assertTrue('<a href="/package/rpms/geany/">' in output.data)
+        self.assertTrue('<a href="/package/rpms/guake/">' in output.data)
+
         output = self.app.get('/search/?term=p&type=packager',
                               follow_redirects=True)
         self.assertEqual(output.status_code, 200)
