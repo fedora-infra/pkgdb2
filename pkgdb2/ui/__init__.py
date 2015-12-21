@@ -173,7 +173,10 @@ def search():
             motif=search_term
         )
         if search_type:
-            args['namespace'] = search_type
+            if search_type == 'packages':
+                args['namespace'] = 'rpms'
+            else:
+                args['namespace'] = search_type
         return flask.redirect(flask.url_for('.list_packages', **args))
 
 
