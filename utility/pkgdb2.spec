@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.0.1
+Version:        2.0.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,10 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Dec 21 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.2-1
+- Update to 2.0.2
+- Fix the opensearch integration
+
 * Fri Dec 18 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.1-1
 - Update to 2.0.1
 - Fix typo in a variable name that was making requesting a new package fail
