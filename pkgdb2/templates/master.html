@@ -165,7 +165,7 @@
           'url': '{{fedmenu_data_url}}',
           'mimeType': 'application/javascript',
           'position': 'bottom-right',
-          {% if packager is defined %}
+          {% if packager %}
             'user': '{{packager}}',
           {% endif %}
           {% if package is defined %}
