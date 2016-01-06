@@ -34,8 +34,11 @@ if args.profile:
     APP.wsgi_app = ProfilerMiddleware(APP.wsgi_app, restrictions=[30])
 
 if args.config:
-    here = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-    os.environ['PKGDB2_CONFIG'] = os.path.join(here, args.config)
+    config = args.config
+    if not config.startswith('/'):
+        here = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+        config = os.path.join(here, config)
+    os.environ['PKGDB2_CONFIG'] = config
 
 from pkgdb2 import APP
 APP.debug = True
