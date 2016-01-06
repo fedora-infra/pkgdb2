@@ -165,11 +165,15 @@
           'url': '{{fedmenu_data_url}}',
           'mimeType': 'application/javascript',
           'position': 'bottom-right',
-          {% if packager is defined %}
+          {% if packager %}
             'user': '{{packager}}',
           {% endif %}
           {% if package is defined %}
+           {% if package.name is defined %}
             'package': '{{package.name}}',
+           {% else %}
+            'package': '{{package}}',
+           {% endif %}
             'alignment': 'horizontal',
           {% endif %}
       });
