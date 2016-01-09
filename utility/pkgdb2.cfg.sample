@@ -104,3 +104,12 @@ SESSION_COOKIE_SECURE = True
 ## pgkdb is not deployed at the root of the server. This is used to set the
 ## `path` value of the cookie, actually avoiding the cookie conflict.
 APPLICATION_ROOT = '/pkgdb/'
+
+
+### Fedmenu integration
+## PkgDB2 can be integrated with Fedmenu if the following item are activated.
+
+## URL to where are located the fedmenu js files
+# FEDMENU_URL = 'https://apps.fedoraproject.org/fedmenu/'
+## URL to where is the data to load/show in fedmenu
+# FEDMENU_DATA_URL = 'https://apps.fedoraproject.org/js/data.js'
