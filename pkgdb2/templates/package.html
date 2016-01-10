@@ -693,7 +693,10 @@ confusing what the difference is between that status an the per-branch status)
                 $('#flashes').append(
                     '<li class="info">' + res.messages + '</li>'
                 );
-                var _mon = $('[name="monitoring"]');
+                if (action == 'monitor') {
+                    action = 'monitoring';
+                }
+                var _mon = $('[name="' + action + '"]');
                 for (i = 0; i < _mon.length; i++) {
                     var _obj = $(_mon[i]);
                     var _lbl = $("label[for='" + _obj.attr("id") + "']");
