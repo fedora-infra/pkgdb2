@@ -221,7 +221,8 @@ confusing what the difference is between that status an the per-branch status)
 
   <ul id="actions">
       <li>
-          <a href="http://koji.fedoraproject.org/koji/search?type=package&match=glob&terms={{ package.name }}"
+          <a href="http://koji.fedoraproject.org/koji/search?type=package&match=glob&terms={{
+      package.name | urlencode }}"
           class="koji">
           Builds status</a>
       </li>
