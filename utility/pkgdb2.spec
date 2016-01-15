@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.0.2
+Version:        2.0.3
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,17 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Jan 15 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.3-1
+- Update to 2.0.3
+- Fix fedmenu in the timeline page (Mikolaj Izdebski)
+- Adjust the example configuration file for fedmenu
+- Adjust the runserver script to make it easier to specify a configuration file
+  to use
+- Fix the koschei button so that it doesn't change the monitoring status in the
+  UI
+- Fix link to koji for packages having non-alphanumerical characters in their
+  name (such as a `+`)
+
 * Mon Dec 21 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.0.2-1
 - Update to 2.0.2
 - Fix the opensearch integration
