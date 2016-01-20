@@ -1910,7 +1910,8 @@ class AdminAction(BASE):
     @classmethod
     def search(cls, session, package_id=None, collection_id=None,
                packager=None, action=None, user=None,
-               status=None, offset=None, limit=None, count=False):
+               status=None, offset=None, limit=None, count=False,
+               order='asc'):
         """ Return the list of actions present in the database and
         matching these criterias.
 
@@ -1925,6 +1926,9 @@ class AdminAction(BASE):
         :kwarg offset: start the result at row X
         :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
+        :kwarg order: the order in which to return the requests, default to
+            ``asc`` meaning from the oldest to the most recent, can be
+            ``desc`` meaning from the most recent to the oldest.
 
         """
         query = session.query(
@@ -1979,7 +1983,10 @@ class AdminAction(BASE):
                     )
                 )
 
-        query = query.order_by(cls.date_created.asc())
+        if order == 'desc':
+            query = query.order_by(cls.date_created.desc())
+        else:
+            query = query.order_by(cls.date_created.asc())
 
         if count:
             return query.count()

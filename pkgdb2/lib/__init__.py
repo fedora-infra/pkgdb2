@@ -881,7 +881,7 @@ def search_packagers(session, pattern, eol=False, page=None, limit=None,
 def search_actions(
         session, namespace='rpms', package=None, packager=None,
         action=None, status='Awaiting Review', page=None,
-        limit=None, count=False):
+        limit=None, count=False, order='asc'):
     """ Return the list of actions requiring an admin and matching the
     given criteria.
 
@@ -895,6 +895,9 @@ def search_actions(
     :kwarg limit: the number of results to return.
     :kwarg count: a boolean to return the result of a COUNT query
             if true, returns the data if false (default).
+    :kwarg order: the order in which to return the requests, default to
+        ``asc`` meaning from the oldest to the most recent, can be
+        ``desc`` meaning from the most recent to the oldest.
     :returns: a list of ``Log`` entry corresponding to the given criterias.
     :rtype: list(Log)
     :raises pkgdb2.lib.PkgdbException: There are few conditions leading to
@@ -939,7 +942,9 @@ def search_actions(
         status=status,
         offset=page,
         limit=limit,
-        count=count)
+        count=count,
+        order=order,
+    )
 
 
 def search_logs(session,namespace=None, package=None, packager=None,
