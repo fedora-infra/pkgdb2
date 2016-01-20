@@ -162,6 +162,7 @@ def packager_requests(packager):
             status=status,
             page=page,
             limit=limit,
+            order='desc',
         )
         cnt_actions = pkgdblib.search_actions(
             SESSION,
