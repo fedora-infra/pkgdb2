@@ -972,7 +972,12 @@ def api_package_list(namespace=None, pattern=None):
     httpcode = 200
     output = {}
 
-    patterns = flask.request.args.getlist('pattern', pattern) or '*'
+    patterns = flask.request.args.getlist('pattern')
+    if not patterns and not pattern:
+        patterns = ['*']
+    elif not patterns and pattern:
+        patterns = [pattern]
+
     namespace = flask.request.args.get('namespace', namespace) or 'rpms'
     branches = flask.request.args.getlist('branches', None)
     poc = flask.request.args.get('poc', None)
