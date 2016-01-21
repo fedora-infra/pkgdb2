@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013-2014  Red Hat, Inc.
+# Copyright © 2013-2016  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions
@@ -1362,6 +1362,17 @@ class FlaskApiPackagesTest(Modeltests):
             data['error'], 'No packages found for these parameters')
         self.assertEqual(data['output'], 'notok')
         self.assertEqual(data['packages'], [])
+
+        output = self.app.get('/api/packages/?pattern=guake&pattern=geany')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['packages'][0]['name'], 'geany')
+        self.assertEqual(data['packages'][1]['name'], 'guake')
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.is_admin')
