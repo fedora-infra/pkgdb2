@@ -1363,6 +1363,17 @@ class FlaskApiPackagesTest(Modeltests):
         self.assertEqual(data['output'], 'notok')
         self.assertEqual(data['packages'], [])
 
+        output = self.app.get('/api/packages/?pattern=guake&pattern=geany')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+        self.assertEqual(
+            sorted(data.keys()),
+            ['output', 'packages', 'page', 'page_total'])
+        self.assertEqual(data['output'], 'ok')
+        self.assertEqual(len(data['packages']), 2)
+        self.assertEqual(data['packages'][0]['name'], 'geany')
+        self.assertEqual(data['packages'][1]['name'], 'guake')
+
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.is_admin')
     def test_api_package_edit(self, login_func, mock_func):
