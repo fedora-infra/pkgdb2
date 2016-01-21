@@ -833,9 +833,14 @@ def api_package_list(namespace=None, pattern=None):
 
         /api/packages/?pattern=<pattern>
 
+        /api/packages/?pattern=<pattern>&pattern=<pattern2>
+
     Accepts GET queries only
 
-    :arg pattern: Pattern to list packages from their name.
+    :arg pattern: Pattern to list packages from their name. Use ``*`` to
+        match multiple packages by their name.
+        Multiple patterns can be provided if you wish to search for multiple
+        packages at once.
     :arg branches: List of string of the branches name in which these
         packages will be searched.
     :arg poc: String of the user name to to which restrict the search.
@@ -887,6 +892,40 @@ def api_package_list(namespace=None, pattern=None):
           "page": 1
         }
 
+        /api/packages/?pattern=guake&pattern=tilda
+
+        {
+          "output": "ok",
+          "packages": [
+            {
+              "acls": [],
+              "creation_date": 1400063778.0,
+              "description": "Tilda is a Linux terminal taking after the likeness of many classic terminals\nfrom first person shooter games, Quake, Doom and Half-Life (to name a few),\nwhere the terminal has no border and is hidden from the desktop until a key is\npressed.",
+              "koschei_monitor": false,
+              "monitor": false,
+              "name": "tilda",
+              "review_url": null,
+              "status": "Approved",
+              "summary": "A Gtk based drop down terminal for Linux and Unix",
+              "upstream_url": "http://github.com/lanoxx/tilda"
+            },
+            {
+              "acls": [],
+              "creation_date": 1400063778.0,
+              "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+              "koschei_monitor": true,
+              "monitor": true,
+              "name": "guake",
+              "review_url": null,
+              "status": "Approved",
+              "summary": "Drop-down terminal for GNOME",
+              "upstream_url": "http://www.guake.org/"
+            }
+          ],
+          "page": 1,
+          "page_total": 1
+        }
+
         /api/packages/cl*?status=Orphaned&branches=f20&acls=true
 
         {
@@ -933,7 +972,7 @@ def api_package_list(namespace=None, pattern=None):
     httpcode = 200
     output = {}
 
-    pattern = flask.request.args.get('pattern', pattern) or '*'
+    patterns = flask.request.args.getlist('pattern', pattern) or '*'
     namespace = flask.request.args.get('namespace', namespace) or 'rpms'
     branches = flask.request.args.getlist('branches', None)
     poc = flask.request.args.get('poc', None)
@@ -969,8 +1008,8 @@ def api_package_list(namespace=None, pattern=None):
 
         if count:
             packages = 0
-            for status, branch in itertools.product(
-                    tmp_statuses, tmp_branches):
+            for status, branch, pattern in itertools.product(
+                    tmp_statuses, tmp_branches, patterns):
                 packages += pkgdblib.search_package(
                     SESSION,
                     namespace=namespace,
@@ -993,8 +1032,8 @@ def api_package_list(namespace=None, pattern=None):
         else:
             packages = set()
             packages_count = 0
-            for status, branch in itertools.product(
-                    tmp_statuses, tmp_branches):
+            for status, branch, pattern in itertools.product(
+                    tmp_statuses, tmp_branches, patterns):
                 packages.update(
                     pkgdblib.search_package(
                         SESSION,
