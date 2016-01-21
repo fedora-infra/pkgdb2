@@ -900,7 +900,12 @@ def api_package_list(namespace=None, pattern=None):
             {
               "acls": [],
               "creation_date": 1400063778.0,
-              "description": "Tilda is a Linux terminal taking after the likeness of many classic terminals\nfrom first person shooter games, Quake, Doom and Half-Life (to name a few),\nwhere the terminal has no border and is hidden from the desktop until a key is\npressed.",
+              "description": "Tilda is a Linux terminal taking after the "
+                             "likeness of many classic terminals from first "
+                             "person shooter games, Quake, Doom and Half-Life "
+                             "(to name a few), where the terminal has no "
+                             "border and is hidden from the desktop until "
+                             "a key is pressed.",
               "koschei_monitor": false,
               "monitor": false,
               "name": "tilda",
@@ -912,7 +917,10 @@ def api_package_list(namespace=None, pattern=None):
             {
               "acls": [],
               "creation_date": 1400063778.0,
-              "description": "Guake is a drop-down terminal for Gnome Desktop Environment,\nso you just need to press a key to invoke him,\nand press again to hide.",
+              "description": "Guake is a drop-down terminal for Gnome "
+                             "Desktop Environment, so you just need to "
+                             "press a key to invoke him, and press again "
+                             "to hide.",
               "koschei_monitor": true,
               "monitor": true,
               "name": "guake",
