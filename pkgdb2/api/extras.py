@@ -625,7 +625,8 @@ def api_koschei():
 
 
 @API.route('/dead/package/<pkg_name>/<clt_name>')
-def api_dead_package(pkg_name, clt_name):
+@API.route('/dead/package/<namespace>/<pkg_name>/<clt_name>')
+def api_dead_package(pkg_name, clt_name, namespace=None):
     '''
     Returned the content of the of dead.package file
     -----------------------
@@ -638,6 +639,8 @@ def api_dead_package(pkg_name, clt_name):
         /api/dead/package/acheck/master
 
     '''
+    if namespace is not None:
+        pkg_name = '%s/%s' % (namespace, pkg_name)
     req = requests.get(
         'http://pkgs.fedoraproject.org/cgit/%s.git/plain/'
         'dead.package?h=%s' % (pkg_name, clt_name)
