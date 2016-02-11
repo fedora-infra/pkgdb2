@@ -221,8 +221,8 @@ def main():
 
     print '%s packages found' % len(KNOWN)
     print '%s packages updated' % updated
-    print '%s packages not found' % len(UNKNOWN)
-    for pkg in sorted(UNKNOWN)[:5]:
+    print '%s packages not found\n' % len(UNKNOWN)
+    for pkg in sorted(UNKNOWN):
         print "No such package %s found in yum's metadata." % pkg
 
 
