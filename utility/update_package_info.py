@@ -116,7 +116,13 @@ def decompress_primary_db(archive, location):
 
 def get_pkg_info(session, pkg_name):
     ''' Query the sqlite database for the package specified. '''
-    pkg = session.query(Package).filter(Package.name == pkg_name).one()
+    pkg = session.query(
+        Package
+    ).filter(
+        Package.namespace == 'rpms'
+    ).filter(
+        Package.name == pkg_name
+    ).one()
     return pkg
 
 
@@ -151,7 +157,7 @@ def main():
         updated = 0
         if name == 'rawhide':
             for pkg in pkgdb2.lib.search_package(
-                    pkgdb2.SESSION, '*', status='Approved'):
+                    pkgdb2.SESSION, 'rpms', '*', status='Approved'):
 
                 try:
                     pkgobj = get_pkg_info(session, pkg.name)
@@ -178,7 +184,7 @@ def main():
             tmp = set()
             for pkgname in UNKNOWN:
                 pkg = pkgdb2.lib.search_package(
-                    pkgdb2.SESSION, pkgname, status='Approved')
+                    pkgdb2.SESSION, 'rpms', pkgname, status='Approved')
 
                 if len(pkg) == 1:
                     pkg = pkg[0]
@@ -215,8 +221,8 @@ def main():
 
     print '%s packages found' % len(KNOWN)
     print '%s packages updated' % updated
-    print '%s packages not found' % len(UNKNOWN)
-    for pkg in sorted(UNKNOWN)[:5]:
+    print '%s packages not found\n' % len(UNKNOWN)
+    for pkg in sorted(UNKNOWN):
         print "No such package %s found in yum's metadata." % pkg
 
 
