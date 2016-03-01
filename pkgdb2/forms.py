@@ -170,6 +170,19 @@ class RequestPackageForm(wtf.Form):
         [wtforms.validators.Required()],
         choices=[(item, item) for item in []]
     )
+    monitoring_status = wtforms.SelectField(
+        'Monitor this package and report new versions',
+        [wtforms.validators.Required()],
+        choices=[
+            ('True', 'Monitoring and scratch build'),
+            ('False', 'No monitoring'),
+            ('nobuild', 'Monitoring but no scratch build'),
+        ]
+    )
+    koschei = wtforms.BooleanField(
+        'Koschei integration',
+        [wtforms.validators.optional()]
+    )
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but

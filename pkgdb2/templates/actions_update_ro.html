@@ -32,13 +32,25 @@
   {% if admin_action.action == 'request.package'
       or admin_action.action == 'request.unretire' %}
   <tr>
-      <td>Ticket</td>
-      <td>
-        <a href="{{ admin_action.info_data['pkg_review_url'] }}">
-          {{ admin_action.info_data['pkg_review_url'] }}
-        </a>
-      </td>
-    </tr>
+    <td>Ticket</td>
+    <td>
+      <a href="{{ admin_action.info_data['pkg_review_url'] }}">
+        {{ admin_action.info_data['pkg_review_url'] }}
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>Monitoring status</td>
+    <td>
+      {{ admin_action.info_data.get('monitoring_status', 'True') }}
+    </td>
+  </tr>
+  <tr>
+    <td>Koschei integration</td>
+    <td>
+      {{ admin_action.info_data.get('koschei', 'False') }}
+    </td>
+  </tr>
   {% endif %}
 </table>
 

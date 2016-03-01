@@ -513,6 +513,8 @@ def package_new():
         pkg_poc = form.poc.data
         pkg_upstream_url = form.upstream_url.data
         pkg_namespace = form.namespace.data
+        monitoring_status = form.monitoring_status.data
+        koschei = form.koschei.data
 
         try:
             message = pkgdblib.add_package(
@@ -527,6 +529,8 @@ def package_new():
                 pkg_collection=pkg_collection,
                 pkg_poc=pkg_poc,
                 pkg_upstream_url=pkg_upstream_url,
+                monitoring_status=monitoring_status,
+                koschei=koschei,
                 user=flask.g.fas_user,
             )
             SESSION.commit()
@@ -1360,6 +1364,8 @@ def package_request_new():
             pkg_collection.append('master')
         pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
+        monitoring_status = form.monitoring_status.data
+        koschei = form.koschei.data
 
         bz = APP.config.get('PKGDB2_BUGZILLA_URL')
         if bz not in pkg_review_url:
@@ -1384,6 +1390,8 @@ def package_request_new():
                     pkg_collection=clt,
                     pkg_poc=pkg_poc,
                     pkg_upstream_url=pkg_upstream_url,
+                    monitoring_status=monitoring_status,
+                    koschei=koschei,
                     user=flask.g.fas_user,
                 )
                 if message:
