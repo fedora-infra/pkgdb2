@@ -179,7 +179,7 @@ def add_package(
         session, namespace, pkg_name, pkg_summary, pkg_description,
         pkg_status, pkg_collection, pkg_poc, user, pkg_review_url=None,
         pkg_upstream_url=None, pkg_critpath=False,
-        monitring_status=True, koschei=False):
+        monitoring_status=True, koschei=False):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
 
