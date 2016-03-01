@@ -172,7 +172,7 @@ class RequestPackageForm(wtf.Form):
     )
     monitoring_status = wtforms.SelectField(
         'Monitor this package and report new versions',
-        [wtforms.validators.Required()],
+        [wtforms.validators.optional()],
         choices=[
             ('True', 'Monitoring and scratch build'),
             ('False', 'No monitoring'),
