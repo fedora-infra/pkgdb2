@@ -178,7 +178,8 @@ def create_session(db_url, debug=False, pool_recycle=3600):
 def add_package(
         session, namespace, pkg_name, pkg_summary, pkg_description,
         pkg_status, pkg_collection, pkg_poc, user, pkg_review_url=None,
-        pkg_upstream_url=None, pkg_critpath=False):
+        pkg_upstream_url=None, pkg_critpath=False,
+        monitoring_status=True, koschei=False):
     """ Create a new Package in the database and adds the corresponding
     PackageListing entry.
 
@@ -196,6 +197,9 @@ def add_package(
     :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
         being in critpath.
+    :kwarg monitoring_status: the new release monitoring status for this
+        package.
+    :kwarg koschei: the koschei integration status for this package.
     :returns: a message informating that the package has been successfully
         created.
     :rtype: str()
@@ -230,6 +234,8 @@ def add_package(
         status=pkg_status,
         review_url=pkg_review_url,
         upstream_url=pkg_upstream_url,
+        monitor=monitoring_status,
+        koschei=koschei,
     )
     session.add(package)
     try:
@@ -1848,7 +1854,8 @@ def add_new_branch_request(session, namespace, pkg_name, clt_to, user):
 def add_new_package_request(
         session, pkg_name, pkg_summary, pkg_description, pkg_status,
         pkg_collection, pkg_poc, user, pkg_review_url, pkg_namespace='rpms',
-        pkg_upstream_url=None, pkg_critpath=False):
+        pkg_upstream_url=None, pkg_critpath=False,
+        monitoring_status=True, koschei=False):
     """ Create a new Package request in the database.
 
     :arg session: session with which to connect to the database.
@@ -1864,6 +1871,9 @@ def add_new_package_request(
     :kwarg pkg_upstream_url: the url of the upstream project.
     :kwarg pkg_critpath: a boolean specifying if the package is marked as
         being in critpath.
+    :kwarg monitoring_status: the new release monitoring status for this
+        package.
+    :kwarg koschei: the koschei integration status for this package.
     :returns: a message informing that the request has been successfully
         created.
     :rtype: str()
@@ -1907,6 +1917,8 @@ def add_new_package_request(
         'pkg_upstream_url': pkg_upstream_url.strip() if pkg_upstream_url else None,
         'pkg_critpath': pkg_critpath,
         'pkg_namespace': pkg_namespace,
+        'monitoring_status': monitoring_status,
+        'koschei': koschei,
     }
 
     action = model.AdminAction(

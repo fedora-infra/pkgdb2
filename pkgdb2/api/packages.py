@@ -74,6 +74,11 @@ def api_package_new():
     :arg critpath: boolean specifying if the package is in the critpath
     :kwarg namespace: String of the namespace of the package to create
         (defaults to ``rpms``).
+    :kwarg monitoring_status: the new release monitoring status for this
+        package (defaults to ``True``, can be ``True``, ``False`` or
+        ``nobuild``).
+    :kwarg koschei: the koschei integration status for this package
+        (defaults to ``False``, can be ``True`` or ``False``).
 
     Sample response:
 
@@ -120,6 +125,8 @@ def api_package_new():
         pkg_poc = form.poc.data
         pkg_upstream_url = form.upstream_url.data
         pkg_critpath = form.critpath.data
+        monitoring_status = form.monitoring_status.data
+        koschei = form.koschei.data
 
         try:
             message = pkgdblib.add_package(
@@ -134,6 +141,8 @@ def api_package_new():
                 pkg_poc=pkg_poc,
                 pkg_upstream_url=pkg_upstream_url,
                 pkg_critpath=pkg_critpath,
+                monitoring_status=monitoring_status,
+                koschei=koschei,
                 user=flask.g.fas_user
             )
             SESSION.commit()
@@ -1357,6 +1366,11 @@ def api_package_request():
         automatically.
     :kwarg namespace: The namespace of the package to create
         (defaults to ``rpms``).
+    :kwarg monitoring_status: the new release monitoring status for this
+        package (defaults to ``True``, can be ``True``, ``False`` or
+        ``nobuild``).
+    :kwarg koschei: the koschei integration status for this package
+        (defaults to ``False``, can be ``True`` or ``False``).
 
 
     Sample response:
@@ -1428,6 +1442,8 @@ def api_package_request():
         pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
         pkg_namespace = form.namespace.data
+        monitoring_status = form.monitoring_status.data
+        koschei = form.koschei.data
 
         bz = APP.config.get('PKGDB2_BUGZILLA_URL')
         if bz not in pkg_review_url:
@@ -1452,6 +1468,8 @@ def api_package_request():
                     pkg_poc=pkg_poc,
                     pkg_upstream_url=pkg_upstream_url,
                     pkg_namespace=pkg_namespace,
+                    monitoring_status=monitoring_status,
+                    koschei=koschei,
                     user=flask.g.fas_user,
                 )
                 if message:

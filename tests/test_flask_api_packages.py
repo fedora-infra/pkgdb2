@@ -108,6 +108,7 @@ class FlaskApiPackagesTest(Modeltests):
             'branches': '',
             'poc': '',
             'upstream_url': '',
+            'monitoring_status': '1',
             'namespace': 'foo',
         }
         with user_set(pkgdb2.APP, user):
@@ -121,6 +122,7 @@ class FlaskApiPackagesTest(Modeltests):
                     "error_detail": [
                         "status: This field is required.",
                         "namespace: Not a valid choice",
+                        "monitoring_status: Not a valid choice",
                         "branches: '' is not a valid choice for this field",
                         "poc: This field is required.",
                     ],
@@ -196,6 +198,8 @@ class FlaskApiPackagesTest(Modeltests):
             'poc': 'mclasen',
             'upstream_url': 'http://www.gnome.org/',
             'critpath': False,
+            'monitoring_status': 'nobuild',
+            'koschei': True,
             'namespace': 'rpms',
         }
         with user_set(pkgdb2.APP, user):
@@ -211,6 +215,15 @@ class FlaskApiPackagesTest(Modeltests):
                     "output": "ok"
                 }
             )
+
+            # Check that the package created has the property we asked
+            output = self.app.get('/api/package/gnome-terminal/')
+            self.assertEqual(output.status_code, 200)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data['packages'][0]['package']['koschei_monitor'], True)
+            self.assertEqual(
+                data['packages'][0]['package']['monitor'], 'nobuild')
 
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
@@ -1934,6 +1947,7 @@ class FlaskApiPackagesTest(Modeltests):
                 'review_url': '123',
                 'branches': ['master'],
                 'namespace': 'rpms',
+                'monitoring_status': 'True',
             }
             output = self.app.post('/api/request/package', data=data)
             self.assertEqual(output.status_code, 200)

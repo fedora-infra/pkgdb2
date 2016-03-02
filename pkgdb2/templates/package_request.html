@@ -24,6 +24,8 @@
     {{ render_field_in_row(form.branches) }}
     {{ render_field_in_row(form.description, rows=5) }}
     {{ render_field_in_row(form.upstream_url, title="URL of the upstream project (if any)") }}
+    {{ render_field_in_row(form.monitoring_status, title="New release monitoring") }}
+    {{ render_field_in_row(form.koschei, title="Koschei integration/monitoring") }}
     {{ render_field_in_row(form.namespace, title="Namespace of the package") }}
   </table>
   <p class="buttons indent">
