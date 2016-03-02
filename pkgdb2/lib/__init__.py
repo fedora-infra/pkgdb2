@@ -1855,7 +1855,7 @@ def add_new_package_request(
         session, pkg_name, pkg_summary, pkg_description, pkg_status,
         pkg_collection, pkg_poc, user, pkg_review_url, pkg_namespace='rpms',
         pkg_upstream_url=None, pkg_critpath=False,
-        monitoring_status=True, koschei=False):
+        monitoring_status=True, koschei=False, comaintainers=None):
     """ Create a new Package request in the database.
 
     :arg session: session with which to connect to the database.
@@ -1874,6 +1874,8 @@ def add_new_package_request(
     :kwarg monitoring_status: the new release monitoring status for this
         package.
     :kwarg koschei: the koschei integration status for this package.
+    :kwarg comaintainers: comma separated list of potential co-maintainers
+        of the package.
     :returns: a message informing that the request has been successfully
         created.
     :rtype: str()
@@ -1919,6 +1921,7 @@ def add_new_package_request(
         'pkg_namespace': pkg_namespace,
         'monitoring_status': monitoring_status,
         'koschei': koschei,
+        'co-maintainers': comaintainers,
     }
 
     action = model.AdminAction(

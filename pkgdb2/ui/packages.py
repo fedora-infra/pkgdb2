@@ -1366,6 +1366,7 @@ def package_request_new():
         pkg_upstream_url = form.upstream_url.data
         monitoring_status = form.monitoring_status.data
         koschei = form.koschei.data
+        comaintainers = form.comaintainers.data.strip() or None
 
         bz = APP.config.get('PKGDB2_BUGZILLA_URL')
         if bz not in pkg_review_url:
@@ -1392,6 +1393,7 @@ def package_request_new():
                     pkg_upstream_url=pkg_upstream_url,
                     monitoring_status=monitoring_status,
                     koschei=koschei,
+                    comaintainers=comaintainers,
                     user=flask.g.fas_user,
                 )
                 if message:

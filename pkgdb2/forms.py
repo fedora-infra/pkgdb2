@@ -183,6 +183,10 @@ class RequestPackageForm(wtf.Form):
         'Koschei integration',
         [wtforms.validators.optional()]
     )
+    comaintainers = wtforms.TextField(
+        'Co-maintainers (comma separated)',
+        [wtforms.validators.optional()]
+    )
 
     def __init__(self, *args, **kwargs):
         """ Calls the default constructor with the normal argument but
