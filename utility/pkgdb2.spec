@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.1
+Version:        2.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -118,6 +118,17 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Mar 08 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.2-1
+- Update to 2.2
+- Update update_package_info.py to support namespacing and report all unknown
+  packages
+- Fix pagination when searching the list of packages to preserve the motif
+  searched and thus actually allow to go to page two
+- Add link to the user's page on the page listing pending ACL requests
+- Allow specifying the monitoring and the koschei status when asking or creating
+  a new package
+- Allow specifying co-maintainers when requesting a new package to be added
+
 * Wed Feb 03 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1-1
 - Update to 2.1
 - When showing one's requests or all the requests for the admins, place the most
