@@ -28,6 +28,7 @@ import json
 
 import sqlalchemy
 
+from datetime import datetime
 from datetime import timedelta
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
@@ -1720,26 +1721,55 @@ def add_branch(session, clt_from, clt_to, user):
     ))
     session.commit()
 
+    q1 = '''INSERT INTO "PackageListing" (
+        package_id, point_of_contact, collection_id, status, critpath,
+        status_change
+    )
+    SELECT package_id, point_of_contact, %s, status, critpath, '%s'
+    FROM "PackageListing"
+    WHERE "PackageListing".collection_id = %s
+    AND "PackageListing".status IN ('Approved','Orphaned');''' % (
+        clt_to.id, datetime.utcnow(), clt_from.id
+    )
+
+    q2 = '''INSERT INTO "PackageListingAcl" (
+        fas_name, packagelisting_id, acl, status, date_created
+    )
+    SELECT "PackageListingAcl".fas_name, p2.id,
+           "PackageListingAcl".acl, "PackageListingAcl".status, '%s'
+    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl"
+    WHERE p1.collection_id = %s
+    AND p2.collection_id = %s
+    AND p1.package_id = p2.package_id
+    AND "PackageListingAcl".packagelisting_id = p1.id;
+    ''' % (datetime.utcnow(), clt_from.id, clt_to.id)
+
     messages = []
-    for pkglist in model.PackageListing.by_collectionid(
-            session, clt_from.id):
-        if pkglist.status in ('Approved','Orphaned'):
-            try:
-                pkglist.branch(session, clt_to)
-                # Should not fail since the flush() passed
-                session.commit()
-                messages.append(
-                    '%s/%s branched successfully from %s to %s %s' % (
-                        pkglist.package.namespace, pkglist.package.name,
-                        clt_from.name, clt_to.name, clt_to.version))
-            except SQLAlchemyError, err:  # pragma: no cover
-                session.rollback()
-                pkgdb2.LOG.debug(err)
-                messages.append(
-                    'FAILED: %s/%s failed to branch from %s to %s %s' % (
-                        pkglist.package.namespace, pkglist.package.name,
-                        clt_from.name, clt_to.name, clt_to.version))
-                messages.append(str(err))
+    try:
+        session.execute(q1)
+        session.commit()
+        messages.append(
+            'SUCCESS: successfully branched (PackageListing) %s from '
+            'to %s %s' % (clt_from.name, clt_to.name, clt_to.version))
+    except SQLAlchemyError, err:  # pragma: no cover
+        session.rollback()
+        pkgdb2.LOG.debug(err)
+        messages.append(
+            'FAILED: failed to branch (PackageListing) %s from to %s %s' % (
+                clt_from.name, clt_to.name, clt_to.version))
+
+    try:
+        session.execute(q2)
+        session.commit()
+        messages.append(
+                'SUCCESS: successfully branched (PackageListingAcl) %s from '
+            'to %s %s' % (clt_from.name, clt_to.name, clt_to.version))
+    except SQLAlchemyError, err:  # pragma: no cover
+        session.rollback()
+        pkgdb2.LOG.debug(err)
+        messages.append(
+            'FAILED: failed to branch (PackageListingAcl) %s from to %s %s' % (
+                clt_from.name, clt_to.name, clt_to.version))
 
     pkgdb2.lib.utils.log(session, None, 'branch.complete', dict(
         agent=user.username,
