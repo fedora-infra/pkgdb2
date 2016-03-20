@@ -87,7 +87,8 @@ def email_publish(
         cc_email = [cc_email]
     if isinstance(to_email, basestring):
         to_email = [to_email]
-    to_email.extend(cc_email)
+    if cc_email:
+        to_email.extend(cc_email)
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
