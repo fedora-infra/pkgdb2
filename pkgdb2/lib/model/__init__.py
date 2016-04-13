@@ -1684,6 +1684,7 @@ class Package(BASE):
 
         result = {
             'name': self.name,
+            'namespace': self.namespace,
             'summary': self.summary,
             'description': self.description,
             'status': self.status,

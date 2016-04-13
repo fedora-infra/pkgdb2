@@ -87,6 +87,7 @@ class PackageListingAcltests(Modeltests):
                 'package': {
                     'upstream_url': u'http://guake.org',
                     'name': u'guake',
+                    'namespace': u'rpms',
                     'status': u'Approved',
                     'review_url': u'https://bugzilla.redhat.com/450189',
                     'acls': [],
