@@ -3,7 +3,7 @@
 
 Name:           pkgdb2
 Version:        2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
@@ -91,9 +91,6 @@ install -m 644 createdb.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_createdb.py
 # Install the pkgdb2_branch script
 install -m 644 utility/pkgdb2_branch.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/pkgdb2_branch.py
 
-# Install the set_monitoring_script
-install -m 644 utility/set_monitoring_status.py $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/set_monitoring_status.py
-
 # Install the alembic files
 cp -r alembic $RPM_BUILD_ROOT/%{_datadir}/pkgdb2/
 install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic.ini
@@ -118,6 +115,9 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Apr 13 2016 Till Maas <opensource@till.name> - 2.2-2
+- Remove no longer needed set_monitoring_status.py script
+
 * Tue Mar 08 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.2-1
 - Update to 2.2
 - Update update_package_info.py to support namespacing and report all unknown
