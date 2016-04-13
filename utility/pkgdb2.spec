@@ -101,7 +101,8 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 #./runtests.sh
 
 %files
-%doc README.rst COPYING doc/
+%doc README.rst doc/
+%license COPYING
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/pkgdb2.conf
 %config(noreplace) %{_sysconfdir}/pkgdb2/pkgdb2.cfg
 %config(noreplace) %{_sysconfdir}/pkgdb2/alembic.ini
@@ -117,6 +118,7 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 %changelog
 * Wed Apr 13 2016 Till Maas <opensource@till.name> - 2.2-2
 - Remove no longer needed set_monitoring_status.py script
+- Use %%license
 
 * Tue Mar 08 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.2-1
 - Update to 2.2
