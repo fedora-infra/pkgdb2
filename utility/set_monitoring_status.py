@@ -2,7 +2,7 @@
 
 """
 Simple script used to import the monitoring status of packages from the wiki
-page: http://fedoraproject.org/wiki/Upstream_release_monitoring
+page: https://fedoraproject.org/wiki/Upstream_release_monitoring
 into pkgdb: https://admin.fedoraproject.org/pkgdb/
 
 
@@ -52,7 +52,7 @@ class MediaWiki(fedora.client.Wiki):
 class Repository:
     def __init__(self):
         self.name = 'Fedora Rawhide'
-        self.path = 'http://kojipkgs.fedoraproject.org/mash/rawhide/source/SRPMS'
+        self.path = 'https://kojipkgs.fedoraproject.org/mash/rawhide/source/SRPMS'
         self.repoid = "cnucnu-%s" % "".join(
             c for c in self.name if c in string.letters)
 

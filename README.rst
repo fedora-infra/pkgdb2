@@ -12,8 +12,8 @@ bugzilla and who get the notifications for changes in the git, builds or bugs.
 
 
 :Project page: https://fedorahosted.org/pkgdb2/
-:Documentation: http://pkgdb2.rtfd.org
-:Git repository: http://git.fedorahosted.org/git/pkgdb2
+:Documentation: https://pkgdb2.readthedocs.org/
+:Git repository: https://git.fedorahosted.org/git/pkgdb2
 :Github mirror: https://github.com/fedora-infra/pkgdb2
 :Mailing list: https://lists.fedorahosted.org/mailman/listinfo/packagedb
 
@@ -78,7 +78,7 @@ For setting up the PostgreSQL database you can look into the `Fedora documentati
 
 .. note:: If you need/want a copy of the database used in production, follow the
           instructions in the `documentation
-          <http://pkgdb2.readthedocs.org/en/latest/development.html#get-a-working-database>`_
+          <https://pkgdb2.readthedocs.org/en/latest/development.html#get-a-working-database>`_
 
 After executing all the above steps, you now need to  `Adjust Postgresql Connection Settings
 <https://github.com/fedora-infra/bodhi#3-adjust-postgresql-connection-settings>`_
@@ -100,4 +100,4 @@ Open your browser and visit http://localhost:5000 to check it out.
 
 
 For more information about the project configuration or deployment, check out
-the `documentation <http://pkgdb2.readthedocs.org>`_
+the `documentation <https://pkgdb2.readthedocs.org>`_
