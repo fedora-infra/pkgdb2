@@ -6,7 +6,7 @@ From sources
 
 Clone the source::
 
- git clone http://git.fedorahosted.org/git/pkgdb2.git
+ git clone https://git.fedorahosted.org/git/pkgdb2.git
 
 Install the dependencies listed in the ``requirements.txt`` file.
 

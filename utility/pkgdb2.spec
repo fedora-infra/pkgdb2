@@ -7,7 +7,7 @@ Release:        1%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
-URL:            http://fedorahosted.org/pkgdb2/
+URL:            https://fedorahosted.org/pkgdb2/
 Source0:        https://fedorahosted.org/releases/p/k/pkgdb2/%{name}-%{version}.tar.gz
 
 BuildArch:      noarch

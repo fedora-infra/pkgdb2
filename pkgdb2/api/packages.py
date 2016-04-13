@@ -921,7 +921,7 @@ def api_package_list(namespace=None, pattern=None):
               "review_url": null,
               "status": "Approved",
               "summary": "A Gtk based drop down terminal for Linux and Unix",
-              "upstream_url": "http://github.com/lanoxx/tilda"
+              "upstream_url": "https://github.com/lanoxx/tilda"
             },
             {
               "acls": [],

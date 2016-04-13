@@ -61,7 +61,7 @@ ADMIN_GROUP = ['sysadmin-main', 'sysadmin-cvs']
 
 # The default backend for dogpile
 # Options are listed at:
-# http://dogpilecache.readthedocs.org/en/latest/api.html  (backend section)
+# https://dogpilecache.readthedocs.org/en/latest/api.html  (backend section)
 #PKGDB2_CACHE_BACKEND = 'dogpile.cache.memory'
 PKGDB2_CACHE_BACKEND = 'dogpile.cache.memcached'
 PKGDB2_CACHE_KWARGS = {

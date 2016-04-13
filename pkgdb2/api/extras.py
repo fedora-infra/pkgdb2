@@ -80,7 +80,8 @@ def _bz_acls_cached(name=None, out_format='text'):
                 group = []
                 for ppl in packages[clt][pkg]['cc'].split(','):
                     if ppl.startswith('group::'):
-                        group.append(ppl.replace('group::', '@').encode('UTF-8'))
+                        group.append(ppl.replace('group::', '@').encode(
+                            'UTF-8'))
                     elif ppl:
                         user.append(ppl.encode('UTF-8'))
                 poc = packages[clt][pkg]['poc']
@@ -543,7 +544,7 @@ def api_monitored():
     List packages monitored
     -----------------------
     Return the list of packages in pkgdb that have been flagged to be
-    monitored by `anitya <http://release-monitoring.org>`_.
+    monitored by `anitya <https://release-monitoring.org>`_.
 
     ::
 
@@ -774,7 +775,7 @@ def api_pkgrequest(bzid):
 
             if flag_setter != bug.assigned_to:
                 msg = 'Review not approved by the assignee of ' \
-                        'the ticket {0}'.format(flag_setter)
+                      'the ticket {0}'.format(flag_setter)
                 if error:
                     error += ' -- {0}'.format(msg)
                 else:
