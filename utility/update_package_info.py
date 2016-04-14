@@ -119,8 +119,6 @@ def get_pkg_info(session, pkg_name):
     pkg = session.query(
         Package
     ).filter(
-        Package.namespace == 'rpms'
-    ).filter(
         Package.name == pkg_name
     ).one()
     return pkg
