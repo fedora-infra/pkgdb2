@@ -119,8 +119,6 @@ def get_pkg_info(session, pkg_name):
     pkg = session.query(
         Package
     ).filter(
-        Package.namespace == 'rpms'
-    ).filter(
         Package.name == pkg_name
     ).one()
     return pkg
@@ -132,6 +130,7 @@ def main():
 
     UNKNOWN = set()
     KNOWN = set()
+    UPDATED = 0
     for name, version in VERSIONS:
         print '%s: %s' % (name, version)
         base_url = BASE_URL % version
@@ -154,7 +153,6 @@ def main():
 
         # Update the package in pkgdb
         count = 0
-        updated = 0
         if name == 'rawhide':
             for pkg in pkgdb2.lib.search_package(
                     pkgdb2.SESSION, 'rpms', '*', status='Approved'):
@@ -179,7 +177,7 @@ def main():
                     user=User()
                 )
                 if msg:
-                    updated += 1
+                    UPDATED += 1
         else:
             tmp = set()
             for pkgname in UNKNOWN:
@@ -211,7 +209,7 @@ def main():
                     user=User()
                 )
                 if msg:
-                    updated += 1
+                    UPDATED += 1
             # Add the package we didn't find here (in case)
             UNKNOWN.update(tmp)
             # Remove the ones we found
@@ -220,7 +218,7 @@ def main():
         pkgdb2.SESSION.commit()
 
     print '%s packages found' % len(KNOWN)
-    print '%s packages updated' % updated
+    print '%s packages updated' % UPDATED
     print '%s packages not found\n' % len(UNKNOWN)
     for pkg in sorted(UNKNOWN):
         print "No such package %s found in yum's metadata." % pkg
