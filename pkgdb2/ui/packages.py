@@ -862,7 +862,9 @@ def package_unretire(namespace, package, full=True):
     if form.validate_on_submit():
         review_url = form.review_url.data
         review_url = review_url.strip() if review_url else None
+
         checks_ok = True
+
         for br in form.branches.data:
             if br == 'master' and not review_url:
                 checks_ok = False
@@ -877,6 +879,19 @@ def package_unretire(namespace, package, full=True):
                     'branch if master is also retired',
                     'error')
                 break
+
+        # Check the review URL
+        bz = APP.config.get('PKGDB2_BUGZILLA_URL')
+        try:
+            int(review_url)
+            review_url = bz + '/' + review_url
+        except (TypeError, ValueError):
+            pass
+        if review_url and bz not in review_url:
+            checks_ok = False
+            flask.flash(
+                'The review URL must be either a bug identifier or the full '\
+                'URL to %s' % bz, 'error')
 
         if not checks_ok:
             return flask.redirect(flask.url_for(
@@ -905,6 +920,7 @@ def package_unretire(namespace, package, full=True):
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
                     except SQLAlchemyError, err:
+                        print err
                         SESSION.rollback()
                         flask.flash(
                             'Could not save the request for branch: %s, has '
