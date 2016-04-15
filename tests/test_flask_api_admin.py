@@ -86,18 +86,16 @@ class FlaskApiAdminTest(Modeltests):
 
         output = self.app.get('/api/admin/actions/?page=2&limit=1')
         data = json.loads(output.data)
-        self.assertEqual(data['actions'], [])
-        self.assertEqual(data['page'], 1)
-        self.assertEqual(data['page_total'], 1)
-        self.assertEqual(data['output'], 'notok')
-        self.assertEqual(
-            data['error'], 'No actions found for these parameters')
+        self.assertEqual(len(data['actions']), 1)
+        self.assertEqual(data['page'], 2)
+        self.assertEqual(data['page_total'], 2)
+        self.assertEqual(data['output'], 'ok')
 
         output = self.app.get('/api/admin/actions/?package=guake')
         data = json.loads(output.data)
         self.assertEqual(data['page'], 1)
         self.assertEqual(data['page_total'], 1)
-        self.assertEqual(len(data['actions']), 1)
+        self.assertEqual(len(data['actions']), 2)
         self.assertEqual(data['actions'][0]['action'], 'request.unretire')
         self.assertEqual(
             data['actions'][0]['collection']['branchname'], 'f18')
@@ -110,7 +108,7 @@ class FlaskApiAdminTest(Modeltests):
         data = json.loads(output.data)
         self.assertEqual(data['page'], 1)
         self.assertEqual(data['page_total'], 1)
-        self.assertEqual(len(data['actions']), 1)
+        self.assertEqual(len(data['actions']), 2)
         self.assertEqual(data['actions'][0]['action'], 'request.unretire')
         self.assertEqual(
             data['actions'][0]['collection']['branchname'], 'f18')
@@ -123,7 +121,7 @@ class FlaskApiAdminTest(Modeltests):
         data = json.loads(output.data)
         self.assertEqual(data['page'], 1)
         self.assertEqual(data['page_total'], 1)
-        self.assertEqual(len(data['actions']), 1)
+        self.assertEqual(len(data['actions']), 2)
         self.assertEqual(data['actions'][0]['action'], 'request.unretire')
         self.assertEqual(
             data['actions'][0]['collection']['branchname'], 'f18')
@@ -132,7 +130,7 @@ class FlaskApiAdminTest(Modeltests):
         self.assertEqual(data['output'], 'ok')
         self.assertFalse('error' in data)
 
-        output = self.app.get('/api/admin/actions/?packager=pingou')
+        output = self.app.get('/api/admin/actions/?packager=kevin')
         data = json.loads(output.data)
         self.assertEqual(data['actions'], [])
         self.assertEqual(data['page'], 1)
