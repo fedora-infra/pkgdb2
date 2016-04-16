@@ -602,7 +602,7 @@ def api_package_retire():
 
 
 @API.route('/package/unretire/', methods=['POST'])
-@packager_login_required
+@is_admin
 def api_package_unretire():
     '''
     Unretire packages
