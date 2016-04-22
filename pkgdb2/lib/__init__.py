@@ -25,6 +25,8 @@ PkgDB internal API to interact with the database.
 
 import operator
 import json
+import urlparse
+import os
 
 import sqlalchemy
 
@@ -2772,3 +2774,28 @@ def drop_namespace(session, namespace, user):
         session.rollback()
         raise PkgdbException(
             'Could not remove Namespace "%s" to the database.' % namespace)
+
+
+def check_bz_url(bugzilla_url, url):
+    """ Check if the provided url
+
+    :arg bugzilla_url: the url of the bugzilla instance
+    :arg url: the url to a bugzilla ticket to check or a ticket identifier
+
+    """
+    if not url or not bugzilla_url:
+        return None
+    output = None
+    url = urlparse.urlparse(url)
+    if url.path:
+        path = url.path
+        if path.startswith('/'):
+            path = path[1:]
+        try:
+            int(path)
+            output = os.path.join(bugzilla_url, path)
+        except (TypeError, ValueError):
+            pass
+    elif url.query and 'id=' in url.query:
+        output = os.path.join(bugzilla_url, url.query.replace('id=', ''))
+    return output
