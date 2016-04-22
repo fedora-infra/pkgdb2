@@ -635,7 +635,7 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertIn(
-                '<li class="error">You must provide a review URL to '
+                '<li class="error">You must provide a valid review URL to '
                 'un-retire master</li>', output.data)
 
             # Invalid review_url
@@ -645,9 +645,8 @@ class FlaskUiPackagesTest(Modeltests):
                 data=data)
             self.assertEqual(output.status_code, 200)
             self.assertIn(
-                '<li class="error">The review URL must be either a bug '
-                'identifier or the full URL to https://bugzilla.redhat.com'
-                '</li>', output.data)
+                '<li class="error">You must provide a valid review URL to '
+                'un-retire master</li>', output.data)
 
             # Int review_url
             data['review_url'] = '1234'
