@@ -1454,8 +1454,8 @@ def api_package_request():
         pkg_poc = flask.g.fas_user.username
         pkg_upstream_url = form.upstream_url.data
         pkg_namespace = form.namespace.data
-        monitoring_status = form.monitoring_status.data
-        koschei = form.koschei.data
+        monitoring_status = form.monitoring_status.data or True
+        koschei = form.koschei.data or False
 
         bz = APP.config.get('PKGDB2_BUGZILLA_URL')
         if bz not in pkg_review_url:
