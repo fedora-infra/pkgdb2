@@ -862,20 +862,25 @@ def package_unretire(namespace, package, full=True):
     if form.validate_on_submit():
         review_url = form.review_url.data
         review_url = review_url.strip() if review_url else None
+
         checks_ok = True
+
+        # Check the review URL
+        bz = APP.config.get('PKGDB2_BUGZILLA_URL')
+        review_url = pkgdblib.check_bz_url(bz, review_url)
+
         for br in form.branches.data:
             if br == 'master' and not review_url:
                 checks_ok = False
                 flask.flash(
-                    'You must provide a review URL to un-retire master',
+                    'You must provide a valid review URL to un-retire master',
                     'error')
                 break
             elif br.startswith('e') and 'master' in collections and not review_url:
                 checks_ok = False
                 flask.flash(
-                    'You must provide a review URL to un-retire an EPEL '
-                    'branch if master is also retired',
-                    'error')
+                    'You must provide a valid review URL to un-retire an '
+                    'EPEL branch if master is also retired', 'error')
                 break
 
         if not checks_ok:
@@ -905,6 +910,7 @@ def package_unretire(namespace, package, full=True):
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
                     except SQLAlchemyError, err:
+                        APP.logger.exception(err)
                         SESSION.rollback()
                         flask.flash(
                             'Could not save the request for branch: %s, has '
@@ -1369,12 +1375,7 @@ def package_request_new():
         comaintainers = form.comaintainers.data.strip() or None
 
         bz = APP.config.get('PKGDB2_BUGZILLA_URL')
-        if bz not in pkg_review_url:
-            try:
-                int(pkg_review_url)
-                pkg_review_url = bz + '/' + pkg_review_url
-            except (TypeError, ValueError):
-                pass
+        pkg_review_url = pkgdblib.check_bz_url(bz, pkg_review_url)
 
         try:
             messages = []

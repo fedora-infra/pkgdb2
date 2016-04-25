@@ -591,6 +591,83 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="error">Could not save the request for branch: '
                 'f18, has it already been requested?</li>' in output.data)
 
+        # Oprhan and retire guake on master
+        data = {
+            'branches': ['master'],
+            'csrf_token': csrf_token,
+        }
+
+        user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/rpms/guake/orphan', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">You are no longer point of contact on '
+                'branch: master</li>' in output.data)
+
+        user = FakeFasUserAdmin()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post(
+                '/package/rpms/guake/retire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">This package has been retired on '
+                'branch: master</li>' in output.data)
+
+        # Ask to un-retire guake on master
+        utils_module.get_packagers.return_value = ['pingou', 'toshio']
+        user.username = 'pingou'
+        with user_set(pkgdb2.APP, user):
+            output = self.app.get(
+                '/package/rpms/guake/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<td><select id="branches" multiple name="branches">'
+                '<option value="master">master</option>' in output.data)
+
+            # Missing review_url
+            output = self.app.post(
+                '/package/rpms/guake/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertIn(
+                '<li class="error">You must provide a valid review URL to '
+                'un-retire master</li>', output.data)
+
+            # Invalid review_url
+            data['review_url'] = 'foo'
+            output = self.app.post(
+                '/package/rpms/guake/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertIn(
+                '<li class="error">You must provide a valid review URL to '
+                'un-retire master</li>', output.data)
+
+            # Int review_url
+            data['review_url'] = '1234'
+            output = self.app.post(
+                '/package/rpms/guake/unretire', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertTrue(
+                '<li class="message">Admins have been asked to un-retire '
+                'branch: master</li>' in output.data)
+
+            # Full URL as review_url
+            data['review_url'] = 'https://bugzilla.redhat.com/1234'
+            output = self.app.post(
+                '/package/rpms/guake/unretire/0', follow_redirects=True,
+                data=data)
+            self.assertEqual(output.status_code, 200)
+            self.assertIn(
+                '<li class="error">Could not save the request for branch: '
+                'master, has it already been requested?</li>', output.data)
+
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
     def test_package_take(self, login_func, utils_module):
