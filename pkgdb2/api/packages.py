@@ -114,6 +114,10 @@ def api_package_new():
     if str(form.namespace.data) in ['None', '']:
         form.namespace.data = 'rpms'
 
+    violation = enforce_namespace_policy(form)
+    if violation:
+        return violation
+
     if form.validate_on_submit():
         namespace = form.namespace.data
         pkg_name = form.pkgname.data
@@ -223,6 +227,10 @@ def api_package_edit():
 
     if str(form.namespace.data) in ['None', '']:
         form.namespace.data = 'rpms'
+
+    violation = enforce_namespace_policy(form)
+    if violation:
+        return violation
 
     if form.validate_on_submit():
         namespace = form.namespace.data
@@ -1429,6 +1437,10 @@ def api_package_request():
     if str(form.namespace.data) in ['None', '']:
         form.namespace.data = 'rpms'
 
+    violation = enforce_namespace_policy(form)
+    if violation:
+        return violation
+
     if form.validate_on_submit():
         pkg_name = form.pkgname.data
         pkg_summary = form.summary.data
@@ -1624,3 +1636,27 @@ def api_branch_request(package, namespace='rpms'):
     jsonout = flask.jsonify(output)
     jsonout.status_code = httpcode
     return jsonout
+
+
+def enforce_namespace_policy(form):
+    """ Check that a package change requests meets with the policy.
+
+    Only some collections are allowed for some namespaces
+    https://github.com/fedora-infra/pkgdb2/issues/341
+    """
+
+    namespace_policy = APP.config.get('PKGDB2_NAMESPACE_POLICY')
+    namespace = form.namespace.data
+    if namespace in namespace_policy:
+        policy = namespace_policy[namespace]
+        culprits = [b for b in form.branches.data if b not in policy]
+        if len(culprits) > 0:
+            output['output'] = 'notok'
+            output['error'] = "%r not allowed by namespace policy %r: %r" % (
+                culprits, namespace, policy)
+            jsonout = flask.jsonify(output)
+            jsonout.status_code = 400
+            return jsonout
+
+    # No problems found...
+    return None
