@@ -1290,7 +1290,7 @@ def package_request_branch(namespace, package, full=True):
 
     # Further limit that list to only the branches allowed for this namespace.
     namespace_policy = APP.config.get('PKGDB2_NAMESPACE_POLICY')
-    policy = namespace_policy.get(pkg.namespace)
+    policy = namespace_policy.get(pkg.package.namespace)
     if policy:
         branches_possible = [b for b in branches_possible if b in policy]
 
