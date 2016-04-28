@@ -1736,9 +1736,16 @@ def add_branch(session, clt_from, clt_to, user):
         package_id, point_of_contact, collection_id, status, critpath,
         status_change
     )
-    SELECT package_id, point_of_contact, %s, status, critpath, '%s'
-    FROM "PackageListing"
+    SELECT
+        "PackageListing".package_id,
+        "PackageListing".point_of_contact,
+        %s,
+        "PackageListing".status,
+        "PackageListing".critpath,
+        '%s'
+    FROM "PackageListing", "Package"
     WHERE "PackageListing".collection_id = %s
+    AND "Package".id = "PackageListing".package_id
     AND "PackageListing".status IN ('Approved','Orphaned')
     ''' % (
         clt_to.id, datetime.utcnow(), clt_from.id
@@ -1749,16 +1756,17 @@ def add_branch(session, clt_from, clt_to, user):
     )
     SELECT "PackageListingAcl".fas_name, p2.id,
            "PackageListingAcl".acl, "PackageListingAcl".status, '%s'
-    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl"
+    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl", "Package"
     WHERE p1.collection_id = %s
     AND p2.collection_id = %s
     AND p1.package_id = p2.package_id
     AND "PackageListingAcl".packagelisting_id = p1.id
+    AND "Package".id = p1.package_id
     ''' % (datetime.utcnow(), clt_from.id, clt_to.id)
 
     for namespace in exempted_namespaces:
-        q1 += ''' AND "PackageListing".namespace != '%s' ''' % namespace
-        q2 += ''' AND p1.namespace != '%s' ''' % namespace
+        q1 += ''' AND "Package".namespace != '%s' ''' % namespace
+        q2 += ''' AND "Package".namespace != '%s' ''' % namespace
 
     q1 += ";"
     q2 += ";"
