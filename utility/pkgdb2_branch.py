@@ -61,7 +61,7 @@ class FakeFasUser(object):
     '''
 
     def __init__(self, username, groups=[]):
-        ''' Instanciate a FakeFasUser object.
+        ''' Instantiate a FakeFasUser object.
 
         :arg username: the username of the user in FAS.
         :type username: str
