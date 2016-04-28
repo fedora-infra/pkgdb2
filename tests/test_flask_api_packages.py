@@ -225,6 +225,35 @@ class FlaskApiPackagesTest(Modeltests):
             self.assertEqual(
                 data['packages'][0]['package']['monitor'], 'nobuild')
 
+        # Test that the namespace-policy enforcement works.
+        # https://github.com/fedora-infra/pkgdb2/issues/341
+        data = {
+            'pkgname': 'gnome-terminal',
+            'summary': 'Terminal emulator for GNOME',
+            'description': 'Terminal for GNOME...',
+            'review_url': 'http://bugzilla.redhat.com/1234',
+            'status': 'Approved',
+            'branches': 'notmaster',
+            'poc': 'mclasen',
+            'upstream_url': 'http://www.gnome.org/',
+            'critpath': False,
+            'monitoring_status': 'nobuild',
+            'koschei': True,
+            'namespace': 'modules',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/new/', data=data)
+            self.assertEqual(output.status_code, 400)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    u"error": u"notmaster not allowed by namespace "
+                    "policy modules: master",
+                    u"output": u"notok"
+                }
+            )
+
     @patch('pkgdb2.lib.utils')
     @patch('pkgdb2.packager_login_required')
     def test_api_package_orphan(self, login_func, mock_func):
