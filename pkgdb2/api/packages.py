@@ -1651,10 +1651,11 @@ def enforce_namespace_policy(form):
         policy = namespace_policy[namespace]
         culprits = [b for b in form.branches.data if b not in policy]
         if len(culprits) > 0:
-            output['output'] = 'notok'
-            output['error'] = "%r not allowed by namespace policy %r: %r" % (
-                culprits, namespace, policy)
-            jsonout = flask.jsonify(output)
+            jsonout = flask.jsonify({
+                'output': 'notok',
+                'error': "%s not allowed by namespace policy %s: %s" % (
+                    ", ".join(culprits), namespace, ", ".join(policy)),
+            })
             jsonout.status_code = 400
             return jsonout
 
