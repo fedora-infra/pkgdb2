@@ -1682,7 +1682,7 @@ def unorphan_package(
 
 
 def add_branch(session, clt_from, clt_to, user):
-    """ Clone a the permission from a branch to another.
+    """ Clone a permission from a branch to another.
 
     This method only flushes the new objects, the only thing committed is
     the log message when the branching starts.
