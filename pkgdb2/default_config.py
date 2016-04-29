@@ -172,3 +172,13 @@ Your prompt attention in this matter is appreciated.
 
 The Fedora admins.
 """
+
+# If a namespace appears in this list, then you can only request packages for
+# it from the list of mandated branches here. If the namespace doesn't appear
+# here, then you can request any branches that you like.
+# https://github.com/fedora-infra/pkgdb2/issues/341
+PKGDB2_NAMESPACE_POLICY = {
+    "modules": [
+        "master",
+    ],
+}

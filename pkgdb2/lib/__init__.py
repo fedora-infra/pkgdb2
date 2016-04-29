@@ -1682,7 +1682,7 @@ def unorphan_package(
 
 
 def add_branch(session, clt_from, clt_to, user):
-    """ Clone a the permission from a branch to another.
+    """ Clone a permission from a branch to another.
 
     This method only flushes the new objects, the only thing committed is
     the log message when the branching starts.
@@ -1716,10 +1716,19 @@ def add_branch(session, clt_from, clt_to, user):
     except NoResultFound:
         raise PkgdbException('Branch %s not found' % clt_to)
 
+    # Compute a list of namespaces that should *not* be handled in this branch.
+    policy = pkgdb2.APP.config.get('PKGDB2_NAMESPACE_POLICY')
+    exempted_namespaces = [
+        namespace for namespace, specified_branches in policy.items()
+        if clt_to.branchname not in specified_branches
+    ]
+    pkgdb2.LOG.info("Exempted namespaces %r" % exempted_namespaces)
+
     pkgdb2.lib.utils.log(session, None, 'branch.start', dict(
         agent=user.username,
         collection_from=clt_from.to_json(),
         collection_to=clt_to.to_json(),
+        exempted_namespaces=exempted_namespaces,
     ))
     session.commit()
 
@@ -1727,10 +1736,18 @@ def add_branch(session, clt_from, clt_to, user):
         package_id, point_of_contact, collection_id, status, critpath,
         status_change
     )
-    SELECT package_id, point_of_contact, %s, status, critpath, '%s'
-    FROM "PackageListing"
+    SELECT
+        "PackageListing".package_id,
+        "PackageListing".point_of_contact,
+        %s,
+        "PackageListing".status,
+        "PackageListing".critpath,
+        '%s'
+    FROM "PackageListing", "Package"
     WHERE "PackageListing".collection_id = %s
-    AND "PackageListing".status IN ('Approved','Orphaned');''' % (
+    AND "Package".id = "PackageListing".package_id
+    AND "PackageListing".status IN ('Approved','Orphaned')
+    ''' % (
         clt_to.id, datetime.utcnow(), clt_from.id
     )
 
@@ -1739,12 +1756,20 @@ def add_branch(session, clt_from, clt_to, user):
     )
     SELECT "PackageListingAcl".fas_name, p2.id,
            "PackageListingAcl".acl, "PackageListingAcl".status, '%s'
-    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl"
+    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl", "Package"
     WHERE p1.collection_id = %s
     AND p2.collection_id = %s
     AND p1.package_id = p2.package_id
-    AND "PackageListingAcl".packagelisting_id = p1.id;
+    AND "PackageListingAcl".packagelisting_id = p1.id
+    AND "Package".id = p1.package_id
     ''' % (datetime.utcnow(), clt_from.id, clt_to.id)
+
+    for namespace in exempted_namespaces:
+        q1 += ''' AND "Package".namespace != '%s' ''' % namespace
+        q2 += ''' AND "Package".namespace != '%s' ''' % namespace
+
+    q1 += ";"
+    q2 += ";"
 
     messages = []
     try:
@@ -1777,6 +1802,7 @@ def add_branch(session, clt_from, clt_to, user):
         agent=user.username,
         collection_from=clt_from.to_json(),
         collection_to=clt_to.to_json(),
+        exempted_namespaces=exempted_namespaces,
     ))
 
     return messages

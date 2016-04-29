@@ -1281,10 +1281,18 @@ def package_request_branch(namespace, package, full=True):
     collections = pkgdb2.lib.search_collection(
         SESSION, '*', 'Under Development')
     collections.extend(pkgdb2.lib.search_collection(SESSION, '*', 'Active'))
+
+    # List the possible branches that this package does not already have.
     branches_possible = [
         collec.branchname
         for collec in collections
         if collec.branchname not in branches]
+
+    # Further limit that list to only the branches allowed for this namespace.
+    namespace_policy = APP.config.get('PKGDB2_NAMESPACE_POLICY')
+    policy = namespace_policy.get(pkg.package.namespace)
+    if policy:
+        branches_possible = [b for b in branches_possible if b in policy]
 
     form = pkgdb2.forms.BranchForm(collections=branches_possible)
 

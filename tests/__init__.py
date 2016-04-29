@@ -123,6 +123,9 @@ class Modeltests(unittest.TestCase):
         # Create the docker namespace
         obj = model.Namespace('docker')
         self.session.add(obj)
+        # Create the modules namespace
+        obj = model.Namespace('modules')
+        self.session.add(obj)
         self.session.commit()
         APP.before_request(FAS._check_session)
 
@@ -253,6 +256,18 @@ def create_package(session):
     )
     session.add(package)
 
+    package = model.Package(
+        name='core',
+        namespace='modules',
+        summary='The core module.  Just enough to light up a machine.',
+        description='The core module...',
+        status='Approved',
+        review_url=None,
+        upstream_url=None,
+        monitor=False,
+    )
+    session.add(package)
+
     session.commit()
 
 
@@ -265,6 +280,7 @@ def create_package_listing(session):
     fedocal_pkg = model.Package.by_name(session, 'rpms', 'fedocal')
     geany_pkg = model.Package.by_name(session, 'rpms', 'geany')
     offlineimap_pkg = model.Package.by_name(session, 'docker', 'offlineimap')
+    core_pkg = model.Package.by_name(session, 'modules', 'core')
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')
@@ -348,6 +364,15 @@ def create_package_listing(session):
     )
     session.add(pkgltg)
 
+    # Pkg: core - Collection: devel - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='josef',
+        status='Approved',
+        package_id=core_pkg.id,
+        collection_id=devel_collec.id,
+    )
+    session.add(pkgltg)
+
     session.commit()
 
 
@@ -399,6 +424,7 @@ def create_package_acl(session):
     guake_pkg = model.Package.by_name(session, 'rpms', 'guake')
     geany_pkg = model.Package.by_name(session, 'rpms', 'geany')
     offlineimap_pkg = model.Package.by_name(session, 'docker', 'offlineimap')
+    core_pkg = model.Package.by_name(session, 'modules', 'core')
 
     el4_collec = model.Collection.by_name(session, 'el4')
     f18_collec = model.Collection.by_name(session, 'f18')
@@ -412,6 +438,8 @@ def create_package_acl(session):
         session, geany_pkg.id, devel_collec.id)
     pkglist_offlineimap_el4 = model.PackageListing.by_pkgid_collectionid(
         session, offlineimap_pkg.id, el4_collec.id)
+    pkglist_core_devel = model.PackageListing.by_pkgid_collectionid(
+        session, core_pkg.id, devel_collec.id)
 
     packager = model.PackageListingAcl(
         fas_name='pingou',
@@ -521,6 +549,30 @@ def create_package_acl(session):
     packager = model.PackageListingAcl(
         fas_name='dodji',
         packagelisting_id=pkglist_offlineimap_el4.id,
+        acl='watchcommits',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_core_devel.id,
+        acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_core_devel.id,
+        acl='approveacls',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_core_devel.id,
         acl='watchcommits',
         status='Approved',
     )

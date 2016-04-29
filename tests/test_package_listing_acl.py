@@ -44,7 +44,7 @@ class PackageListingAcltests(Modeltests):
         """ Test the __init__ function of PackageListingAcl. """
         create_package_acl(self.session)
         self.assertEqual(
-            14, len(model.PackageListingAcl.all(self.session)))
+            17, len(model.PackageListingAcl.all(self.session)))
 
     def test_to_json(self):
         """ Test the to_json function of PackageListingAcl. """
@@ -139,7 +139,7 @@ class PackageListingAcltests(Modeltests):
 
         acls = model.PackageListingAcl.get_acl_packager(
             self.session, 'pingou', eol=True)
-        self.assertEqual(99, len(acls))
+        self.assertEqual(110, len(acls))
         for acl in acls:
             self.assertEqual(acl[0].fas_name, 'pingou')
             self.assertTrue(
