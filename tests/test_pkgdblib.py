@@ -222,7 +222,7 @@ class PkgdbLibtests(Modeltests):
         create_package_acl(self.session)
 
         packages = pkgdblib.model.Package.all(self.session)
-        self.assertEqual(4, len(packages))
+        self.assertEqual(5, len(packages))
         self.assertEqual('guake', packages[0].name)
 
         pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake')
@@ -2223,7 +2223,7 @@ class PkgdbLibtests(Modeltests):
         # Before:
         namespaces = pkgdblib.get_status(
             self.session, 'namespaces')['namespaces']
-        self.assertEqual(namespaces, ['docker', 'rpms'])
+        self.assertEqual(namespaces, ['docker', 'modules', 'rpms'])
 
         # User is not an admin
         user = FakeFasUser()
@@ -2256,7 +2256,7 @@ class PkgdbLibtests(Modeltests):
         # After:
         namespaces = pkgdblib.get_status(
             self.session, 'namespaces')['namespaces']
-        self.assertEqual(namespaces, ['docker', 'foo', 'rpms'])
+        self.assertEqual(namespaces, ['docker', 'foo', 'modules', 'rpms'])
 
     def test_drop_namespace(self):
         """ Test the drop_namespace method to pkgdblib. """
@@ -2266,7 +2266,7 @@ class PkgdbLibtests(Modeltests):
         # Before:
         namespaces = pkgdblib.get_status(
             self.session, 'namespaces')['namespaces']
-        self.assertEqual(namespaces, ['docker', 'foo', 'rpms'])
+        self.assertEqual(namespaces, ['docker', 'foo', 'modules', 'rpms'])
 
         # User is not an admin
         user = FakeFasUser()
@@ -2299,7 +2299,7 @@ class PkgdbLibtests(Modeltests):
         # After:
         namespaces = pkgdblib.get_status(
             self.session, 'namespaces')['namespaces']
-        self.assertEqual(namespaces, ['docker', 'rpms'])
+        self.assertEqual(namespaces, ['docker', 'modules', 'rpms'])
 
 
 if __name__ == '__main__':
