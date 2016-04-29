@@ -1627,6 +1627,15 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
         self.assertEqual(pkg_acl[1].collection.branchname, 'master')
 
+        # Check that the modules namespace is set up beforehand.
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'modules', 'core')
+        self.assertEqual(len(pkg_acl), 1)
+        self.assertEqual(pkg_acl[0].collection.branchname, 'master')
+        self.assertEqual(pkg_acl[0].package.name, 'core')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'josef')
+        self.assertEqual(len(pkg_acl[0].acls), 3)
+
+
         # Create a new collection
         new_collection = pkgdblib.model.Collection(
             name='Fedora',
