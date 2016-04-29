@@ -1423,7 +1423,7 @@ class PkgdbLibtests(Modeltests):
 
         top = pkgdblib.get_top_maintainers(self.session)
         self.assertEqual(
-            top, [(u'group::gtk-sig', 1), (u'josef', 1), (u'pingou', 1)])
+            top, [(u'josef', 2), (u'group::gtk-sig', 1), (u'pingou', 1)])
 
     def test_get_top_poc(self):
         """ Test the get_top_poc function. """
@@ -1431,7 +1431,7 @@ class PkgdbLibtests(Modeltests):
 
         top = pkgdblib.get_top_poc(self.session)
         self.assertEqual(
-            top, [(u'pingou', 3), (u'group::gtk-sig', 1), (u'josef', 1)])
+            top, [(u'pingou', 3), (u'josef', 2), (u'group::gtk-sig', 1)])
 
     def test_search_logs(self):
         """ Test the search_logs function. """
@@ -1684,6 +1684,14 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[2].collection.branchname, 'f19')
         self.assertEqual(len(pkg_acl[2].acls), 5)
 
+        # Check that the namespace policy took effect
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'modules', 'core')
+        self.assertEqual(len(pkg_acl), 1)
+        self.assertEqual(pkg_acl[0].collection.branchname, 'master')
+        self.assertEqual(pkg_acl[0].package.name, 'core')
+        self.assertEqual(pkg_acl[0].acls[0].fas_name, 'josef')
+        self.assertEqual(len(pkg_acl[0].acls), 3)
+
     def test_get_critpath_packages(self):
         """ Test the get_critpath_packages method of pkgdblib. """
         create_package_acl(self.session)
@@ -1758,13 +1766,22 @@ class PkgdbLibtests(Modeltests):
         data = pkgdblib.notify(self.session, acls='commit')
         self.assertEqual(
             data,
-            {u'guake': u'pingou', u'geany': u'group::gtk-sig,josef'}
+            {
+                u'guake': u'pingou',
+                u'geany': u'group::gtk-sig,josef',
+                u'core': 'josef',
+            }
         )
 
         data = pkgdblib.notify(self.session)
         self.assertEqual(
             data,
-            {u'guake': u'pingou', u'geany': u'group::gtk-sig,josef'})
+            {
+                u'guake': u'pingou',
+                u'geany': u'group::gtk-sig,josef',
+                u'core': 'josef',
+            }
+        )
 
     def test_set_monitor_package(self):
         """ Test the set_monitor_package function. """

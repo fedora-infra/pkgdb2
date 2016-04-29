@@ -280,6 +280,7 @@ def create_package_listing(session):
     fedocal_pkg = model.Package.by_name(session, 'rpms', 'fedocal')
     geany_pkg = model.Package.by_name(session, 'rpms', 'geany')
     offlineimap_pkg = model.Package.by_name(session, 'docker', 'offlineimap')
+    core_pkg = model.Package.by_name(session, 'modules', 'core')
 
     f17_collec = model.Collection.by_name(session, 'f17')
     f18_collec = model.Collection.by_name(session, 'f18')
@@ -359,6 +360,15 @@ def create_package_listing(session):
         point_of_contact='josef',
         status='Approved',
         package_id=offlineimap_pkg.id,
+        collection_id=devel_collec.id,
+    )
+    session.add(pkgltg)
+
+    # Pkg: core - Collection: devel - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='josef',
+        status='Approved',
+        package_id=core_pkg.id,
         collection_id=devel_collec.id,
     )
     session.add(pkgltg)
@@ -539,6 +549,30 @@ def create_package_acl(session):
     packager = model.PackageListingAcl(
         fas_name='dodji',
         packagelisting_id=pkglist_offlineimap_el4.id,
+        acl='watchcommits',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_core_devel.id,
+        acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_core_devel.id,
+        acl='approveacls',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='josef',
+        packagelisting_id=pkglist_core_devel.id,
         acl='watchcommits',
         status='Approved',
     )
