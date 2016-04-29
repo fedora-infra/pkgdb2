@@ -1720,7 +1720,7 @@ def add_branch(session, clt_from, clt_to, user):
     policy = pkgdb2.APP.config.get('PKGDB2_NAMESPACE_POLICY')
     exempted_namespaces = [
         namespace for namespace, specified_branches in policy.items()
-        if clt_to.branchname in specified_branches
+        if clt_to.branchname not in specified_branches
     ]
     pkgdb2.LOG.info("Exempted namespaces %r" % exempted_namespaces)
 
