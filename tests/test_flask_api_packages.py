@@ -1067,7 +1067,13 @@ class FlaskApiPackagesTest(Modeltests):
             output = self.app.post('/api/package/unretire/')
             self.assertEqual(output.status_code, 302)
 
+        # Redirects, you are a packager but not an admin
         user = FakeFasUser()
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/unretire/')
+            self.assertEqual(output.status_code, 302)
+
+        user = FakeFasUserAdmin()
         with user_set(pkgdb2.APP, user):
             output = self.app.post('/api/package/unretire/')
             self.assertEqual(output.status_code, 500)
@@ -1103,25 +1109,6 @@ class FlaskApiPackagesTest(Modeltests):
 
         create_package_acl(self.session)
         mock_func.log.return_value = ''
-
-        # User is not an admin
-        data = {
-            'pkgnames': 'guake',
-            'branches': ['f18', 'master'],
-        }
-        with user_set(pkgdb2.APP, user):
-            output = self.app.post('/api/package/unretire/', data=data)
-            self.assertEqual(output.status_code, 500)
-            data = json.loads(output.data)
-            self.assertEqual(
-                data,
-                {
-                    "error": "You are not allowed to update the status of "
-                             "the package: rpms/guake on branch f18 to "
-                             "Approved.",
-                    "output": "notok"
-                }
-            )
 
         # Unretire the package
         user = FakeFasUserAdmin()
