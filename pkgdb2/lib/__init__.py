@@ -1742,7 +1742,7 @@ def add_branch(session, clt_from, clt_to, user):
         %s,
         "PackageListing".status,
         "PackageListing".critpath,
-        "PackageListing".status_change,
+        "PackageListing".status_change
     FROM "PackageListing", "Package"
     WHERE "PackageListing".collection_id = %s
     AND "Package".id = "PackageListing".package_id
