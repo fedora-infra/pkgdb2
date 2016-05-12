@@ -111,7 +111,67 @@ def main():
     args = get_arguments()
 
     user = FakeFasUser(username=args.user, groups=args.groups)
+    collection = pkgdb2.lib.search_collection(
+            pkgdb2.SESSION,
+            'master',
+        )
 
+    if collection:
+        collection = collection[0]
+        print "Updating rawhide's dist-tag"
+        dist_tag = collection.dist_tag
+        version = dist_tag.replace('.fc', '')
+        error = False
+        try:
+            version = int(version) + 1
+        except:
+            error = True
+            pass
+
+        if error:
+            version = raw_input('Enter the new version to create: ').strip()
+            version = int(version) + 1
+
+        answer = raw_input(
+            'New dist-tag: `.fc%s` [Y/n]: ' % (version))
+        if answer.strip().lower() in ['y', '']:
+            new_dist_tag = '.fc%s' % (version)
+        else:
+            new_dist_tag = raw_input(
+                'Enter the new dist-tag for rawhide '
+                '(current dist-tag: %s): ' % dist_tag).strip()
+        collection.dist_tag = new_dist_tag
+        pkgdb2.SESSION.add(collection)
+        pkgdb2.SESSION.commit()
+
+        # new collection
+        version = args.new_branch
+        version = version.replace('f', '')
+        version = int(version)
+        print "Create the new collection"
+        print "  name:          %s" % collection.name
+        print "  version:       %s" % version
+        print "  status:        %s" % collection.status
+        print "  branchname:    f%s" % version
+        print "  disttag:       .fc%s" % version
+        print "  koji:          f%s" % version
+        print "  allow_retire:  True"
+        answer = raw_input('Save this new collection? [Y/n]: ')
+        if answer.lower() in ['', 'y']:
+            pkgdb2.lib.add_collection(
+                pkgdb2.SESSION,
+                clt_name=collection.name,
+                clt_version=version,
+                clt_status=collection.status,
+                clt_branchname='f%s' % version,
+                clt_disttag='.fc%s' % version,
+                clt_koji_name='f%s' % version,
+                clt_allow_retire=True,
+                user=user,
+            )
+            pkgdb2.SESSION.commit()
+
+    print "Branching for %s..." % args.new_branch
     try:
         pkgdblist = pkgdb2.lib.add_branch(
             pkgdb2.SESSION,
