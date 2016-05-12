@@ -2,8 +2,8 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.2
-Release:        2%{?dist}
+Version:        2.3
+Release:        1%{?dist}
 Summary:        The Fedora package database
 
 License:        GPLv2+
@@ -116,6 +116,22 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Thu May 12 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.3-1
+- Update to 2.3
+- Optimize the pkgdb2_branch script used when branching
+- Add the namespace in the JSON representation of a package
+- Use more https in the links (Till Maas)
+- Remove no longer needed set_monitoring_status.py scrip (Till Maas)
+- Use %%license in the spec file (Till Maas)
+- Fix the update_package_info script
+- Check the review_url upon asking to un-retire a package
+- Enforce a namespace policy for branches (Ralph Bean)
+- Fix checking who can un-retire a package via pkgdb2's API
+- Fix the pagination when browsing the requests to include the status info
+- Use the default value for koschei and monitoring_status if None is provided
+- Keep the status change of the packae/branch info when doing mass branching
+- Improve the mass-branching script
+
 * Wed Apr 13 2016 Till Maas <opensource@till.name> - 2.2-2
 - Remove no longer needed set_monitoring_status.py script
 - Use %%license
