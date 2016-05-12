@@ -60,10 +60,12 @@
         {% if page > 1%}
             {% if select %}
             <a href="{{ url_for('.packager_requests', page=page-1,
-                packager=packager, package=package if package else None) }}">
+                packager=packager, package=package if package else None,
+                status=act_status if act_status else None) }}">
             {% else %}
             <a href="{{ url_for('.admin_actions', page=page-1,
-                package=package, from_date=from_date) }}">
+                package=package, from_date=from_date,
+                status=act_status if act_status else None) }}">
             {% endif %}
                 < Previous
             </a>
