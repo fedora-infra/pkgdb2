@@ -1742,14 +1742,12 @@ def add_branch(session, clt_from, clt_to, user):
         %s,
         "PackageListing".status,
         "PackageListing".critpath,
-        '%s'
+        "PackageListing".status_change
     FROM "PackageListing", "Package"
     WHERE "PackageListing".collection_id = %s
     AND "Package".id = "PackageListing".package_id
     AND "PackageListing".status IN ('Approved','Orphaned')
-    ''' % (
-        clt_to.id, datetime.utcnow(), clt_from.id
-    )
+    ''' % (clt_to.id, clt_from.id)
 
     q2 = '''INSERT INTO "PackageListingAcl" (
         fas_name, packagelisting_id, acl, status, date_created
