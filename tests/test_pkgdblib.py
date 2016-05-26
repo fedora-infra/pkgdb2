@@ -1909,6 +1909,17 @@ class PkgdbLibtests(Modeltests):
             user=FakeFasUserAdmin()
         )
 
+        # violation of namespace policy
+        self.assertRaises(
+            pkgdblib.PkgdbException,
+            pkgdblib.add_new_branch_request,
+            session=self.session,
+            namespace='modules',
+            pkg_name='core',
+            clt_to='el6',
+            user=FakeFasUserAdmin(),
+        )
+
         # valid entry
         user = FakeFasUser()
         user.username = 'toshio'

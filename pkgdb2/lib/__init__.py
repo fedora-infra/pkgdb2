@@ -1832,6 +1832,14 @@ def add_new_branch_request(session, namespace, pkg_name, clt_to, user):
     except NoResultFound:
         raise PkgdbException('Branch %s not found' % clt_to)
 
+    # Check that the requested branch is allowed for this namespace.
+    policy = pkgdb2.APP.config.get('PKGDB2_NAMESPACE_POLICY')
+    if namespace in policy:
+        allowed_branches = policy[namespace]
+        if clt_to.branchname not in allowed_branches:
+            raise PkgdbException('Branch %s not in policy %s, namespace %s' % (
+                clt_to.branchname, ", ".join(allowed_branches), namespace))
+
     _validate_poc(user.username)
     pkg_admin = has_acls(
         session, user.username, namespace, pkg_name, 'approveacls')
