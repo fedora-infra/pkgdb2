@@ -31,7 +31,7 @@ import unittest
 import sys
 import os
 
-from datetime import date
+from datetime import datetime
 
 from mock import patch
 from sqlalchemy.orm.exc import NoResultFound
@@ -1486,11 +1486,11 @@ class PkgdbLibtests(Modeltests):
         logs = pkgdblib.search_logs(self.session, count=True)
         self.assertEqual(logs, 23)
 
-        logs = pkgdblib.search_logs(self.session, from_date=date.today())
+        logs = pkgdblib.search_logs(self.session, from_date=datetime.utcnow().date())
         self.assertEqual(len(logs), 23)
 
         logs = pkgdblib.search_logs(
-            self.session, from_date=date.today(), package='guake')
+            self.session, from_date=datetime.utcnow().date(), package='guake')
         self.assertEqual(len(logs), 5)
 
         logs = pkgdblib.search_logs(self.session, packager='admin')
