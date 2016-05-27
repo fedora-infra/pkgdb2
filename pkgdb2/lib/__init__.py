@@ -42,7 +42,7 @@ from fedora.client.fas2 import FASError
 import pkgdb2
 from pkgdb2.lib import model
 import pkgdb2.lib.utils
-from pkgdb2.lib.exceptions import PkgdbException, PkgdbBugzillaException
+from pkgdb2.lib.exceptions import PkgdbException
 
 
 ACLS = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
@@ -1831,6 +1831,14 @@ def add_new_branch_request(session, namespace, pkg_name, clt_to, user):
         clt_to = model.Collection.by_name(session, clt_to)
     except NoResultFound:
         raise PkgdbException('Branch %s not found' % clt_to)
+
+    # Check that the requested branch is allowed for this namespace.
+    policy = pkgdb2.APP.config.get('PKGDB2_NAMESPACE_POLICY')
+    if namespace in policy:
+        allowed_branches = policy[namespace]
+        if clt_to.branchname not in allowed_branches:
+            raise PkgdbException('Branch %s not in policy %s, namespace %s' % (
+                clt_to.branchname, ", ".join(allowed_branches), namespace))
 
     _validate_poc(user.username)
     pkg_admin = has_acls(
