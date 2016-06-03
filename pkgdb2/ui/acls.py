@@ -71,14 +71,15 @@ def request_acl(namespace, package):
         pkg_acls = form.acl.data
 
         try:
+            pkger_grp = APP.config.get('PKGER_GROUP', 'packager')
             for (collec, acl) in itertools.product(pkg_branchs, pkg_acls):
                 acl_status = 'Awaiting Review'
                 if acl in APP.config['AUTO_APPROVE']:
                     acl_status = 'Approved'
-                elif 'packager' not in flask.g.fas_user.groups:
+                elif pkger_grp not in flask.g.fas_user.groups:
                     flask.flash(
-                        'You must be a packager to apply to the'
-                        ' ACL: %s on %s' % (acl, collec), 'errors')
+                        'You must be a %s to apply to the'
+                        ' ACL: %s on %s' % (pkger_grp, acl, collec), 'errors')
                     continue
 
                 pkgdblib.set_acl_package(
@@ -140,12 +141,13 @@ def request_acl_all_branch(namespace, package, acl):
 
         for branch in pkg_branchs:
             acl_status = 'Awaiting Review'
+            pkger_grp = APP.config.get('PKGER_GROUP', 'packager')
             if acl in APP.config['AUTO_APPROVE']:
                 acl_status = 'Approved'
-            elif 'packager' not in flask.g.fas_user.groups:
+            elif pkger_grp not in flask.g.fas_user.groups:
                 flask.flash(
-                    'You must be a packager to apply to the ACL: %s on %s' % (
-                        acl, package), 'error')
+                    'You must be a %s to apply to the ACL: %s on %s' % (
+                        pkger_grp, acl, package), 'error')
 
             try:
                 pkgdblib.set_acl_package(
@@ -403,9 +405,10 @@ def comaintain_package(namespace, package):
     if form.validate_on_submit():
         # This is really wearing belt and suspenders, the decorator above
         # should take care of this
-        if 'packager' not in flask.g.fas_user.groups:  # pragma: no cover
+        pkger_grp = APP.config.get('PKGER_GROUP', 'packager')
+        if pkger_grp not in flask.g.fas_user.groups:  # pragma: no cover
             flask.flash(
-                'You must be a packager to apply to be a comaintainer',
+                'You must be a %s to apply to be a comaintainer' % pkger_grp,
                 'errors')
             return flask.redirect(flask.url_for(
                 '.package_info', package=package))

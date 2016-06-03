@@ -234,7 +234,7 @@ def login():  # pragma: no cover
     else:
         groups = pkgdblib.get_groups(SESSION)
         groups.extend(APP.config['ADMIN_GROUP'])
-        groups.append('packager')
+        groups.append(APP.config.get('PKGER_GROUP', 'packager'))
         return FAS.login(return_url=next_url, groups=groups)
 
 

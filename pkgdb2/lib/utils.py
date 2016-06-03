@@ -95,7 +95,8 @@ def __get_fas_grp_member(group='packager'):  # pragma: no cover
 def get_packagers():  # pragma: no cover
     """ Return a list containing the name of all the packagers. """
     output = []
-    for user in __get_fas_grp_member('packager'):
+    pkger_grp = pkgdb2.APP.config.get('PKGER_GROUP', 'packager')
+    for user in __get_fas_grp_member(pkger_grp):
         if user.role_type in ('user', 'sponsor', 'administrator'):
             output.append(user.username)
     return output

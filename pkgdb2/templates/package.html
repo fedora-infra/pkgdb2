@@ -69,7 +69,7 @@ confusing what the difference is between that status an the per-branch status)
           <div id="monitoring_block">
             <input type="radio" id="no_monitoring" name="monitoring" value="0" />
               <label for="no_monitoring" {%-
-                if ('packager' in g.fas_user.groups or is_admin)
+                if (config.get('PKGER_GROUP', 'packager') in g.fas_user.groups or is_admin)
                 %} title="Turns off monitoring new releases for this package"{%
                 elif g.fas_user
                 %} title="Only package admin or owner can turn off monitoring new releases"{%
@@ -85,7 +85,7 @@ confusing what the difference is between that status an the per-branch status)
               </label> <br />
             <input type="radio" id="monitoring" name="monitoring" value="1" />
               <label for="monitoring" {%
-                if('packager' in g.fas_user.groups or is_admin)
+                if(config.get('PKGER_GROUP', 'packager') in g.fas_user.groups or is_admin)
                 %} title="Turns on monitoring and attempt to build new releases for this package"{%
                 elif g.fas_user
                 %} title="Only package admin or owner can turn on monitoring and attempt to build new releases"{%
@@ -101,7 +101,7 @@ confusing what the difference is between that status an the per-branch status)
               </label> <br />
             <input type="radio" id="no_build" name="monitoring" value="nobuild" />
               <label for="no_build" {%-
-                if ('packager' in g.fas_user.groups or is_admin)
+                if (config.get('PKGER_GROUP', 'packager') in g.fas_user.groups or is_admin)
                 %} title="Turns on monitoring of new releases but without attempt to build it"{%
                 elif g.fas_user
                 %} title="Only package admin or owner can turn on monitoring new releases"{%
@@ -133,7 +133,7 @@ confusing what the difference is between that status an the per-branch status)
               <label class="switch">
                 <input type="checkbox" class="switch-input" name="koschei" id="koschei"
                   {%if package.koschei %}checked="checked"{% endif %}
-                  {% if not('packager' in g.fas_user.groups
+                  {% if not(config.get('PKGER_GROUP', 'packager') in g.fas_user.groups
                             or is_admin) %} disabled="disabled"{% endif %} />
                 <span class="switch-label" data-on="On" data-off="Off"  id="koschei_lbl"></span>
                 <span class="switch-handle"></span>
@@ -717,7 +717,7 @@ confusing what the difference is between that status an the per-branch status)
         $("#committers").tablesorter();
         $( "#monitoring_block" ).buttonset();
 
-        {% if g.fas_user and 'packager' in g.fas_user.groups %}
+        {% if g.fas_user and config.get('PKGER_GROUP', 'packager') in g.fas_user.groups %}
         $('#koschei_lbl').click(function(){
             var _mon = $('#koschei');
             toggle_monitor(!_mon[0].checked, 'koschei');
