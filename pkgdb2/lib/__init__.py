@@ -1183,7 +1183,6 @@ def add_collection(session, clt_name, clt_version, clt_status,
 
     if not pkgdb2.is_pkgdb_admin(user):
         raise PkgdbException('You are not allowed to create collections')
-
     collection = model.Collection(
         name=clt_name,
         version=clt_version,
@@ -1627,11 +1626,13 @@ def unorphan_package(
                 namespace, pkg_name, pkg_branch))
 
     if not pkgdb2.is_pkgdb_admin(user):
+        pkger_grp = pkgdb2.APP.config.get('PKGER_GROUP', 'packager')
         if user.username != pkg_user and not pkg_user.startswith('group::'):
             raise PkgdbException('You are not allowed to update ACLs of '
                                  'someone else.')
-        elif user.username == pkg_user and 'packager' not in user.groups:
-            raise PkgdbException('You must be a packager to take a package.')
+        elif user.username == pkg_user and pkger_grp not in user.groups:
+            raise PkgdbException(
+                'You must be a %s to take a package.' % pkger_grp)
 
     status = 'Approved'
     pkg_listing.point_of_contact = pkg_user
@@ -2244,8 +2245,10 @@ def _vcs_acls_json(packages, skip_pp=None):
 
         if branchname not in output[namespace][pkgname]:
             groups = []
-            if skip_pp and pkgname not in skip_pp:
-                groups.append('provenpackager')
+            ppkger_grp = pkgdb2.APP.config.get(
+                'PROVEN_PKGER_GROUP', 'provenpackager')
+            if skip_pp and pkgname not in skip_pp and ppkger_grp:
+                groups.append(ppkger_grp)
 
             output[namespace][pkgname][branchname] = {
                 'commit': {'groups': groups, 'people': []},
@@ -2297,8 +2300,10 @@ def _vcs_acls_text(packages, skip_pp=None):
             user = username
 
         groups = ''
-        if pkgname not in skip_pp:
-            groups = '@provenpackager'
+        ppkger_grp = pkgdb2.APP.config.get(
+            'PROVEN_PKGER_GROUP', 'provenpackager')
+        if pkgname not in skip_pp and ppkger_grp:
+            groups = '@%s' % ppkger_grp
 
         if pkgname in output:
             if branchname in output[pkgname]:
@@ -2551,7 +2556,8 @@ def set_koschei_monitor_package(session, namespace, pkg_name, status, user):
     except NoResultFound:
         raise PkgdbException('No package found by this name')
 
-    if not 'packager' in user.groups:
+    pkger_grp = pkgdb2.APP.config.get('PKGER_GROUP', 'packager')
+    if not pkger_grp in user.groups:
         raise PkgdbException(
             'You are not allowed to update the koschei monitoring flag on '
             'this package'

@@ -178,13 +178,15 @@ def fas_login_required(function):
 
 def packager_login_required(function):
     """ Flask decorator to ensure that the user is logged in against FAS
-    and is part of the 'packager' group.
+    and is part of the 'PKGER_GROUP' group (set in the configuration).
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
         """ Do the actual work of the decorator. """
         if flask.session.get('_justloggedout', False):
             return flask.redirect(flask.url_for('ui_ns.index'))
+
+        pkger_grp = pkgdb2.APP.config.get('PKGER_GROUP', 'packager')
 
         if not is_authenticated():  # pragma: no cover
             return flask.redirect(flask.url_for('ui_ns.login',
@@ -193,8 +195,8 @@ def packager_login_required(function):
             flask.flash('You must sign the CLA (Contributor License '
                         'Agreement to use pkgdb', 'errors')
             return flask.redirect(flask.url_for('ui_ns.index'))
-        elif 'packager' not in flask.g.fas_user.groups:
-            flask.flash('You must be a packager', 'errors')
+        elif pkger_grp not in flask.g.fas_user.groups:
+            flask.flash('You must be a %s' % pkger_grp, 'errors')
             return flask.redirect(flask.url_for('ui_ns.msg'))
         return function(*args, **kwargs)
     return decorated_function

@@ -401,7 +401,8 @@ def package_request_edit(action_id):
             action_id=action_id,
         )
 
-    if not is_authenticated() or not 'packager' in flask.g.fas_user.groups:
+    pkger_grp = APP.config.get('PKGER_GROUP', 'packager')
+    if not is_authenticated() or not pkger_grp in flask.g.fas_user.groups:
         return flask.render_template(
             'actions_update_ro.html',
             admin_action=admin_action,
