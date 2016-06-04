@@ -2812,22 +2812,28 @@ def check_bz_url(bugzilla_url, url):
     """ Check if the provided url
 
     :arg bugzilla_url: the url of the bugzilla instance
-    :arg url: the url to a bugzilla ticket to check or a ticket identifier
+    :arg url: the url or ID of a bugzilla bug
+    :returns: Normalized Bugzilla URL or None if URL is invalid
 
     """
     if not url or not bugzilla_url:
         return None
-    output = None
     url = urlparse.urlparse(url)
-    if url.path:
-        path = url.path
-        if path.startswith('/'):
-            path = path[1:]
-        try:
-            int(path)
-            output = os.path.join(bugzilla_url, path)
-        except (TypeError, ValueError):
-            pass
-    elif url.query and 'id=' in url.query:
-        output = os.path.join(bugzilla_url, url.query.replace('id=', ''))
-    return output
+
+    bug_id = None
+    if url.scheme:
+        if not url.query:
+            # Handle URLs like https://example.com/1334887
+            bug_id = url.path.split("/")[-1]
+        else:
+            # Handle URLs like https://example.com/show_bug.cgi?id=1334887
+            params = urlparse.parse_qs(url.query)
+            bug_id = params.get("id", [None])[0]
+    else:
+        # Handle blank bug IDs
+        bug_id = url.path
+
+    if bug_id.isdigit():
+        return os.path.join(bugzilla_url, bug_id)
+
+    return None
