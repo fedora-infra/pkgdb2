@@ -58,6 +58,7 @@ ACLS = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 ## Ignore variable name that are too short
 # pylint: disable=C0103
 
+
 def _validate_poc(pkg_poc):
     """ Validate is the provided ``pkg_poc`` is a valid poc for a package.
 
@@ -956,7 +957,7 @@ def search_actions(
     )
 
 
-def search_logs(session,namespace=None, package=None, packager=None,
+def search_logs(session, namespace=None, package=None, packager=None,
                 from_date=None, page=None, limit=None, count=False):
     """ Return the list of Collection matching the given criteria.
 
@@ -1261,7 +1262,8 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if clt_koji_name and clt_koji_name != collection.koji_name:
         collection.koji_name = clt_koji_name
         edited.append('koji_name')
-    if clt_allow_retire is not None and clt_allow_retire != collection.allow_retire:
+    if clt_allow_retire is not None and \
+            clt_allow_retire != collection.allow_retire:
         collection.allow_retire = clt_allow_retire
         edited.append('allow_retire')
 
@@ -1435,7 +1437,7 @@ def get_pending_acl_user(session, user=None):
                 'collection': package.packagelist.collection.branchname,
                 'acl': package.acl,
                 'status': package.status,
-             }
+            }
         )
     return output
 
@@ -1754,7 +1756,8 @@ def add_branch(session, clt_from, clt_to, user):
     )
     SELECT "PackageListingAcl".fas_name, p2.id,
            "PackageListingAcl".acl, "PackageListingAcl".status, '%s'
-    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl", "Package"
+    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl",
+         "Package"
     WHERE p1.collection_id = %s
     AND p2.collection_id = %s
     AND p1.package_id = p2.package_id
@@ -1787,7 +1790,7 @@ def add_branch(session, clt_from, clt_to, user):
         session.execute(q2)
         session.commit()
         messages.append(
-                'SUCCESS: successfully branched (PackageListingAcl) %s from '
+            'SUCCESS: successfully branched (PackageListingAcl) %s from '
             'to %s %s' % (clt_from.name, clt_to.name, clt_to.version))
     except SQLAlchemyError, err:  # pragma: no cover
         session.rollback()
@@ -1972,15 +1975,21 @@ def add_new_package_request(
     if pkg_collection.startswith(('el', 'epel')):
         _validate_pkg(session, pkg_collection[-1:], pkg_name)
 
+    if pkg_description:
+        pkg_description = pkg_description.strip()
+
+    if pkg_upstream_url:
+        pkg_upstream_url = pkg_upstream_url.strip()
+
     info = {
         'pkg_name': pkg_name.strip(),
         'pkg_summary': pkg_summary.strip(),
-        'pkg_description': pkg_description.strip() if pkg_description else None,
+        'pkg_description': pkg_description,
         'pkg_status': pkg_status.strip(),
         'pkg_collection': pkg_collection.strip(),
         'pkg_poc': pkg_poc.strip(),
         'pkg_review_url': pkg_review_url.strip() if pkg_review_url else None,
-        'pkg_upstream_url': pkg_upstream_url.strip() if pkg_upstream_url else None,
+        'pkg_upstream_url': pkg_upstream_url,
         'pkg_critpath': pkg_critpath,
         'pkg_namespace': pkg_namespace,
         'monitoring_status': monitoring_status,
@@ -2252,11 +2261,11 @@ def _vcs_acls_json(packages, skip_pp=None):
             }
 
         if group:
-            output[namespace][pkgname][branchname
-                ]['commit']['groups'].append(group)
+            output[namespace][pkgname][branchname]['commit']['groups'].append(
+                group)
         if user:
-            output[namespace][pkgname][branchname
-                ]['commit']['people'].append(user)
+            output[namespace][pkgname][branchname]['commit']['people'].append(
+                user)
     return output
 
 
@@ -2313,7 +2322,6 @@ def _vcs_acls_text(packages, skip_pp=None):
             else:
                 if group and groups:  # pragma: no cover
                     group = ',' + group
-
 
                 output[pkgname][branchname] = {
                     'name': pkgname,

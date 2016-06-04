@@ -232,7 +232,8 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
 
         # No EOL collection, so no change
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake', eol=True)
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake',
+                                           eol=True)
         self.assertEqual(len(pkg_acl), 2)
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
@@ -1149,8 +1150,10 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[2][0].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[3][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[2][0].packagelist.collection.branchname,
+                         'master')
+        self.assertEqual(acls[3][0].packagelist.collection.branchname,
+                         'master')
 
         # Wrong page provided
         self.assertRaises(
@@ -1166,15 +1169,18 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls='commit', page=2, limit=2)
         self.assertEqual(len(acls), 2)
         self.assertEqual(acls[0][0].packagelist.package.name, 'geany')
-        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[0][0].packagelist.collection.branchname,
+                         'master')
         self.assertEqual(acls[1][0].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit', 'watchbugzilla'])
@@ -1182,7 +1188,8 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit'], poc=True)
@@ -1190,15 +1197,18 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit'], poc=False)
         self.assertEqual(len(acls), 3)
         self.assertEqual(acls[0][0].packagelist.package.name, 'geany')
-        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[0][0].packagelist.collection.branchname,
+                         'master')
         self.assertEqual(acls[1][0].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
         self.assertEqual(acls[2][0].packagelist.package.name, 'fedocal')
         self.assertEqual(acls[2][0].packagelist.collection.branchname, 'f18')
 
@@ -1267,7 +1277,8 @@ class PkgdbLibtests(Modeltests):
         self.assertFalse(pkgdblib.has_acls(
             self.session, 'toshio', 'rpms', 'guake', acl='commit'))
         self.assertFalse(pkgdblib.has_acls(
-            self.session, 'toshio', 'rpms', 'guake', acl=['commit', 'approveacls']))
+            self.session, 'toshio', 'rpms', 'guake', acl=['commit',
+                                                          'approveacls']))
 
     def test_get_status(self):
         """ Test the get_status function. """
@@ -1486,7 +1497,8 @@ class PkgdbLibtests(Modeltests):
         logs = pkgdblib.search_logs(self.session, count=True)
         self.assertEqual(logs, 23)
 
-        logs = pkgdblib.search_logs(self.session, from_date=datetime.utcnow().date())
+        logs = pkgdblib.search_logs(self.session,
+                                    from_date=datetime.utcnow().date())
         self.assertEqual(len(logs), 23)
 
         logs = pkgdblib.search_logs(
@@ -1634,7 +1646,6 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].package.name, 'core')
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'josef')
         self.assertEqual(len(pkg_acl[0].acls), 3)
-
 
         # Create a new collection
         new_collection = pkgdblib.model.Collection(
