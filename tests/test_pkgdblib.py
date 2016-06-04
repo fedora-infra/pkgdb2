@@ -2338,6 +2338,26 @@ class PkgdbLibtests(Modeltests):
             self.session, 'namespaces')['namespaces']
         self.assertEqual(namespaces, ['docker', 'modules', 'rpms'])
 
+    def test_check_bz_url(self):
+        BZ_BASE = "https://example.com"
+        EXPECTED_URL = "https://example.com/12345"
+
+        result = pkgdblib.check_bz_url(BZ_BASE, EXPECTED_URL)
+        self.assertEqual(result, EXPECTED_URL)
+
+        result = pkgdblib.check_bz_url(
+            BZ_BASE, "https://example.com/show_bug.cgi?id=12345")
+        self.assertEqual(result, EXPECTED_URL)
+
+        result = pkgdblib.check_bz_url(BZ_BASE, "12345")
+        self.assertEqual(result, EXPECTED_URL)
+
+        result = pkgdblib.check_bz_url(BZ_BASE, "https://example.com/")
+        self.assertEqual(result, None)
+
+        result = pkgdblib.check_bz_url(BZ_BASE, "")
+        self.assertEqual(result, None)
+
 
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(PkgdbLibtests)
