@@ -1975,11 +1975,22 @@ def add_new_package_request(
     if pkg_collection.startswith(('el', 'epel')):
         _validate_pkg(session, pkg_collection[-1:], pkg_name)
 
+    # pkg_description, pkg_upstream_url and pkg_review_url should be None if
+    # empty
     if pkg_description:
         pkg_description = pkg_description.strip()
+    if not pkg_description:
+        pkg_description = None
 
     if pkg_upstream_url:
         pkg_upstream_url = pkg_upstream_url.strip()
+    if not pkg_upstream_url:
+        pkg_upstream_url = None
+
+    if pkg_review_url:
+        pkg_review_url = pkg_review_url.strip()
+    if not pkg_review_url:
+        pkg_review_url = None
 
     info = {
         'pkg_name': pkg_name.strip(),
@@ -1988,7 +1999,7 @@ def add_new_package_request(
         'pkg_status': pkg_status.strip(),
         'pkg_collection': pkg_collection.strip(),
         'pkg_poc': pkg_poc.strip(),
-        'pkg_review_url': pkg_review_url.strip() if pkg_review_url else None,
+        'pkg_review_url': pkg_review_url,
         'pkg_upstream_url': pkg_upstream_url,
         'pkg_critpath': pkg_critpath,
         'pkg_namespace': pkg_namespace,
