@@ -97,7 +97,7 @@ def admin_log():
             from_date=from_date,
             count=True
         )
-    except pkgdblib.PkgdbException, err:
+    except pkgdblib.PkgdbException as err:
         flask.flash(err, 'errors')
 
     total_page = int(ceil(cnt_logs / float(limit)))
@@ -160,7 +160,7 @@ def admin_actions():
             status=status,
             count=True
         )
-    except pkgdblib.PkgdbException, err:
+    except pkgdblib.PkgdbException as err:
         flask.flash(err, 'errors')
 
     total_page = int(ceil(cnt_actions / float(limit)))
@@ -215,7 +215,7 @@ def admin_action_edit_status(action_id):
             )
             SESSION.commit()
             flask.flash(message)
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             # We can only reach here in two cases:
             # 1) the user is not an admin, but that's taken care of
             #    by the decorator
@@ -270,7 +270,7 @@ def admin_drop_namespace():
             )
             SESSION.commit()
             flask.flash(message)
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             # We can only reach here in two cases:
             # 1) the user is not an admin, but that's taken care of
             #    by the decorator
@@ -301,7 +301,7 @@ def admin_add_namespace():
             )
             SESSION.commit()
             flask.flash(message)
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             # We can only reach here in two cases:
             # 1) the user is not an admin, but that's taken care of
             #    by the decorator

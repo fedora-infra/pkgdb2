@@ -317,7 +317,7 @@ def package_timeline(namespace, package):
             from_date=from_date,
             count=True
         )
-    except pkgdblib.exceptions.PkgdbException, err:
+    except pkgdblib.exceptions.PkgdbException as err:
         flask.flash(err, 'errors')
 
     total_page = int(ceil(cnt_logs / float(limit)))
@@ -365,7 +365,7 @@ def package_anitya(namespace, package, full=True):
                 'Querying anitya returned a status %s' % req.status_code)
         else:
             data = req.json()
-    except Exception, err:
+    except Exception as err:
         flask.flash(err.message, 'error')
         pass
 
@@ -455,7 +455,7 @@ def package_request_edit(action_id):
             )
             SESSION.commit()
             flask.flash(message)
-        except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
             # We can only reach here in two cases:
             # 1) the user is not an admin, but that's taken care of
             #    by the decorator
@@ -537,7 +537,7 @@ def package_new():
             flask.flash(message)
             return flask.redirect(flask.url_for('.list_packages'))
         # Keep it in, but normally we shouldn't hit this
-        except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
@@ -619,11 +619,11 @@ def package_give(namespace, package, full=True):
                     )
 
                 SESSION.commit()
-        except pkgdblib.exceptions.PkgdbBugzillaException, err:  # pragma: no cover
+        except pkgdblib.exceptions.PkgdbBugzillaException as err:  # pragma: no cover
             APP.logger.exception(err)
             flask.flash(str(err), 'error')
             SESSION.rollback()
-        except pkgdblib.exceptions.PkgdbException, err:
+        except pkgdblib.exceptions.PkgdbException as err:
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
@@ -692,18 +692,18 @@ def package_orphan(namespace, package, full=True):
                 flask.flash(
                     'You are no longer point of contact on branch: %s'
                     % branch)
-            except pkgdblib.exceptions.PkgdbBugzillaException, err:  # pragma: no cover
+            except pkgdblib.exceptions.PkgdbBugzillaException as err:  # pragma: no cover
                 APP.logger.exception(err)
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
-            except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+            except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
 
         try:
             SESSION.commit()
         # Keep it in, but normally we shouldn't hit this
-        except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
@@ -776,7 +776,7 @@ def package_retire(namespace, package, full=True):
                         flask.flash(
                             'This package has been retired on branch: %s'
                             % acl.collection.branchname)
-                    except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+                    except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
                         # We should never hit this
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
@@ -789,7 +789,7 @@ def package_retire(namespace, package, full=True):
         try:
             SESSION.commit()
         # Keep it in, but normally we shouldn't hit this
-        except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
             # We should never hit this
             SESSION.rollback()
             APP.logger.exception(err)
@@ -905,11 +905,11 @@ def package_unretire(namespace, package, full=True):
                         flask.flash(
                             'Admins have been asked to un-retire branch: %s'
                             % acl.collection.branchname)
-                    except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+                    except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
                         # We should never hit this
                         flask.flash(str(err), 'error')
                         SESSION.rollback()
-                    except SQLAlchemyError, err:
+                    except SQLAlchemyError as err:
                         APP.logger.exception(err)
                         SESSION.rollback()
                         flask.flash(
@@ -924,7 +924,7 @@ def package_unretire(namespace, package, full=True):
         try:
             SESSION.commit()
         # Keep it in, but normally we shouldn't hit this
-        except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
             # We should never hit this
             SESSION.rollback()
             APP.logger.exception(err)
@@ -995,11 +995,11 @@ def package_take(namespace, package, full=True):
                 SESSION.commit()
                 flask.flash('You have taken the package %s on branch %s' % (
                     package.name, branch))
-            except pkgdblib.exceptions.PkgdbBugzillaException, err:  # pragma: no cover
+            except pkgdblib.exceptions.PkgdbBugzillaException as err:  # pragma: no cover
                 APP.logger.exception(err)
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
-            except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+            except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
 
@@ -1163,7 +1163,7 @@ def update_acl(namespace, package, update_acl):
                         flask.flash("%s's %s ACL updated on %s" % (
                             lcl_user, update_acl, lcl_branch))
                         changed = True
-                    except pkgdblib.exceptions.PkgdbException, err:
+                    except pkgdblib.exceptions.PkgdbException as err:
                         SESSION.rollback()
                         flask.flash(str(err), 'error')
                     cnt += 1
@@ -1236,7 +1236,7 @@ def delete_package(namespace, package):
     try:
         SESSION.commit()
         flask.flash('Package %s deleted' % packagename)
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         SESSION.rollback()
         flask.flash(
             'An error occured while trying to delete the package %s'
@@ -1307,10 +1307,10 @@ def package_request_branch(namespace, package, full=True):
                     user=flask.g.fas_user)
                 SESSION.commit()
                 flask.flash(msg)
-            except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+            except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
-            except SQLAlchemyError, err:  # pragma: no cover
+            except SQLAlchemyError as err:  # pragma: no cover
                 APP.logger.exception(err)
                 flask.flash(
                     'Could not save the request to the database for '
@@ -1412,7 +1412,7 @@ def package_request_new():
                 flask.flash(message)
             return flask.redirect(flask.url_for('.index'))
         # Keep it in, but normally we shouldn't hit this
-        except pkgdblib.exceptions.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.exceptions.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
 

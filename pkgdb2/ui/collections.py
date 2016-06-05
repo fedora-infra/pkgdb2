@@ -136,7 +136,7 @@ def collection_edit(collection):
             return flask.redirect(flask.url_for(
                 '.collection_info', collection=collection.branchname))
         # In theory we should never hit this
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'errors')
     elif flask.request.method == 'GET':
@@ -184,7 +184,7 @@ def collection_new():
             flask.flash(message)
             return flask.redirect(flask.url_for('.list_collections'))
         # In theory we should never hit this
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'errors')
 

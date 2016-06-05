@@ -99,7 +99,7 @@ def request_acl(namespace, package):
                 package=package.name)
             )
 
-        except pkgdblib.PkgdbException, err:
+        except pkgdblib.PkgdbException as err:
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
@@ -161,7 +161,7 @@ def request_acl_all_branch(namespace, package, acl):
                 flask.flash(
                     'ACL %s requested on branch %s' % (acl, branch))
                 SESSION.commit()
-            except pkgdblib.PkgdbException, err:
+            except pkgdblib.PkgdbException as err:
                 SESSION.rollback()
                 flask.flash(str(err), 'error')
 
@@ -220,14 +220,14 @@ def giveup_acl(namespace, package, acl):
                 flask.flash(
                     'Your ACL %s is obsoleted on branch %s of package %s'
                     % (acl, branch, package))
-            except pkgdblib.PkgdbException, err:  # pragma: no cover
+            except pkgdblib.PkgdbException as err:  # pragma: no cover
                 flask.flash(str(err), 'error')
                 SESSION.rollback()
 
         try:
             SESSION.commit()
         # Keep it in, but normally we shouldn't hit this
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
@@ -290,7 +290,7 @@ def package_give_acls(namespace, package):
             flask.flash('ACLs updated')
             return flask.redirect(flask.url_for(
                 '.package_info', namespace=namespace, package=package))
-        except pkgdblib.PkgdbException, err:
+        except pkgdblib.PkgdbException as err:
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
@@ -341,7 +341,7 @@ def watch_package(namespace, package):
             SESSION.commit()
             flask.flash('ACLs updated')
         # Let's keep this in although we should never see it
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for(
@@ -385,7 +385,7 @@ def unwatch_package(namespace, package):
             SESSION.commit()
             flask.flash('ACLs updated')
         # Let's keep this in although we should never see it
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for(
@@ -468,7 +468,7 @@ def comaintain_package(namespace, package):
             else:
                 flask.flash('Nothing to update')
         # Let's keep this in although we should never see it
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for(
@@ -517,7 +517,7 @@ def dropcommit_package(namespace, package):
             SESSION.commit()
             flask.flash('ACLs updated')
         # Let's keep this in although we should never see it
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
     return flask.redirect(flask.url_for(
@@ -563,7 +563,7 @@ def pending_acl_approve():
             SESSION.commit()
             flask.flash('All ACLs approved')
             # Let's keep this in although we should never see it
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
 
@@ -595,7 +595,7 @@ def pending_acl_deny():
             SESSION.commit()
             flask.flash('All ACLs denied')
             # Let's keep this in although we should never see it
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'error')
 

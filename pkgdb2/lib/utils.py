@@ -194,7 +194,7 @@ def set_bugzilla_owner(
                     'PKGDB2_BUGZILLA_NOTIFICATION']:  # pragma: no cover
                 try:
                     bug.setassignee(assigned_to=bz_mail, comment=bz_comment)
-                except Exception, err:
+                except Exception as err:
                     raise pkgdb2.lib.exceptions.PkgdbBugzillaException(
                         'An error occured while calling bugzilla: %s'
                         % str(err)

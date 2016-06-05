@@ -117,7 +117,7 @@ def api_collection_new():
             output['messages'] = [message]
         # Apparently we're pretty tight on checks and looks like we cannot
         # raise this exception in a normal situation
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except pkgdblib.PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = str(err)
@@ -195,7 +195,7 @@ def api_collection_status(collection):
                 SESSION.commit()
                 output['output'] = 'ok'
                 output['messages'] = [message]
-            except pkgdblib.PkgdbException, err:
+            except pkgdblib.PkgdbException as err:
                 SESSION.rollback()
                 output['output'] = 'notok'
                 output['error'] = str(err)

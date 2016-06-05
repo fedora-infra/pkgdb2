@@ -1616,7 +1616,7 @@ def api_branch_request(package, namespace='rpms'):
                 output['output'] = 'notok'
                 output['error'] = str(err)
                 httpcode = 400
-            except SQLAlchemyError, err:  # pragma: no cover
+            except SQLAlchemyError as err:  # pragma: no cover
                 SESSION.rollback()
                 APP.logger.exception(err)
                 output['output'] = 'notok'

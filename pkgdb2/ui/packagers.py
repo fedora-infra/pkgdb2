@@ -174,7 +174,7 @@ def packager_requests(packager):
             limit=limit,
             count=True,
         )
-    except pkgdblib.PkgdbException, err:
+    except pkgdblib.PkgdbException as err:
         flask.flash(err, 'errors')
 
     total_page = int(ceil(cnt_actions / float(limit)))

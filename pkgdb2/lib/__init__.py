@@ -244,7 +244,7 @@ def add_package(
     session.add(package)
     try:
         session.flush()
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         session.rollback()
         raise PkgdbException('Could not create package')
@@ -258,7 +258,7 @@ def add_package(
         session.add(pkglisting)
         try:
             session.flush()
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             session.rollback()
             raise PkgdbException('Could not add packages to collections')
@@ -288,7 +288,7 @@ def add_package(
     try:
         session.flush()
         return 'Package created'
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not add ACLs')
 
@@ -1203,7 +1203,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
             collection=collection.to_json(),
         ))
         return 'Collection "%s" created' % collection.branchname
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not add Collection to the database.')
 
@@ -1282,7 +1282,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
                 )
             )
             return 'Collection "%s" edited' % collection.branchname
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit Collection.')
 
@@ -1351,7 +1351,7 @@ def edit_package(
                 package=package.to_json(acls=False),
             ))
             return 'Package "%s" edited' % package.name
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit package.')
 
@@ -1403,7 +1403,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
     except NoResultFound:  # pragma: no cover
         raise PkgdbException('Could not find collection "%s"' %
                              clt_branchname)
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not update the status of collection'
                              '"%s".' % clt_branchname)
@@ -1779,7 +1779,7 @@ def add_branch(session, clt_from, clt_to, user):
         messages.append(
             'SUCCESS: successfully branched (PackageListing) %s from '
             'to %s %s' % (clt_from.name, clt_to.name, clt_to.version))
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         session.rollback()
         pkgdb2.LOG.debug(err)
         messages.append(
@@ -1792,7 +1792,7 @@ def add_branch(session, clt_from, clt_to, user):
         messages.append(
             'SUCCESS: successfully branched (PackageListingAcl) %s from '
             'to %s %s' % (clt_from.name, clt_to.name, clt_to.version))
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         session.rollback()
         pkgdb2.LOG.debug(err)
         messages.append(
@@ -2452,7 +2452,7 @@ def set_critpath_packages(
             branches=branches,
             package=package.to_json(),
         ))
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not edit package.')
 
@@ -2535,7 +2535,7 @@ def set_monitor_package(session, namespace, pkg_name, status, user):
                     package=package.to_json(acls=False),
                 )
             )
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not update monitoring status.')
 
@@ -2593,7 +2593,7 @@ def set_koschei_monitor_package(session, namespace, pkg_name, status, user):
                     package=package.to_json(acls=False),
                 )
             )
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException(
                 'Could not update Koschei monitoring status.')
@@ -2688,7 +2688,7 @@ def edit_action_status(
                     new_status=action_status,
                     action=admin_action.to_json(),
                 ))
-        except SQLAlchemyError, err:
+        except SQLAlchemyError as err:
             session.rollback()
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit action.')
@@ -2775,7 +2775,7 @@ def add_namespace(session, namespace, user):
             namespace=namespace,
         ))
         return 'Namespace "%s" created' % namespace
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         session.rollback()
         raise PkgdbException(
@@ -2820,7 +2820,7 @@ def drop_namespace(session, namespace, user):
             namespace=namespace,
         ))
         return 'Namespace "%s" removed' % namespace
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         session.rollback()
         raise PkgdbException(
