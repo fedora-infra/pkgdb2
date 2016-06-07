@@ -30,6 +30,7 @@ import pkgdb2.forms
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP, is_admin
 from pkgdb2.ui import UI
+from pkgdb2.lib.exceptions import PkgdbException
 
 
 ## Some of the object we use here have inherited methods which apparently
@@ -136,7 +137,7 @@ def collection_edit(collection):
             return flask.redirect(flask.url_for(
                 '.collection_info', collection=collection.branchname))
         # In theory we should never hit this
-        except pkgdblib.PkgdbException as err:  # pragma: no cover
+        except PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'errors')
     elif flask.request.method == 'GET':
@@ -184,7 +185,7 @@ def collection_new():
             flask.flash(message)
             return flask.redirect(flask.url_for('.list_collections'))
         # In theory we should never hit this
-        except pkgdblib.PkgdbException as err:  # pragma: no cover
+        except PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             flask.flash(str(err), 'errors')
 
