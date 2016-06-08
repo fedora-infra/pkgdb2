@@ -76,7 +76,8 @@ class ContextInjector(logging.Filter):
         if not isinstance(current_process, str):
             record.pid = current_process.pid
             record.proc_name = current_process.name
-            record.command_line = " ".join(current_process.cmdline)
+            record.command_line = " ".join(current_process.cmdline) \
+                if current_process.cmdline else "- no command line"
         record.callstack = self.format_callstack()
 
         record.url = '-'
