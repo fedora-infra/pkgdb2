@@ -46,6 +46,7 @@ from tests import (FakeFasUser, FakeFasUserAdmin, Modeltests,
                    FakeFasGroupValid, FakeFasGroupInvalid,
                    create_collection, create_package_acl,
                    create_package_acl2, create_package_critpath)
+from pkgdb2.lib.exceptions import PkgdbException
 
 
 class PkgdbLibtests(Modeltests):
@@ -58,7 +59,7 @@ class PkgdbLibtests(Modeltests):
 
         mock_func.return_value = 1
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_package,
                           self.session,
                           namespace='rpms',
@@ -74,7 +75,7 @@ class PkgdbLibtests(Modeltests):
                           )
         self.session.rollback()
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_package,
                           self.session,
                           namespace='rpms',
@@ -94,7 +95,7 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_packagers.reset_mock()
 
         # Configuration to query FAS isn't set
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_package,
                           self.session,
                           namespace='rpms',
@@ -112,7 +113,7 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_packagers.return_value = ['pingou']
 
         # 'Ralph' is not in the packager group
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_package,
                           self.session,
                           namespace='rpms',
@@ -130,7 +131,7 @@ class PkgdbLibtests(Modeltests):
         pkgdb2.lib.utils.get_fas_group.return_value = FakeFasGroupInvalid
 
         # Invalid FAS group, not ending with -sig
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_package,
                           self.session,
                           namespace='rpms',
@@ -145,7 +146,7 @@ class PkgdbLibtests(Modeltests):
                           user=FakeFasUserAdmin())
 
         # Invalid FAS group returned
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_package,
                           self.session,
                           namespace='rpms',
@@ -232,7 +233,8 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'pingou')
 
         # No EOL collection, so no change
-        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake', eol=True)
+        pkg_acl = pkgdblib.get_acl_package(self.session, 'rpms', 'guake',
+                                           eol=True)
         self.assertEqual(len(pkg_acl), 2)
         self.assertEqual(pkg_acl[0].collection.branchname, 'f18')
         self.assertEqual(pkg_acl[0].package.name, 'guake')
@@ -265,7 +267,7 @@ class PkgdbLibtests(Modeltests):
         mock_func.return_value = 1
 
         # Not allowed to set acl on non-existant package
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           namespace='rpms',
@@ -279,7 +281,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Not allowed to set non-existant collection
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           namespace='rpms',
@@ -321,7 +323,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Not allowed to set acl for yourself
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           namespace='rpms',
@@ -335,7 +337,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Not allowed to set acl for someone else
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           namespace='rpms',
@@ -349,7 +351,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Not allowed to set acl approveacl to a group
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           namespace='rpms',
@@ -363,7 +365,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Group must ends with -sig
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           namespace='rpms',
@@ -377,7 +379,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Group cannot have approveacls
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.set_acl_package,
                           self.session,
                           namespace='rpms',
@@ -413,7 +415,7 @@ class PkgdbLibtests(Modeltests):
 
         # Adding non-auto-approve ACL should not work fine
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.set_acl_package,
             self.session,
             namespace='rpms',
@@ -502,7 +504,7 @@ class PkgdbLibtests(Modeltests):
         mock_func.get_fas_group.return_value = FakeFasGroupValid()
 
         # Package must exists
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
                           namespace='rpms',
@@ -514,7 +516,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Collection must exists
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
                           namespace='rpms',
@@ -527,7 +529,7 @@ class PkgdbLibtests(Modeltests):
 
         # User must be the actual Point of Contact (or an admin of course,
         # or part of the group)
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
                           namespace='rpms',
@@ -557,7 +559,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].point_of_contact, 'group::perl-sig')
 
         # User must be in the group it takes the PoC from
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
                           namespace='rpms',
@@ -571,7 +573,7 @@ class PkgdbLibtests(Modeltests):
         # User must be in the POC of the branch specified
         user = FakeFasUser()
         user.username = 'ralph'
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
                           namespace='rpms',
@@ -617,7 +619,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].point_of_contact, 'toshio')
 
         # PoC must be a packager, even for admin
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_poc,
                           self.session,
                           namespace='rpms',
@@ -806,7 +808,7 @@ class PkgdbLibtests(Modeltests):
                                        )
         self.assertEqual(len(pkgs), 0)
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_package,
                           self.session,
                           namespace='rpms',
@@ -818,7 +820,7 @@ class PkgdbLibtests(Modeltests):
                           limit='a'
                           )
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_package,
                           self.session,
                           namespace='rpms',
@@ -835,7 +837,7 @@ class PkgdbLibtests(Modeltests):
         create_package_acl(self.session)
 
         # Wrong package
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           namespace='rpms',
@@ -847,7 +849,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Wrong collection
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           namespace='rpms',
@@ -859,7 +861,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # User not allowed to retire the package on f18
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           namespace='rpms',
@@ -871,7 +873,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Wrong status
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           namespace='rpms',
@@ -883,7 +885,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # User not allowed to change status to Allowed
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           namespace='rpms',
@@ -929,7 +931,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[1].status, 'Orphaned')
 
         # Admin must give a poc when un-orphan/un-retire a package
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           namespace='rpms',
@@ -990,7 +992,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[1].status, 'Approved')
 
         # Not Admin and status is not Orphaned nor Retired
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_pkg_status,
                           self.session,
                           namespace='rpms',
@@ -1024,7 +1026,7 @@ class PkgdbLibtests(Modeltests):
             limit=1)
         self.assertEqual(len(collections), 1)
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_collection,
                           self.session,
                           'f*',
@@ -1038,7 +1040,7 @@ class PkgdbLibtests(Modeltests):
             page=2)
         self.assertEqual(len(collections), 1)
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_collection,
                           self.session,
                           'f*',
@@ -1048,7 +1050,7 @@ class PkgdbLibtests(Modeltests):
     def test_add_collection(self):
         """ Test the add_collection function. """
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_collection,
                           session=self.session,
                           clt_name='Fedora',
@@ -1085,7 +1087,7 @@ class PkgdbLibtests(Modeltests):
         collection = pkgdblib.model.Collection.by_name(self.session, 'f18')
         self.assertEqual(collection.status, 'Active')
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.update_collection_status,
                           self.session,
                           'f18',
@@ -1123,14 +1125,14 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(len(pkg), 1)
         self.assertEqual(pkg[0][0], 'pingou')
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_packagers,
                           self.session,
                           'p*',
                           limit='a'
                           )
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_packagers,
                           self.session,
                           'p*',
@@ -1149,12 +1151,14 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.collection.branchname, 'f18')
-        self.assertEqual(acls[2][0].packagelist.collection.branchname, 'master')
-        self.assertEqual(acls[3][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[2][0].packagelist.collection.branchname,
+                         'master')
+        self.assertEqual(acls[3][0].packagelist.collection.branchname,
+                         'master')
 
         # Wrong page provided
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.get_acl_packager,
             self.session,
             'pingou',
@@ -1166,15 +1170,18 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls='commit', page=2, limit=2)
         self.assertEqual(len(acls), 2)
         self.assertEqual(acls[0][0].packagelist.package.name, 'geany')
-        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[0][0].packagelist.collection.branchname,
+                         'master')
         self.assertEqual(acls[1][0].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit', 'watchbugzilla'])
@@ -1182,7 +1189,8 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit'], poc=True)
@@ -1190,15 +1198,18 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(acls[0][0].packagelist.package.name, 'guake')
         self.assertEqual(acls[0][0].packagelist.collection.branchname, 'f18')
         self.assertEqual(acls[1][0].packagelist.package.name, 'guake')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
 
         acls = pkgdblib.get_acl_packager(
             self.session, 'pingou', acls=['commit'], poc=False)
         self.assertEqual(len(acls), 3)
         self.assertEqual(acls[0][0].packagelist.package.name, 'geany')
-        self.assertEqual(acls[0][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[0][0].packagelist.collection.branchname,
+                         'master')
         self.assertEqual(acls[1][0].packagelist.package.name, 'fedocal')
-        self.assertEqual(acls[1][0].packagelist.collection.branchname, 'master')
+        self.assertEqual(acls[1][0].packagelist.collection.branchname,
+                         'master')
         self.assertEqual(acls[2][0].packagelist.package.name, 'fedocal')
         self.assertEqual(acls[2][0].packagelist.collection.branchname, 'f18')
 
@@ -1267,7 +1278,8 @@ class PkgdbLibtests(Modeltests):
         self.assertFalse(pkgdblib.has_acls(
             self.session, 'toshio', 'rpms', 'guake', acl='commit'))
         self.assertFalse(pkgdblib.has_acls(
-            self.session, 'toshio', 'rpms', 'guake', acl=['commit', 'approveacls']))
+            self.session, 'toshio', 'rpms', 'guake', acl=['commit',
+                                                          'approveacls']))
 
     def test_get_status(self):
         """ Test the get_status function. """
@@ -1353,7 +1365,7 @@ class PkgdbLibtests(Modeltests):
                                        user=FakeFasUserAdmin())
         self.assertEqual(out, None)
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.edit_collection,
                           self.session,
                           collection)
@@ -1388,7 +1400,7 @@ class PkgdbLibtests(Modeltests):
             self.session, package, user=FakeFasUserAdmin())
         self.assertEqual(out, None)
 
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.edit_package,
                           self.session,
                           package)
@@ -1438,21 +1450,21 @@ class PkgdbLibtests(Modeltests):
         self.test_add_package()
 
         # Wrong limit
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_logs,
                           self.session,
                           limit='a'
                           )
 
         # Wrong offset
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_logs,
                           self.session,
                           page='a'
                           )
 
         # Wrong package name
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.search_logs,
                           self.session,
                           package='asdads'
@@ -1486,7 +1498,8 @@ class PkgdbLibtests(Modeltests):
         logs = pkgdblib.search_logs(self.session, count=True)
         self.assertEqual(logs, 23)
 
-        logs = pkgdblib.search_logs(self.session, from_date=datetime.utcnow().date())
+        logs = pkgdblib.search_logs(self.session,
+                                    from_date=datetime.utcnow().date())
         self.assertEqual(len(logs), 23)
 
         logs = pkgdblib.search_logs(
@@ -1504,7 +1517,7 @@ class PkgdbLibtests(Modeltests):
         create_package_acl(self.session)
 
         # Wrong package name
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
                           namespace='rpms',
@@ -1516,7 +1529,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Wrong collection
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
                           namespace='rpms',
@@ -1528,7 +1541,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # Package is not orphaned
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
                           namespace='rpms',
@@ -1540,7 +1553,7 @@ class PkgdbLibtests(Modeltests):
         self.session.rollback()
 
         # PKGDB2_BUGZILLA_* configuration not set
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
                           namespace='rpms',
@@ -1569,7 +1582,7 @@ class PkgdbLibtests(Modeltests):
         self.session.commit()
 
         # User cannot unorphan for someone else
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
                           namespace='rpms',
@@ -1583,7 +1596,7 @@ class PkgdbLibtests(Modeltests):
         # User must be a packager
         user = FakeFasUser()
         user.groups = ['cla_done']
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.unorphan_package,
                           self.session,
                           namespace='rpms',
@@ -1635,7 +1648,6 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(pkg_acl[0].acls[0].fas_name, 'josef')
         self.assertEqual(len(pkg_acl[0].acls), 3)
 
-
         # Create a new collection
         new_collection = pkgdblib.model.Collection(
             name='Fedora',
@@ -1649,7 +1661,7 @@ class PkgdbLibtests(Modeltests):
         self.session.commit()
 
         # User cannot branch, admins are required
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_branch,
                           session=self.session,
                           clt_from='master',
@@ -1658,7 +1670,7 @@ class PkgdbLibtests(Modeltests):
                           )
 
         # Inexistant collection to branch from
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_branch,
                           session=self.session,
                           clt_from='blah',
@@ -1667,7 +1679,7 @@ class PkgdbLibtests(Modeltests):
                           )
 
         # Inexistant collection to branch to
-        self.assertRaises(pkgdblib.PkgdbException,
+        self.assertRaises(PkgdbException,
                           pkgdblib.add_branch,
                           session=self.session,
                           clt_from='master',
@@ -1746,7 +1758,7 @@ class PkgdbLibtests(Modeltests):
     def test_set_critpath_packages(self):
         """ Test the set_critpath_packages function. """
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.set_critpath_packages,
             session=self.session,
             namespace='rpms',
@@ -1759,7 +1771,7 @@ class PkgdbLibtests(Modeltests):
         create_package_critpath(self.session)
 
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.set_critpath_packages,
             session=self.session,
             namespace='rpms',
@@ -1801,7 +1813,7 @@ class PkgdbLibtests(Modeltests):
 
         # Fails: package not found
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.set_monitor_package,
             session=self.session,
             namespace='rpms',
@@ -1821,7 +1833,7 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'Toshio'
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.set_monitor_package,
             session=self.session,
             namespace='rpms',
@@ -1878,7 +1890,7 @@ class PkgdbLibtests(Modeltests):
 
         # Invalid package
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_new_branch_request,
             session=self.session,
             namespace='rpms',
@@ -1889,7 +1901,7 @@ class PkgdbLibtests(Modeltests):
 
         # Invalid collection_to
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_new_branch_request,
             session=self.session,
             namespace='rpms',
@@ -1900,7 +1912,7 @@ class PkgdbLibtests(Modeltests):
 
         # Invalid collection_from
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_new_branch_request,
             session=self.session,
             namespace='rpms',
@@ -1911,7 +1923,7 @@ class PkgdbLibtests(Modeltests):
 
         # violation of namespace policy
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_new_branch_request,
             session=self.session,
             namespace='modules',
@@ -1939,7 +1951,7 @@ class PkgdbLibtests(Modeltests):
 
         # Wrong limit
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.search_actions,
             self.session,
             limit='a'
@@ -1947,7 +1959,7 @@ class PkgdbLibtests(Modeltests):
 
         # Wrong offset
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.search_actions,
             self.session,
             page='a'
@@ -1955,7 +1967,7 @@ class PkgdbLibtests(Modeltests):
 
         # Wrong package name
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.search_actions,
             self.session,
             package='asdads'
@@ -2048,7 +2060,7 @@ class PkgdbLibtests(Modeltests):
         self.assertEqual(action.info, None)
 
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.edit_action_status,
             self.session,
             admin_action=action,
@@ -2059,7 +2071,7 @@ class PkgdbLibtests(Modeltests):
         action = pkgdblib.get_admin_action(self.session, 1)
 
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.edit_action_status,
             self.session,
             admin_action=action,
@@ -2071,7 +2083,7 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'shaiton'
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.edit_action_status,
             self.session,
             admin_action=action,
@@ -2083,7 +2095,7 @@ class PkgdbLibtests(Modeltests):
         user = FakeFasUser()
         user.username = 'toshio'
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.edit_action_status,
             self.session,
             admin_action=action,
@@ -2094,7 +2106,7 @@ class PkgdbLibtests(Modeltests):
         # Obsolete status but user is not requester
         user = FakeFasUserAdmin()
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.edit_action_status,
             self.session,
             admin_action=action,
@@ -2143,7 +2155,7 @@ class PkgdbLibtests(Modeltests):
         mock_func.return_value = ['pingou']
 
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_unretire_request,
             self.session,
             namespace='rpms',
@@ -2157,7 +2169,7 @@ class PkgdbLibtests(Modeltests):
         self.session.commit()
 
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_unretire_request,
             self.session,
             namespace='rpms',
@@ -2187,7 +2199,7 @@ class PkgdbLibtests(Modeltests):
 
         # Branch `foo` not found
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_new_package_request,
             session=self.session,
             pkg_name='guake',
@@ -2207,7 +2219,7 @@ class PkgdbLibtests(Modeltests):
 
         # Again, branch not found
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_new_package_request,
             session=self.session,
             pkg_name='guake',
@@ -2224,7 +2236,7 @@ class PkgdbLibtests(Modeltests):
 
         # Package already exists
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_new_package_request,
             session=self.session,
             pkg_name='guake',
@@ -2265,7 +2277,7 @@ class PkgdbLibtests(Modeltests):
         # User is not an admin
         user = FakeFasUser()
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_namespace,
             self.session,
             'foo',
@@ -2274,7 +2286,7 @@ class PkgdbLibtests(Modeltests):
 
         # Namespace already exists
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.add_namespace,
             self.session,
             'rpms',
@@ -2308,7 +2320,7 @@ class PkgdbLibtests(Modeltests):
         # User is not an admin
         user = FakeFasUser()
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.drop_namespace,
             self.session,
             'foo',
@@ -2317,7 +2329,7 @@ class PkgdbLibtests(Modeltests):
 
         # Namespace does not exist
         self.assertRaises(
-            pkgdblib.PkgdbException,
+            PkgdbException,
             pkgdblib.drop_namespace,
             self.session,
             'foobar',
@@ -2337,6 +2349,26 @@ class PkgdbLibtests(Modeltests):
         namespaces = pkgdblib.get_status(
             self.session, 'namespaces')['namespaces']
         self.assertEqual(namespaces, ['docker', 'modules', 'rpms'])
+
+    def test_check_bz_url(self):
+        BZ_BASE = "https://example.com"
+        EXPECTED_URL = "https://example.com/12345"
+
+        result = pkgdblib.check_bz_url(BZ_BASE, EXPECTED_URL)
+        self.assertEqual(result, EXPECTED_URL)
+
+        result = pkgdblib.check_bz_url(
+            BZ_BASE, "https://example.com/show_bug.cgi?id=12345")
+        self.assertEqual(result, EXPECTED_URL)
+
+        result = pkgdblib.check_bz_url(BZ_BASE, "12345")
+        self.assertEqual(result, EXPECTED_URL)
+
+        result = pkgdblib.check_bz_url(BZ_BASE, "https://example.com/")
+        self.assertEqual(result, None)
+
+        result = pkgdblib.check_bz_url(BZ_BASE, "")
+        self.assertEqual(result, None)
 
 
 if __name__ == '__main__':

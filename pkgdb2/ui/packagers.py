@@ -29,6 +29,7 @@ from math import ceil
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP
 from pkgdb2.ui import UI
+from pkgdb2.lib.exceptions import PkgdbException
 
 
 @UI.route('/packagers/')
@@ -174,7 +175,7 @@ def packager_requests(packager):
             limit=limit,
             count=True,
         )
-    except pkgdblib.PkgdbException, err:
+    except PkgdbException as err:
         flask.flash(err, 'errors')
 
     total_page = int(ceil(cnt_actions / float(limit)))

@@ -36,6 +36,7 @@ from sqlalchemy.orm.exc import NoResultFound
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import APP, SESSION, forms, is_admin, packager_login_required
 from pkgdb2.api import API, get_limit
+from pkgdb2.lib.exceptions import PkgdbException, PkgdbBugzillaException
 
 
 ## Some of the object we use here have inherited methods which apparently
@@ -152,7 +153,7 @@ def api_package_new():
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = [message]
-        except pkgdblib.PkgdbException, err:
+        except PkgdbException as err:
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = str(err)
@@ -270,7 +271,7 @@ def api_package_edit():
                 SESSION.commit()
                 output['output'] = 'ok'
                 output['messages'] = [message]
-            except pkgdblib.PkgdbException, err:  # pragma: no cover
+            except PkgdbException as err:  # pragma: no cover
                 # We can only reach here in two cases:
                 # 1) the user is not an admin, but that's taken care of
                 #    by the decorator
@@ -361,7 +362,7 @@ def api_package_orphan():
 
                 messages.append(message)
                 SESSION.commit()
-            except pkgdblib.PkgdbException, err:
+            except PkgdbException as err:
                 SESSION.rollback()
                 errors.add(str(err))
 
@@ -461,11 +462,11 @@ def api_package_unorphan():
                 )
                 messages.append(message)
                 SESSION.commit()
-            except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
+            except PkgdbBugzillaException as err:  # pragma: no cover
                 APP.logger.exception(err)
                 SESSION.rollback()
                 errors.add(str(err))
-            except pkgdblib.PkgdbException, err:
+            except PkgdbException as err:
                 SESSION.rollback()
                 errors.add(str(err))
 
@@ -563,7 +564,7 @@ def api_package_retire():
                 )
                 messages.append(message)
             SESSION.commit()
-        except pkgdblib.PkgdbException, err:
+        except PkgdbException as err:
             SESSION.rollback()
             errors.add(str(err))
 
@@ -663,7 +664,7 @@ def api_package_unretire():
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = messages
-        except pkgdblib.PkgdbException, err:
+        except PkgdbException as err:
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = str(err)
@@ -1109,7 +1110,7 @@ def api_package_list(namespace=None, pattern=None):
                 output['page'] = int(page)
                 output['page_total'] = int(ceil(packages_count / float(limit)))
 
-    except pkgdblib.PkgdbException, err:
+    except PkgdbException as err:
         SESSION.rollback()
         output['output'] = 'notok'
         output['error'] = str(err)
@@ -1198,7 +1199,7 @@ def api_package_critpath():
                 output['output'] = 'notok'
                 output['error'] = 'Nothing to update'
                 httpcode = 500
-        except pkgdblib.PkgdbException, err:
+        except PkgdbException as err:
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = str(err)
@@ -1277,7 +1278,7 @@ def api_monitor_package(package, status, namespace='rpms'):
         SESSION.commit()
         output['output'] = 'ok'
         output['messages'] = msg
-    except pkgdblib.PkgdbException, err:
+    except PkgdbException as err:
         SESSION.rollback()
         output['output'] = 'notok'
         output['error'] = str(err)
@@ -1340,7 +1341,7 @@ def api_koschei_package(package, status, namespace='rpms'):
         SESSION.commit()
         output['output'] = 'ok'
         output['messages'] = msg
-    except pkgdblib.PkgdbException, err:
+    except PkgdbException as err:
         SESSION.rollback()
         output['output'] = 'notok'
         output['error'] = str(err)
@@ -1489,7 +1490,7 @@ def api_package_request():
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = messages
-        except pkgdblib.PkgdbException, err:
+        except PkgdbException as err:
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = str(err)
@@ -1610,12 +1611,12 @@ def api_branch_request(package, namespace='rpms'):
                 SESSION.commit()
                 output['output'] = 'ok'
                 output['messages'] = messages
-            except pkgdblib.PkgdbException, err:  # pragma: no cover
+            except PkgdbException as err:  # pragma: no cover
                 SESSION.rollback()
                 output['output'] = 'notok'
                 output['error'] = str(err)
                 httpcode = 400
-            except SQLAlchemyError, err:  # pragma: no cover
+            except SQLAlchemyError as err:  # pragma: no cover
                 SESSION.rollback()
                 APP.logger.exception(err)
                 output['output'] = 'notok'

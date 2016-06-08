@@ -34,7 +34,7 @@ import pkgdb2.forms as forms
 import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, APP
 from pkgdb2.api import API
-
+from pkgdb2.lib.exceptions import PkgdbBugzillaException, PkgdbException
 
 ## Some of the object we use here have inherited methods which apparently
 ## pylint does not detect.
@@ -143,7 +143,7 @@ def api_acl_update():
             SESSION.commit()
             output['output'] = 'ok'
             output['messages'] = messages
-        except pkgdblib.PkgdbException, err:
+        except PkgdbException as err:
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = str(err)
@@ -234,11 +234,11 @@ def api_acl_reassign():
                 )
                 SESSION.commit()
                 messages.append(message)
-            except pkgdblib.PkgdbBugzillaException, err:  # pragma: no cover
+            except PkgdbBugzillaException as err:  # pragma: no cover
                 APP.logger.exception(err)
                 SESSION.rollback()
                 errors.add(str(err))
-            except pkgdblib.PkgdbException, err:
+            except PkgdbException as err:
                 SESSION.rollback()
                 errors.add(str(err))
 

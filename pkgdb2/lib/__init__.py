@@ -58,6 +58,7 @@ ACLS = ['commit', 'watchbugzilla', 'watchcommits', 'approveacls']
 ## Ignore variable name that are too short
 # pylint: disable=C0103
 
+
 def _validate_poc(pkg_poc):
     """ Validate is the provided ``pkg_poc`` is a valid poc for a package.
 
@@ -243,7 +244,7 @@ def add_package(
     session.add(package)
     try:
         session.flush()
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         session.rollback()
         raise PkgdbException('Could not create package')
@@ -257,7 +258,7 @@ def add_package(
         session.add(pkglisting)
         try:
             session.flush()
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             session.rollback()
             raise PkgdbException('Could not add packages to collections')
@@ -287,7 +288,7 @@ def add_package(
     try:
         session.flush()
         return 'Package created'
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not add ACLs')
 
@@ -956,7 +957,7 @@ def search_actions(
     )
 
 
-def search_logs(session,namespace=None, package=None, packager=None,
+def search_logs(session, namespace=None, package=None, packager=None,
                 from_date=None, page=None, limit=None, count=False):
     """ Return the list of Collection matching the given criteria.
 
@@ -1201,7 +1202,7 @@ def add_collection(session, clt_name, clt_version, clt_status,
             collection=collection.to_json(),
         ))
         return 'Collection "%s" created' % collection.branchname
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not add Collection to the database.')
 
@@ -1260,7 +1261,8 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
     if clt_koji_name and clt_koji_name != collection.koji_name:
         collection.koji_name = clt_koji_name
         edited.append('koji_name')
-    if clt_allow_retire is not None and clt_allow_retire != collection.allow_retire:
+    if clt_allow_retire is not None and \
+            clt_allow_retire != collection.allow_retire:
         collection.allow_retire = clt_allow_retire
         edited.append('allow_retire')
 
@@ -1279,7 +1281,7 @@ def edit_collection(session, collection, clt_name=None, clt_version=None,
                 )
             )
             return 'Collection "%s" edited' % collection.branchname
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit Collection.')
 
@@ -1348,7 +1350,7 @@ def edit_package(
                 package=package.to_json(acls=False),
             ))
             return 'Package "%s" edited' % package.name
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit package.')
 
@@ -1400,7 +1402,7 @@ def update_collection_status(session, clt_branchname, clt_status, user):
     except NoResultFound:  # pragma: no cover
         raise PkgdbException('Could not find collection "%s"' %
                              clt_branchname)
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not update the status of collection'
                              '"%s".' % clt_branchname)
@@ -1434,7 +1436,7 @@ def get_pending_acl_user(session, user=None):
                 'collection': package.packagelist.collection.branchname,
                 'acl': package.acl,
                 'status': package.status,
-             }
+            }
         )
     return output
 
@@ -1755,7 +1757,8 @@ def add_branch(session, clt_from, clt_to, user):
     )
     SELECT "PackageListingAcl".fas_name, p2.id,
            "PackageListingAcl".acl, "PackageListingAcl".status, '%s'
-    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl", "Package"
+    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl",
+         "Package"
     WHERE p1.collection_id = %s
     AND p2.collection_id = %s
     AND p1.package_id = p2.package_id
@@ -1777,7 +1780,7 @@ def add_branch(session, clt_from, clt_to, user):
         messages.append(
             'SUCCESS: successfully branched (PackageListing) %s from '
             'to %s %s' % (clt_from.name, clt_to.name, clt_to.version))
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         session.rollback()
         pkgdb2.LOG.debug(err)
         messages.append(
@@ -1788,9 +1791,9 @@ def add_branch(session, clt_from, clt_to, user):
         session.execute(q2)
         session.commit()
         messages.append(
-                'SUCCESS: successfully branched (PackageListingAcl) %s from '
+            'SUCCESS: successfully branched (PackageListingAcl) %s from '
             'to %s %s' % (clt_from.name, clt_to.name, clt_to.version))
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         session.rollback()
         pkgdb2.LOG.debug(err)
         messages.append(
@@ -1973,15 +1976,32 @@ def add_new_package_request(
     if pkg_collection.startswith(('el', 'epel')):
         _validate_pkg(session, pkg_collection[-1:], pkg_name)
 
+    # pkg_description, pkg_upstream_url and pkg_review_url should be None if
+    # empty
+    if pkg_description:
+        pkg_description = pkg_description.strip()
+    if not pkg_description:
+        pkg_description = None
+
+    if pkg_upstream_url:
+        pkg_upstream_url = pkg_upstream_url.strip()
+    if not pkg_upstream_url:
+        pkg_upstream_url = None
+
+    if pkg_review_url:
+        pkg_review_url = pkg_review_url.strip()
+    if not pkg_review_url:
+        pkg_review_url = None
+
     info = {
         'pkg_name': pkg_name.strip(),
         'pkg_summary': pkg_summary.strip(),
-        'pkg_description': pkg_description.strip() if pkg_description else None,
+        'pkg_description': pkg_description,
         'pkg_status': pkg_status.strip(),
         'pkg_collection': pkg_collection.strip(),
         'pkg_poc': pkg_poc.strip(),
-        'pkg_review_url': pkg_review_url.strip() if pkg_review_url else None,
-        'pkg_upstream_url': pkg_upstream_url.strip() if pkg_upstream_url else None,
+        'pkg_review_url': pkg_review_url,
+        'pkg_upstream_url': pkg_upstream_url,
         'pkg_critpath': pkg_critpath,
         'pkg_namespace': pkg_namespace,
         'monitoring_status': monitoring_status,
@@ -2255,11 +2275,11 @@ def _vcs_acls_json(packages, skip_pp=None):
             }
 
         if group:
-            output[namespace][pkgname][branchname
-                ]['commit']['groups'].append(group)
+            output[namespace][pkgname][branchname]['commit']['groups'].append(
+                group)
         if user:
-            output[namespace][pkgname][branchname
-                ]['commit']['people'].append(user)
+            output[namespace][pkgname][branchname]['commit']['people'].append(
+                user)
     return output
 
 
@@ -2318,7 +2338,6 @@ def _vcs_acls_text(packages, skip_pp=None):
             else:
                 if group and groups:  # pragma: no cover
                     group = ',' + group
-
 
                 output[pkgname][branchname] = {
                     'name': pkgname,
@@ -2438,7 +2457,7 @@ def set_critpath_packages(
             branches=branches,
             package=package.to_json(),
         ))
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         raise PkgdbException('Could not edit package.')
 
@@ -2521,7 +2540,7 @@ def set_monitor_package(session, namespace, pkg_name, status, user):
                     package=package.to_json(acls=False),
                 )
             )
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not update monitoring status.')
 
@@ -2580,7 +2599,7 @@ def set_koschei_monitor_package(session, namespace, pkg_name, status, user):
                     package=package.to_json(acls=False),
                 )
             )
-        except SQLAlchemyError, err:  # pragma: no cover
+        except SQLAlchemyError as err:  # pragma: no cover
             pkgdb2.LOG.exception(err)
             raise PkgdbException(
                 'Could not update Koschei monitoring status.')
@@ -2675,7 +2694,7 @@ def edit_action_status(
                     new_status=action_status,
                     action=admin_action.to_json(),
                 ))
-        except SQLAlchemyError, err:
+        except SQLAlchemyError as err:
             session.rollback()
             pkgdb2.LOG.exception(err)
             raise PkgdbException('Could not edit action.')
@@ -2762,7 +2781,7 @@ def add_namespace(session, namespace, user):
             namespace=namespace,
         ))
         return 'Namespace "%s" created' % namespace
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         session.rollback()
         raise PkgdbException(
@@ -2807,7 +2826,7 @@ def drop_namespace(session, namespace, user):
             namespace=namespace,
         ))
         return 'Namespace "%s" removed' % namespace
-    except SQLAlchemyError, err:  # pragma: no cover
+    except SQLAlchemyError as err:  # pragma: no cover
         pkgdb2.LOG.exception(err)
         session.rollback()
         raise PkgdbException(
@@ -2818,22 +2837,28 @@ def check_bz_url(bugzilla_url, url):
     """ Check if the provided url
 
     :arg bugzilla_url: the url of the bugzilla instance
-    :arg url: the url to a bugzilla ticket to check or a ticket identifier
+    :arg url: the url or ID of a bugzilla bug
+    :returns: Normalized Bugzilla URL or None if URL is invalid
 
     """
     if not url or not bugzilla_url:
         return None
-    output = None
     url = urlparse.urlparse(url)
-    if url.path:
-        path = url.path
-        if path.startswith('/'):
-            path = path[1:]
-        try:
-            int(path)
-            output = os.path.join(bugzilla_url, path)
-        except (TypeError, ValueError):
-            pass
-    elif url.query and 'id=' in url.query:
-        output = os.path.join(bugzilla_url, url.query.replace('id=', ''))
-    return output
+
+    bug_id = None
+    if url.scheme:
+        if not url.query:
+            # Handle URLs like https://example.com/1334887
+            bug_id = url.path.split("/")[-1]
+        else:
+            # Handle URLs like https://example.com/show_bug.cgi?id=1334887
+            params = urlparse.parse_qs(url.query)
+            bug_id = params.get("id", [None])[0]
+    else:
+        # Handle blank bug IDs
+        bug_id = url.path
+
+    if bug_id.isdigit():
+        return os.path.join(bugzilla_url, bug_id)
+
+    return None

@@ -32,6 +32,7 @@ import pkgdb2.lib as pkgdblib
 from pkgdb2 import SESSION, forms, is_admin
 from pkgdb2.api import API
 from pkgdb2.lib import model
+from pkgdb2.lib.exceptions import PkgdbException
 
 
 ## Some of the object we use here have inherited methods which apparently
@@ -117,7 +118,7 @@ def api_collection_new():
             output['messages'] = [message]
         # Apparently we're pretty tight on checks and looks like we cannot
         # raise this exception in a normal situation
-        except pkgdblib.PkgdbException, err:  # pragma: no cover
+        except PkgdbException as err:  # pragma: no cover
             SESSION.rollback()
             output['output'] = 'notok'
             output['error'] = str(err)
@@ -195,7 +196,7 @@ def api_collection_status(collection):
                 SESSION.commit()
                 output['output'] = 'ok'
                 output['messages'] = [message]
-            except pkgdblib.PkgdbException, err:
+            except PkgdbException as err:
                 SESSION.rollback()
                 output['output'] = 'notok'
                 output['error'] = str(err)

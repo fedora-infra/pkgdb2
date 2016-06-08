@@ -31,6 +31,7 @@ import pkgdb2.lib as pkgdblib
 import pkgdb2.forms
 from pkgdb2 import SESSION, is_admin
 from pkgdb2.api import API, get_limit
+from pkgdb2.lib.exceptions import PkgdbException
 
 
 @API.route('/admin/actions/')
@@ -151,7 +152,7 @@ List admin actions
             status=status,
             count=True,
         )
-    except pkgdblib.PkgdbException, err:  # pragma: no cover
+    except PkgdbException as err:  # pragma: no cover
         SESSION.rollback()
         output['output'] = 'notok'
         output['error'] = str(err)
@@ -336,7 +337,7 @@ Edit Admin Action status update
                 SESSION.commit()
                 output['output'] = 'ok'
                 output['messages'] = [message]
-            except pkgdblib.PkgdbException, err:  # pragma: no cover
+            except PkgdbException as err:  # pragma: no cover
                 # We can only reach here in two cases:
                 # 1) the user is not an admin, but that's taken care of
                 #    by the decorator
