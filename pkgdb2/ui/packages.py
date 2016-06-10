@@ -44,6 +44,7 @@ from pkgdb2.lib.exceptions import PkgdbException
 
 
 @UI.route('/packages/')
+@UI.route('/packages/<motif>/')
 @UI.route('/packages/<namespace>/<motif>/')
 def list_packages(namespace=None, motif=None, orphaned=None, status=None,
                   origin='list_packages', case_sensitive=False):
@@ -52,7 +53,7 @@ def list_packages(namespace=None, motif=None, orphaned=None, status=None,
     pattern = flask.request.args.get('motif', motif) or '*'
     branches = flask.request.args.get('branches', None)
     owner = flask.request.args.get('owner', None)
-    namespace = flask.request.args.get('namespace', namespace) or 'rpms'
+    namespace = flask.request.args.get('namespace', namespace)
     orphaned = flask.request.args.get('orphaned', orphaned)
     if str(orphaned) in ['False', '0']:
         orphaned = False
@@ -100,6 +101,8 @@ def list_packages(namespace=None, motif=None, orphaned=None, status=None,
     total_page = int(ceil(packages_count / float(limit)))
 
     select = origin.replace('list_', '')
+    if namespace:
+        select = namespace
 
     if len(packages) == 1:
         flask.flash('Only one package matching, redirecting you to it')
