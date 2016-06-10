@@ -1022,7 +1022,7 @@ class FlaskUiAclsTest(Modeltests):
             self.assertTrue(
                 '<li class="error">No package found by this name</li>'
                 in output.data)
-            self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
+            self.assertTrue('<h1>Search packages</h1>' in output.data)
 
             output = self.app.get('/acl/rpms/guake/give/')
             self.assertEqual(output.status_code, 200)

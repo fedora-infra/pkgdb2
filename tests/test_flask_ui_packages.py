@@ -64,21 +64,21 @@ class FlaskUiPackagesTest(Modeltests):
 
         output = self.app.get('/packages/')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
-        self.assertTrue('<p>3 packages found</p>' in output.data)
+        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<p>5 packages found</p>' in output.data)
 
         output = self.app.get('/packages/?limit=abc&page=def')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
-        self.assertTrue('<p>3 packages found</p>' in output.data)
+        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<p>5 packages found</p>' in output.data)
         self.assertTrue(
             '<li class="errors">Incorrect limit provided, using default</li>'
             in output.data)
 
         output = self.app.get('/packages/?orphaned=0')
         self.assertEqual(output.status_code, 200)
-        self.assertTrue('<h1>Search packages (rpms) </h1>' in output.data)
-        self.assertTrue('<p>3 packages found</p>' in output.data)
+        self.assertTrue('<h1>Search packages</h1>' in output.data)
+        self.assertTrue('<p>5 packages found</p>' in output.data)
 
     def test_package_info(self):
         """ Test the package_info function. """
@@ -165,8 +165,7 @@ class FlaskUiPackagesTest(Modeltests):
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
                 '<li class="message">Package created</li>' in output.data)
-            self.assertTrue(
-                '<h1>Search packages (rpms) </h1>' in output.data)
+            self.assertTrue('<h1>Search packages</h1>' in output.data)
             self.assertTrue(
                 '<a href="/package/rpms/gnome-terminal/">' in output.data)
 
@@ -813,7 +812,7 @@ class FlaskUiPackagesTest(Modeltests):
             output = self.app.get('/packages/')
             self.assertEqual(output.status_code, 200)
             self.assertTrue(
-                '<p>3 packages found</p>' in output.data)
+                '<p>5 packages found</p>' in output.data)
 
         # User is an admin with csrf
         user = FakeFasUserAdmin()
@@ -826,7 +825,7 @@ class FlaskUiPackagesTest(Modeltests):
                 '<li class="message">Package guake deleted</li>'
                 in output.data)
             self.assertTrue(
-                '<p>2 packages found</p>' in output.data)
+                '<p>4 packages found</p>' in output.data)
 
             output = self.app.post(
                 '/package/rpms/random/delete', follow_redirects=True, data=data)
