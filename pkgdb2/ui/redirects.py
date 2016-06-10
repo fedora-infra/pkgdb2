@@ -37,7 +37,7 @@ import pkgdb2.ui.acls as acls
 @UI.route('/packages/<motif>/')
 def old_list_packages(motif=None):
     return flask.redirect(flask.url_for(
-        'ui_ns.list_packages', namespace='rpms', motif=motif))
+        'ui_ns.list_packages', namespace=None, motif=motif))
 
 
 @UI.route('/package/<package>/')
