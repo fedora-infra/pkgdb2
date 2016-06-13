@@ -220,32 +220,41 @@ confusing what the difference is between that status an the per-branch status)
   </p>
 
   <ul id="actions">
+      {% if config.get('KOJI_URL') %}
       <li>
-          <a href="http://koji.fedoraproject.org/koji/search?type=package&match=glob&terms={{
-      package.name | urlencode }}"
+          <a href="{{ config['KOJI_URL'] % package.name | urlencode }}"
           class="koji">
           Builds status</a>
       </li>
+      {% endif %}
+      {% if config.get('BODHI_URL') %}
       <li>
-          <a href="https://admin.fedoraproject.org/updates/{{ package.name }}"
+          <a href="{{ config['BODHI_URL'] % package.name }}"
           class="bodhi">
           Updates status</a>
       </li>
+      {% endif %}
+      {% if config.get('CGIT_URL') %}
       <li>
-          <a href="http://pkgs.fedoraproject.org/cgit/{{ package.name }}.git/"
+          <a href="{{ config['CGIT_URL'] % package.name }}"
           class="cvs">
           Package source</a>
       </li>
+      {% endif %}
+      {% if config.get('PKGS_BUG_URL') %}
       <li>
-          <a href="https://apps.fedoraproject.org/packages/{{ package.name }}/bugs"
+          <a href="{{ config['PKGS_BUG_URL'] % package.name }}"
           class="bugz">
           Bug reports</a>
       </li>
+      {% endif %}
+      {% if config.get('PKGS_PKG_URL') %}
       <li>
-          <a href="https://apps.fedoraproject.org/packages/{{ package.name }}"
+          <a href="{{ config['PKGS_PKG_URL'] % package.name }}"
           class="community">
           Packages</a>
       </li>
+      {% endif %}
       <li>
       {% if package.review_url %}
           <a href="{{ package.review_url }}" class="pkg_review">

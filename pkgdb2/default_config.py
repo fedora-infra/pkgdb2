@@ -182,3 +182,13 @@ PKGDB2_NAMESPACE_POLICY = {
         "master",
     ],
 }
+
+# URLs used in the package's info page
+# Watch for the `%s` in the URL it is mandatory and in each of these, it
+# will be replaced by the package's name
+PKGS_BUG_URL = 'https://apps.fedoraproject.org/packages/%s/bugs'
+PKGS_PKG_URL = 'https://apps.fedoraproject.org/packages/%s'
+CGIT_URL = 'http://pkgs.fedoraproject.org/cgit/%s.git/'
+BODHI_URL = 'https://bodhi.fedoraproject.org/updates/?packages=%s'
+KOJI_URL = 'http://koji.fedoraproject.org/koji/search?'\
+    'type=package&match=glob&terms=%s'
