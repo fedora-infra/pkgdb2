@@ -11,9 +11,9 @@
   {{ packager | avatar | safe }}
   {{ packager }}</h1> (<a class="fas" target="_blank"
     {% if packager.startswith('group::') %}
-        href="https://admin.fedoraproject.org/accounts/group/view/{{ packager.replace('group::', '') }}"
+        href="{{ config['PKGDB2_FAS_URL'] }}/group/view/{{ packager.replace('group::', '') }}"
     {% else %}
-        href="https://admin.fedoraproject.org/accounts/user/view/{{ packager }}"
+        href="{{ config['PKGDB2_FAS_URL'] }}/user/view/{{ packager }}"
     {% endif %}
     >fas</a> -
     <a href="{{ url_for('.packager_requests', packager=packager) }}">
