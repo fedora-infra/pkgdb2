@@ -95,6 +95,9 @@ def get_arguments():
     parser.add_argument(
         '--nomail', dest='nomail', action='store_true', default=False,
         help='Print the repo instead of sending it by email')
+    parser.add_argument(
+        '--nocreate', dest='nocreate', action='store_true', default=False,
+        help='Do not update rawhide nor create the new collection in the db')
 
     return parser.parse_args()
 
@@ -116,7 +119,7 @@ def main():
             'master',
         )
 
-    if collection:
+    if not args.nocreate and collection:
         collection = collection[0]
         print "Updating rawhide's dist-tag"
         dist_tag = collection.dist_tag
