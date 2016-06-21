@@ -60,7 +60,11 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
         <td>
         {% if page > 1 %}
             <a href="{{ url_for('.%s' % origin, motif=motif, page=page-1,
-                branches=branches, status=status, owner=owner) }}">
+                branches=branches or None,
+                status=status or None,
+                owner=owner or None,
+                namespace=namespace or None,
+                ) }}">
                 &lt; Previous
             </a>
         {% else %}
@@ -71,7 +75,11 @@ or <a href="{{ url_for('.list_orphaned') }}">orphaned</a> packages</p>
         <td>
             {% if page < total_page %}
             <a href="{{ url_for('.%s' % origin, motif=motif, page=page+1,
-                branches=branches, status=status, owner=owner) }}">
+                branches=branches or None,
+                status=status or None,
+                owner=owner or None,
+                namespace=namespace or None,
+                ) }}">
                 Next &gt;
             </a>
             {% else %}
