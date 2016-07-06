@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.3
+Version:        2.4
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -116,6 +116,20 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Jul 06 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4-1
+- Update to 2.4
+- Fix some timezone-sensitivity in the tests (Ralph Bean)
+- Check namespace policy on branch request (Ralph Bean)
+- Do not hard-code packager and provenpackager in the code
+- Properly handle bugzilla urls for unretirement requests (Till Maas)
+- Fix logger and return the user when emailing an exception
+- Correctly fix the change in the API of python-psutil between 1.0 and 2.0+
+- Let the Package page return everything regardless of the namespace
+- Do not hardcode the URLs to koji, bodhi, packages, bugz... on the package page
+- Fix pagination on the list packages and packagers pages
+- Add an option to skip the entire update rawhide/creation new branch step in
+  the pkgdb2_branch script
+
 * Thu May 12 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.3-1
 - Update to 2.3
 - Optimize the pkgdb2_branch script used when branching
