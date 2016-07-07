@@ -304,7 +304,7 @@ class PackageListingAcl(BASE):
     __tablename__ = 'PackageListingAcl'
 
     id = sa.Column(sa.Integer, primary_key=True)
-    fas_name = sa.Column(sa.String(32), nullable=False, index=True)
+    fas_name = sa.Column(sa.String(255), nullable=False, index=True)
     packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
