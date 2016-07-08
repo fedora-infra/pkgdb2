@@ -28,7 +28,7 @@ def upgrade():
 def downgrade():
     """ Update the fas_name column of PackageListingAcl from 255 chars to 32
     """
-     op.alter_column(
+    op.alter_column(
         table_name='PackageListingAcl',
         column_name='fas_name',
         type_=sa.String(32),
