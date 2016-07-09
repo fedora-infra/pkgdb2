@@ -174,9 +174,13 @@ Callstack that lead to the logging statement
 def get_mail_handler(smtp_server, mail_admin):
     """ Set up the handler sending emails for big exception
     """
+    import pkgdb2
+
+    sender = pkgdb2.APP.config.get(
+        'PKGDB2_EMAIL_FROM', 'nobody@fedoraproject.org'),
     mail_handler = logging.handlers.SMTPHandler(
         smtp_server,
-        'nobody@fedoraproject.org',
+        sender,
         mail_admin,
         'PkgDB2 error')
     mail_handler.setFormatter(logging.Formatter(MSG_FORMAT))
