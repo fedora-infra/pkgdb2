@@ -236,7 +236,11 @@ confusing what the difference is between that status an the per-branch status)
       {% endif %}
       {% if config.get('CGIT_URL') %}
       <li>
+          {% if config['CGIT_URL'].count('%') == 1 %}
           <a href="{{ config['CGIT_URL'] % package.name }}"
+          {% else %}
+          <a href="{{ config['CGIT_URL'] % (package.namespace, package.name) }}"
+          {% endif %}
           class="cvs">
           Package source</a>
       </li>
