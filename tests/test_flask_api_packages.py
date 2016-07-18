@@ -52,6 +52,7 @@ class FlaskApiPackagesTest(Modeltests):
         super(FlaskApiPackagesTest, self).setUp()
 
         pkgdb2.APP.config['TESTING'] = True
+        pkgdb2.APP.config['REQUEST_BLACKLIST'] = ['rpms/fedora']
         pkgdb2.SESSION = self.session
         pkgdb2.api.packages.SESSION = self.session
         pkgdb2.ui.SESSION = self.session
@@ -187,6 +188,33 @@ class FlaskApiPackagesTest(Modeltests):
 
         mock_func.get_packagers.return_value = ['mclasen']
         mock_func.log.return_value = ''
+
+        data = {
+            'pkgname': 'fedora',
+            'summary': 'Linux Distribution',
+            'description': 'The distribution',
+            'review_url': 'http://bugzilla.redhat.com/1234',
+            'status': 'Approved',
+            'branches': 'master',
+            'poc': 'mclasen',
+            'upstream_url': 'http://www.getfedora.org/',
+            'critpath': False,
+            'namespace': 'rpms',
+        }
+        with user_set(pkgdb2.APP, user):
+            output = self.app.post('/api/package/new/', data=data)
+            self.assertEqual(output.status_code, 500)
+            data = json.loads(output.data)
+            self.assertEqual(
+                data,
+                {
+                    "error": "Invalid input submitted",
+                    "error_detail": [
+                        "pkgname: This package name is blacklisted",
+                    ],
+                    "output": "notok"
+                }
+            )
 
         data = {
             'pkgname': 'gnome-terminal',

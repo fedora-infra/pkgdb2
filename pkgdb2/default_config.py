@@ -52,6 +52,9 @@ SECRET_KEY = '<insert here your own key>'
 # List the ACL which are auto-approved (don't need reviewing)
 AUTO_APPROVE = ['watchcommits', 'watchbugzilla']
 
+### Blacklisted items
+REQUEST_BLACKLIST = []
+
 # List of FAS user that can be automatically approved w/o checking if they
 # are packagers
 AUTOAPPROVE_PKGERS = []

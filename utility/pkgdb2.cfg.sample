@@ -19,6 +19,9 @@ DB_URL='sqlite:////var/tmp/pkgdb2_dev.sqlite'
 ### pages
 ITEMS_PER_PAGE = 50
 
+### Blacklisted items, format: namespace/name
+REQUEST_BLACKLIST = ['docker/fedora']
+
 
 ### List the ACL which are automatically approved (don't need reviewing)
 AUTO_APPROVE = ['watchcommits', 'watchbugzilla']
