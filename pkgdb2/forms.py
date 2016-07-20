@@ -36,6 +36,8 @@ import re
 import wtforms
 from flask.ext import wtf
 
+import pkgdb2
+
 PKG_NAME_RE = '[a-zA-Z0-9\-\+]+'
 
 
@@ -205,6 +207,11 @@ class RequestPackageForm(wtf.Form):
                 (ns, ns)
                 for ns in kwargs['namespaces']
             ]
+
+    def validate_pkgname(form, field):
+        if '%s/%s' % (form._fields['namespace'].data,
+                      field.data) in pkgdb2.APP.config['REQUEST_BLACKLIST']:
+            raise wtforms.ValidationError('This package name is blacklisted')
 
 
 class AddPackageForm(RequestPackageForm):
