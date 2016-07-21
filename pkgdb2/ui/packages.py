@@ -1361,6 +1361,10 @@ def package_request_new():
         collections.append(collection)
 
     namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
+    # Ensure the `rpms` namespace is always the first in the list (the default)
+    if 'rpms' in namespaces:
+        namespaces.pop(namespaces.index('rpms'))
+        namespaces.insert(0, 'rpms')
 
     form = pkgdb2.forms.RequestPackageForm(
         collections=collections,
