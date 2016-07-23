@@ -860,6 +860,139 @@ def create_retired_pkgs(session):
     session.commit()
 
 
+def create_docker_packages(session):
+    """ Add packagers to packages. """
+
+    # Add packages
+    cockpit_pkg = model.Package(
+        name='cockpit',
+        namespace='docker',
+        summary='Server Management GUI',
+        description='Server Management...',
+        status='Approved',
+        review_url='https://bugzilla.redhat.com/450189',
+        upstream_url='http://cockpit.io',
+        monitor=False,
+    )
+    session.add(cockpit_pkg)
+
+    fedocal_pkg = model.Package(
+        name='fedocal',
+        namespace='docker',
+        summary='A web-based calendar for Fedora',
+        description='Web calendar ...',
+        status='Approved',
+        review_url='https://bugzilla.redhat.com/915074',
+        upstream_url='http://fedorahosted.org/fedocal',
+        monitor=False,
+    )
+    session.add(fedocal_pkg)
+
+    session.commit()
+
+    devel_collec = model.Collection.by_name(session, 'master')
+
+    # Add PackageListing
+    # Pkg: cockpit - Collection: devel - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='puiterwijk',
+        status='Approved',
+        package_id=cockpit_pkg.id,
+        collection_id=devel_collec.id,
+    )
+    session.add(pkgltg)
+    # Pkg: guake - Collection: devel - Approved
+    pkgltg = model.PackageListing(
+        point_of_contact='pingou',
+        status='Approved',
+        package_id=fedocal_pkg.id,
+        collection_id=devel_collec.id,
+    )
+    session.add(pkgltg)
+
+    session.commit()
+
+    # Add PackageListingAcl
+    cockpit_devel = model.PackageListing.by_pkgid_collectionid(
+        session, cockpit_pkg.id, devel_collec.id)
+    fedocal_devel = model.PackageListing.by_pkgid_collectionid(
+        session, fedocal_pkg.id, devel_collec.id)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
+        packagelisting_id=cockpit_devel.id,
+        acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
+        packagelisting_id=cockpit_devel.id,
+        acl='watchbugzilla',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
+        packagelisting_id=fedocal_devel.id,
+        acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
+        packagelisting_id=fedocal_devel.id,
+        acl='watchcommits',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='pingou',
+        packagelisting_id=fedocal_devel.id,
+        acl='watchbugzilla',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='toshio',
+        packagelisting_id=fedocal_devel.id,
+        acl='commit',
+        status='Awaiting Review',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='spot',
+        packagelisting_id=fedocal_devel.id,
+        acl='watchbugzilla',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='group::gtk-sig',
+        packagelisting_id=cockpit_devel.id,
+        acl='commit',
+        status='Approved',
+    )
+    session.add(packager)
+
+    packager = model.PackageListingAcl(
+        fas_name='group::gtk-sig',
+        packagelisting_id=cockpit_devel.id,
+        acl='watchbugzilla',
+        status='Approved',
+    )
+    session.add(packager)
+
+    session.commit()
+
+
 if __name__ == '__main__':
     SUITE = unittest.TestLoader().loadTestsFromTestCase(Modeltests)
     unittest.TextTestRunner(verbosity=2).run(SUITE)
