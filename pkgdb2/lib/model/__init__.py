@@ -2091,6 +2091,7 @@ def bugzilla(session, name=None):
         PackageListing.point_of_contact,  # 4
         PackageListingAcl.fas_name,  # 5
         Collection.branchname,  # 6
+        Package.namespace,  # 7
     ).filter(
         Package.id == PackageListing.package_id
     ).filter(

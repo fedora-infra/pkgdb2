@@ -2165,6 +2165,7 @@ def bugzilla(session, name=None):
     # 4  PackageListing.point_of_contact
     # 5  PackageListingAcl.fas_name
     # 6  Collection.branchname
+    # 7  Package.namespace
 
     for pkg in pkgs:
         version = pkg[1]
@@ -2174,30 +2175,34 @@ def bugzilla(session, name=None):
             else:
                 version = 0
 
-        if pkg[0] in output:
-            if pkg[2] in output[pkg[0]]:
+        collect_name = pkg[0]
+        if pkg[7] != 'rpms':
+            collect_name = '%s %s' % (collect_name, pkg[7].capitalize())
+
+        if collect_name in output:
+            if pkg[2] in output[collect_name]:
                 # Check poc
                 if pkg[4] == 'orphan':
                     pass
-                elif output[pkg[0]][pkg[2]]['poc'] == 'orphan':
-                    output[pkg[0]][pkg[2]]['poc'] = pkg[4]
-                    output[pkg[0]][pkg[2]]['version'] = version
-                elif int(version) > int(output[pkg[0]][pkg[2]]['version']):
-                    output[pkg[0]][pkg[2]]['poc'] = pkg[4]
-                    output[pkg[0]][pkg[2]]['version'] = version
+                elif output[collect_name][pkg[2]]['poc'] == 'orphan':
+                    output[collect_name][pkg[2]]['poc'] = pkg[4]
+                    output[collect_name][pkg[2]]['version'] = version
+                elif int(version) > int(output[collect_name][pkg[2]]['version']):
+                    output[collect_name][pkg[2]]['poc'] = pkg[4]
+                    output[collect_name][pkg[2]]['version'] = version
                 # If #5 is not poc, add it to cc
                 if pkg[5] != 'orphan' \
-                        and pkg[5] != output[pkg[0]][pkg[2]]['poc'] \
-                        and pkg[5] not in output[pkg[0]][pkg[2]]['cc']:
-                    if output[pkg[0]][pkg[2]]['cc']:
-                        output[pkg[0]][pkg[2]]['cc'] += ','
-                    output[pkg[0]][pkg[2]]['cc'] += pkg[5]
+                        and pkg[5] != output[collect_name][pkg[2]]['poc'] \
+                        and pkg[5] not in output[collect_name][pkg[2]]['cc']:
+                    if output[collect_name][pkg[2]]['cc']:
+                        output[collect_name][pkg[2]]['cc'] += ','
+                    output[collect_name][pkg[2]]['cc'] += pkg[5]
             else:
                 cc = ''
                 if pkg[5] != pkg[4]:  # pragma: no cover
                     cc = pkg[5]
-                output[pkg[0]][pkg[2]] = {
-                    'collection': pkg[0],
+                output[collect_name][pkg[2]] = {
+                    'collection': collect_name,
                     'name': pkg[2],
                     'summary': pkg[3],
                     'poc': pkg[4],
@@ -2209,9 +2214,9 @@ def bugzilla(session, name=None):
             cc = ''
             if pkg[5] != pkg[4]:
                 cc = pkg[5]
-            output[pkg[0]] = {
+            output[collect_name] = {
                 pkg[2]: {
-                    'collection': pkg[0],
+                    'collection': collect_name,
                     'name': pkg[2],
                     'summary': pkg[3],
                     'poc': pkg[4],
