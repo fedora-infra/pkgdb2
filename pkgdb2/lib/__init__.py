@@ -2148,11 +2148,14 @@ def notify(session, eol=False, name=None, version=None, acls=None):
     return output
 
 
-def bugzilla(session, name=None):
+def bugzilla(session, name=None, default_namespace='rpms'):
     """ Return the information to sync ACLs with bugzilla.
 
     :arg session: the session to connect to the database with.
     :kwarg name: restricts the output to a specific collection name.
+    :kwarg default_namespace: the default namespace. If the package is in
+        another namespace, that namespace will be included in the collection
+        name used.
 
     """
     output = {}
@@ -2176,7 +2179,7 @@ def bugzilla(session, name=None):
                 version = 0
 
         collect_name = pkg[0]
-        if pkg[7] != 'rpms':
+        if pkg[7] != default_namespace:
             collect_name = '%s %s' % (collect_name, pkg[7].capitalize())
 
         if collect_name in output:

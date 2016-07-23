@@ -63,10 +63,12 @@ def _bz_acls_cached(name=None, out_format='text'):
         :summary: Short description of the package
         :cclist: list of FAS userids that are watching the package
     '''
-
+    default_ns = APP.config.get('DEFAULT_NAMESPACE', 'rpms')
     packages = pkgdblib.bugzilla(
         session=SESSION,
-        name=name)
+        name=name,
+        default_namespace=default_ns,
+    )
 
     output = []
     if out_format == 'json':
