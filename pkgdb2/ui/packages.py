@@ -1361,6 +1361,11 @@ def package_request_new():
         collections.append(collection)
 
     namespaces = pkgdblib.get_status(SESSION, 'namespaces')['namespaces']
+    default_ns = APP.config.get('DEFAULT_NAMESPACE', 'rpms')
+    # Ensure the `rpms` namespace is always the first in the list (the default)
+    if default_ns in namespaces:
+        namespaces.pop(namespaces.index(default_ns))
+        namespaces.insert(0, default_ns)
 
     form = pkgdb2.forms.RequestPackageForm(
         collections=collections,
