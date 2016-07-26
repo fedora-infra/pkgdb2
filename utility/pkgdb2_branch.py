@@ -30,6 +30,7 @@ __requires__ = ['SQLAlchemy >= 0.7', 'jinja2 >= 2.4']
 import pkg_resources
 
 import argparse
+import datetime
 import os
 
 from sqlalchemy.exc import SQLAlchemyError
@@ -175,6 +176,8 @@ def main():
             pkgdb2.SESSION.commit()
 
     print "Branching for %s..." % args.new_branch
+    start = datetime.datetime.utcnow()
+    print "Started at %s" % start
     try:
         pkgdblist = pkgdb2.lib.add_branch(
             pkgdb2.SESSION,
@@ -185,6 +188,9 @@ def main():
     except pkgdb2.lib.PkgdbException, err:
         print err
         return 1
+    end = datetime.datetime.utcnow()
+    print "Finished at %s" % end
+    print "Lasted for %s" % (end - start)
 
     try:
         pkgdb2.SESSION.commit()
