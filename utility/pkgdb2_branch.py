@@ -190,7 +190,7 @@ def main():
         return 1
     end = datetime.datetime.utcnow()
     print "Finished at %s" % end
-    print "Last for %s" % (end - start)
+    print "Lasted for %s" % (end - start)
 
     try:
         pkgdb2.SESSION.commit()
