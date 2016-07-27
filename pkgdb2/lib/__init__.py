@@ -1775,6 +1775,7 @@ def add_branch(session, clt_from, clt_to, user):
 
     messages = []
     try:
+        messages.append(q1)
         session.execute(q1)
         session.commit()
         messages.append(
@@ -1788,6 +1789,7 @@ def add_branch(session, clt_from, clt_to, user):
                 clt_from.name, clt_to.name, clt_to.version))
 
     try:
+        messages.append(q2)
         session.execute(q2)
         session.commit()
         messages.append(
