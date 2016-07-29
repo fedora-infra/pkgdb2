@@ -76,7 +76,11 @@ DRY_RUN = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_DRY_RUN', False)
 EMAIL_FROM = 'accounts@fedoraproject.org'
 DATA_CACHE = '/var/tmp/pkgdb_sync_bz.json'
 
-PRODUCTS = ['Fedora', 'Fedora EPEL']
+PRODUCTS = {
+    'Fedora': 'Fedora',
+    'Fedora docker': 'Fedora Docker Images',
+    'Fedora EPEL': 'Fedora EPEL',
+}
 
 # When querying for current info, take segments of 1000 packages a time
 BZ_PKG_SEGMENT = 1000
@@ -414,6 +418,7 @@ if __name__ == '__main__':
     for product in acls.keys():
         if product not in PRODUCTS:
             continue
+        product = PRODUCTS[product]
         for pkg in sorted(acls[product]):
             if DRY_RUN:
                 print pkg
