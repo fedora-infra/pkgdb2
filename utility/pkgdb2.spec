@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.4.2
+Version:        2.4.3
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -116,6 +116,16 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Fri Jul 29 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4.3-1
+- Update to 2.4.3
+- Implement blacklisting feature, allowing to blacklist some specific packages
+  in some namespaces (Patrick Uiterwijk)
+- Ensure the `rpms` namespace is always the first in the list (default) when
+  requesting new package
+- Give some time indication when doing mass-branching
+- Log the query when doing the mass-branching
+- Adjust the bugzilla API endpoint to sync ACLs to bugzilla for more products
+
 * Mon Jul 11 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4.2-1
 - Update to 2.4.2
 - When sending error report, use PKGDB2_EMAIL_FROM from the configuration
