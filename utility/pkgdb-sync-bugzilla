@@ -78,7 +78,7 @@ DATA_CACHE = '/var/tmp/pkgdb_sync_bz.json'
 
 PRODUCTS = {
     'Fedora': 'Fedora',
-    'Fedora docker': 'Fedora Docker Images',
+    'Fedora Docker': 'Fedora Docker Images',
     'Fedora EPEL': 'Fedora EPEL',
 }
 
