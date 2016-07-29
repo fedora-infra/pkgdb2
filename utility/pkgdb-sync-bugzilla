@@ -1,7 +1,7 @@
 #!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2013-2014  Red Hat, Inc.
+# Copyright © 2013-2016  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use, modify,
 # copy, or redistribute it subject to the terms and conditions of the GNU
@@ -75,6 +75,12 @@ DRY_RUN = pkgdb2.APP.config.get('PKGDB2_BUGZILLA_DRY_RUN', False)
 
 EMAIL_FROM = 'accounts@fedoraproject.org'
 DATA_CACHE = '/var/tmp/pkgdb_sync_bz.json'
+
+PRODUCTS = {
+    'Fedora': 'Fedora',
+    'Fedora Docker': 'Fedora Docker Images',
+    'Fedora EPEL': 'Fedora EPEL',
+}
 
 # When querying for current info, take segments of 1000 packages a time
 BZ_PKG_SEGMENT = 1000
@@ -410,8 +416,9 @@ if __name__ == '__main__':
     bugzilla = Bugzilla(BZSERVER, BZUSER, BZPASS, acls)
 
     for product in acls.keys():
-        if product not in ('Fedora', 'Fedora EPEL'):
+        if product not in PRODUCTS:
             continue
+        product = PRODUCTS[product]
         for pkg in sorted(acls[product]):
             if DRY_RUN:
                 print pkg

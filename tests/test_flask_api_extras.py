@@ -36,7 +36,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(
 
 import pkgdb2
 from tests import (Modeltests, create_package_acl, create_package_acl2,
-                   create_package_critpath, create_retired_pkgs)
+                   create_package_critpath, create_retired_pkgs,
+                   create_docker_packages)
 
 
 class FlaskApiExtrasTest(Modeltests):
@@ -166,6 +167,110 @@ Fedora|guake|Top down terminal for GNOME|pingou||spot"""
 
 """
         self.assertEqual(output.data, expected)
+
+    def test_api_bugzilla_filled_docker(self):
+        """ Test the api_bugzilla function with a filled database with
+        namespaces. """
+        # Fill the DB
+        create_package_acl2(self.session)
+        create_docker_packages(self.session)
+
+        output = self.app.get('/api/bugzilla/')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """# Package Database VCS Acls
+# Text Format
+# Collection|Package|Description|Owner|Initial QA|Initial CCList
+# Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
+
+Fedora|fedocal|A web-based calendar for Fedora|pingou||pingou
+Fedora|geany|A fast and lightweight IDE using GTK2|group::gtk-sig||
+Fedora|guake|Top down terminal for GNOME|pingou||spot
+Fedora Docker|cockpit|Server Management GUI|puiterwijk||group::gtk-sig,pingou
+Fedora Docker|fedocal|A web-based calendar for Fedora|pingou||spot"""
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/bugzilla/?format=random')
+        self.assertEqual(output.status_code, 200)
+        self.assertEqual(output.data, expected)
+
+        output = self.app.get('/api/bugzilla/?format=json')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            u'bugzillaAcls': {
+                'Fedora': {
+                    "fedocal": {
+                        "owner": "pingou",
+                        "cclist": {
+                            "groups": [],
+                            "people": ["pingou"]
+                        },
+                        "qacontact": None,
+                        "summary": "A web-based calendar for Fedora"
+                    },
+                    'geany': {
+                        'owner': '@gtk-sig',
+                        'cclist': {
+                            'groups': [],
+                            'people': []
+                        },
+                        'qacontact': None,
+                        'summary': 'A fast and lightweight IDE using '
+                        'GTK2'
+                    },
+                    'guake': {
+                        'owner': 'pingou',
+                        'cclist': {
+                            'groups': [],
+                            'people': ['spot']
+                        },
+                        'qacontact': None,
+                        'summary': 'Top down terminal for GNOME'
+                    }
+                },
+                "Fedora Docker": {
+                  "cockpit": {
+                    "cclist": {
+                      "groups": [
+                        "@gtk-sig"
+                      ],
+                      "people": ["pingou"]
+                    },
+                    "owner": "puiterwijk",
+                    "qacontact": None,
+                    "summary": "Server Management GUI"
+                  },
+                  "fedocal": {
+                    "cclist": {
+                      "groups": [],
+                      "people": [
+                        "spot"
+                      ]
+                    },
+                    "owner": "pingou",
+                    "qacontact": None,
+                    "summary": "A web-based calendar for Fedora"
+                  }
+                }
+            },
+            'title': 'Fedora Package Database -- Bugzilla ACLs'
+        }
+        self.assertEqual(data, expected)
+
+        # Filter for a collection
+        output = self.app.get('/api/bugzilla/?collection=Fedora EPEL')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """# Package Database VCS Acls
+# Text Format
+# Collection|Package|Description|Owner|Initial QA|Initial CCList
+# Backslashes (\) are escaped as \u005c Pipes (|) are escaped as \u007c
+
+"""
+        self.assertEqual(output.data, expected)
+
 
     def test_api_notify_empty(self):
         """ Test the api_notify function with an empty database. """
