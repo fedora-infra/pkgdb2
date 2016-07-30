@@ -258,7 +258,7 @@ class Bugzilla(object):
                 data['initialowner'] = owner
 
                 # Changes occurred.  Submit a request to change via xmlrpc
-                data['product'] = collection
+                data['product'] = PRODUCTS[collection]
                 data['component'] = package
                 if DRY_RUN:
                     print '[EDITCOMP] Changing via editComponent(' \
@@ -286,7 +286,7 @@ class Bugzilla(object):
                 qacontact = 'extras-qa@fedoraproject.org'
 
             data = {
-                'product': collection,
+                'product': PRODUCTS[collection],
                 'component': package,
                 'description': description,
                 'initialowner': owner,
@@ -418,7 +418,6 @@ if __name__ == '__main__':
     for product in acls.keys():
         if product not in PRODUCTS:
             continue
-        product = PRODUCTS[product]
         for pkg in sorted(acls[product]):
             if DRY_RUN:
                 print pkg
