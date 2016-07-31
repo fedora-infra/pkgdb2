@@ -132,7 +132,10 @@ class ProductCache(dict):
             for pkg_segment in segment(pkglist, BZ_PKG_SEGMENT):
                 # Format that bugzilla will understand.  Strip None's that segment() pads
                 # out the final data segment() with
-                query = [dict(product=key, component=p) for p in pkg_segment if p is not None]
+                query = [
+                    dict(product=PRODUCTS[key], component=p)
+                    for p in pkg_segment if p is not None
+                ]
                 raw_data = self.bz._proxy.Component.get(dict(names=query))
                 for package in raw_data['components']:
                     # Reformat data to be the same as what's returned from
