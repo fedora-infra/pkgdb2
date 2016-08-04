@@ -40,6 +40,18 @@ from tests import (Modeltests, create_package_acl, create_package_acl2,
                    create_docker_packages)
 
 
+def clean_since_pending_acls(data):
+    ''' Clean the dates from the pendinacls text output as it will change
+    for every run of the tests. '''
+    text = []
+    for row in data.split('\n'):
+        if 'since' in row:
+            row = row.rsplit(' ', 2)[0] + ' ...'
+        text.append(row)
+    data = '\n'.join(text)
+    return data
+
+
 class FlaskApiExtrasTest(Modeltests):
     """ Flask API extras tests. """
 
@@ -766,17 +778,22 @@ avail | @provenpackager, | docker/offlineimap/master"""
         self.assertEqual(output.status_code, 200)
 
         expected = """# Number of requests pending: 2
-guake:master has ralph waiting for approveacls
-guake:master has toshio waiting for commit"""
-        self.assertEqual(output.data, expected)
+guake:master has ralph waiting for approveacls since ...
+guake:master has toshio waiting for commit since ..."""
+        data = clean_since_pending_acls(output.data)
+        self.assertEqual(data, expected)
 
         output = self.app.get('/api/pendingacls/?format=random')
         self.assertEqual(output.status_code, 200)
-        self.assertEqual(output.data, expected)
+        data = clean_since_pending_acls(output.data)
+        self.assertEqual(data, expected)
 
         output = self.app.get('/api/pendingacls/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
+
+        for req in data['pending_acls']:
+            req['since'] = '2015-02-10 15:04:36'
 
         expected = {
             'pending_acls': [
@@ -785,6 +802,7 @@ guake:master has toshio waiting for commit"""
                     'collection': 'master',
                     'namespace': 'rpms',
                     'package': 'guake',
+                    'since': '2015-02-10 15:04:36',
                     'status': 'Awaiting Review',
                     'user': 'ralph'
                 },
@@ -793,6 +811,7 @@ guake:master has toshio waiting for commit"""
                     'collection': 'master',
                     'namespace': 'rpms',
                     'package': 'guake',
+                    'since': '2015-02-10 15:04:36',
                     'status': 'Awaiting Review',
                     'user': 'toshio'
                 }
@@ -805,6 +824,8 @@ guake:master has toshio waiting for commit"""
         output = self.app.get('/api/pendingacls/?format=json&username=pingou')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
+        for req in data['pending_acls']:
+            req['since'] = '2015-02-10 15:04:36'
 
         self.assertEqual(data, expected)
 
