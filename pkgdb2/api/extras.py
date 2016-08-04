@@ -489,7 +489,7 @@ def api_pendingacls():
         for entry in pending_acls:
             output.append(
                 "%(package)s:%(collection)s has %(user)s waiting for "
-                "%(acl)s" % (entry))
+                "%(acl)s since %(since)s" % (entry))
         return flask.Response(
             '\n'.join(output),
             content_type="text/plain;charset=UTF-8"

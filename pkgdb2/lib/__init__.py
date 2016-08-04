@@ -1436,6 +1436,7 @@ def get_pending_acl_user(session, user=None):
                 'collection': package.packagelist.collection.branchname,
                 'acl': package.acl,
                 'status': package.status,
+                'since': package.date_created.strftime('%Y-%m-%d %H:%M:%S'),
             }
         )
     return output
