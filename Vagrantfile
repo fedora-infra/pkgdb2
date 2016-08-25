@@ -28,11 +28,8 @@ Vagrant.configure(2) do |config|
   # Set up development.ini
   config.vm.provision "shell", inline: "cp /vagrant/pkgdb2/default_config.py /vagrant/pkgdb2/vagrant_default_config.py", privileged: false
   config.vm.provision "shell", inline: "pushd /vagrant/; rpl 'sqlite:////var/tmp/pkgdb2_dev.sqlite' 'postgresql://postgres:whatever@localhost/pkgdb2' /vagrant/pkgdb2/vagrant_default_config.py; popd;"
-  config.vm.provision "shell", inline: "echo 'Provisioning Complete. Connect to your new vagrant box with'"
-  config.vm.provision "shell", inline: "echo 'vagrant ssh'"
-  config.vm.provision "shell", inline: "echo 'Then start the pkdb2 server with'"
-  config.vm.provision "shell", inline: "echo 'pushd /vagrant/; ./runserver.py -c pkgdb2/vagrant_default_config.py --host \"0.0.0.0\";'"
- 
+
+  config.vm.post_up_message = "Provisioning Complete. Connect to your new vagrant box with\nvagrant ssh\nThen start the pkdb2 server with\npushd /vagrant/; ./runserver.py -c pkgdb2/vagrant_default_config.py --host \"0.0.0.0\";\nYour fresh pkgdb2 instance will now be accessible at\nhttp://localhost:5001/"
 
 end
 
