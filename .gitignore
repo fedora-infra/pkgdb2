@@ -10,3 +10,4 @@ doc/_build/
 start-pkgdb
 .coverage
 alembic.ini
+.vagrant/
