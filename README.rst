@@ -19,7 +19,43 @@ bugzilla and who get the notifications for changes in the git, builds or bugs.
 
 
 Hacking
--------
+=======
+
+Hacking with Vagrant
+--------------------
+Quickly start hacking on pkgdb2 using the vagrant setup that is included in the
+pkgdb2 repo is super simple.
+
+First, install Vagrant and the vagrant-libvirt plugin from the official Fedora
+repos::
+
+    $ sudo dnf install vagrant vagrant-libvirt
+
+The pkgdb2 vagrant setup uses vagrant-sshfs for syncing files between your host
+and the vagrant dev machine. vagrant-sshfs is not in the Fedora repos (yet), so
+we install the vagrant-sshfs plugin from dustymabe's COPR repo::
+
+    $ sudo dnf copr enable dustymabe/vagrant-sshfs
+    $ sudo dnf install vagrant-sshfs
+
+Now, from within main directory (the one with the Vagrantfile in it) of your git
+checkout of pkgdb, run the ``vagrant up`` command to provision your dev
+environment::
+
+    $ vagrant up
+
+When this command is completed (it may take a while) you will be able to ssh
+into your dev VM with ``vagrant ssh`` and then run the command to start the
+pkgdb2 server::
+
+    $ vagrant ssh
+    [vagrant@localhost ~]$ pushd /vagrant/; ./runserver.py -c pkgdb2/vagrant_default_config.py --host "0.0.0.0";
+
+Once that is running, simply go to http://localhost:5001/ in your browser on
+your host to see your running pkgdb2 test instance.
+
+Setting up a Dev Environment by hand
+------------------------------------
 
 Here are some preliminary instructions about how to stand up your own instance
 of packagedb2.  We'll use a virtualenv and a sqlite database and we'll install
@@ -33,7 +69,7 @@ First, set up a virtualenv::
     $ virtualenv my-pkgdb2-env
     $ source my-pkgdb2-env/bin/activate
 
-Issueing that last command should change your prompt to indicate that you are
+Issuing that last command should change your prompt to indicate that you are
 operating in an active virtualenv.
 
 Next, install your dependencies::
@@ -68,7 +104,7 @@ pkgdb2::
     (my-pkgdb2-env)$ python createdb.py
 
 Setting up PostgreSQL
-=====================
+~~~~~~~~~~~~~~~~~~~~~
 
 Using PostgreSQL is optional but if you want to work with real datadump then
 setting up PostgreSQL will be a better option
