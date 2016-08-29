@@ -29,7 +29,7 @@ pkgdb2 repo is super simple.
 First, install Vagrant and the vagrant-libvirt plugin from the official Fedora
 repos::
 
-    $ sudo yum install vagrant vagrant-libvirt
+    $ sudo dnf install vagrant vagrant-libvirt
 
 The pkgdb2 vagrant setup uses vagrant-sshfs for syncing files between your host
 and the vagrant dev machine. vagrant-sshfs is not in the Fedora repos (yet), so
@@ -49,7 +49,7 @@ into your dev VM with ``vagrant ssh`` and then run the command to start the
 pkgdb2 server::
 
     $ vagrant ssh
-    [vagrant@localhost ~]$ pushd /vagrant/; ./runserver.py -c pkgdb2/vagrant_default_config.py --host \"0.0.0.0\";
+    [vagrant@localhost ~]$ pushd /vagrant/; ./runserver.py -c pkgdb2/vagrant_default_config.py --host "0.0.0.0";
 
 Once that is running, simply go to http://localhost:5001/ in your browser on
 your host to see your running pkgdb2 test instance.
