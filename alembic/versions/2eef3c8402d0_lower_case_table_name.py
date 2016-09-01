@@ -18,7 +18,7 @@ TABLES = {
     'PkgStatus': 'pkg_status',
     'AclStatus': 'acl_status',
     'CollecStatus': 'collection_status',
-    'PackageListingAcl': 'package_listing_acls',
+    'PackageListingAcl': 'package_listing_acl',
     'Collection': 'collection',
     'PackageListing': 'package_listing',
     'Package': 'package',
