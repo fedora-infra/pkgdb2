@@ -177,7 +177,7 @@ def create_status(session):
 
 class PkgAcls(BASE):
     """ Table storing the ACLs a package can have. """
-    __tablename__ = 'PkgAcls'
+    __tablename__ = 'pkg_acls'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -196,7 +196,7 @@ class PkgAcls(BASE):
 
 class PkgStatus(BASE):
     """ Table storing the statuses a package can have. """
-    __tablename__ = 'PkgStatus'
+    __tablename__ = 'pkg_status'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -215,7 +215,7 @@ class PkgStatus(BASE):
 
 class AclStatus(BASE):
     """ Table storing the statuses ACLs a package can have. """
-    __tablename__ = 'AclStatus'
+    __tablename__ = 'acl_status'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -253,7 +253,7 @@ class ActionStatus(BASE):
 
 class CollecStatus(BASE):
     """ Table storing the statuses a collection can have. """
-    __tablename__ = 'CollecStatus'
+    __tablename__ = 'collection_status'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -301,7 +301,7 @@ class PackageListingAcl(BASE):
     Table -- PackageListingAcl
     """
 
-    __tablename__ = 'PackageListingAcl'
+    __tablename__ = 'package_listing_acl'
 
     id = sa.Column(sa.Integer, primary_key=True)
     fas_name = sa.Column(sa.String(255), nullable=False, index=True)
@@ -659,7 +659,7 @@ class Collection(BASE):
     Table -- Collection
     """
 
-    __tablename__ = 'Collection'
+    __tablename__ = 'collection'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
@@ -789,7 +789,7 @@ class PackageListing(BASE):
     Table -- PackageListing
     """
 
-    __tablename__ = 'PackageListing'
+    __tablename__ = 'package_listing'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     package_id = sa.Column(
         sa.Integer,
@@ -1127,7 +1127,7 @@ class Package(BASE):
     Table -- Package
     """
 
-    __tablename__ = 'Package'
+    __tablename__ = 'package'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False, index=True)
     summary = sa.Column(sa.Text, nullable=False)
@@ -1722,7 +1722,7 @@ class Log(BASE):
     Table -- Log
     """
 
-    __tablename__ = 'Log'
+    __tablename__ = 'log'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     user = sa.Column(sa.String(32), nullable=False, index=True)
     change_time = sa.Column(sa.DateTime, nullable=False,
