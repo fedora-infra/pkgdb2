@@ -40,7 +40,6 @@ from sqlalchemy.orm import backref
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation
-from sqlalchemy.orm import backref
 from sqlalchemy.sql import or_
 from sqlalchemy.sql import and_
 from sqlalchemy.sql import not_
@@ -308,16 +307,16 @@ class PackageListingAcl(BASE):
     packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'PackageListing.id', ondelete='CASCADE', onupdate='CASCADE'),
+            'package_listing.id', ondelete='CASCADE', onupdate='CASCADE'),
         nullable=False)
     acl = sa.Column(
         sa.String(50),
-        sa.ForeignKey('PkgAcls.status', onupdate='CASCADE'),
+        sa.ForeignKey('pkg_acls.status', onupdate='CASCADE'),
         nullable=False,
         index=True)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('AclStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('acl_status.status', onupdate='CASCADE'),
         nullable=False,
         index=True)
 
@@ -665,7 +664,7 @@ class Collection(BASE):
     version = sa.Column(sa.Text, nullable=False)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('CollecStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('collection_status.status', onupdate='CASCADE'),
         nullable=False)
     owner = sa.Column(sa.String(32), nullable=False)
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
@@ -794,17 +793,17 @@ class PackageListing(BASE):
     package_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'package.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False)
     point_of_contact = sa.Column(sa.Text, nullable=False, index=True)
     collection_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'collection.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('pkg_status.status', onupdate='CASCADE'),
         nullable=False,
         index=True)
     critpath = sa.Column(sa.Boolean, default=False, nullable=False)
@@ -1138,7 +1137,7 @@ class Package(BASE):
     koschei = sa.Column(sa.Boolean(), default=False, nullable=False)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('pkg_status.status', onupdate='CASCADE'),
         nullable=False)
     namespace = sa.Column(
         sa.String(50),
@@ -1730,7 +1729,7 @@ class Log(BASE):
     package_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Package.id', ondelete='SET NULL', onupdate='CASCADE'),
+            'package.id', ondelete='SET NULL', onupdate='CASCADE'),
         nullable=True,
         index=True)
     description = sa.Column(sa.Text, nullable=False)
@@ -1821,12 +1820,12 @@ class AdminAction(BASE):
     package_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'package.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=True)
     collection_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'collection.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False)
     _status = sa.Column(
         sa.String(50),
