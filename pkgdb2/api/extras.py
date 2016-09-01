@@ -795,12 +795,19 @@ def api_pkgrequest(bzid):
         else:
             output['error'] = msg
 
-    tmp = bug.summary.split(':', 1)[1]
+    tmp = bug.summary.partition(':')[1]
+    if not tmp:
+        httpcode = 400
+        output['output'] = 'notok'
+        output['error'] = 'Invalid title for this bugzilla ticket (no ":" '\
+            'present)'
+
     # Check the format of the title
     if not ' - ' in tmp:
         httpcode = 400
         output['output'] = 'notok'
-        output['error'] = 'Invalid title for this bugzilla ticket'
+        output['error'] = 'Invalid title for this bugzilla ticket (no "-" '\
+            'present)'
 
     if httpcode == 200:
         pkg, summary = tmp.split(' - ', 1)
