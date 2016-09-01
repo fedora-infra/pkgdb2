@@ -1735,35 +1735,35 @@ def add_branch(session, clt_from, clt_to, user):
     ))
     session.commit()
 
-    q1 = '''INSERT INTO "PackageListing" (
+    q1 = '''INSERT INTO package_listing (
         package_id, point_of_contact, collection_id, status, critpath,
         status_change
     )
     SELECT
-        "PackageListing".package_id,
-        "PackageListing".point_of_contact,
+        package_listing.package_id,
+        package_listing.point_of_contact,
         %s,
-        "PackageListing".status,
-        "PackageListing".critpath,
-        "PackageListing".status_change
-    FROM "PackageListing", "Package"
-    WHERE "PackageListing".collection_id = %s
-    AND "Package".id = "PackageListing".package_id
-    AND "PackageListing".status IN ('Approved','Orphaned')
+        package_listing.status,
+        package_listing.critpath,
+        package_listing.status_change
+    FROM package_listing, package
+    WHERE package_listing.collection_id = %s
+    AND package.id = package_listing.package_id
+    AND package_listing.status IN ('Approved','Orphaned')
     ''' % (clt_to.id, clt_from.id)
 
-    q2 = '''INSERT INTO "PackageListingAcl" (
+    q2 = '''INSERT INTO package_listing_acl (
         fas_name, packagelisting_id, acl, status, date_created
     )
-    SELECT "PackageListingAcl".fas_name, p2.id,
-           "PackageListingAcl".acl, "PackageListingAcl".status, '%s'
-    FROM "PackageListing" as p1, "PackageListing" as p2, "PackageListingAcl",
-         "Package"
+    SELECT package_listing_acl.fas_name, p2.id,
+           package_listing_acl.acl, package_listing_acl.status, '%s'
+    FROM package_listing as p1, package_listing as p2, package_listing_acl,
+         package
     WHERE p1.collection_id = %s
     AND p2.collection_id = %s
     AND p1.package_id = p2.package_id
-    AND "PackageListingAcl".packagelisting_id = p1.id
-    AND "Package".id = p1.package_id
+    AND package_listing_acl.packagelisting_id = p1.id
+    AND package.id = p1.package_id
     ''' % (datetime.utcnow(), clt_from.id, clt_to.id)
 
     for namespace in exempted_namespaces:
