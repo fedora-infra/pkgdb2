@@ -9,7 +9,7 @@
 <span class="inline">
 <h1>
   {{ packager | avatar | safe }}
-  {{ packager }}</h1> (<a class="fas" target="_blank"
+  {{ packager }}</h1> (<a class="fas" target="_blank" rel="noopener noreferrer"
     {% if packager.startswith('group::') %}
         href="{{ config['PKGDB2_FAS_URL'] }}/group/view/{{ packager.replace('group::', '') }}"
     {% else %}
