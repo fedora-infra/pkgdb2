@@ -40,7 +40,6 @@ from sqlalchemy.orm import backref
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import relation
-from sqlalchemy.orm import backref
 from sqlalchemy.sql import or_
 from sqlalchemy.sql import and_
 from sqlalchemy.sql import not_
@@ -177,7 +176,7 @@ def create_status(session):
 
 class PkgAcls(BASE):
     """ Table storing the ACLs a package can have. """
-    __tablename__ = 'PkgAcls'
+    __tablename__ = 'pkg_acls'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -196,7 +195,7 @@ class PkgAcls(BASE):
 
 class PkgStatus(BASE):
     """ Table storing the statuses a package can have. """
-    __tablename__ = 'PkgStatus'
+    __tablename__ = 'pkg_status'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -215,7 +214,7 @@ class PkgStatus(BASE):
 
 class AclStatus(BASE):
     """ Table storing the statuses ACLs a package can have. """
-    __tablename__ = 'AclStatus'
+    __tablename__ = 'acl_status'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -253,7 +252,7 @@ class ActionStatus(BASE):
 
 class CollecStatus(BASE):
     """ Table storing the statuses a collection can have. """
-    __tablename__ = 'CollecStatus'
+    __tablename__ = 'collection_status'
 
     status = sa.Column(sa.String(50), primary_key=True)
 
@@ -301,23 +300,23 @@ class PackageListingAcl(BASE):
     Table -- PackageListingAcl
     """
 
-    __tablename__ = 'PackageListingAcl'
+    __tablename__ = 'package_listing_acl'
 
     id = sa.Column(sa.Integer, primary_key=True)
     fas_name = sa.Column(sa.String(255), nullable=False, index=True)
     packagelisting_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'PackageListing.id', ondelete='CASCADE', onupdate='CASCADE'),
+            'package_listing.id', ondelete='CASCADE', onupdate='CASCADE'),
         nullable=False)
     acl = sa.Column(
         sa.String(50),
-        sa.ForeignKey('PkgAcls.status', onupdate='CASCADE'),
+        sa.ForeignKey('pkg_acls.status', onupdate='CASCADE'),
         nullable=False,
         index=True)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('AclStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('acl_status.status', onupdate='CASCADE'),
         nullable=False,
         index=True)
 
@@ -659,13 +658,13 @@ class Collection(BASE):
     Table -- Collection
     """
 
-    __tablename__ = 'Collection'
+    __tablename__ = 'collection'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False)
     version = sa.Column(sa.Text, nullable=False)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('CollecStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('collection_status.status', onupdate='CASCADE'),
         nullable=False)
     owner = sa.Column(sa.String(32), nullable=False)
     branchname = sa.Column(sa.String(32), unique=True, nullable=False)
@@ -789,22 +788,22 @@ class PackageListing(BASE):
     Table -- PackageListing
     """
 
-    __tablename__ = 'PackageListing'
+    __tablename__ = 'package_listing'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     package_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'package.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False)
     point_of_contact = sa.Column(sa.Text, nullable=False, index=True)
     collection_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'collection.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('pkg_status.status', onupdate='CASCADE'),
         nullable=False,
         index=True)
     critpath = sa.Column(sa.Boolean, default=False, nullable=False)
@@ -1127,7 +1126,7 @@ class Package(BASE):
     Table -- Package
     """
 
-    __tablename__ = 'Package'
+    __tablename__ = 'package'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     name = sa.Column(sa.Text, nullable=False, index=True)
     summary = sa.Column(sa.Text, nullable=False)
@@ -1138,7 +1137,7 @@ class Package(BASE):
     koschei = sa.Column(sa.Boolean(), default=False, nullable=False)
     status = sa.Column(
         sa.String(50),
-        sa.ForeignKey('PkgStatus.status', onupdate='CASCADE'),
+        sa.ForeignKey('pkg_status.status', onupdate='CASCADE'),
         nullable=False)
     namespace = sa.Column(
         sa.String(50),
@@ -1722,7 +1721,7 @@ class Log(BASE):
     Table -- Log
     """
 
-    __tablename__ = 'Log'
+    __tablename__ = 'log'
     id = sa.Column(sa.Integer, nullable=False, primary_key=True)
     user = sa.Column(sa.String(32), nullable=False, index=True)
     change_time = sa.Column(sa.DateTime, nullable=False,
@@ -1730,7 +1729,7 @@ class Log(BASE):
     package_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Package.id', ondelete='SET NULL', onupdate='CASCADE'),
+            'package.id', ondelete='SET NULL', onupdate='CASCADE'),
         nullable=True,
         index=True)
     description = sa.Column(sa.Text, nullable=False)
@@ -1821,12 +1820,12 @@ class AdminAction(BASE):
     package_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Package.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'package.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=True)
     collection_id = sa.Column(
         sa.Integer,
         sa.ForeignKey(
-            'Collection.id', ondelete="CASCADE", onupdate="CASCADE"),
+            'collection.id', ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False)
     _status = sa.Column(
         sa.String(50),
