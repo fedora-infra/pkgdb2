@@ -26,10 +26,10 @@ Hacking with Vagrant
 Quickly start hacking on pkgdb2 using the vagrant setup that is included in the
 pkgdb2 repo is super simple.
 
-First, install Vagrant and the vagrant-libvirt plugin from the official Fedora
+First, install Ansible, Vagrant and the vagrant-libvirt plugin from the official Fedora
 repos::
 
-    $ sudo dnf install vagrant vagrant-libvirt
+    $ sudo dnf install ansible vagrant vagrant-libvirt
 
 The pkgdb2 vagrant setup uses vagrant-sshfs for syncing files between your host
 and the vagrant dev machine. vagrant-sshfs is not in the Fedora repos (yet), so

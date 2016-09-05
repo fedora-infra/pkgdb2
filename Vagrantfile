@@ -7,29 +7,13 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 5000, host: 5001
   config.vm.synced_folder ".", "/vagrant", type: "sshfs"
 
-  config.vm.provision "shell", inline: "sudo dnf -y install python redhat-rpm-config python-devel postgresql-devel postgresql-server rpl python-alembic python-psycopg2 gcc"
+  # Ansible needs the guest to have these
+  config.vm.provision "shell", inline: "sudo dnf install -y libselinux-python python2-dnf"
 
-  config.vm.provision "shell", inline: "pip install kitchen paver urllib3"
-  config.vm.provision "shell", inline: "pip install -r /vagrant/requirements.txt"
-
-  config.vm.provision "shell", inline: "sudo postgresql-setup initdb"
-
-  config.vm.provision "shell", inline: "sudo rpl 'host    all             all             127.0.0.1/32            ident' 'host    all             all             127.0.0.1/32            trust' /var/lib/pgsql/data/pg_hba.conf"
-  config.vm.provision "shell", inline: "sudo rpl 'host    all             all             ::1/128                 ident' 'host    all             all             ::1/128                 trust' /var/lib/pgsql/data/pg_hba.conf"
-
-  config.vm.provision "shell", inline: "sudo systemctl enable postgresql.service"
-  config.vm.provision "shell", inline: "sudo systemctl start postgresql.service"
-
-  config.vm.provision "shell", inline: "pushd /tmp/; curl -O https://infrastructure.fedoraproject.org/infra/db-dumps/pkgdb2.dump.xz; popd;"
-  config.vm.provision "shell", inline: "sudo runuser -l postgres -c 'createdb pkgdb2'"
-
-  config.vm.provision "shell", inline: "xzcat /tmp/pkgdb2.dump.xz | sudo runuser -l postgres -c 'psql pkgdb2'"
-
-  # Set up development.ini
-  config.vm.provision "shell", inline: "cp /vagrant/pkgdb2/default_config.py /vagrant/pkgdb2/vagrant_default_config.py", privileged: false
-  config.vm.provision "shell", inline: "pushd /vagrant/; rpl 'sqlite:////var/tmp/pkgdb2_dev.sqlite' 'postgresql://postgres:whatever@localhost/pkgdb2' /vagrant/pkgdb2/vagrant_default_config.py; popd;"
-
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "devel/ansible/playbook.yml"
+  end
+  
   config.vm.post_up_message = "Provisioning Complete. Connect to your new vagrant box with\nvagrant ssh\nThen start the pkdb2 server with\npushd /vagrant/; ./runserver.py -c pkgdb2/vagrant_default_config.py --host \"0.0.0.0\";\nYour fresh pkgdb2 instance will now be accessible at\nhttp://localhost:5001/"
 
 end
-

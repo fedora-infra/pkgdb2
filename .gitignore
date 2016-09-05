@@ -11,3 +11,5 @@ start-pkgdb
 .coverage
 alembic.ini
 .vagrant/
+devel/ansible/playbook.retry
+pkgdb2/vagrant_default_config.py

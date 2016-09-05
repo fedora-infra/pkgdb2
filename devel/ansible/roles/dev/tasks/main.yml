@@ -1,0 +1,44 @@
+---
+- name: Install dev packages
+  dnf:
+      name: "{{ item }}"
+      state: present
+  with_items:
+      - gcc
+      - postgresql-devel
+      - python
+      - python-devel
+      - python-alembic
+      - python-psycopg2
+      - redhat-rpm-config
+
+- name: Install python packages
+  pip:
+      name: "{{ item }}"
+      state: present
+  with_items:
+      - kitchen
+      - paver
+      - urllib3
+
+- name: Install python packages from requirements.txt
+  pip:
+      requirements: /vagrant/requirements.txt
+
+- name: Retrieve database dump
+  get_url:
+      url: https://infrastructure.fedoraproject.org/infra/db-dumps/pkgdb2.dump.xz
+      dest: /tmp/pkgdb2.dump.xz
+
+- shell: xzcat /tmp/pkgdb2.dump.xz | runuser -l postgres -c 'psql pkgdb2' && touch /home/vagrant/.db-imported
+  args:
+      creates: /home/vagrant/.db-imported
+
+- command: cp /vagrant/pkgdb2/default_config.py /vagrant/pkgdb2/vagrant_default_config.py
+  args:
+    creates: /vagrant/pkgdb2/vagrant_default_config.py
+
+- replace:
+    dest: /vagrant/pkgdb2/vagrant_default_config.py
+    regexp: "sqlite:////var/tmp/pkgdb2_dev.sqlite"
+    replace: "postgresql://postgres:whatever@localhost/pkgdb2"
