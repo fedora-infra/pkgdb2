@@ -1767,8 +1767,8 @@ def add_branch(session, clt_from, clt_to, user):
     ''' % (datetime.utcnow(), clt_from.id, clt_to.id)
 
     for namespace in exempted_namespaces:
-        q1 += ''' AND "Package".namespace != '%s' ''' % namespace
-        q2 += ''' AND "Package".namespace != '%s' ''' % namespace
+        q1 += ''' AND "package".namespace != '%s' ''' % namespace
+        q2 += ''' AND "package".namespace != '%s' ''' % namespace
 
     q1 += ";"
     q2 += ";"
