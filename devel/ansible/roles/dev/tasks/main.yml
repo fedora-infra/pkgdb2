@@ -42,3 +42,17 @@
     dest: /vagrant/pkgdb2/vagrant_default_config.py
     regexp: "sqlite:////var/tmp/pkgdb2_dev.sqlite"
     replace: "postgresql://postgres:whatever@localhost/pkgdb2"
+
+- command: cp /vagrant/utility/alembic.ini /vagrant/alembic.ini
+  args:
+    creates: /vagrant/alembic.ini
+
+- replace:
+    dest: /vagrant/alembic.ini
+    regexp: "driver://user:pass@localhost/dbname"
+    replace: "postgresql://postgres:whatever@localhost/pkgdb2"
+
+- name: Apply database migrations
+  command: alembic upgrade head
+  args:
+        chdir: /vagrant
