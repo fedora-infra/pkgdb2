@@ -32,7 +32,7 @@ class UpdateBZConsumer(fedmsg.consumers.FedmsgConsumer):
 
         pkg_poc = msg['msg'].get('username')
         if not pkg_poc:
-            msg['msg']['package_listing']['point_of_contact']
+            pkg_poc = msg['msg']['package_listing']['point_of_contact']
         pkg_prev_poc = msg['msg'].get('previous_owner')
         pkg_name = msg['msg'].get('package_name')
         if not pkg_name:
