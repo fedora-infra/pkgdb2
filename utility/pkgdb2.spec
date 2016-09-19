@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.4.3
+Version:        2.5
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -116,6 +116,17 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Mon Sep 19 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5-1
+- Update to 2.5
+- Fix the pkgdb-sync-bugzilla so that it converts pkgdb collection to BZ product
+  in the right place
+- Add the possibility to run pkgdb under Vagrant (Ryan Lerch)
+- Specify rel="noopener noreferrer" to link including target='_blank'
+- Fix pkgdb2.api.extras to be more robust when extracting the summary of a bug
+- Make all the database table lower case to be more postgresql friendly
+- Add the date of the request when listing the pending ACLs requests
+- Fix the runserver script when running it with --profiler
+
 * Fri Jul 29 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.4.3-1
 - Update to 2.4.3
 - Implement blacklisting feature, allowing to blacklist some specific packages
