@@ -12,7 +12,7 @@ import socket
 hostname = socket.gethostname().split('.')[0]
 
 config = dict(
-    fasclient.consumer.enabled=True,
+    pkgdb.bz_consumer.enabled=True,
     endpoints={
         "pkgdb2.%s" % hostname: [
             "tcp://127.0.0.1:3005",
