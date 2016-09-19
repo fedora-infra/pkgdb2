@@ -49,4 +49,9 @@ setup(
         'utility/pkgdb-sync-bugzilla',
         'utility/update_package_info.py',
     ],
+    py_modules=['fedmsg_update_bz'],
+    entry_points="""
+    [moksha.consumer]
+    fedmsg_pkgdb_bz = fedmsg_update_bz:UpdateBZConsumer
+    """,
 )
