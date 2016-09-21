@@ -795,7 +795,7 @@ def api_pkgrequest(bzid):
         else:
             output['error'] = msg
 
-    tmp = bug.summary.partition(':')[1]
+    tmp = bug.summary.partition(':')[2]
     if not tmp:
         httpcode = 400
         output['output'] = 'notok'
