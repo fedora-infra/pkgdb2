@@ -124,6 +124,11 @@ a.pkg_review {
   background: url(fedora-infra-icon_review.png) 0 50% no-repeat;
 }
 
+a.koschei {
+  padding-left: 20px;
+  background: url(icon_koschei.png) 0 50% no-repeat;
+}
+
 a.pkgdb {
   padding-left: 20px;
   background: url(https://fedoraproject.org/static/mages/icons/fedora-infra-icon_pkgdb.png) 0 50% no-repeat;

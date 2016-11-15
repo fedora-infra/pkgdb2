@@ -195,3 +195,4 @@ CGIT_URL = 'http://pkgs.fedoraproject.org/cgit/%s/%s.git/'
 BODHI_URL = 'https://bodhi.fedoraproject.org/updates/?packages=%s'
 KOJI_URL = 'http://koji.fedoraproject.org/koji/search?'\
     'type=package&match=glob&terms=%s'
+KOSCHEI_URL = 'https://apps.fedoraproject.org/koschei/package/%s'
