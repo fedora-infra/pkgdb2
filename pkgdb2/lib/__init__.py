@@ -2715,13 +2715,14 @@ def edit_action_status(
         if action_status == 'Approved' \
                 and admin_action.action == 'request.package':
             pkg = admin_action.info_data.get('pkg_name')
+            namespace = admin_action.info_data.get('pkg_namespace', 'rpms')
             if pkg:
                 requests = search_actions(
-                    session, package=pkg, action='request.package',
-                    status='Awaiting Review')
+                    session, package=pkg, namespace=namespace,
+                    action='request.package', status='Awaiting Review')
                 requests.extend(search_actions(
-                    session, package=pkg, action='request.branch',
-                    status='Awaiting Review'))
+                    session, package=pkg, namespace=namespace,
+                    action='request.branch', status='Awaiting Review'))
                 for req in requests:
                     if req.collection.name.lower() != 'fedora':
                         continue
@@ -2730,6 +2731,7 @@ def edit_action_status(
                         set_acl_package(
                             session,
                             pkg_name=pkg,
+                            namespace=namespace,
                             pkg_branch=req.collection.branchname,
                             pkg_user=user.username,
                             acl=acl,
