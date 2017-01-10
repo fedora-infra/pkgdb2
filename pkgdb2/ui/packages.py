@@ -875,13 +875,9 @@ def package_unretire(namespace, package, full=True):
         review_url = pkgdblib.check_bz_url(bz, review_url)
 
         for br in form.branches.data:
-            if br == 'master' and not review_url:
-                checks_ok = False
-                flask.flash(
-                    'You must provide a valid review URL to un-retire master',
-                    'error')
-                break
-            elif br.startswith('e') and 'master' in collections and not review_url:
+            if br.startswith('e') \
+                    and 'master' in collections \
+                    and not review_url:
                 checks_ok = False
                 flask.flash(
                     'You must provide a valid review URL to un-retire an '
@@ -904,7 +900,7 @@ def package_unretire(namespace, package, full=True):
                             namespace=namespace,
                             pkg_name=package.name,
                             pkg_branch=acl.collection.branchname,
-                            review_url=form.review_url.data,
+                            review_url=review_url,
                             user=flask.g.fas_user,
                         )
                         flask.flash(

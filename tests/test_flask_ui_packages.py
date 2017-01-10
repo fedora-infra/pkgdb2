@@ -628,25 +628,6 @@ class FlaskUiPackagesTest(Modeltests):
                 '<td><select id="branches" multiple name="branches">'
                 '<option value="master">master</option>' in output.data)
 
-            # Missing review_url
-            output = self.app.post(
-                '/package/rpms/guake/unretire', follow_redirects=True,
-                data=data)
-            self.assertEqual(output.status_code, 200)
-            self.assertIn(
-                '<li class="error">You must provide a valid review URL to '
-                'un-retire master</li>', output.data)
-
-            # Invalid review_url
-            data['review_url'] = 'foo'
-            output = self.app.post(
-                '/package/rpms/guake/unretire', follow_redirects=True,
-                data=data)
-            self.assertEqual(output.status_code, 200)
-            self.assertIn(
-                '<li class="error">You must provide a valid review URL to '
-                'un-retire master</li>', output.data)
-
             # Int review_url
             data['review_url'] = '1234'
             output = self.app.post(
