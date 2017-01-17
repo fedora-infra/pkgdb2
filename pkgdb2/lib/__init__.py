@@ -523,6 +523,7 @@ def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
             'Orphaning restricted to the packages of user %s' % prev_poc)
 
     pkglisting.point_of_contact = pkg_poc
+    prev_status = pkglisting.status
     session.flush()
     if pkg_poc == 'orphan':
         pkglisting.status = 'Orphaned'
@@ -570,6 +571,20 @@ def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
             package_listing=pkglisting.to_json(),
         )
     )
+    if prev_status != 'Approved':
+        pkgdb2.lib.utils.log(
+            session,
+            pkglisting.package,
+            'package.update.status',
+            dict(
+                agent=user.username,
+                status=status,
+                prev_status=prev_status,
+                package_name=pkglisting.package.name,
+                package_listing=pkglisting.to_json(),
+            )
+        )
+
     if namespace == 'rpms':
         # Update Bugzilla about new owner
         pkgdb2.lib.utils.set_bugzilla_owner(
@@ -1637,11 +1652,27 @@ def unorphan_package(
             raise PkgdbException(
                 'You must be a %s to take a package.' % pkger_grp)
 
+    prev_status = pkg_listing.status
+
     status = 'Approved'
     pkg_listing.point_of_contact = pkg_user
     pkg_listing.status = status
     session.add(pkg_listing)
     session.flush()
+
+    if prev_status != 'Approved':
+        pkgdb2.lib.utils.log(
+            session,
+            pkg_listing.package,
+            'package.update.status',
+            dict(
+                agent=user.username,
+                status=status,
+                prev_status=prev_status,
+                package_name=pkg_listing.package.name,
+                package_listing=pkg_listing.to_json(),
+            )
+        )
 
     pkgdb2.lib.utils.log(session, pkg_listing.package, 'owner.update', dict(
         agent=user.username,
