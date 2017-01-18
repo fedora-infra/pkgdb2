@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.5
+Version:        2.6
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -116,6 +116,14 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Jan 18 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.6-1
+- Update to 2.6
+- Fix bug in splitting the title of bug reports (Patrick Uiterwijk)
+- Add a link to koschei from the package page (Vít Ondruch)
+- Do not require a review_url when asking to unretire master
+- Fix approving a new package request in the docker namespace
+- Fix sending notifications when we update the status of a package on a branch
+
 * Mon Sep 19 2016 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.5-1
 - Update to 2.5
 - Fix the pkgdb-sync-bugzilla so that it converts pkgdb collection to BZ product
