@@ -524,9 +524,11 @@ def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
 
     pkglisting.point_of_contact = pkg_poc
     prev_status = pkglisting.status
+    status = None
     session.flush()
     if pkg_poc == 'orphan':
         pkglisting.status = 'Orphaned'
+        status = 'Orphaned'
         # Remove commit and watchcommits if the user has them
         for acl in ['commit', 'approveacls']:
             if has_acls(
@@ -544,6 +546,7 @@ def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
                 )
     elif pkglisting.status in ('Orphaned', 'Retired'):
         pkglisting.status = 'Approved'
+        status = 'Approved'
         for acl in ACLS:
             if not has_acls(
                     session, pkg_poc, namespace, pkg_name,
@@ -571,7 +574,7 @@ def update_pkg_poc(session, namespace, pkg_name, pkg_branch, pkg_poc, user,
             package_listing=pkglisting.to_json(),
         )
     )
-    if prev_status != 'Approved':
+    if prev_status != status and status is not None:
         pkgdb2.lib.utils.log(
             session,
             pkglisting.package,
