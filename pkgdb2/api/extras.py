@@ -803,7 +803,7 @@ def api_pkgrequest(bzid):
             'present)'
 
     # Check the format of the title
-    if not ' - ' in tmp:
+    if tmp and not ' - ' in tmp:
         httpcode = 400
         output['output'] = 'notok'
         output['error'] = 'Invalid title for this bugzilla ticket (no "-" '\
