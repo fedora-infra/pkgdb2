@@ -82,6 +82,8 @@ PRODUCTS = {
     'Fedora EPEL': 'Fedora EPEL',
 }
 
+PRODUCTS = pkgdb2.APP.config.get('BZ_PRODUCTS', PRODUCTS)
+
 # When querying for current info, take segments of 1000 packages a time
 BZ_PKG_SEGMENT = 1000
 
