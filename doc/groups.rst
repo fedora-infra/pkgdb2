@@ -20,10 +20,9 @@ One requirement for the mailing list address:
   bugzilla account
 
 
-.. note:: If you wish to share you ACLs with a FAS group, `open a new ticket
-          <https://fedorahosted.org/fedora-infrastructure/newticket?type=New%20Pkgdb%20Group>`_ on
-          the `infrastructure trac <https://fedorahosted.org/fedora-infrastructure/>`_
-          (Type: ``New Pkgdb Group``).
+.. note:: If you wish to share you ACLs with a FAS group, open a new ticket on
+          the `infrastructure pagure.io tracker <https://pagure.io/fedora-infrastructure/new_issue>`_.
+
 
 
 Once the group has been created in FAS, you may give it ``commit``,
