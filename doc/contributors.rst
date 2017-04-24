@@ -3,12 +3,12 @@ Contributors to packagedb
 
 Pkgdb2 would be nothing without its contributors.
 
-On January 18, 2017 (release 2.6), the list looks as follow:
+On April 25, 2017 (release 2.6.2), the list looks as follow:
 
 =================  ===========
 Number of commits  Contributor
 =================  ===========
-  2808              Pierre-Yves Chibon <pingou@pingoured.fr>
+  2814              Pierre-Yves Chibon <pingou@pingoured.fr>
     60              Ralph Bean <rbean@redhat.com>
     18              Till Maas <opensource@till.name>
      9              Devyani Kota <divs.passion.18@gmail.com>
@@ -31,6 +31,7 @@ Number of commits  Contributor
      1              Ralph Bean <ralph.bean@gmail.com>
      1              Ratnadeep Debnath <ratnadeep.debnath@ibibogroup.com>
      1              Subho-bcrec <subho.prp@gmail.com>
+     1              Vít Ondruch <v.ondruch@tiscali.cz>
      1              Vít Ondruch <vondruch@redhat.com>
      1              mhaynes121 <mhaynes.linux@gmail.com>
 =================  ===========

@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.6
+Version:        2.6.2
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -116,6 +116,15 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Tue Apr 25 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.6.2-1
+- Update to 2.6.2
+- Fix git history in 2.6.2
+
+* Mon Apr 24 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.6.1-1
+- Update to 2.6.1
+- Make the mapping in pkgdb-sync-bugzilla script easier to adjust (by placing it
+  in the config file)
+
 * Wed Jan 18 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.6-1
 - Update to 2.6
 - Fix bug in splitting the title of bug reports (Patrick Uiterwijk)
