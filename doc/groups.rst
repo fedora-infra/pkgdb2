@@ -4,6 +4,10 @@ Group maintainership
 PkgDB2 integrates the possibility for FAS group to get ``watchcommits``,
 ``watchbugzilla`` and ``commit`` ACLs.
 
+.. note:: Please note that FAS group cannot get ``approveacls`` permissions.
+          This is to prevent anyone in the group to approve him/herself and drop
+          the ACLs for everybody else.
+
 
 There are some requirements for the FAS group:
 
@@ -36,3 +40,22 @@ which ACL you want to give and on which branch.
     ``group::<fas_group_name>``.
     If you do not respect this format, pkgdb2 will refuse to add the group as
     co-maintainer.
+
+
+The suggested package configuration for groups maintenance is:
+
+* Since group cannot have ``approveacls`` permissions, there have to be
+  at least one explicit "human" package administrator.
+* Group should have ``commits`` bit. This allows every member of the
+  group to make changes to package in dist-git. This is actually the main
+  purpose of groups.
+* Add "watchcommits" bit to allow notification of the group members about
+  changes in the package dist-git.
+* Group should have ``watchbugzilla`` permissions to allow group to be
+  notified about bugzilla issues associated with the package.
+* Optionally, the group can become PoC of the package. This effectively
+  results only in change of default assignee in bugzilla, nothing else. Keep
+  in mind, that this does not replace ``watchbugzilla`` bugzilla presmissions,
+  since the default assignee is not in CC list of the ticket by default
+  and therefore once the assignee in bugzilla was changed, the the group would
+  not be notified about the changes in bugzilla ticket anymore.
