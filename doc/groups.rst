@@ -54,8 +54,4 @@ The suggested package configuration for groups maintenance is:
 * Group should have ``watchbugzilla`` permissions to allow group to be
   notified about bugzilla issues associated with the package.
 * Optionally, the group can become PoC of the package. This effectively
-  results only in change of default assignee in bugzilla, nothing else. Keep
-  in mind, that this does not replace ``watchbugzilla`` bugzilla presmissions,
-  since the default assignee is not in CC list of the ticket by default
-  and therefore once the assignee in bugzilla was changed, the the group would
-  not be notified about the changes in bugzilla ticket anymore.
+  results only in change of default assignee in bugzilla, nothing else.
