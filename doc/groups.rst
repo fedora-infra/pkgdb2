@@ -55,3 +55,6 @@ The suggested package configuration for groups maintenance is:
   notified about bugzilla issues associated with the package.
 * Optionally, the group can become PoC of the package. This effectively
   results only in change of default assignee in bugzilla, nothing else.
+* All users who are members of the group might be optionally removed from
+  the ``commits``, ``watchcommits`` and ``watchbugzilla`` lists, since they
+  inherit the group rights.
