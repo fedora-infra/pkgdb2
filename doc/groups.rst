@@ -49,7 +49,7 @@ The suggested package configuration for groups maintenance is:
 * Group should have ``commits`` bit. This allows every member of the
   group to make changes to package in dist-git. This is actually the main
   purpose of groups.
-* Add "watchcommits" bit to allow notification of the group members about
+* Add ``watchcommits`` bit to allow notification of the group members about
   changes in the package dist-git.
 * Group should have ``watchbugzilla`` permissions to allow group to be
   notified about bugzilla issues associated with the package.
