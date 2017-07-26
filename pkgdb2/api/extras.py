@@ -112,7 +112,8 @@ def _bz_acls_cached(name=None, out_format='text'):
 
 #@pkgdb.CACHE.cache_on_arguments(expiration_time=3600)
 def _bz_notify_cache(
-        name=None, version=None, eol=False, out_format='text', acls=None):
+        name=None, version=None, eol=False, out_format='text', acls=None,
+        namespace=False):
     '''List of usernames that should be notified of changes to a package.
 
     For the collections specified we want to retrieve all of the owners,
@@ -124,6 +125,8 @@ def _bz_notify_cache(
     :kwarg eol: Set to True if you want to include end of life
         distributions
     :kwarg out_format: Specify if the output if text or json.
+    :kwarg namespace: A boolean specify wether to include the namespaces or
+        not.
     '''
     packages = pkgdblib.notify(
         session=SESSION,
@@ -138,11 +141,21 @@ def _bz_notify_cache(
                   'name': name,
                   'version': version,
                   'title': 'Fedora Package Database -- Notification List'}
-    for package in sorted(packages):
+    for package in sorted(packages, key=lambda pkg: pkg.name):
         if out_format == 'json':
-            output['packages'][package] = packages[package].split(',')
+            if namespace:
+                if package.namespace not in output['packages']:
+                    output['packages'][package.namespace] = {}
+                output['packages'][package.namespace][
+                    package.name] = packages[package].split(',')
+            else:
+                output['packages'][package.name] = packages[package].split(',')
         else:
-            output.append('%s|%s\n' % (package, packages[package]))
+            if namespace:
+                output.append('%s|%s|%s\n' % (
+                    package.namespace, package.name, packages[package]))
+            else:
+                output.append('%s|%s\n' % (package.name, packages[package]))
     return output
 
 
@@ -262,11 +275,14 @@ def api_notify():
     :kwarg eol: Set to True if you want to include end of life
         distributions
     :kwarg format: Specify if the output if text or json.
+    :kwarg namespace: Specify if the namespace should be included in the
+        output (defaults to False).
     '''
 
     name = flask.request.args.get('name', None)
     version = flask.request.args.get('version', None)
     eol = flask.request.args.get('eol', False)
+    namespace = flask.request.args.get('namespace', False)
     out_format = flask.request.args.get('format', 'text')
     if out_format not in ('text', 'json'):
         out_format = 'text'
@@ -276,7 +292,9 @@ def api_notify():
 
     output = _bz_notify_cache(
         name, version, eol, out_format,
-        acls=['commit', 'approveacls', 'watchcommits'])
+        acls=['commit', 'approveacls', 'watchcommits'],
+        namespace=namespace
+    )
 
     if out_format == 'json':
         return flask.jsonify(output)
@@ -285,6 +303,7 @@ def api_notify():
             output,
             content_type="text/plain;charset=UTF-8"
         )
+
 
 
 @API.route('/notify/all/')

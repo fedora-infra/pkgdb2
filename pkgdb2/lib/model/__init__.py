@@ -2038,7 +2038,7 @@ def notify(session, eol=False, name=None, version=None, acls=None):
         acls = [acls]
 
     query = session.query(
-        Package.name,
+        Package,
         PackageListingAcl.fas_name
     ).join(
         PackageListing,
@@ -2060,7 +2060,8 @@ def notify(session, eol=False, name=None, version=None, acls=None):
     ).group_by(
         Package.name, PackageListingAcl.fas_name
     ).order_by(
-        Package.name
+        Package.namespace,
+        Package.name,
     )
 
     if eol is False:

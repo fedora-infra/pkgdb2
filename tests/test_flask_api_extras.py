@@ -337,6 +337,15 @@ guake|pingou
         self.assertEqual(output.status_code, 200)
         self.assertEqual(output.data, expected)
 
+        output = self.app.get('/api/notify/?namespace=1')
+        self.assertEqual(output.status_code, 200)
+
+        expected = """modules|core|josef
+rpms|geany|group::gtk-sig,josef
+rpms|guake|pingou
+"""
+        self.assertEqual(output.data, expected)
+
         output = self.app.get('/api/notify/?format=json')
         self.assertEqual(output.status_code, 200)
         data = json.loads(output.data)
@@ -347,6 +356,27 @@ guake|pingou
                 'core': [u'josef'],
                 'geany': [u'group::gtk-sig', 'josef'],
                 'guake': [u'pingou'],
+            },
+            u'name': None,
+            u'version': None,
+            u'eol': False
+        }
+        self.assertEqual(data, expected)
+
+        output = self.app.get('/api/notify/?format=json&namespace=1')
+        self.assertEqual(output.status_code, 200)
+        data = json.loads(output.data)
+
+        expected = {
+            u'title': u'Fedora Package Database -- Notification List',
+            u'packages': {
+                u"modules": {
+                    u'core': [u'josef'],
+                },
+                u"rpms": {
+                    u'geany': [u'group::gtk-sig', 'josef'],
+                    u'guake': [u'pingou'],
+                }
             },
             u'name': None,
             u'version': None,
