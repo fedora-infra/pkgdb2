@@ -2,7 +2,7 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           pkgdb2
-Version:        2.6.2
+Version:        2.7
 Release:        1%{?dist}
 Summary:        The Fedora package database
 
@@ -116,6 +116,12 @@ install -m 644 utility/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/pkgdb2/alembic
 
 
 %changelog
+* Wed Jul 26 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.7-1
+- Update to 2.7
+- Fix checking the bugzilla ticket summary (Miro Hrončok)
+- Improve documentation (Vít Ondruch)
+- Add support for namespace to the /api/notify endpoint
+
 * Tue Apr 25 2017 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.6.2-1
 - Update to 2.6.2
 - Fix git history in 2.6.2
