@@ -2058,7 +2058,7 @@ def notify(session, eol=False, name=None, version=None, acls=None):
     ).filter(
         PackageListingAcl.status == 'Approved'
     ).group_by(
-        Package.name, PackageListingAcl.fas_name
+        Package.name, PackageListingAcl.fas_name, Package.id
     ).order_by(
         Package.namespace,
         Package.name,
